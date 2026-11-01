@@ -2,21 +2,33 @@
 # Jalankan seluruh pipeline dari nol: unduh sumber -> build -> takhrij -> uji -> audit -> ekspor D1.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-python3 pipeline/fetch_sources.py
-python3 pipeline/build_db.py
-python3 pipeline/takhrij.py
+# Cari Python 3 yang benar-benar jalan. Di Windows, "python3" sering hanya pintasan Microsoft Store yang mencetak
+# "Python was not found"; Python dari python.org terpasang sebagai "python" / "py". "-X utf8": baca/tulis berkas
+# dan cetak teks Arab sebagai UTF-8 di semua sistem (bawaan Windows cp1252 gagal); tetap berlaku bersama -I.
+PY=""
+for c in python3 python py; do
+  if command -v "$c" >/dev/null 2>&1 && "$c" -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)" >/dev/null 2>&1; then
+    PY="$c"; break
+  fi
+done
+[ -n "$PY" ] || { echo "Python 3.10+ tidak ditemukan. Pasang dari https://www.python.org/downloads/ (centang 'Add python.exe to PATH'), lalu buka terminal baru." >&2; exit 1; }
+pyu() { "$PY" -X utf8 "$@"; }      # bukan "py": nama itu bisa = peluncur Python Windows
+echo "Memakai $("$PY" -c 'import sys; print(sys.executable, sys.version.split()[0])')"
+pyu pipeline/fetch_sources.py
+pyu pipeline/build_db.py
+pyu pipeline/takhrij.py
 # HadeethEnc: unduhan bisa dilanjutkan; ulangi sampai lengkap (sopan, <= 3 permintaan/detik)
-until python3 -I pipeline/hadeethenc.py unduh --maks-detik 500 | tee /dev/stderr | grep -q "unduhan lengkap"; do :; done
-python3 -I pipeline/hadeethenc.py bangun
-python3 -I pipeline/riyadh.py
-python3 -I pipeline/bab_openiti.py
-python3 -I pipeline/katalog_palsu.py
-python3 -I pipeline/rijal.py
-python3 -I pipeline/perawi.py
-# opsional (unduh data pembanding Ifta'): python3 -I pipeline/uji_perawi_ifta.py
-# opsional (unduh OCR kitab cetak dari archive.org): python3 -I pipeline/verifikasi_cetak.py
-python3 -m unittest pipeline/test_golden.py pipeline/test_hadeethenc.py pipeline/test_riyadh.py pipeline/test_bab.py pipeline/test_katalog.py pipeline/test_rijal.py -v
-python3 pipeline/audit.py
-python3 pipeline/export_d1.py
-python3 pipeline/fixtures_js.py
-python3 design/build_prototype.py
+until pyu -I pipeline/hadeethenc.py unduh --maks-detik 500 | tee /dev/stderr | grep -q "unduhan lengkap"; do :; done
+pyu -I pipeline/hadeethenc.py bangun
+pyu -I pipeline/riyadh.py
+pyu -I pipeline/bab_openiti.py
+pyu -I pipeline/katalog_palsu.py
+pyu -I pipeline/rijal.py
+pyu -I pipeline/perawi.py
+# opsional (unduh data pembanding Ifta'): pyu -I pipeline/uji_perawi_ifta.py
+# opsional (unduh OCR kitab cetak dari archive.org): pyu -I pipeline/verifikasi_cetak.py
+pyu -m unittest pipeline/test_golden.py pipeline/test_hadeethenc.py pipeline/test_riyadh.py pipeline/test_bab.py pipeline/test_katalog.py pipeline/test_rijal.py -v
+pyu pipeline/audit.py
+pyu pipeline/export_d1.py
+pyu pipeline/fixtures_js.py
+pyu design/build_prototype.py

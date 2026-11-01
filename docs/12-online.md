@@ -109,7 +109,7 @@ Sisa tulisan terbesar: tabel `riwayat` sendiri beserta 3 indeksnya (±310 ribu),
 
 ## Langkah menerbitkan (dari komputer pemilik proyek)
 
-Prasyarat: Node.js ≥ 20, Python 3 (hanya pustaka bawaan, tanpa `pip install`), repo ini, dan data sudah dibangun (`bash pipeline/run_all.sh`, dijalankan dari folder utama repo). Skripnya memakai bash: di Windows, jalankan lewat WSL atau Git Bash.
+Prasyarat: Node.js ≥ 20, Python 3 (hanya pustaka bawaan, tanpa `pip install`), repo ini, dan data sudah dibangun (`bash pipeline/run_all.sh`, dijalankan dari folder utama repo). Skripnya memakai bash: di Windows, jalankan lewat WSL atau Git Bash. `run_all.sh` mencari sendiri Python yang jalan (`python3`, `python`, atau peluncur Windows `py`) dan memaksa mode UTF-8 (`-X utf8`) supaya teks Arab tidak gagal ditulis di Windows.
 
 Membangun data dari nol mengunduh ±300 MB sumber, termasuk unduhan HadeethEnc yang sengaja dibatasi (≤ 3 permintaan/detik), lalu menjalankan seluruh pipeline dan ujinya. Hasilnya `build/d1/` (9 berkas SQL, ±290 MB). Waktu totalnya belum diukur ulang; siapkan beberapa jam dan koneksi yang stabil.
 
