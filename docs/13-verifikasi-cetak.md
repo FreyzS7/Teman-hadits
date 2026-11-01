@@ -254,15 +254,19 @@ Teks digital ad-Darimi kita berasal dari tahqiq Husain Salim Asad ad-Darani (Dar
 
 Batasan: sekitar 50 perbedaan kata kecil antara fihris dan data lainnya (mis. «يوما»/«يوم», «تزال»/«يزال») tidak dicek satu per satu di halaman isi. Dengan pola di atas (fihris yang berbeda, bukan data), kemungkinan besar data sudah sesuai halaman isi.
 
-### Musnad asy-Syafi'i: daftar isi cetakan al-Fahl (sampel)
+### Musnad asy-Syafi'i: daftar isi cetakan al-Fahl (utuh)
 
 Teks digital kita: tartib Sanjar, tahqiq Mahir Yasin al-Fahl (Ghiras, 2004). Scan cetakannya ada di archive.org (`alfirdwsiy2018_gmail_3731_201808`). Daftar isi keempat jilid ada di awal berkas (leaf 4–25). Judulnya berharakat penuh, bergaris bawah, dan bertitik penuntun, sehingga OCR terlalu bising untuk pencocokan otomatis (hanya ±340 dari ±600 judul cocok).
 
-- **Sampel dibaca langsung dari gambar:** 28 judul Kitab ath-Thaharah (leaf 5) dan 13 judul Kitab al-Waqf serta Kitab al-'Itq (leaf 17). Semuanya sama dengan data, baik urutan maupun kata-katanya.
+- **Seluruh daftar isi dibaca langsung dari gambar** (leaf 5–25): 32 kitab dan ±565 bab, dibandingkan satu per satu dengan 597 judul data, baik urutan maupun kata-katanya. Fihris kadang menyingkat judul; bila berbeda, halaman isi yang menentukan.
+- **2 judul dikoreksi** (dilihat di halaman isi; rentang memakai nomor edisi al-Fahl):
+  - «باب: ترك الجمعة للعذر» (hadits 458–459). Teks digital «ترك الجمعة وللعذر»: penanda halaman manuskrip «/٦٢و/» di tengah judul terbaca sebagai huruf «و» (jilid 2 hlm. 33, leaf 403).
+  - «باب: في الضبع» (hadits 1508–1509, tentang hyena). Teks digital menulis «باب: في الضب» dua kali berturut-turut; di cetakan, bab ke-2 «في الضبع» dan bab ke-3 «في الضب» mulai hadits 1510 (jilid 3 hlm. 233–234, leaf 906–907).
+- Satu kandidat lain («رضي الله عنها» di bab pertama Kitab an-Nikah) ternyata sudah benar di data.
 - Temuan parser: «### $ 1277 - باب ما كان من الطلاق والرجعة» (nomor hadits dan judul bab dalam satu baris). Judulnya sudah benar, tetapi hadits 1277 dulu tanpa nomor edisi. Kini diperbaiki.
 - Teks digital juga punya «### | كتاب الرجعة.» palsu (ujung kalimat takhrij «أخرجه من كتاب الرجعة.») tepat sebelum judul kitab yang asli. Tidak ada riwayat di bawahnya, jadi tidak ada yang tampil salah.
 
-Batasan: asy-Syafi'i baru dicek dengan sampel (41 judul), belum seluruh daftar isi.
+Batasan: hanya judul yang berbeda dari fihris yang dicek di halaman isi. Judul yang sama di fihris dan data tidak dibuka halaman isinya.
 
 ## Batasan dan yang belum
 
@@ -272,4 +276,4 @@ Batasan: asy-Syafi'i baru dicek dengan sampel (41 judul), belum seluruh daftar i
 - **Teks dan nomor hadits Bukhari** belum dicek visual satu per satu. Halamannya harus dicari manual di scan (OCR-nya tidak bisa dipakai untuk mencari), atau dengan scan lain yang OCR-nya lebih baik.
 - Muslim: halaman fihris Muqaddimah dan Kitab al-Iman bab 1–18 belum dicek (tidak ada di scan).
 - **Fihris Bukhari sudah dibaca utuh**, tetapi hanya untuk bab tanpa judul. Judul bab bertajuk belum dibandingkan satu per satu dengan fihris; baru 14 judul Kitab 62 yang dicek persis.
-- **Sudah dicek dengan fihris cetak:** Bukhari, Muslim, Ibnu Majah, Abu Dawud, Nasa'i, Tirmidzi, Malik, ad-Darimi (untuk Abu Dawud, Nasa'i, dan Tirmidzi: struktur dan judul lewat OCR, kandidat dilihat di gambar; Tirmidzi juga di halaman isi). Al-Muwaththa' dan ad-Darimi juga sudah dicek (OCR al-Muwaththa' lebih lemah); asy-Syafi'i baru sampel 41 judul. **Belum:** Musnad Ahmad.
+- **Sudah dicek dengan fihris cetak:** Bukhari, Muslim, Ibnu Majah, Abu Dawud, Nasa'i, Tirmidzi, Malik, ad-Darimi (untuk Abu Dawud, Nasa'i, dan Tirmidzi: struktur dan judul lewat OCR, kandidat dilihat di gambar; Tirmidzi juga di halaman isi). Al-Muwaththa' dan ad-Darimi juga sudah dicek (OCR al-Muwaththa' lebih lemah); asy-Syafi'i (al-Fahl) seluruh daftar isinya. **Belum:** Musnad Ahmad.

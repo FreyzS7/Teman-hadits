@@ -296,3 +296,13 @@ class DarimiSyafiiCetak(unittest.TestCase):
     def test_syafii_judul_dan_nomor_satu_baris(self):
         # «### $ 1277 - باب ما كان من الطلاق والرجعة»: hadits 1277 kini bernomor edisi
         self.assertEqual(self.judul_edisi("syafii", 1277), "باب ما كان من الطلاق والرجعة")
+
+    def test_koreksi_syafii_nomor_edisi(self):
+        # halaman isi jilid 2 hlm. 33: «باب: ترك الجمعة /٦٢و/ للعذر» (penanda manuskrip, bukan huruf و)
+        self.assertEqual(self.judul_edisi("syafii", 458), "باب: ترك الجمعة للعذر")
+        # jilid 3 hlm. 233–234: «في الضبع» (1508–1509) lalu «في الضب» (1510 dst.)
+        self.assertEqual(self.judul_edisi("syafii", 1508), "باب: في الضبع")
+        self.assertEqual(self.judul_edisi("syafii", 1509), "باب: في الضبع")
+        self.assertEqual(self.judul_edisi("syafii", 1510), "باب: في الضب")
+        # «عنها» sudah benar di teks digital (halaman isi & fihris sama)
+        self.assertEqual(self.judul_edisi("syafii", 1103), "باب زواج النبي صلى الله عليه وسلم عائشة رضي الله عنها")

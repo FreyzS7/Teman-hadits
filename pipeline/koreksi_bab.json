@@ -499,6 +499,24 @@
       "bab_ar": "باب ومن سورة تبت",
       "alasan": "Teks digital: «ومن سورة تبت يدا»; cetakan: «ومن سورة تبت».",
       "bukti": "Halaman isi jilid 5 hlm. 379 (leaf 378, dilihat langsung): «(١١٠) (91) باب «ومن سورة تبت»»; fihris jilid 5 (leaf 568) sama. Scan: archive.org gkt6_20251231 (al-Jami' al-Kabir, tahqiq Basyar 'Awwad Ma'ruf, Dar al-Gharb al-Islami 1996; sama dengan dasar teks digital kita, Shamela 7895)."
+    },
+    {
+      "kitab_id": "syafii",
+      "penomoran": "edisi",
+      "dari": 458,
+      "sampai": 459,
+      "bab_ar": "باب: ترك الجمعة للعذر",
+      "alasan": "Teks digital: «ترك الجمعة وللعذر» (penanda halaman manuskrip «/٦٢و/» di tengah judul terbaca sebagai «و»); cetakan: «ترك الجمعة للعذر». Rentang memakai nomor edisi al-Fahl.",
+      "bukti": "Halaman isi jilid 2 hlm. 33 (leaf 403, dilihat langsung): «باب: ترك الجمعة /٦٢و/ للعذر»; fihris (leaf 10) sama. Scan: archive.org alfirdwsiy2018_gmail_3731_201808 (Musnad al-Imam asy-Syafi'i tartib Sanjar, tahqiq Mahir Yasin al-Fahl, Ghiras; sama dengan dasar teks digital kita)."
+    },
+    {
+      "kitab_id": "syafii",
+      "penomoran": "edisi",
+      "dari": 1508,
+      "sampai": 1509,
+      "bab_ar": "باب: في الضبع",
+      "alasan": "Teks digital memberi judul «باب: في الضب» dua kali berturut-turut; cetakan: bab ke-2 «في الضبع» (hadits 1508–1509, tentang hyena), bab ke-3 «في الضب» mulai hadits 1510. Rentang memakai nomor edisi al-Fahl.",
+      "bukti": "Halaman isi jilid 3 hlm. 233 (leaf 906, dilihat langsung): «٢- باب: في الضبع» di atas hadits 1508; hlm. 234 (leaf 907): «٣- باب: في الضب» di atas hadits 1510; fihris (leaf 21) sama. Scan: archive.org alfirdwsiy2018_gmail_3731_201808 (Musnad al-Imam asy-Syafi'i tartib Sanjar, tahqiq Mahir Yasin al-Fahl, Ghiras; sama dengan dasar teks digital kita)."
     }
   ]
 }
