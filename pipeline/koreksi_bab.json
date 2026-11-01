@@ -402,6 +402,15 @@
       "bukti": "Fihris rinci juz 9 hlm. 170 (leaf 78, dilihat langsung): «بابٌ: حدثني محمد بن المثنى» antara bab «الاستخلاف» dan bab «إخراج الخصوم وأهل الريب من البيوت بعد المعرفة». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
     },
     {
+      "kitab_id": "darimi",
+      "penomoran": "edisi",
+      "dari": 2435,
+      "sampai": 2435,
+      "bab_ar": "باب الجهاد في سبيل الله أفضل العمل",
+      "alasan": "Teks digital: «أفضل الأعمال»; halaman isi cetakan: «أفضل العمل». Rentang memakai nomor edisi Asad.",
+      "bukti": "Halaman isi jilid 3 hlm. 1545 (leaf 1555, dilihat langsung): «١ - باب: الجهاد في سبيل الله أفضل العمل»; fihris (leaf 2433) sama. Scan: archive.org MusnadDarimiAll (Musnad ad-Darimi, tahqiq Husain Salim Asad ad-Darani, Dar al-Mughni; sama dengan dasar teks digital kita)."
+    },
+    {
       "kitab_id": "malik",
       "dari": 193,
       "sampai": 196,

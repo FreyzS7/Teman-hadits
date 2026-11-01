@@ -273,3 +273,26 @@ class MalikCetak(unittest.TestCase):
         self.assertEqual({judul(f"malik:{n}")[1] for n in range(193, 197)}, {"باب ما جاء في التأمين خلف الإمام"})
         # fihris berbeda, halaman isi = teks digital: tidak dikoreksi
         self.assertEqual(judul("malik:102")[1], "باب واجب الغسل إذا التقى الختانان")
+
+
+class DarimiSyafiiCetak(unittest.TestCase):
+    """ad-Darimi (Asad, Dar al-Mughni) dan asy-Syafi'i (al-Fahl, Ghiras): fihris + halaman isi cetakan."""
+
+    def judul_edisi(self, kid, no):
+        return q("SELECT bab_ar FROM riwayat_bab WHERE riwayat_id LIKE ? AND no_openiti=?", kid + ":%", no)[0][0]
+
+    def test_judul_darimi_di_baris_berikutnya(self):
+        # «### | باب» lalu «# النهي عن استقبال القبلة لغائط أو بول</span>» (halaman isi hlm. 526: judul bab ke-6)
+        self.assertEqual(self.judul_edisi("darimi", 691), "باب النهي عن استقبال القبلة لغائط أو بول")
+        self.assertEqual(self.judul_edisi("darimi", 159), "باب الفتيا وما فيه من الشدة")
+        # bab tanpa judul sungguhan tetap «باب»: fihris memberi deskripsi dalam kurung, halaman isi hanya «باب»
+        self.assertEqual(self.judul_edisi("darimi", 176), "باب")
+
+    def test_koreksi_darimi_nomor_edisi(self):
+        self.assertEqual(self.judul_edisi("darimi", 2435), "باب الجهاد في سبيل الله أفضل العمل")
+        # fihris «نبيذ الخمر», halaman isi = teks digital «نبيذ الجر»: tidak dikoreksi
+        self.assertEqual(self.judul_edisi("darimi", 2155), "باب النهي عن نبيذ الجر، وما ينبذ فيه")
+
+    def test_syafii_judul_dan_nomor_satu_baris(self):
+        # «### $ 1277 - باب ما كان من الطلاق والرجعة»: hadits 1277 kini bernomor edisi
+        self.assertEqual(self.judul_edisi("syafii", 1277), "باب ما كان من الطلاق والرجعة")

@@ -159,6 +159,13 @@ def urai(path, kid=None):
             mode_tahqiq = False
             sambung, judul_terbuka = judul_terbuka, False
             polos = norm_ar(_AWALAN_NOMOR.sub("", isi))
+            mnb = re.match(r"^\s*([0-9٠-٩]+)\s*-\s*(باب\b.*)$", isi) if kid == "syafii" else None   # di Muslim: nomor bab
+            if mnb:                                        # Syafi'i: "### $ 1277 - باب ما كان من الطلاق والرجعة"
+                tunggu_judul = judul_tir = False           # = judul bab baru + awal hadits bernomor dalam satu baris
+                tutup()
+                bab = bersihkan_judul(mnb.group(2))
+                teks, tahqiq, no = [], [], int(mnb.group(1).translate(_ANGKA_TIMUR))
+                continue
             mn = _NOMOR_SAJA.match(isi)
             if mn:                                         # "### | 12 - " = awal hadits bernomor
                 tunggu_judul = judul_tir = False
@@ -217,7 +224,9 @@ def urai(path, kid=None):
                 tutup()
                 teks, tahqiq, no = [], [], None
                 bab = bersihkan_judul(_AWALAN_NOMOR.sub("", isi))
-                tunggu_judul = kid == "bukhari" and norm_ar(bab) == "باب"
+                # «### | باب» lalu judulnya di baris «# …» berikutnya: Bukhari, dan ad-Darimi («# النهي عن استقبال
+                # القبلة لغائط أو بول</span>»; halaman isi cetakan Asad hlm. 526 mencetaknya sebagai judul bab)
+                tunggu_judul = kid in ("bukhari", "darimi") and norm_ar(bab) == "باب"
                 judul_terbuka = kid == "nasai"
                 judul_tir, judul_tir_mentah = kid == "tirmidzi", _AWALAN_NOMOR.sub("", isi)
                 continue
@@ -419,12 +428,18 @@ def betulkan_letak(kid, blok, riwayat, akhir, cara):
 _KOREKSI = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "koreksi_bab.json"), encoding="utf8"))["koreksi"]
 
 
-def koreksi_cetak(rid):
-    """Koreksi judul bab yang sudah diverifikasi terhadap kitab cetak (pipeline/koreksi_bab.json)."""
+def koreksi_cetak(rid, no_edisi=None):
+    """Koreksi judul bab yang sudah diverifikasi terhadap kitab cetak (pipeline/koreksi_bab.json). Rentang memakai
+    nomor riwayat kita, kecuali entri ber-"penomoran": "edisi" (kitab Lidwa-saja: Ahmad, ad-Darimi, asy-Syafi'i),
+    yang memakai nomor edisi tahqiq (= nomor blok OpenITI)."""
     kid, _, no = rid.partition(":")
-    if not no.isdigit():
-        return None
-    return next((k for k in _KOREKSI if k["kitab_id"] == kid and k["dari"] <= int(no) <= k["sampai"]), None)
+    for k in _KOREKSI:
+        if k["kitab_id"] != kid:
+            continue
+        n = no_edisi if k.get("penomoran") == "edisi" else (int(no) if no.isdigit() else None)
+        if n is not None and k["dari"] <= n <= k["sampai"]:
+            return k
+    return None
 
 
 def main():
@@ -435,7 +450,7 @@ def main():
     db = sqlite3.connect(OUT)
     db.executescript("""
     CREATE TABLE riwayat_bab (riwayat_id TEXT PRIMARY KEY, kitab_ar TEXT, bab_ar TEXT, skor REAL, cara TEXT, no_openiti INT,
-      kitab_nama_id TEXT, tahqiq TEXT, urut_openiti INT, catatan TEXT);
+      kitab_nama_id TEXT, tahqiq TEXT, urut_openiti INT, catatan TEXT, cara_cocok TEXT);
     CREATE TABLE kitab_nama (kitab_id TEXT, bab_no INT, nama_ar TEXT, setuju INT, total INT, nama_id TEXT, PRIMARY KEY (kitab_id, bab_no));
     CREATE TABLE info (kitab_id TEXT, kunci TEXT, nilai TEXT);
     """)
@@ -463,12 +478,13 @@ def main():
             # Penilaian muhaqqiq hanya dipasang bila teks riwayat jelas ada di blok edisi itu (>= 0.9)
             tq = b.get("tahqiq") if (cara[rid] == "teks" and s >= 0.9) else None
             bab_ar, cr, catatan = b["bab"], cara[rid], None
-            k = koreksi_cetak(rid)
+            k = koreksi_cetak(rid, b["no"])
             if k:
                 # cara "catatan-cetak": judul tetap, tetapi cetakan memberi catatan penting (mis. bab tambahan edisi lain)
                 bab_ar, cr, catatan = k["bab_ar"], k.get("cara", "koreksi-cetak"), k.get("catatan_id")
-            db.execute("INSERT INTO riwayat_bab VALUES (?,?,?,?,?,?,?,?,?,?)",
-                       (rid, b["kitab"], bab_ar, s, cr, b["no"], nama_indonesia(b["kitab"]), tq, i, catatan))
+            # cara_cocok = cara pencocokan asli (cara bisa ditimpa koreksi cetak; tingkat A kitab Lidwa-saja butuh "teks")
+            db.execute("INSERT INTO riwayat_bab VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                       (rid, b["kitab"], bab_ar, s, cr, b["no"], nama_indonesia(b["kitab"]), tq, i, catatan, cara[rid]))
 
         # uji: urutan & nomor
         idx = [peta[rid][0] for rid in urut if rid in peta]

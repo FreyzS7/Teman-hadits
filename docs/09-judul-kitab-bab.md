@@ -48,6 +48,8 @@ Pencocokan memakai isi teks. Nomor hadits hanya dipakai untuk **memilih** di ant
   - Judul kitab «أبواب ٣٠ الجمعة»: angka lepas di judul kitab dibuang.
   - Judul bab yang berlanjut ke baris berikutnya sebelum hadits pertama («باب ما جاء في قول النبي ﷺ:» + «# أمرت بقتالهم…», «فضل سورة البقرة» + «# وآية الكرسي»), termasuk baris kedua blok judul di Bab Manaqib («يقال وله كنيتان: أبو تراب، وأبو الحسن»), kini ikut judul.
   - Penanda ayat «@QUR@» dibuang dari judul (7 judul), dan «ب بسم الله» ditulis «ببسم الله» seperti cetakannya.
+- ad-Darimi: «### | باب» yang judulnya ada di baris berikutnya («# النهي عن استقبال القبلة لغائط أو بول</span>») kini dibaca seperti di Bukhari (2 judul, 19 hadits; diverifikasi dengan halaman isi cetakan Asad, lihat docs/13).
+- asy-Syafi'i: «### $ 1277 - باب …» (nomor hadits dan judul bab dalam satu baris) kini memberi nomor edisi ke hadits itu.
 - Muslim: 59 judul bertanda «*» («### || * باب …») adalah tambahan teks digital, tidak ada di cetakan Fu'ad 'Abd al-Baqi (dibuktikan dengan fihris dan halaman isinya, lihat docs/13). Kini diabaikan; haditsnya tetap di bab cetakan.
 
 Selisih nomor Bukhari yang tersisa kebanyakan +1. Penyebabnya, dua nomor di edisi Dar Thauq an-Najah berada dalam satu blok, sehingga bab dan kitabnya tetap benar.

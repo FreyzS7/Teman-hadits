@@ -258,7 +258,7 @@ def main():
         j = judul_rw.get(rid)
         no_edisi = None
         if kid in LIDWA_SAJA:
-            cocok = j is not None and j["cara"] == "teks" and (j["skor"] or 0) >= 0.9
+            cocok = j is not None and (j.get("cara_cocok") or j["cara"]) == "teks" and (j["skor"] or 0) >= 0.9
             k = kunci_bagian(kid, j) if j else None
             babno = bagian_lidwa.get((kid, k), 0) if k else 0
             nama_b = (j["kitab_nama_id"] if (j and kid != "ahmad") else None) or k or "Belum terpetakan ke edisi tahqiq"
