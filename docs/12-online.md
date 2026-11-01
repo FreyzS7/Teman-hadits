@@ -109,7 +109,7 @@ Sisa tulisan terbesar: tabel `riwayat` sendiri beserta 3 indeksnya (±310 ribu),
 
 ## Langkah menerbitkan (dari komputer pemilik proyek)
 
-Prasyarat: Node.js ≥ 20, Python 3, repo ini, dan data sudah dibangun (`bash pipeline/run_all.sh`).
+Prasyarat: Node.js ≥ 20, Python 3 (hanya pustaka bawaan, tanpa `pip install`), repo ini, dan data sudah dibangun (`bash pipeline/run_all.sh`, dijalankan dari folder utama repo). Skripnya memakai bash: di Windows, jalankan lewat WSL atau Git Bash.
 
 Membangun data dari nol mengunduh ±300 MB sumber, termasuk unduhan HadeethEnc yang sengaja dibatasi (≤ 3 permintaan/detik), lalu menjalankan seluruh pipeline dan ujinya. Hasilnya `build/d1/` (9 berkas SQL, ±290 MB). Waktu totalnya belum diukur ulang; siapkan beberapa jam dan koneksi yang stabil.
 
@@ -122,9 +122,12 @@ Membangun data dari nol mengunduh ±300 MB sumber, termasuk unduhan HadeethEnc y
 Token itu bisa mengubah Worker dan database di akun Anda. Cabut token itu di dashboard setelah situs terbit.
 
 1. Buat akun Cloudflare (gratis) di <https://dash.cloudflare.com/sign-up>.
-2. Masuk ke folder situs:
+2. Masuk ke folder situs dan pasang wrangler (sekali saja):
    ```bash
    cd site
+   ```
+   ```bash
+   npm install
    ```
 3. Login wrangler:
    ```bash
