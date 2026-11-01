@@ -93,6 +93,24 @@ class TidakAdaDiKitab(unittest.TestCase):
         self.assertEqual(cari_frasa("حب الوطن من الايمان"), [])
 
 
+class PencarianTanpaAI(unittest.TestCase):
+    def test_tarawih_lewat_qiyam_ramadhan(self):
+        # Kata "tarawih" tidak ada di teks Arab hadits; kamus konsep harus menemukannya lewat قيام رمضان.
+        # Bukhari 2009 (Kitab Shalat at-Tarawih) dan Muslim 759 = riwayat "man qama Ramadhan".
+        from cari import cari
+        out = cari("tolong carikan hadits tentang sholat tarawih", batas=500, db=db)
+        ids = {h["id"] for h in out["hasil"]}
+        self.assertIn("bukhari:2009", ids)
+        self.assertTrue(any(h["kitab"] == "muslim" and str(h["no_arab"]).startswith("759") for h in out["hasil"]))
+        self.assertGreaterEqual(out["total"], 40)
+        self.assertEqual([k["id"] for k in out["rencana"]["konsep"]], ["tarawih"])
+
+    def test_babi_menemukan_bukhari_2236(self):
+        from cari import cari
+        ids = {h["id"] for h in cari("apakah makan babi itu hukumnya haram?", batas=500, db=db)["hasil"]}
+        self.assertIn("bukhari:2236", ids)
+
+
 class Integritas(unittest.TestCase):
     def test_jumlah_baris_sesuai_readme_sumber(self):
         # Angka dari README repo sumber (pernyataan pihak ketiga, bukan hitungan kita).

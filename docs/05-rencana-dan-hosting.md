@@ -13,6 +13,12 @@
 | 5 | Situs sungguhan: halaman per riwayat, pencarian, cek teks, SEO | |
 | 6 | Verifikasi sampel kitab cetak + peninjau independen, lalu rilis publik | |
 
+## Lokal dulu, Cloudflare kemudian
+
+Seluruh pengembangan berjalan di komputer sendiri. Cloudflare menyediakan alat `wrangler dev` yang menjalankan Worker **dan** database D1 (berkas SQLite lokal) di laptop tanpa akun dan tanpa internet. Kode yang jalan lokal adalah kode yang sama persis yang nanti di-deploy, jadi tidak ada "pindah platform". Saat siap online, cukup `wrangler d1 import` dan `wrangler deploy`.
+
+Kebutuhan di komputer: Node.js ≥ 20 dan Python 3 (untuk pipeline data).
+
 ## Arsitektur yang disarankan
 
 - **Situs:** Astro. Halaman beranda, metode, dan rak kitab dibuat statis.

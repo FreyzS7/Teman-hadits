@@ -1,0 +1,199 @@
+{
+  "_catatan": "Kamus untuk memahami kueri tanpa AI. Setiap konsep wajib punya 'bukti': alasan yang bisa dicek di database (jumlah kemunculan). Tambah entri lewat pull request; jangan menambah padanan yang tidak terbukti ada di teks.",
+  "varian": [
+    [
+      "shalat",
+      "sholat",
+      "solat",
+      "salat",
+      "sembahyang"
+    ],
+    [
+      "wudhu",
+      "wudu",
+      "wudlu"
+    ],
+    [
+      "ramadhan",
+      "ramadan",
+      "romadhon",
+      "ramadlan",
+      "romadon"
+    ],
+    [
+      "tarawih",
+      "terawih",
+      "taraweh",
+      "taraweeh",
+      "trawih"
+    ],
+    [
+      "hadits",
+      "hadist",
+      "hadis",
+      "hadith"
+    ],
+    [
+      "puasa",
+      "shaum",
+      "saum",
+      "shiyam"
+    ],
+    [
+      "sedekah",
+      "shadaqah",
+      "shodaqoh",
+      "shadaqoh",
+      "sadaqah",
+      "sedeqah"
+    ],
+    [
+      "zakat",
+      "zakah"
+    ],
+    [
+      "subuh",
+      "shubuh",
+      "fajar"
+    ],
+    [
+      "jumat",
+      "jum'at",
+      "jumuah",
+      "jumu'ah"
+    ]
+  ],
+  "_catatan_varian": "Kata pertama = bentuk baku untuk tampilan. Saat mencari, SEMUA varian dicari bersamaan (terjemahan Lidwa memakai ejaan campuran: sedekah 821, shadaqah 248, shodaqoh 16).",
+  "pengisi": [
+    "tolong",
+    "carikan",
+    "cari",
+    "cariin",
+    "mencari",
+    "hadits",
+    "tentang",
+    "mengenai",
+    "soal",
+    "terkait",
+    "seputar",
+    "yang",
+    "apa",
+    "apakah",
+    "adakah",
+    "ada",
+    "dong",
+    "ya",
+    "kak",
+    "min",
+    "admin",
+    "saya",
+    "aku",
+    "mau",
+    "ingin",
+    "minta",
+    "tau",
+    "tahu",
+    "dalil",
+    "bagaimana",
+    "gimana",
+    "itu",
+    "ini",
+    "nya",
+    "dan",
+    "atau",
+    "di",
+    "ke",
+    "dari",
+    "untuk",
+    "dengan",
+    "hukumnya",
+    "hukum",
+    "sih",
+    "kah",
+    "bisa",
+    "berikan",
+    "kasih",
+    "tunjukkan",
+    "sebutkan",
+    "rasulullah",
+    "nabi"
+  ],
+  "kata_maksud": [
+    "keutamaan",
+    "fadhilah",
+    "fadilah",
+    "anjuran",
+    "larangan",
+    "pahala",
+    "manfaat",
+    "adab",
+    "tata",
+    "cara"
+  ],
+  "_catatan_kata_maksud": "Kata yang menunjukkan maksud pertanyaan tetapi jarang tertulis di hadits. Tidak diwajibkan ada; hanya menaikkan peringkat bila muncul.",
+  "konsep": [
+    {
+      "id": "tarawih",
+      "label": "Shalat tarawih (qiyam Ramadhan)",
+      "pemicu": [
+        "tarawih"
+      ],
+      "arab": [
+        "قيام رمضان",
+        "قام رمضان"
+      ],
+      "terjemah": [
+        "tarawih"
+      ],
+      "bab": [
+        [
+          "bukhari",
+          "Praying at Night in Ramadaan (Taraweeh)"
+        ],
+        [
+          "malik",
+          "Prayer in Ramadan"
+        ]
+      ],
+      "catatan": "Kata \"tarawih\" (تراويح) tidak muncul di teks Arab hadits mana pun dalam koleksi ini. Hadits-haditsnya memakai istilah qiyam Ramadhan (قيام رمضان), yaitu shalat malam di bulan Ramadhan.",
+      "bukti": "arab_akar:تراويح = 0; arab_akar:\"قام رمضان\" = 29; arab_akar:\"قيام رمضان\" = 13; terjemah 'tarawih' = 5 (build 2026-11-01)"
+    },
+    {
+      "id": "babi",
+      "label": "Babi (khinzir)",
+      "pemicu": [
+        "babi",
+        "khinzir"
+      ],
+      "arab": [
+        "خنزير",
+        "خنازير"
+      ],
+      "terjemah": [
+        "babi"
+      ],
+      "bab": [],
+      "catatan": "Dalam teks Arab hadits, babi disebut khinzir (خنزير), jamaknya khanazir (خنازير).",
+      "bukti": "terjemah 'babi' atau arab خنزير = 77 riwayat (build 2026-11-01)"
+    },
+    {
+      "id": "niat",
+      "label": "Niat",
+      "pemicu": [
+        "niat",
+        "niatnya"
+      ],
+      "arab": [
+        "الأعمال بالنيات",
+        "العمل بالنية",
+        "الأعمال بالنية"
+      ],
+      "terjemah": [
+        "niat"
+      ],
+      "bab": [],
+      "catatan": "Hadits pokok tentang niat diriwayatkan dengan lafaz بالنيات (jamak) dan بالنية (tunggal).",
+      "bukti": "uji emas Takhrij: 7 tempat di Shahih al-Bukhari + Muslim 1907"
+    }
+  ]
+}

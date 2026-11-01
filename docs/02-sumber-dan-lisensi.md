@@ -8,10 +8,8 @@
 - **Commit terkunci:** `db43bdaa70ee528a0e663c089d3dab5bb4d855f0`.
 - **Lisensi repo:** MIT, © 2020 Ahmad Irsyadul Ibad.
 - **Catatan penting:** README repo menyebut sumbernya carihadis.com. Gaya terjemahannya, yaitu nama perawi dalam `[kurung siku]` dan penomoran (Bukhari 7.008, Muslim 5.362, Darimi 3.367), identik dengan *Ensiklopedi Hadits Kitab 9 Imam* terbitan Lidwa Pusaka. Lisensi MIT hanya berlaku untuk karya si pengunggah (kompilasi SQL). Lisensi itu **tidak bisa** memberi izin atas terjemahan yang hak ciptanya milik pihak lain.
-- **Tindakan yang disarankan sebelum situs dibuka untuk umum:**
-  1. Cantumkan atribusi "Terjemah: Lidwa Pusaka" di setiap halaman. Ini sudah ada di prototipe.
-  2. Kirim email permohonan izin ke Lidwa Pusaka untuk pemakaian non-komersial. Lampirkan penjelasan bahwa situs ini gratis, tanpa iklan, dan selalu mengatribusi.
-  3. Bila izin tidak diberikan, rencana cadangannya: teks Arab dan penilaian tetap tampil (sumbernya domain publik), dan terjemahan diganti dengan sumber berlisensi terbuka (lihat bagian kandidat).
+- **Izin:** pemilik proyek menyatakan sudah **mendapat izin** dari Lidwa Pusaka (dicatat 1 November 2026). Simpan bukti tertulisnya (email/surat) di arsip pribadi, bukan di repo publik, dan cantumkan di halaman Metode: "Terjemah digunakan dengan izin Lidwa Pusaka".
+- **Atribusi:** "Terjemah: Lidwa Pusaka" tetap dicantumkan di setiap halaman hadits.
 
 ### 2. fawazahmed0/hadith-api
 
@@ -26,11 +24,11 @@ Prioritas ditentukan oleh nilai tambahnya bagi kebenaran data.
 
 | Sumber | Untuk apa | Status akses dari lingkungan build |
 |---|---|---|
-| Dorar.net, *al-Mausu'ah al-Haditsiyyah* | Takhrij + hukum hadits per ulama, termasuk hadits palsu populer | **Diblokir** oleh kebijakan jaringan sesi ini |
-| HadeethEnc.com (Ensiklopedia Hadits Terjemah) | Terjemah Indonesia yang sudah ditinjau, derajat, penjelasan, tema | **Diblokir** |
+| Dorar.net, *al-Mausu'ah al-Haditsiyyah* | Takhrij + hukum hadits per ulama, termasuk hadits palsu populer | Jaringan sudah dibuka, tetapi **situs Dorar sendiri menolak akses otomatis** (403, proteksi bot). Kami tidak menembusnya. Jalan yang benar: minta akses API resmi ke pengelola Dorar, atau pakai sumber lain (mis. teks *al-Maudhu'at* Ibnul Jauzi di OpenITI) |
+| HadeethEnc.com (Ensiklopedia Hadits Terjemah) | 447 kategori tema berbahasa Indonesia, terjemah yang sudah ditinjau, derajat, penjelasan, faedah | **Bisa diakses** (API publik `hadeethenc.com/api/v1`). Syarat pemakaian perlu dibaca sebelum diimpor |
 | sunnah.com API | Pembanding nomor dan teks (perlu API key) | **Diblokir** |
 | OpenITI (GitHub) | Teks Arab dengan identitas edisi cetak, untuk Darimi, Musnad Ahmad, Syafi'i, Riyadhus Shalihin, dan kitab rijal | Bisa diakses |
 | Kitab rijal: *Taqrib at-Tahdzib*, *Tahdzib al-Kamal*, *al-Kasyif* | Biodata dan penilaian perawi untuk rantai sanad | Lewat OpenITI / Syamilah |
-| Scan kitab cetak (archive.org) | Verifikasi sampel (lihat protokol) | **Diblokir**; bisa diunduh manual oleh pemilik proyek |
+| Scan kitab cetak (archive.org) | Verifikasi sampel (lihat protokol) | **Bisa diakses** |
 
-Host yang diblokir bisa dibuka oleh pemilik proyek di pengaturan *Network access* environment Claude Code, dengan menambah host di *Allowed domains*. Panduannya ada di <https://code.claude.com/docs/en/cloud-environments#network-access>. Host yang perlu ditambah: `dorar.net`, `hadeethenc.com`, `archive.org`, `cdn.jsdelivr.net`.
+Host yang diblokir bisa dibuka oleh pemilik proyek di pengaturan *Network access* environment Claude Code, dengan menambah host di *Allowed domains*. Panduannya ada di <https://code.claude.com/docs/en/cloud-environments#network-access>. Status 1 Nov 2026: `hadeethenc.com` dan `archive.org` sudah terbuka. `dorar.net` terbuka di jaringan tetapi menolak bot.
