@@ -11,6 +11,7 @@
 | 3 | Rantai sanad tertaut ke data rijal (Taqrib at-Tahdzib): nama, tahun wafat, penilaian perawi | **Selesai untuk enam kitab** (lihat docs/11): 58% sebutan nama pasti, 4.315 halaman perawi, 99,85% sama dengan Ifta' Sunnah. Malik/Ahmad/Darimi/Syafi'i belum |
 | 4 | Katalog hadits palsu populer dengan penilaian ulama bernama | **Selesai, tahap awal** (lihat docs/10): 4 kitab klasik (6.044 entri) dari OpenITI, 20 ucapan populer, `/populer`, terintegrasi di `/cek`. Dorar tetap tidak dipakai (menolak bot). Daftar ucapan belum ditinjau ahli |
 | 5 | Situs sungguhan: halaman per riwayat, pencarian, cek teks, SEO | **Berjalan lokal** (`site/`): beranda, cari, cek, halaman riwayat + rantai sanad + takhrij, kitab/bab, tema, metode, sitemap |
+| 5b | Persiapan online: pengukuran batas Cloudflare, indeks yang hilang, cache tepi, header keamanan, konfigurasi & skrip produksi | **Siap** (lihat docs/12): tinggal langkah dari akun pemilik proyek dan daftar wajib (lisensi OpenITI, dll.) |
 | 6 | Verifikasi sampel kitab cetak + peninjau independen, lalu rilis publik | |
 
 ## Lokal dulu, Cloudflare kemudian
@@ -31,7 +32,7 @@ Kebutuhan di komputer: Node.js ≥ 20 dan Python 3 (untuk pipeline data).
 
 | Pos | Pilihan | Perkiraan biaya |
 |---|---|---|
-| Hosting situs + Worker + D1 | Cloudflare paket gratis | Rp 0 |
+| Hosting situs + Worker + D1 | Cloudflare paket gratis (impor awal: Workers Paid 1 bulan, lihat docs/12) | ±Rp 85.000 sekali, lalu Rp 0 |
 | Domain | `temanhadits.my.id` (murah) atau `.com` / `.id` | Kisaran puluhan ribu (.my.id) sampai ±Rp 200–400 ribu/tahun (.com/.id) |
 | Repo + build | GitHub (gratis) | Rp 0 |
 

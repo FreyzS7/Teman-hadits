@@ -19,3 +19,23 @@ database_id = "00000000-0000-0000-0000-000000000000"
 # Terjemah Indonesia Riyadhus Shalihin BUKAN dari Lidwa Pusaka; penerjemahnya belum dipastikan.
 # Ubah ke "sembunyi" sebelum online bila izinnya belum ada. Teks Arab & tautan sumber tetap tampil.
 TERJEMAH_RIYADH = "tampil"
+
+# ---------------------------------------------------------------------------------------------------------------
+# PRODUKSI (Cloudflare). Langkah lengkap: docs/12-online.md. Jalankan dengan --env production.
+# ---------------------------------------------------------------------------------------------------------------
+[env.production]
+name = "teman-hadits"
+# Domain sendiri (aktifkan setelah domain ditambahkan ke akun Cloudflare):
+# routes = [{ pattern = "temanhadits.my.id", custom_domain = true }]
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "teman-hadits"
+# Ganti dengan "database_id" yang dicetak oleh: npx wrangler d1 create teman-hadits
+database_id = "GANTI-DENGAN-ID-DARI-wrangler-d1-create"
+
+[env.production.vars]
+# Sampai izin terjemah Riyadhus Shalihin jelas, terjemahnya disembunyikan (teks Arab & sumber tetap tampil).
+TERJEMAH_RIYADH = "sembunyi"
+# Diisi otomatis oleh scripts/deploy.sh (kunci cache tepi; data baru = cache baru).
+VERSI_DATA = "belum-diisi"

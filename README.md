@@ -26,6 +26,7 @@ Pustaka hadits berbahasa Indonesia. Pengguna bisa mencari dengan kata kunci atau
 | `docs/09-judul-kitab-bab.md` | Judul kitab & bab Arab (OpenITI) dan nama kitab Indonesia (glosarium) |
 | `docs/10-katalog-palsu.md` | Katalog hadits populer & palsu: 4 kitab klasik, kata kunci penilaian, ucapan populer |
 | `docs/11-perawi.md` | Identitas & biodata perawi: Taqrib at-Tahdzib, Tahdzib al-Kamal, cara identifikasi, uji independen |
+| `docs/12-online.md` | Persiapan online: batas Cloudflare, hasil pengukuran, langkah terbit, daftar wajib sebelum diumumkan |
 | `site/` | Situs sungguhan: Cloudflare Worker + database D1, jalan lokal dengan `wrangler dev` |
 | `design/` | Prototipe desain (`prototipe.html`), diisi data asli dari database |
 
@@ -70,6 +71,8 @@ Uji emas lewat HTTP (saat `npm run dev` sedang jalan di terminal lain):
 ```bash
 BASE_URL=http://127.0.0.1:8787 npm run test:http
 ```
+
+**4. Online (Cloudflare):** ikuti `docs/12-online.md` (`npm run impor:online`, `npm run deploy`). Alat ukur: `npm run estimasi` (ukuran & beban impor), `npm run ukur:cpu` (CPU per halaman).
 
 Pencarian juga bisa dicoba dari terminal tanpa situs:
 

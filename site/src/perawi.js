@@ -38,17 +38,14 @@ export async function perawiSanad(db, n) {
 }
 
 export async function dataPerawi(db, id) {
+  // Satu baris: guru/murid/riwayat sudah dihitung pipeline (export_d1.py) supaya halaman tidak memindai sanad_perawi.
   const p = await db.prepare("SELECT * FROM perawi WHERE id = ?1").bind(id).first();
   if (!p) return null;
-  const relasi = async (geser) => (await db.prepare(`SELECT q.id, q.nama, q.tingkat, count(*) AS n FROM sanad_perawi a
-    JOIN sanad_perawi b ON b.n = a.n AND b.pos = a.pos + ?2 JOIN perawi q ON q.id = b.perawi_id
-    WHERE a.perawi_id = ?1 GROUP BY q.id ORDER BY n DESC LIMIT 24`).bind(id, geser).all()).results;
-  const [guru, murid, riwayat] = await Promise.all([
-    relasi(1), relasi(-1),
-    db.prepare(`SELECT r.kitab_id, r.slug, r.no_tampil, k.nama AS kitab_nama FROM sanad_perawi sp JOIN riwayat r ON r.n = sp.n
-      JOIN kitab k ON k.id = r.kitab_id WHERE sp.perawi_id = ?1 ORDER BY k.urut, r.urut LIMIT 80`).bind(id).all(),
-  ]);
-  return { ...p, guru, murid, riwayat: riwayat.results };
+  const orang = (j) => JSON.parse(j || "[]").map(([id, nama, tingkat, n]) => ({ id, nama, tingkat, n }));
+  return {
+    ...p, guru: orang(p.guru_json), murid: orang(p.murid_json),
+    riwayat: JSON.parse(p.riwayat_json || "[]").map(([kitab_id, slug, no_tampil]) => ({ kitab_id, slug, no_tampil })),
+  };
 }
 
 export async function daftarPerawi(db) {

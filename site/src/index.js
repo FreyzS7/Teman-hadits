@@ -11,10 +11,12 @@ const PER_HALAMAN = 50;
 const KEAMANAN = {
   "X-Content-Type-Options": "nosniff",
   "Referrer-Policy": "strict-origin-when-cross-origin",
-  "Content-Security-Policy": "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+  "Content-Security-Policy": "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
 };
 
-const html = (body, status = 200) => new Response(body, { status, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=300", ...KEAMANAN } });
+// Cache-Control diisi di fetch() (cache tepi untuk 200; 404 sebentar; galat tidak disimpan)
+const html = (body, status = 200) => new Response(body, { status, headers: { "Content-Type": "text/html; charset=utf-8", ...KEAMANAN } });
 const alihkan = (lokasi, status = 302) => new Response(null, { status, headers: { Location: lokasi } });
 const halamanKe = (url) => Math.max(1, Math.min(1000, parseInt(url.searchParams.get("h") || "1", 10) || 1));
 
@@ -288,15 +290,68 @@ async function rute(req, env) {
   return null;
 }
 
+/** Bungkus binding D1 untuk menghitung baris yang dibaca (D1 gratis: 5 juta baris/hari). Hasilnya dikirim di header
+ *  X-D1-Baris supaya beban tiap halaman bisa dipantau. Semantik first()/all()/run() tetap sama. */
+function hitungD1(db) {
+  const hit = { baris: 0, kueri: 0 };
+  const catat = (meta) => { hit.kueri++; hit.baris += (meta && meta.rows_read) || 0; };
+  const bungkus = (st) => ({
+    asli: st,
+    bind: (...a) => bungkus(st.bind(...a)),
+    all: async () => { const r = await st.all(); catat(r.meta); return r; },
+    run: async () => { const r = await st.run(); catat(r.meta); return r; },
+    raw: (...a) => st.raw(...a),
+    first: async (kol) => {
+      const r = await st.all(); catat(r.meta);
+      const baris = r.results[0];
+      return baris === undefined ? null : kol ? baris[kol] : baris;
+    },
+  });
+  const batch = async (xs) => { const rs = await db.batch(xs.map((x) => x.asli || x)); rs.forEach((r) => catat(r.meta)); return rs; };
+  return { db: { prepare: (q) => bungkus(db.prepare(q)), batch }, hit };
+}
+
+
+/** Lama simpan di cache tepi (detik). Halaman data berubah hanya saat data dibangun ulang; kunci cache memuat VERSI_DATA,
+ *  jadi impor data baru (dengan VERSI_DATA baru) otomatis memakai cache baru. */
+function lamaCache(p) {
+  if (p.startsWith("/api/") || p === "/cari" || p === "/cek") return 3600;
+  return 86400;
+}
+
 export default {
-  async fetch(req, env) {
+  async fetch(req, env, ctx) {
+    const url = new URL(req.url);
+    const bolehCache = req.method === "GET" && typeof caches !== "undefined" && !url.searchParams.has("segar");
+    const kunci = bolehCache ? new Request(`${url.origin}${url.pathname}?${url.searchParams.toString()}&__v=${env.VERSI_DATA || "lokal"}`) : null;
+    if (bolehCache) {
+      const ada = await caches.default.match(kunci);
+      if (ada) { const r = new Response(ada.body, ada); r.headers.set("X-Cache", "HIT"); r.headers.set("X-D1-Baris", "0; cache"); return r; }
+    }
+    const { db, hit } = hitungD1(env.DB);
+    env = { ...env, DB: db };
+    const beri = (res) => {
+      const r = new Response(res.body, res);
+      r.headers.set("X-D1-Baris", `${hit.baris}; kueri=${hit.kueri}`);
+      for (const [k, v] of Object.entries(KEAMANAN)) if (!r.headers.has(k)) r.headers.set(k, v);
+      if (bolehCache && r.status === 200 && !r.headers.has("Cache-Control")) {
+        r.headers.set("Cache-Control", `public, max-age=300, s-maxage=${lamaCache(url.pathname)}`);
+        r.headers.set("X-Cache", "MISS");
+        const simpan = r.clone();
+        const tugas = caches.default.put(kunci, simpan).catch(() => {});
+        if (ctx && ctx.waitUntil) ctx.waitUntil(tugas);
+      } else if (!r.headers.has("Cache-Control")) {
+        r.headers.set("Cache-Control", r.status === 404 ? "public, max-age=60" : r.status >= 500 ? "no-store" : "public, max-age=300");
+      }
+      return r;
+    };
     try {
       const res = await rute(req, env);
-      if (res) return res;
-      return html(T.layout({ judul: "Halaman tidak ditemukan · Teman Hadits", noindex: true, isi: T.halamanGalat("Halaman tidak ditemukan", "Alamat ini tidak ada. Coba cari hadits yang Anda maksud.") }), 404);
+      if (res) return beri(res);
+      return beri(html(T.layout({ judul: "Halaman tidak ditemukan · Teman Hadits", noindex: true, isi: T.halamanGalat("Halaman tidak ditemukan", "Alamat ini tidak ada. Coba cari hadits yang Anda maksud.") }), 404));
     } catch (e) {
       console.error(e && e.stack || e);
-      return html(T.layout({ judul: "Terjadi kesalahan · Teman Hadits", noindex: true, isi: T.halamanGalat("Terjadi kesalahan", "Maaf, halaman ini gagal dimuat. Coba lagi sebentar lagi.") }), 500);
+      return beri(html(T.layout({ judul: "Terjadi kesalahan · Teman Hadits", noindex: true, isi: T.halamanGalat("Terjadi kesalahan", "Maaf, halaman ini gagal dimuat. Coba lagi sebentar lagi.") }), 500));
     }
   },
 };

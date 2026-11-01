@@ -6,7 +6,11 @@
     "dev": "wrangler dev --ip 127.0.0.1 --port 8787",
     "impor": "bash scripts/impor-lokal.sh",
     "test": "node --test test/paritas.test.js test/teks.test.js",
-    "test:http": "node --test test/http.test.js"
+    "test:http": "node --test test/http.test.js",
+    "ukur:cpu": "node scripts/ukur-cpu.mjs",
+    "estimasi": "node scripts/estimasi-d1.mjs",
+    "impor:online": "bash scripts/impor-online.sh",
+    "deploy": "bash scripts/deploy.sh"
   },
   "devDependencies": {
     "wrangler": "4.151.1"

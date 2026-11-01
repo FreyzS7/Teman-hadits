@@ -60,6 +60,7 @@ CREATE TABLE penilaian (n INT, penilai TEXT, hukum TEXT, kategori TEXT);
 CREATE INDEX ix_penilaian_n ON penilaian (n);
 CREATE TABLE mirip (a INT, b INT, skor REAL, tingkat TEXT);
 CREATE INDEX ix_mirip_a ON mirip (a);
+CREATE INDEX ix_mirip_b ON mirip (b);   -- tanpa ini halaman hadits memindai 219 ribu baris (diukur: 450 ribu baris dibaca/halaman)
 CREATE TABLE kata_df (kata TEXT PRIMARY KEY, n INT) WITHOUT ROWID;
 CREATE VIRTUAL TABLE cari USING fts5 (
   arab_polos, arab_akar, terjemah_polos, perawi, judul,
@@ -70,6 +71,7 @@ CREATE TABLE he_hadits (id TEXT PRIMARY KEY, judul TEXT, teks_id TEXT, teks_ar T
   penjelasan TEXT, faedah_json TEXT, url TEXT, boleh_tampil INT);
 CREATE TABLE he_tema (he_id TEXT, tema_id TEXT);
 CREATE INDEX ix_he_tema ON he_tema (tema_id);
+CREATE INDEX ix_he_tema_he ON he_tema (he_id);
 CREATE TABLE he_riwayat (he_id TEXT, n INT, skor REAL);
 CREATE INDEX ix_he_riwayat_n ON he_riwayat (n);
 CREATE INDEX ix_he_riwayat_he ON he_riwayat (he_id);
@@ -87,10 +89,11 @@ CREATE TABLE populer_katalog (populer_id TEXT, katalog_id TEXT, skor REAL);
 CREATE TABLE populer_riwayat (populer_id TEXT, n INT, skor REAL);
 CREATE TABLE populer_sebut (populer_id TEXT, katalog_id TEXT, kutipan TEXT);
 -- Perawi (Taqrib at-Tahdzib + Tahdzib al-Kamal) dan identifikasi per segmen sanad (pipeline/perawi.py, hanya 'pasti')
+-- guru_json/murid_json/riwayat_json dihitung di sini supaya halaman perawi hanya membaca 1 baris (batas baca D1 gratis)
 CREATE TABLE perawi (id TEXT PRIMARY KEY, taqrib INT, tk_no INT, nama TEXT, teks_taqrib TEXT, penilaian TEXT, tingkat INT,
-  tabaqah INT, wafat INT, wafat_ragu INT, rumuz TEXT, n_riwayat INT);
+  tabaqah INT, wafat INT, wafat_ragu INT, rumuz TEXT, n_riwayat INT, guru_json TEXT, murid_json TEXT, riwayat_json TEXT);
 CREATE TABLE sanad_perawi (n INT, pos INT, perawi_id TEXT, PRIMARY KEY (n, pos));
-CREATE INDEX sanad_perawi_p ON sanad_perawi (perawi_id, n);
+CREATE INDEX ix_perawi_n ON perawi (n_riwayat);
 """
 
 # Stem Indonesia ringan untuk tabel frekuensi kata (dipakai fitur "cek teks"); harus sama dengan site/src/teks.js
@@ -422,10 +425,33 @@ def main():
     n_pr = 0
     if os.path.exists(pr_path):
         pr = sqlite3.connect(pr_path)
-        w.sisip("perawi", ["id", "taqrib", "tk_no", "nama", "teks_taqrib", "penilaian", "tingkat", "tabaqah", "wafat", "wafat_ragu",
-                           "rumuz", "n_riwayat"],
-                pr.execute("SELECT id, taqrib, tk_no_cetak, nama, teks_taqrib, penilaian, tingkat, tabaqah, wafat, wafat_ragu, rumuz, n_riwayat FROM perawi"))
         ids = {tk: pid for tk, pid in pr.execute("SELECT tk_id, id FROM perawi")}
+        info_p = {pid: (nama, tingkat) for pid, nama, tingkat in pr.execute("SELECT id, nama, tingkat FROM perawi")}
+        # guru (posisi +1) & murid (posisi -1) yang SAMA-SAMA pasti di rantai yang sama; daftar riwayat menurut urutan kitab
+        posisi = collections.defaultdict(dict)
+        for rid, pos, tk in pr.execute("SELECT riwayat_id, pos, tk_id FROM sebutan WHERE label='pasti'"):
+            if tk in ids:
+                posisi[rid][pos] = ids[tk]
+        guru, murid, riw = (collections.defaultdict(collections.Counter) for _ in range(3))
+        urut_kitab = {k: i for i, k in enumerate(["bukhari", "muslim", "abudawud", "tirmidzi", "nasai", "ibnumajah"])}
+        meta_r = {rid: (kid, slug, tampil, urut) for rid, kid, slug, tampil, urut in
+                  ((x[1], x[2], x[3], x[5], x[4]) for x in data_riwayat)}
+        for rid, ps in posisi.items():
+            if rid not in meta_r:
+                continue
+            for pos, pid in ps.items():
+                kid, slug, tampil, urut = meta_r[rid]
+                riw[pid][(urut_kitab.get(kid, 9), urut, kid, slug, tampil)] += 1
+                if pos + 1 in ps:
+                    guru[pid][ps[pos + 1]] += 1
+                if pos - 1 in ps:
+                    murid[pid][ps[pos - 1]] += 1
+        daftar = lambda c: json.dumps([[q, info_p[q][0], info_p[q][1], n] for q, n in c.most_common(24)], ensure_ascii=False)
+        w.sisip("perawi", ["id", "taqrib", "tk_no", "nama", "teks_taqrib", "penilaian", "tingkat", "tabaqah", "wafat", "wafat_ragu",
+                           "rumuz", "n_riwayat", "guru_json", "murid_json", "riwayat_json"],
+                [row + (daftar(guru[row[0]]), daftar(murid[row[0]]),
+                        json.dumps([[k[2], k[3], k[4]] for k in sorted(riw[row[0]])[:80]], ensure_ascii=False))
+                 for row in pr.execute("SELECT id, taqrib, tk_no_cetak, nama, teks_taqrib, penilaian, tingkat, tabaqah, wafat, wafat_ragu, rumuz, n_riwayat FROM perawi")])
         sp = [(n_of[rid], pos, ids[tk]) for rid, pos, tk in pr.execute("SELECT riwayat_id, pos, tk_id FROM sebutan WHERE label='pasti'")
               if rid in n_of and tk in ids]
         n_pr = len(sp)
