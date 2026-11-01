@@ -139,10 +139,31 @@ Selain bab yang hilang di teks digital, pemeriksaan ini menemukan **tiga kesalah
 
 Total koreksi bertanda bukti di `pipeline/koreksi_bab.json`: **21 rentang**. Diuji di `test_bab.py`, termasuk hadits tetangga yang harus tetap di babnya.
 
+### Fihris dibaca utuh: 26 bab tanpa judul lagi
+
+Sesudah itu **seluruh** fihris rinci 9 juz (77 halaman, leaf 4–80 di scan) dibaca langsung dari gambar, termasuk membaca ulang 14 halaman yang sebelumnya hanya dilihat untuk entri tertentu. Setiap entri «بابٌ: حدثنا X» dicocokkan dengan data: bab bertajuk berikutnya dicari, lalu hadits yang diawali «حدثنا X» di bab sebelumnya. Setiap rentang diperiksa ulang dengan membaca awal hadits-haditsnya (rentang berakhir tepat sebelum bab bertajuk berikutnya).
+
+| Hasil | Jumlah |
+|---|---:|
+| Entri bab tanpa judul di fihris | 75 |
+| — di luar Kitab at-Tafsir, sudah benar di data (sebagian berkat koreksi sebelumnya) | 37 |
+| — di luar Kitab at-Tafsir, **terlewat di teks digital → dikoreksi** | **26** |
+| — Kitab at-Tafsir, di awal surah: 1 sudah «باب», 11 tampil dengan nama surah | 12 (dibiarkan; lihat di bawah) |
+
+Koreksi baru (nomor hadits): 149; 218; 506; 882; 946; 1153; 1293; 1386; 1420; 2327; 2336–2337; 2348; 2439 (penutup Kitab al-Luqathah); 3019; 3181–3183; 3403–3405; 5154; 5196; 5284; 5441; 5714; 6320; 6967; 7099–7107; 7120–7121; 7222–7223. Setiap entri `koreksi_bab.json` menyebut halaman fihris, leaf scan, dan bab sebelum/sesudahnya.
+
+Di Kitab at-Tafsir, bab tanpa judul di awal surah (mis. «سورة الأنبياء: بابٌ: حدثنا محمد بن بشار») tampil di situs dengan judul **nama surahnya**. Ini tidak salah (hadits itu memang di bagian surah tersebut), jadi tidak diubah.
+
+Total koreksi bertanda bukti: **47 rentang**, semuanya Bukhari. Diuji di `test_bab.py` (`test_fihris_dibaca_utuh`), termasuk hadits tetangga yang harus tetap di babnya.
+
+Pemeriksaan ini juga menemukan dua masalah lain di judul bab, keduanya sudah diperbaiki (rincian di `docs/09-judul-kitab-bab.md`):
+- **141 hadits Bukhari bernomor ganda** (mis. 299–301, 3164–3165) sebelumnya tanpa judul bab sama sekali. Kini dicocokkan lewat nomor dengan syarat ketat.
+- **507 riwayat Tirmidzi, Muslim, dan Ibnu Majah berjudul bab berupa potongan sanad atau potongan teks** (mis. «وحدثني محمد بن حاتم…», «(م ٢) - حدثنا…», «(غلبت الروم)»). Penyebabnya parser kita. Kini 0, dan riwayat Tirmidzi yang berjudul bab naik dari 3.711 ke 3.919.
+
 ## Batasan dan yang belum
 
 - **Nomor entri belum diverifikasi.** OCR mengacaukan angka Arab-Hindi di kolom nomor.
 - **Kasyf al-Khafa'** hanya 11 dari 40 entri yang ditemukan, karena OCR cetakan 1351 H sangat rusak.
 - **Teks hadits** (Bukhari, Muslim, dst.) belum dibandingkan dengan cetakan. Scan Bukhari di archive.org tidak punya OCR. Teks hadits saat ini diverifikasi dengan cara lain: dua sumber digital yang sepakat (tingkat A) dan uji silang atribusi.
 - **Teks dan nomor hadits Bukhari** belum dicek visual satu per satu. Halamannya harus dicari manual di scan (OCR-nya tidak bisa dipakai untuk mencari), atau dengan scan lain yang OCR-nya lebih baik.
-- **Fihris belum dibaca utuh.** Baru 14 dari ±77 halaman fihris Bukhari yang dilihat langsung. Bab tanpa judul di halaman lain yang tidak tertangkap OCR mungkin masih ada.
+- **Fihris Bukhari sudah dibaca utuh**, tetapi hanya untuk bab tanpa judul. Judul bab bertajuk belum dibandingkan satu per satu dengan fihris; baru 14 judul Kitab 62 yang dicek persis. Kitab lain (Muslim, dst.) belum dicek dengan fihris cetak.

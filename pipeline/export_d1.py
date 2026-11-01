@@ -44,7 +44,7 @@ CREATE TABLE kitab (
 );
 CREATE TABLE bab (kitab_id TEXT, no INT, nama TEXT, jumlah INT, n_awal INT, nama_ar TEXT, nama_en TEXT, nama_id_sumber TEXT,
   PRIMARY KEY (kitab_id, no));
--- judul kitab & bab per riwayat dari teks OpenITI (cara: 'teks' = dicocokkan isi, 'urutan' = dari tetangga)
+-- judul kitab & bab per riwayat dari teks OpenITI (cara: 'teks' = dicocokkan isi, 'urutan' = dari tetangga, 'nomor' = hadits bernomor ganda, 'koreksi-cetak' = koreksi dari kitab cetak)
 CREATE TABLE judul (n INTEGER PRIMARY KEY, kitab_ar TEXT, kitab_nama_id TEXT, bab_ar TEXT, cara TEXT);
 CREATE TABLE riwayat (
   n INTEGER PRIMARY KEY, id TEXT UNIQUE, kitab_id TEXT, slug TEXT, urut INT, no_tampil TEXT,

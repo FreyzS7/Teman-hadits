@@ -27,6 +27,22 @@
     },
     {
       "kitab_id": "bukhari",
+      "dari": 149,
+      "sampai": 149,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 149 tergabung ke bab «التبرز في البيوت».",
+      "bukti": "Fihris rinci juz 1 hlm. 179 (leaf 6, dilihat langsung): «بابٌ: حدثنا يعقوب بن إبراهيم» antara bab «التبرز في البيوت» dan bab «الاستنجاء بالماء». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 218,
+      "sampai": 218,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 218 tergabung ke bab «ما جاء في غسل البول».",
+      "bukti": "Fihris rinci juz 1 hlm. 179 (leaf 6, dilihat langsung): «بابٌ: حدثنا محمد بن المثنى» antara bab «ما جاء في غسل البول» dan bab «ترك النبي ﷺ والناس الأعرابي حتى فرغ من بوله في المسجد». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
       "dari": 333,
       "sampai": 333,
       "bab_ar": "باب",
@@ -59,6 +75,14 @@
     },
     {
       "kitab_id": "bukhari",
+      "dari": 506,
+      "sampai": 506,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 506 tergabung ke bab «الصلاة بين السواري في غير جماعة».",
+      "bukti": "Fihris rinci juz 1 hlm. 182 (leaf 9, dilihat langsung): «بابٌ: حدثنا إبراهيم بن المنذر» antara bab «الصلاة بين السواري في غير جماعة» dan bab «الصلاة إلى الراحلة والبعير والشجر والرحل». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
       "dari": 745,
       "sampai": 745,
       "bab_ar": "باب",
@@ -75,11 +99,59 @@
     },
     {
       "kitab_id": "bukhari",
+      "dari": 882,
+      "sampai": 882,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 882 tergabung ke bab «فضل الجمعة».",
+      "bukti": "Fihris rinci juz 2 hlm. 185 (leaf 14, dilihat langsung): «بابٌ: حدثنا أبو نعيم» antara bab «فضل الجمعة» dan bab «الدهن للجمعة». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
       "dari": 899,
       "sampai": 900,
       "bab_ar": "باب",
       "alasan": "Teks digital OpenITI melewatkan bab tanpa judul, sehingga no. 899–900 tergabung ke bab «هل على من لم يشهد الجمعة غسل».",
       "bukti": "Shahih al-Bukhari, Dar Thauq an-Najah, fihris rinci: «باب: حدثنا عبد الله بن محمد» di antara bab «هل على من لم يشهد الجمعة غسل» dan bab «الرخصة إن لم يحضر الجمعة في المطر» (no. 901). Scan: archive.org alfirdwsiy2018_gmail_2698_201808, leaf 14 (dibaca dari OCR fihris). Rentang = hadits yang diawali perawi itu (satu-satunya di bab sebelumnya) sampai sebelum bab berikutnya."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 946,
+      "sampai": 946,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 946 tergabung ke bab «صلاة الطالب والمطلوب راكبا وإيماء».",
+      "bukti": "Fihris rinci juz 2 hlm. 186 (leaf 15, dilihat langsung): «بابٌ: حدثنا عبد الله بن محمد بن أسماء» antara bab «صلاة الطالب والمطلوب راكبا وإيماء» dan bab «التكبير والغلس بالصبح والصلاة عند الإغارة والحرب». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 1153,
+      "sampai": 1153,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 1153 tergabung ke bab «ما يكره من ترك قيام الليل لمن كان يقومه».",
+      "bukti": "Fihris rinci juz 2 hlm. 188 (leaf 17, dilihat langsung): «بابٌ: حدثنا علي بن عبد الله» antara bab «ما يكره من ترك قيام الليل لمن كان يقومه» dan bab «فضل من تعار من الليل فصلى». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 1293,
+      "sampai": 1293,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 1293 tergabung ke bab «ما يكره من النياحة على الميت».",
+      "bukti": "Fihris rinci juz 2 hlm. 189 (leaf 18, dilihat langsung): «بابٌ: حدثنا علي بن عبد الله» antara bab «ما يكره من النياحة على الميت» dan bab «ليس منا من شق الجيوب». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 1386,
+      "sampai": 1386,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 1386 tergabung ke bab «ما قيل في أولاد المشركين».",
+      "bukti": "Fihris rinci juz 2 hlm. 190 (leaf 19, dilihat langsung): «بابٌ: حدثنا موسى بن إسماعيل» antara bab «ما قيل في أولاد المشركين» dan bab «موت يوم الاثنين». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 1420,
+      "sampai": 1420,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 1420 tergabung ke bab «أي الصدقة أفضل؟ وصدقة الشحيح الصحيح».",
+      "bukti": "Fihris rinci juz 2 hlm. 190 (leaf 19, dilihat langsung): «بابٌ: حدثنا موسى بن إسماعيل» antara bab «أي الصدقة أفضل؟ وصدقة الشحيح الصحيح» dan bab «صدقة العلانية». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
     },
     {
       "kitab_id": "bukhari",
@@ -107,6 +179,38 @@
     },
     {
       "kitab_id": "bukhari",
+      "dari": 2327,
+      "sampai": 2327,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 2327 tergabung ke bab «قطع الشجر والنخل».",
+      "bukti": "Fihris rinci juz 3 hlm. 209 (leaf 30, dilihat langsung): «بابٌ: حدثنا محمد» antara bab «قطع الشجر والنخل» dan bab «المزارعة بالشطر ونحوه». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 2336,
+      "sampai": 2337,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 2336–2337 tergabung ke bab «من أحيا أرضا مواتا».",
+      "bukti": "Fihris rinci juz 3 hlm. 209 (leaf 30, dilihat langsung): «بابٌ: حدثنا قتيبة» antara bab «من أحيا أرضا مواتا» dan bab «إذا قال رب الأرض: أقرك ما أقرك الله». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 2348,
+      "sampai": 2348,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 2348 tergabung ke bab «كراء الأرض بالذهب والفضة».",
+      "bukti": "Fihris rinci juz 3 hlm. 209 (leaf 30, dilihat langsung): «بابٌ: حدثنا محمد بن سنان» antara bab «كراء الأرض بالذهب والفضة» dan bab «ما جاء في الغرس». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 2439,
+      "sampai": 2439,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 2439 tergabung ke bab «من عرف اللقطة ولم يدفعها إلى السلطان».",
+      "bukti": "Fihris rinci juz 3 hlm. 210 (leaf 31, dilihat langsung): «بابٌ: حدثنا إسحاق بن إبراهيم» antara bab «من عرف اللقطة ولم يدفعها إلى السلطان» dan bab «كتاب المظالم (bab pertamanya: في المظالم والغصب)». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
       "dari": 2624,
       "sampai": 2624,
       "bab_ar": "باب",
@@ -120,6 +224,30 @@
       "bab_ar": "باب",
       "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini.",
       "bukti": "Fihris rinci hlm. 213 (leaf 34, dilihat langsung): «بابٌ: حدثنا عثمان بن أبي شيبة» antara bab 20 «اليمين على المدعى عليه…» dan bab 21 «إذا ادعى أو قذف…». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 3019,
+      "sampai": 3019,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 3019 tergabung ke bab «إذا حرق المشرك المسلم هل يحرق؟».",
+      "bukti": "Fihris rinci juz 4 hlm. 214 (leaf 39, dilihat langsung): «بابٌ: حدثنا يحيى بن بكير» antara bab «إذا حرق المشرك المسلم هل يحرق؟» dan bab «حرق الدور والنخيل». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 3181,
+      "sampai": 3183,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 3181–3183 tergabung ke bab «إثم من عاهد ثم غدر».",
+      "bukti": "Fihris rinci juz 4 hlm. 215 (leaf 40, dilihat langsung): «بابٌ: حدثنا عبدان» antara bab «إثم من عاهد ثم غدر» dan bab «المصالحة على ثلاثة أيام أو وقت معلوم». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 3403,
+      "sampai": 3405,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 3403–3405 tergabung ke bab «حديث الخضر مع موسى عليهما السلام».",
+      "bukti": "Fihris rinci juz 4 hlm. 216 (leaf 41, dilihat langsung): «بابٌ: حدثني إسحاق بن نصر» antara bab «حديث الخضر مع موسى عليهما السلام» dan bab «يعكفون على أصنام لهم». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
     },
     {
       "kitab_id": "bukhari",
@@ -168,6 +296,86 @@
       "bab_ar": "باب",
       "alasan": "Teks digital OpenITI melewatkan bab tanpa judul sebelum no. 3659, sehingga 3659-3678 tergabung ke bab «لو كنت متخذا خليلا».",
       "bukti": "Shahih al-Bukhari, Dar Thauq an-Najah, fihris rinci juz 5 hlm. 183: «باب: حدثنا الحميدي ومحمد بن عبد الله» (hlm. 5) di antara bab 5 «لو كنت متخذا خليلا» (hlm. 4) dan bab 6 «مناقب عمر» (hlm. 10). Scan: archive.org alfirdwsiy2018_gmail_2698_201808, leaf 43."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 5154,
+      "sampai": 5154,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 5154 tergabung ke bab «الصفرة للمتزوج».",
+      "bukti": "Fihris rinci juz 7 hlm. 174 (leaf 59, dilihat langsung): «بابٌ: حدثنا مسدد» antara bab «الصفرة للمتزوج» dan bab «كيف يدعى للمتزوج؟». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 5196,
+      "sampai": 5196,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 5196 tergabung ke bab «لا تأذن المرأة في بيت زوجها لأحد إلا بإذنه».",
+      "bukti": "Fihris rinci juz 7 hlm. 174 (leaf 59, dilihat langsung): «بابٌ: حدثنا مسدد» antara bab «لا تأذن المرأة في بيت زوجها لأحد إلا بإذنه» dan bab «كفران العشير». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 5284,
+      "sampai": 5284,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 5284 tergabung ke bab «شفاعة النبي ﷺ في زوج بريرة».",
+      "bukti": "Fihris rinci juz 7 hlm. 175 (leaf 60, dilihat langsung): «بابٌ: حدثنا عبد الله بن رجاء» antara bab «شفاعة النبي ﷺ في زوج بريرة» dan bab «قول الله تعالى: ولا تنكحوا المشركات حتى يؤمن». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 5441,
+      "sampai": 5441,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 5441 tergabung ke bab «الرطب بالقثاء».",
+      "bukti": "Fihris rinci juz 7 hlm. 177 (leaf 62, dilihat langsung): «بابٌ: حدثنا مسدد» antara bab «الرطب بالقثاء» dan bab «الرطب والتمر». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 5714,
+      "sampai": 5714,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 5714 tergabung ke bab «اللدود».",
+      "bukti": "Fihris rinci juz 7 hlm. 179 (leaf 64, dilihat langsung): «بابٌ: حدثنا بشر بن محمد» antara bab «اللدود» dan bab «العذرة». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 6320,
+      "sampai": 6320,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 6320 tergabung ke bab «التعوذ والقراءة عند المنام».",
+      "bukti": "Fihris rinci juz 8 hlm. 182 (leaf 70, dilihat langsung): «بابٌ: حدثنا أحمد بن يونس» antara bab «التعوذ والقراءة عند المنام» dan bab «الدعاء نصف الليل». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 6967,
+      "sampai": 6967,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 6967 tergabung ke bab «إذا غصب جارية فزعم أنها ماتت فقضي بقيمة الجارية الميتة».",
+      "bukti": "Fihris rinci juz 9 hlm. 168 (leaf 76, dilihat langsung): «بابٌ: حدثنا محمد بن كثير» antara bab «إذا غصب جارية فزعم أنها ماتت فقضي بقيمة الجارية الميتة» dan bab «في النكاح». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 7099,
+      "sampai": 7107,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 7099–7107 tergabung ke bab «الفتنة التي تموج كموج البحر».",
+      "bukti": "Fihris rinci juz 9 hlm. 169 (leaf 77, dilihat langsung): «بابٌ: حدثنا عثمان بن الهيثم» antara bab «الفتنة التي تموج كموج البحر» dan bab «إذا أنزل الله بقوم عذابا». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 7120,
+      "sampai": 7121,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 7120–7121 tergabung ke bab «خروج النار».",
+      "bukti": "Fihris rinci juz 9 hlm. 169 (leaf 77, dilihat langsung): «بابٌ: حدثنا مسدد» antara bab «خروج النار» dan bab «ذكر الدجال». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 7222,
+      "sampai": 7223,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 7222–7223 tergabung ke bab «الاستخلاف».",
+      "bukti": "Fihris rinci juz 9 hlm. 170 (leaf 78, dilihat langsung): «بابٌ: حدثني محمد بن المثنى» antara bab «الاستخلاف» dan bab «إخراج الخصوم وأهل الريب من البيوت بعد المعرفة». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
     }
   ]
 }

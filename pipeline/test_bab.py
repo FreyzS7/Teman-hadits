@@ -129,3 +129,41 @@ class KoreksiCetak(unittest.TestCase):
             self.assertEqual(judul(f"bukhari:{no}")[1], "باب", no)
         for no in (50, 332, 347, 1884, 1887, 1944, 2623, 2668, 3465, 3496, 3539, 3638):
             self.assertNotEqual(judul(f"bukhari:{no}")[1], "باب", no)
+
+    def test_fihris_dibaca_utuh(self):
+        # seluruh fihris rinci 9 juz dibaca langsung (docs/13): 26 bab tanpa judul lagi yang terlewat teks digital
+        for no in (149, 218, 506, 882, 946, 1153, 1293, 1386, 1420, 2327, 2336, 2337, 2348, 2439, 3019, 3181, 3183,
+                   3403, 3405, 5154, 5196, 5284, 5441, 5714, 6320, 6967, 7099, 7107, 7120, 7121, 7222, 7223):
+            self.assertEqual(judul(f"bukhari:{no}")[1], "باب", no)
+        for no in (148, 150, 1152, 1154, 1419, 1421, 2326, 2328, 3180, 3184, 3402, 3406, 7098, 7108, 7119, 7122, 7221):
+            self.assertNotEqual(judul(f"bukhari:{no}")[1], "باب", no)
+        self.assertEqual(judul("bukhari:1419")[1], "باب فضل صدقة الشحيح الصحيح")
+        self.assertEqual(judul("bukhari:7108")[1], "باب إذا أنزل الله بقوم عذابا")
+
+
+class Penguraian(unittest.TestCase):
+    def test_hadits_bernomor_ganda(self):
+        # teks gabungan 3164-3165 / 299-301 ada di setiap nomor; OpenITI memecahnya per nomor -> dicocokkan lewat nomor
+        bab_3163 = judul("bukhari:3163")[1]
+        for no in (3164, 3165):
+            self.assertEqual(judul(f"bukhari:{no}")[1], bab_3163)
+        for no in (299, 300, 301):
+            self.assertEqual(judul(f"bukhari:{no}")[1], "باب مباشرة الحائض")
+        cara = dict(q("SELECT riwayat_id, cara FROM riwayat_bab WHERE riwayat_id IN ('bukhari:3164','bukhari:300')"))
+        self.assertEqual(set(cara.values()), {"nomor"})
+
+    def test_sanad_bukan_judul_bab(self):
+        # Muslim "### $ حدثنا ..." pendek, Tirmidzi "(م ٢) - حدثنا ...": awal/lanjutan hadits, bukan judul bab
+        n = q("SELECT count(*) FROM riwayat_bab WHERE bab_ar LIKE 'حدثن%' OR bab_ar LIKE 'وحدثن%' "
+              "OR bab_ar LIKE 'أخبرن%' OR bab_ar LIKE '(م%'")[0][0]
+        self.assertEqual(n, 0)
+        self.assertTrue(judul("muslim:106")[1].startswith("باب بيان الإيمان الذي يدخل به الجنة"))
+        self.assertEqual(judul("ibnumajah:2016")[1], "باب")          # "باب حدثنا سويد بن سعيد" = bab tanpa judul
+
+    def test_judul_bab_tirmidzi(self):
+        # potongan baris karena penanda catatan kaki "(١)" tidak lagi menjadi judul bab
+        lain = [x for (x,) in q("SELECT DISTINCT bab_ar FROM riwayat_bab WHERE riwayat_id LIKE 'tirmidzi:%'")
+                if x and not norm_ar(x).startswith(("باب", "ما جاء"))]
+        self.assertEqual(lain, [])
+        self.assertEqual(judul("tirmidzi:13")[1], "باب ما جاء في الرخصة في ذلك")
+        self.assertGreater(int(info("tirmidzi", "cocok_teks")), 3850)

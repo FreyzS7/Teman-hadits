@@ -15,6 +15,8 @@ Cara:
      mencocokkan, hanya untuk MENGUJI hasilnya.
   3. Riwayat yang tidak cocok mendapat judul dari tetangganya hanya bila riwayat sebelum & sesudahnya
      berada di bab yang sama (cara = "urutan").
+     Hadits bernomor ganda yang teks gabungannya dipecah OpenITI per nomor mendapat blok bernomor sama, dengan
+     syarat ketat (lihat isi_dari_nomor; cara = "nomor").
   4. Nama Arab tiap "kitab" fawazahmed0 = judul kitab OpenITI yang paling banyak dimiliki riwayat di dalamnya.
 
 Uji (dilaporkan, juga di test_bab.py):
@@ -94,6 +96,10 @@ AWALAN_KITAB = {"tirmidzi": ("كتاب", "ابواب")}
 
 
 _AWAL_SANAD = re.compile(r"^(?:و)?(?:حدثنا|حدثني|اخبرنا|اخبرني|انبانا|سمعت|قال|وقال|ح|عن|حدثنيه|حدثناه|ثنا|نا)\b")
+# Baris "###" yang BUKAN judul bab walau pendek (teks sudah dinormalkan norm_ar):
+_HEADING_SANAD = re.compile(r"^(?:و)?(?:حدثنا|حدثني|اخبرنا|اخبرني|انبانا|حدثنيه|حدثناه)\b")   # awal sanad
+_MUKARRAR = re.compile(r"^\s*\(\s*م\s*[0-9٠-٩]*\s*\)\s*[-–]?\s*")                             # "(م ٢) -" Tirmidzi
+_BAB_FIHRIS = re.compile(r"^باب\s+(?:حدثنا|حدثني|اخبرنا|اخبرني)\b")
 
 
 def urai(path, kid=None):
@@ -153,7 +159,22 @@ def urai(path, kid=None):
                 tutup()
                 teks, tahqiq, no = [isi], [], None
                 continue
+            if _MUKARRAR.match(isi):                        # Tirmidzi: "### || (م ١) - وسمعت ..." = lanjutan hadits bernomor
+                teks.append(_MUKARRAR.sub("", isi))
+                continue
+            if _HEADING_SANAD.match(polos):                 # Muslim: "### $ حدثنا قتيبة ..." pendek = awal hadits, BUKAN judul
+                tutup()
+                teks, tahqiq, no = [isi], [], None
+                continue
+            if kid == "tirmidzi" and polos and not re.match(r"^(?:باب|ما جاء)\b", polos):
+                # Teks digital Tirmidzi memecah baris di penanda catatan kaki "(١)", sehingga potongan judul/teks
+                # ("### || (١) عمرو بن نفيل رضي الله عنه", "### || (غلبت الروم)") tampil sebagai baris "###".
+                # Judul bab Tirmidzi selalu diawali "باب"/"ما جاء"; selain itu = lanjutan teks.
+                teks.append(_AWALAN_NOMOR.sub("", isi))
+                continue
             if len(polos.split()) <= 60 and polos:         # judul bab (dengan/tanpa kata "باب")
+                if _BAB_FIHRIS.match(polos):                # Ibnu Majah: "باب حدثنا سويد بن سعيد" = bab tanpa judul (gaya fihris)
+                    isi = "باب"
                 tutup()
                 teks, tahqiq, no = [], [], None
                 bab = bersihkan_judul(_AWALAN_NOMOR.sub("", isi))
@@ -241,6 +262,35 @@ def petakan(kid, blok, riwayat):
     return hasil
 
 
+MIN_ISI_NOMOR = 0.8
+
+
+def isi_dari_nomor(kid, blok, riwayat, akhir, cara):
+    """Hadits bernomor ganda (mis. al-Bukhari 299-301, 3164-3165): sumber kita memuat teks GABUNGAN di setiap
+    nomornya, sedangkan OpenITI memecahnya per nomor, sehingga skor isi tiap blok di bawah AMBANG. Riwayat seperti
+    ini diberi blok OpenITI bernomor SAMA, hanya bila: tepat satu blok bernomor itu, letaknya di antara blok
+    tetangga yang sudah cocok (urutan kitab), dan >= 80% 2-gram blok itu memang ada di teks riwayat (cara "nomor")."""
+    if kid == "syafii":       # susunan edisi berbeda dari penomoran kita
+        return
+    per_no = collections.defaultdict(list)
+    for i, b in enumerate(blok):
+        if b["no"] is not None:
+            per_no[b["no"]].append(i)
+    urut = [r[0] for r in riwayat]
+    for k, (rid, arab, nos, _) in enumerate(riwayat):
+        if rid in akhir or not re.fullmatch(r"\d+", str(nos or "")):
+            continue
+        a = next((akhir[urut[j]][0] for j in range(k - 1, -1, -1) if urut[j] in akhir), None)
+        c = next((akhir[urut[j]][0] for j in range(k + 1, len(urut)) if urut[j] in akhir), None)
+        calon = [i for i in per_no.get(int(nos), ()) if a is not None and c is not None and a <= i <= c]
+        if len(calon) != 1:
+            continue
+        gb = grams(norm_ar(_SAMPAH.sub(" ", blok[calon[0]]["teks"])))
+        isi = len(gb & grams(norm_ar(arab))) / max(1, len(gb))
+        if isi >= MIN_ISI_NOMOR:
+            akhir[rid], cara[rid] = (calon[0], round(isi, 3)), "nomor"
+
+
 _KOREKSI = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "koreksi_bab.json"), encoding="utf8"))["koreksi"]
 
 
@@ -281,6 +331,7 @@ def main():
             b = next((akhir[urut[j]] for j in range(k + 1, len(urut)) if urut[j] in akhir), None)
             if a and b and blok[a[0]]["bab"] == blok[b[0]]["bab"] and blok[a[0]]["kitab"] == blok[b[0]]["kitab"]:
                 akhir[rid], cara[rid] = (a[0], 0.0), "urutan"
+        isi_dari_nomor(kid, blok, riwayat, akhir, cara)
         for rid, (i, s) in akhir.items():
             b = blok[i]
             # Penilaian muhaqqiq hanya dipasang bila teks riwayat jelas ada di blok edisi itu (>= 0.9)
@@ -319,13 +370,14 @@ def main():
                        (kid, bno, nama if jelas else None, n, jml, nama_indonesia(nama) if jelas else None))
         info = {"blok": len(blok), "riwayat": len(riwayat), "cocok_teks": len(peta),
                 "dari_urutan": sum(1 for c in cara.values() if c == "urutan"),
+                "dari_nomor": sum(1 for c in cara.values() if c == "nomor"),
                 "urutan_naik": f"{naik}/{max(1, len(idx) - 1)}", "nomor_sama": f"{nomor_sama}/{nomor_dicek}",
                 "cocok_090": sum(1 for _, sk in peta.values() if sk >= 0.9), "edisi": EDISI.get(kid, ""),
                 "tahqiq": sum(1 for rid, (i, sk) in akhir.items() if cara[rid] == "teks" and sk >= 0.9 and blok[i].get("tahqiq")),
                 "kesepakatan_kitab": f"{setuju}/{total}"}
         db.executemany("INSERT INTO info VALUES (?,?,?)", [(kid, k, str(v)) for k, v in info.items()])
         db.commit()
-        print(f"{kid:10s} blok {len(blok):5d} | cocok {len(peta):5d}/{len(riwayat)} (+{info['dari_urutan']} urutan) | "
+        print(f"{kid:10s} blok {len(blok):5d} | cocok {len(peta):5d}/{len(riwayat)} (+{info['dari_urutan']} urutan, +{info['dari_nomor']} nomor) | "
               f"urutan naik {info['urutan_naik']} | nomor sama {info['nomor_sama']} | kitab sepakat {info['kesepakatan_kitab']} "
               f"({time.time() - t0:.0f}s)", file=sys.stderr)
 
