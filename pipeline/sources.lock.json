@@ -1,0 +1,112 @@
+{
+ "fawazahmed0/ara-abudawud.json": {
+  "bytes": 7345422,
+  "commit": "df57907be35291c91ad6a6691180e22ca9920784",
+  "sha256": "216139c5f40a8147e700d62ffa3b5b2fe45d0e034f86941a193c598c10056189"
+ },
+ "fawazahmed0/ara-bukhari.json": {
+  "bytes": 9770083,
+  "commit": "df57907be35291c91ad6a6691180e22ca9920784",
+  "sha256": "e34a3402889ca378871da3c5984b7875c680920e93f1c8738ac7afe502179562"
+ },
+ "fawazahmed0/ara-ibnmajah.json": {
+  "bytes": 5583102,
+  "commit": "df57907be35291c91ad6a6691180e22ca9920784",
+  "sha256": "b406e6be81588ab0ec1ddbed32f5fd95bbcdda242c460d88331e82eb5c2bc0aa"
+ },
+ "fawazahmed0/ara-malik.json": {
+  "bytes": 2150337,
+  "commit": "df57907be35291c91ad6a6691180e22ca9920784",
+  "sha256": "088b1f354e110211da006d47e37dd8f8837368f318ed683271f0fdb0f09a3ab5"
+ },
+ "fawazahmed0/ara-muslim.json": {
+  "bytes": 8685140,
+  "commit": "df57907be35291c91ad6a6691180e22ca9920784",
+  "sha256": "194073b24090c5368e4d14a3f55c9e0ef144c7437bd7e5aa83aa4d2bc54a8ea0"
+ },
+ "fawazahmed0/ara-nasai.json": {
+  "bytes": 7152291,
+  "commit": "df57907be35291c91ad6a6691180e22ca9920784",
+  "sha256": "c705983c19bb089c87cd6531aff609bd94d862183ed0859115b0ff991826a956"
+ },
+ "fawazahmed0/ara-nawawi.json": {
+  "bytes": 49340,
+  "commit": "df57907be35291c91ad6a6691180e22ca9920784",
+  "sha256": "91f559b90422005b768bb449426d87d2e6fabbb43ac3a31e5c24c50ca77465e6"
+ },
+ "fawazahmed0/ara-qudsi.json": {
+  "bytes": 55258,
+  "commit": "df57907be35291c91ad6a6691180e22ca9920784",
+  "sha256": "8645482e46b9ab145b3a8b740ffc7dc6902cc1cc0a1845da35b2057ec23bb55a"
+ },
+ "fawazahmed0/ara-tirmidhi.json": {
+  "bytes": 7120806,
+  "commit": "df57907be35291c91ad6a6691180e22ca9920784",
+  "sha256": "408028cd56329ed78edbe3ad443beb96b58e16c3e5bd49f9bc7b0eac77c8820f"
+ },
+ "fawazahmed0/info.json": {
+  "bytes": 10319127,
+  "commit": "df57907be35291c91ad6a6691180e22ca9920784",
+  "sha256": "cf1ced267ada8f606f95eb84e2b6ddfa87bfa2a6a9dd4cb2a5d9a8c1734f10fb"
+ },
+ "lidwa-carihadis/musnad-ahmad.sql": {
+  "bytes": 42168744,
+  "commit": "db43bdaa70ee528a0e663c089d3dab5bb4d855f0",
+  "sha256": "c9f064415a77d01ca34ac8c52b81baf18d8d9fa50d427daa7deb2f50d9c77cbb"
+ },
+ "lidwa-carihadis/musnad-syafii.sql": {
+  "bytes": 2287894,
+  "commit": "db43bdaa70ee528a0e663c089d3dab5bb4d855f0",
+  "sha256": "fa4d29b3132991ad9c7246219a71f36e59d6963b6d39d0006eac7f67cb427ef3"
+ },
+ "lidwa-carihadis/musnad_darimi.sql": {
+  "bytes": 4481920,
+  "commit": "db43bdaa70ee528a0e663c089d3dab5bb4d855f0",
+  "sha256": "d13f9a5d8de61aeca5158ae709f1282285dcf4e6af059ac18bfbf434d7221594"
+ },
+ "lidwa-carihadis/muwatho_malik.sql": {
+  "bytes": 2106139,
+  "commit": "db43bdaa70ee528a0e663c089d3dab5bb4d855f0",
+  "sha256": "6aa9337ee7c831212f7016c8b1a28f155e4b00f656a500e86649f4990e749b82"
+ },
+ "lidwa-carihadis/riyadhus-shalihin-arab.sql": {
+  "bytes": 2060658,
+  "commit": "db43bdaa70ee528a0e663c089d3dab5bb4d855f0",
+  "sha256": "6d6512216f9c6c2826fa9665fc545cfa30078724a7f688cbe0fc69b7b6cbd081"
+ },
+ "lidwa-carihadis/riyadhus-shalihin.sql": {
+  "bytes": 3989948,
+  "commit": "db43bdaa70ee528a0e663c089d3dab5bb4d855f0",
+  "sha256": "cc729d406147a4ba9ccd1178bfea99e0a23dba448b7a3ba20076acfff5958dd4"
+ },
+ "lidwa-carihadis/shahih-bukhari.sql": {
+  "bytes": 14159692,
+  "commit": "db43bdaa70ee528a0e663c089d3dab5bb4d855f0",
+  "sha256": "4b8385fcffcee224173278881a43eb9b43e2db4cdc8b3a0c86fb7010a46acc73"
+ },
+ "lidwa-carihadis/shahih-muslim.sql": {
+  "bytes": 12841949,
+  "commit": "db43bdaa70ee528a0e663c089d3dab5bb4d855f0",
+  "sha256": "3c9976e0438a28ef83979714b550001398dec2129c617210eb973af0267918b0"
+ },
+ "lidwa-carihadis/sunan-abu-daud.sql": {
+  "bytes": 8928446,
+  "commit": "db43bdaa70ee528a0e663c089d3dab5bb4d855f0",
+  "sha256": "29cdfbcdcc06ecf4d6b6fa79e9121aae86f6840dbf62e91557554d9ee919f084"
+ },
+ "lidwa-carihadis/sunan-ibnu-majah.sql": {
+  "bytes": 6502240,
+  "commit": "db43bdaa70ee528a0e663c089d3dab5bb4d855f0",
+  "sha256": "b017e6cfe6df02ac84a8f9245ad0c23b9935dbbc1e45bd4ab1db8bd89b507b00"
+ },
+ "lidwa-carihadis/sunan-nasai.sql": {
+  "bytes": 9041176,
+  "commit": "db43bdaa70ee528a0e663c089d3dab5bb4d855f0",
+  "sha256": "27a38643817e58dcdc1d0b5f446c74fd836178c90aadcc7059167ed7a9372752"
+ },
+ "lidwa-carihadis/sunan-tirmidzi.sql": {
+  "bytes": 9385426,
+  "commit": "db43bdaa70ee528a0e663c089d3dab5bb4d855f0",
+  "sha256": "79c5710963a1505787178e48c97a6220f91bb7b3e35c0d8429f7ba9bdb2748fc"
+ }
+}

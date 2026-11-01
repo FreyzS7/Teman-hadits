@@ -1,0 +1,32 @@
+{
+  "_catatan": "Daftar sumber yang dipakai. Setiap sumber dikunci ke commit tertentu supaya hasil build bisa diulang persis. sha256 diisi otomatis oleh fetch_sources.py ke sources.lock.json.",
+  "sumber": [
+    {
+      "id": "lidwa-carihadis",
+      "nama": "hadits-database (Irsyadul Ibad), teks dari carihadis.com / Lidwa Pusaka",
+      "repo": "https://github.com/irsyadulibad/hadits-database",
+      "commit": "db43bdaa70ee528a0e663c089d3dab5bb4d855f0",
+      "lisensi_repo": "MIT (atas berkas SQL/kompilasi)",
+      "catatan_lisensi": "Terjemahan Indonesia berasal dari Ensiklopedi Hadits 9 Imam (Lidwa Pusaka) via carihadis.com. Lisensi MIT dari pengunggah tidak otomatis mencakup hak cipta terjemahan Lidwa. Wajib atribusi; izin Lidwa sebaiknya dimintakan sebelum situs publik.",
+      "berkas": [
+        "shahih-bukhari.sql", "shahih-muslim.sql", "sunan-abu-daud.sql", "sunan-tirmidzi.sql",
+        "sunan-nasai.sql", "sunan-ibnu-majah.sql", "muwatho_malik.sql", "musnad-ahmad.sql",
+        "musnad_darimi.sql", "musnad-syafii.sql", "riyadhus-shalihin.sql", "riyadhus-shalihin-arab.sql"
+      ]
+    },
+    {
+      "id": "fawazahmed0",
+      "nama": "hadith-api (fawazahmed0)",
+      "repo": "https://github.com/fawazahmed0/hadith-api",
+      "commit": "df57907be35291c91ad6a6691180e22ca9920784",
+      "lisensi_repo": "Unlicense (domain publik)",
+      "catatan_lisensi": "Teks Arab bernomor standar + penilaian derajat per ulama (Albani, Syu'aib al-Arna'uth, Zubair Ali Zai, Ahmad Syakir, Basyar 'Awwad, Abu Ghuddah, Salim al-Hilali, dll). Asal data hulu tidak didokumentasikan lengkap oleh repo; diperlakukan sebagai sumber digital kedua, bukan sumber primer.",
+      "berkas": [
+        "info.json",
+        "editions/ara-bukhari.json", "editions/ara-muslim.json", "editions/ara-abudawud.json",
+        "editions/ara-tirmidhi.json", "editions/ara-nasai.json", "editions/ara-ibnmajah.json",
+        "editions/ara-malik.json", "editions/ara-nawawi.json", "editions/ara-qudsi.json"
+      ]
+    }
+  ]
+}

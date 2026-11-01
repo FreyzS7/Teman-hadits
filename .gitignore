@@ -1,0 +1,7 @@
+# Data mentah hasil unduhan & hasil build (dibuat ulang oleh pipeline)
+sources/
+build/
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/

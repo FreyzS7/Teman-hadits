@@ -1,0 +1,717 @@
+<title>Teman Hadits</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Pustaka hadits berbahasa Indonesia: cari hadits, cek teks yang beredar, lihat sanad dan penilaian ulama beserta sumbernya.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;0,800;1,400&family=Alegreya+Sans:wght@400;500;700&family=Alegreya+Sans+SC:wght@500;700&family=Amiri:wght@400;700&display=swap">
+<style>
+/* Layout: lembar "kitab kuning" di atas meja hijau-pucat. Teks hadits di lembar; catatan ulama di hamisy
+   (pinggir halaman), seperti kitab syarah klasik. Lafaz periwayatan ditulis dengan tinta merah (rubrikasi). */
+:root {
+  --meja: #E4E9E0;        /* latar halaman: hijau abu pucat */
+  --meja-2: #D6DECF;      /* pita latar yang lebih dalam */
+  --kertas: #F4E8C6;      /* kertas kitab kuning, permukaan baca */
+  --kertas-2: #EADAAE;    /* kertas lebih tua: hover, sel */
+  --garis: #CDB57A;       /* garis tepi kertas */
+  --tinta: #1E1A12;       /* midad */
+  --tinta-2: #5A5240;     /* tinta pudar */
+  --zamrud: #0E4A36;      /* hijau logo */
+  --zamrud-2: #18694E;
+  --emas: #9C7417;        /* emas untuk garis & ornamen */
+  --emas-terang: #D7B24F;
+  --rubrik: #A3231A;      /* tinta merah */
+  --sampul: #0E3F2F;      /* sampul kulit hijau: header & punggung buku */
+  --sampul-2: #0A2F23;
+  --sampul-teks: #F4E8C6;
+  --terima: #17603F;      /* derajat diterima (shahih/hasan) */
+  --lemah: #8E4F0C;       /* derajat lemah */
+  --palsu: #A3231A;       /* palsu / batil */
+  --kosong: #6B6656;      /* belum dinilai */
+  --tanda: #F0D77A;       /* stabilo <mark> */
+  --fokus: #C08A12;
+
+  --f-tampil: "Alegreya", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --f-teks: "Alegreya", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --f-ui: "Alegreya Sans", "Gill Sans", "Segoe UI", system-ui, sans-serif;
+  --f-label: "Alegreya Sans SC", "Alegreya Sans", "Gill Sans", system-ui, sans-serif;
+  --f-arab: "Amiri", "Scheherazade New", "Noto Naskh Arabic", "Traditional Arabic", serif;
+  --ar: 1;                /* skala teks Arab (diatur pengguna) */
+  --r: 4px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --meja: #0D1613; --meja-2: #12201A; --kertas: #18231D; --kertas-2: #203028; --garis: #3D5245;
+    --tinta: #EDE4CC; --tinta-2: #A9A28B; --zamrud: #86CBA9; --zamrud-2: #A6DCC0; --emas: #D2AE55; --emas-terang: #E6C66F;
+    --rubrik: #EE8270; --sampul: #0A1F18; --sampul-2: #07170F; --sampul-teks: #EDE4CC;
+    --terima: #7FCB9F; --lemah: #E3A65A; --palsu: #EE8270; --kosong: #A09A86; --tanda: #6B5814; --fokus: #E6C66F;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --meja: #0D1613; --meja-2: #12201A; --kertas: #18231D; --kertas-2: #203028; --garis: #3D5245;
+  --tinta: #EDE4CC; --tinta-2: #A9A28B; --zamrud: #86CBA9; --zamrud-2: #A6DCC0; --emas: #D2AE55; --emas-terang: #E6C66F;
+  --rubrik: #EE8270; --sampul: #0A1F18; --sampul-2: #07170F; --sampul-teks: #EDE4CC;
+  --terima: #7FCB9F; --lemah: #E3A65A; --palsu: #EE8270; --kosong: #A09A86; --tanda: #6B5814; --fokus: #E6C66F;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--meja); color: var(--tinta);
+  font: 400 1.0625rem/1.6 var(--f-teks);
+  font-variant-numeric: oldstyle-nums proportional-nums;
+  -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--sampul); }
+a { color: var(--zamrud); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { color: var(--zamrud-2); }
+:focus-visible { outline: 2px solid var(--fokus); outline-offset: 2px; border-radius: 2px; }
+button { font: inherit; color: inherit; }
+mark { background: var(--tanda); color: inherit; padding: 0 .12em; border-radius: 2px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.label { font: 700 .74rem/1.2 var(--f-label); letter-spacing: .09em; text-transform: lowercase; color: var(--tinta-2); }
+.ar { font-family: var(--f-arab); direction: rtl; text-align: right; unicode-bidi: isolate; }
+.num { font-variant-numeric: lining-nums tabular-nums; }
+h1, h2, h3 { font-family: var(--f-tampil); text-wrap: balance; margin: 0; line-height: 1.15; }
+p { margin: 0; }
+
+/* ---------- pita prototipe ---------- */
+.pita { background: var(--rubrik); color: var(--meja); font: 500 .8rem/1.3 var(--f-ui); }
+.pita .wrap { padding-block: 6px; display: flex; gap: 8px 16px; flex-wrap: wrap; justify-content: space-between; }
+
+/* ---------- header (sampul) ---------- */
+.kepala { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--sampul); color: var(--sampul-teks); border-bottom: 3px double var(--emas-terang); }
+.kepala .wrap { display: flex; align-items: center; gap: 10px 20px; flex-wrap: wrap; padding-block: 8px; }
+.merek { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; margin-right: auto; }
+.merek img { width: 46px; height: auto; display: block; }
+.merek b { font: 800 1.35rem/1 var(--f-tampil); letter-spacing: .01em; color: var(--emas-terang); }
+.merek small { display: block; font: 500 .72rem/1.2 var(--f-ui); color: var(--sampul-teks); opacity: .8; letter-spacing: .02em; }
+.nav { display: flex; gap: 4px; }
+.nav a { color: var(--sampul-teks); text-decoration: none; font: 500 .95rem/1 var(--f-ui); padding: 9px 12px; border-radius: var(--r); }
+.nav a[aria-current="page"] { background: color-mix(in srgb, var(--emas-terang) 22%, transparent); color: var(--emas-terang); }
+.nav a:hover { background: color-mix(in srgb, var(--sampul-teks) 10%, transparent); color: var(--sampul-teks); }
+.alat { display: flex; gap: 4px; align-items: center; }
+.alat button { background: transparent; border: 1px solid color-mix(in srgb, var(--sampul-teks) 30%, transparent); color: var(--sampul-teks); border-radius: var(--r); min-width: 38px; height: 34px; padding: 0 9px; cursor: pointer; font: 500 .85rem/1 var(--f-ui); }
+.alat button[aria-pressed="true"] { background: var(--emas-terang); color: var(--sampul-2); border-color: var(--emas-terang); }
+.alat .ar-btn { font-family: var(--f-arab); font-size: 1rem; }
+@media (max-width: 720px) {
+  .nav { order: 3; width: 100%; justify-content: space-between; border-top: 1px solid color-mix(in srgb, var(--sampul-teks) 18%, transparent); padding-top: 6px; }
+  .nav a { padding: 8px 6px; font-size: .9rem; }
+  .merek small { display: none; }
+}
+
+main { padding-block: 28px 64px; }
+[data-view] { display: none; }
+[data-view].aktif { display: block; animation: muncul .35s ease-out; }
+@keyframes muncul { from { opacity: .4; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ---------- BERANDA ---------- */
+.pembuka { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 28px 48px; align-items: center; }
+.pembuka .logo { width: 100%; max-width: 300px; height: auto; justify-self: center; filter: drop-shadow(0 6px 14px rgb(0 0 0 / .18)); }
+.pembuka h1 { font-size: clamp(2rem, 4.6vw, 3.3rem); font-weight: 800; color: var(--zamrud); letter-spacing: -.01em; }
+.pembuka h1 em { font-style: italic; font-weight: 400; color: var(--tinta); }
+.pembuka .lead { margin-top: 14px; max-width: 58ch; color: var(--tinta-2); font-size: 1.12rem; }
+@media (max-width: 760px) { .pembuka { grid-template-columns: 1fr; } .pembuka .logo { max-width: 190px; } }
+
+/* mihrab: panel cari berbingkai lengkung seperti logo */
+.mihrab { margin-top: 34px; position: relative; }
+.mihrab svg.lengkung { display: block; width: 100%; height: 64px; }
+.mihrab svg.lengkung path { fill: var(--kertas); stroke: var(--emas); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.mihrab-isi { background: var(--kertas); border: 1.5px solid var(--emas); border-top: 0; margin-top: -1px; padding: 6px clamp(16px, 4vw, 40px) 26px; border-radius: 0 0 var(--r) var(--r); }
+.mode { display: flex; gap: 6px; justify-content: center; margin: -22px 0 18px; position: relative; flex-wrap: wrap; }
+.mode button { background: var(--kertas); border: 1px solid var(--garis); padding: 7px 14px; border-radius: 999px; cursor: pointer; font: 500 .92rem/1 var(--f-ui); color: var(--tinta-2); }
+.mode button[aria-selected="true"] { background: var(--zamrud); border-color: var(--zamrud); color: var(--kertas); }
+.kolom-cari { display: flex; gap: 10px; flex-wrap: wrap; }
+.kolom-cari input, .kolom-cari textarea { flex: 1 1 260px; min-width: 0; background: color-mix(in srgb, var(--kertas) 60%, var(--meja)); border: 1px solid var(--garis); border-bottom: 2px solid var(--zamrud); border-radius: var(--r) var(--r) 0 0; padding: 14px 16px; font: 400 1.2rem/1.4 var(--f-teks); color: var(--tinta); }
+.kolom-cari textarea { min-height: 96px; resize: vertical; }
+.tombol { background: var(--zamrud); color: var(--kertas); border: 0; border-radius: var(--r); padding: 0 24px; min-height: 52px; font: 700 1rem/1 var(--f-ui); cursor: pointer; letter-spacing: .01em; }
+.tombol:hover { background: var(--zamrud-2); }
+.contoh { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; align-items: baseline; }
+.contoh a { font: 400 .95rem/1.3 var(--f-teks); font-style: italic; color: var(--tinta); text-decoration: none; border-bottom: 1px dashed var(--emas); padding: 2px 0; }
+.contoh a:hover { color: var(--zamrud); border-bottom-style: solid; }
+.contoh .label { margin-right: 4px; }
+.cakupan { margin-top: 18px; font: 400 .92rem/1.5 var(--f-ui); color: var(--tinta-2); }
+
+/* rak kitab */
+.bagian { margin-top: 56px; }
+.bagian > header { display: flex; justify-content: space-between; align-items: end; gap: 8px 24px; flex-wrap: wrap; margin-bottom: 18px; }
+.bagian h2 { font-size: clamp(1.5rem, 2.6vw, 2rem); color: var(--zamrud); }
+.bagian header p { color: var(--tinta-2); font: 400 .9rem/1.45 var(--f-ui); max-width: 60ch; }
+.rak { display: flex; align-items: flex-end; gap: 3px; flex-wrap: wrap; padding: 0 6px; border-bottom: 10px solid var(--sampul-2); box-shadow: 0 8px 0 -4px color-mix(in srgb, var(--sampul-2) 50%, transparent); }
+.punggung { --w: 50px; width: var(--w); height: 220px; background: linear-gradient(90deg, rgb(255 255 255 / .07), transparent 30%, rgb(0 0 0 / .18)), var(--sampul); border: 0; border-radius: 3px 3px 0 0; color: var(--sampul-teks); cursor: pointer; display: flex; flex-direction: column; align-items: center; padding: 10px 0 12px; gap: 8px; transition: transform .18s ease; position: relative; }
+.punggung:hover, .punggung[aria-pressed="true"] { transform: translateY(-10px); }
+.punggung[aria-pressed="true"] { outline: 2px solid var(--emas-terang); outline-offset: 2px; }
+.punggung .pita-emas { width: 100%; display: grid; gap: 3px; }
+.punggung .pita-emas i { display: block; height: 3px; background: var(--emas-terang); }
+.punggung .judul { writing-mode: vertical-rl; transform: rotate(180deg); font: 700 .98rem/1 var(--f-label); letter-spacing: .06em; white-space: nowrap; flex: 1; overflow: hidden; }
+.punggung .judul-ar { font: 700 1rem/1 var(--f-arab); writing-mode: vertical-rl; }
+.punggung.karantina { background: repeating-linear-gradient(-45deg, var(--meja-2) 0 8px, var(--kertas-2) 8px 16px); color: var(--tinta-2); border: 1px dashed var(--tinta-2); }
+.kartu-kitab { background: var(--kertas); border: 1px solid var(--garis); border-top: 0; padding: 18px clamp(16px, 3vw, 28px) 20px; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px 32px; }
+.kartu-kitab h3 { font-size: 1.45rem; }
+.kartu-kitab .ar { font-size: calc(1.5rem * var(--ar)); color: var(--zamrud); line-height: 1.5; }
+.kartu-kitab dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font: 400 .95rem/1.4 var(--f-ui); }
+.kartu-kitab dt { color: var(--tinta-2); }
+.kartu-kitab dd { margin: 0; }
+@media (max-width: 760px) { .kartu-kitab { grid-template-columns: 1fr; } .punggung { height: 170px; } }
+.legenda { margin-top: 10px; display: flex; gap: 6px 20px; flex-wrap: wrap; font: 400 .85rem/1.4 var(--f-ui); color: var(--tinta-2); }
+.legenda span { display: inline-flex; align-items: center; gap: 6px; }
+.legenda i { display: inline-block; width: 16px; height: 3px; background: var(--emas); }
+
+/* tingkat data */
+.tingkat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid var(--garis); background: var(--kertas); }
+.tingkat-grid > div { padding: 18px 20px; display: grid; gap: 6px; align-content: start; }
+.tingkat-grid > div + div { border-left: 1px solid var(--garis); }
+.tingkat-grid b { font: 800 2rem/1 var(--f-tampil); font-variant-numeric: lining-nums tabular-nums; }
+.tingkat-grid p { font: 400 .93rem/1.45 var(--f-ui); color: var(--tinta-2); }
+@media (max-width: 760px) { .tingkat-grid { grid-template-columns: 1fr; } .tingkat-grid > div + div { border-left: 0; border-top: 1px solid var(--garis); } }
+
+/* lencana tingkat & derajat */
+.tk { display: inline-flex; align-items: center; gap: 5px; font: 700 .72rem/1 var(--f-label); letter-spacing: .08em; padding: 4px 7px; border-radius: 2px; border: 1px solid currentColor; white-space: nowrap; }
+.tk-A { color: var(--terima); }
+.tk-B { color: var(--lemah); }
+.tk-K { color: var(--kosong); border-style: dashed; }
+
+/* buku besar penilaian: nama penilai .......... hukum (gaya daftar isi kitab cetak) */
+.buku-besar { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font: 400 .95rem/1.35 var(--f-ui); }
+.buku-besar li { display: flex; align-items: baseline; gap: 6px; }
+.buku-besar .siapa { white-space: nowrap; }
+.buku-besar .titik { flex: 1; border-bottom: 1px dotted var(--tinta-2); transform: translateY(-4px); min-width: 12px; }
+.buku-besar .hukum { font-weight: 700; text-align: right; }
+.k-shahih .hukum, .k-hasan .hukum, .k-shahih-hasan .hukum { color: var(--terima); }
+.k-lemah .hukum { color: var(--lemah); }
+.k-palsu .hukum { color: var(--palsu); }
+.k-lainnya .hukum { color: var(--tinta-2); }
+.tanpa-nilai { font: italic 400 .93rem/1.45 var(--f-teks); color: var(--kosong); }
+
+/* ---------- HASIL CARI ---------- */
+.kepala-hasil { display: grid; gap: 14px; }
+.kepala-hasil .kolom-cari input { background: var(--kertas); }
+.tafsir-kueri { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; font: 400 .95rem/1.4 var(--f-ui); color: var(--tinta-2); }
+.chip { display: inline-flex; align-items: center; gap: 6px; background: var(--kertas); border: 1px solid var(--garis); border-radius: 999px; padding: 4px 11px; color: var(--tinta); font: 500 .92rem/1.2 var(--f-ui); }
+.chip .ar { font-size: 1.1rem; line-height: 1; }
+.dua-kolom { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 28px 36px; margin-top: 26px; align-items: start; }
+@media (max-width: 900px) { .dua-kolom { grid-template-columns: 1fr; } .dua-kolom > aside { order: -1; } }
+.catatan { border-left: 3px solid var(--emas); background: color-mix(in srgb, var(--kertas) 70%, transparent); padding: 14px 18px; font: 400 1rem/1.55 var(--f-teks); }
+.catatan b { color: var(--zamrud); }
+.daftar-hasil { list-style: none; margin: 18px 0 0; padding: 0; }
+.hasil { padding: 20px 0; border-top: 1px solid var(--garis); display: grid; gap: 10px; }
+.hasil:first-child { border-top: 0; }
+.hasil header { display: flex; justify-content: space-between; gap: 6px 14px; align-items: baseline; flex-wrap: wrap; }
+.hasil .rujukan { font: 700 1.08rem/1.2 var(--f-tampil); color: var(--zamrud); }
+.hasil .rujukan small { font: 500 .85rem/1 var(--f-ui); color: var(--tinta-2); margin-left: 6px; }
+.hasil .id { font-size: 1.04rem; line-height: 1.6; max-width: 70ch; }
+.hasil .ar { font-size: calc(1.3rem * var(--ar)); line-height: 2; color: var(--tinta); }
+.hasil .ar mark { background: none; color: var(--rubrik); font-weight: 700; }
+.hasil footer { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; max-width: 460px; }
+.sebaran { display: grid; gap: 6px; font: 400 .9rem/1.2 var(--f-ui); }
+.sebaran div { display: grid; grid-template-columns: 9.5em 1fr 2.4em; gap: 8px; align-items: center; }
+.sebaran .batang { height: 8px; background: var(--meja-2); border-radius: 1px; overflow: hidden; }
+.sebaran .batang i { display: block; height: 100%; background: var(--zamrud); }
+.sebaran .n { text-align: right; font-variant-numeric: lining-nums tabular-nums; color: var(--tinta-2); }
+.panel-samping { background: var(--kertas); border: 1px solid var(--garis); padding: 18px; display: grid; gap: 14px; }
+.panel-samping h3 { font-size: 1.05rem; color: var(--zamrud); }
+.tab-kueri { display: flex; gap: 0; border-bottom: 1px solid var(--garis); flex-wrap: wrap; }
+.tab-kueri button { background: none; border: 0; border-bottom: 3px solid transparent; padding: 10px 14px; cursor: pointer; font: 500 .95rem/1.2 var(--f-ui); color: var(--tinta-2); text-align: left; }
+.tab-kueri button[aria-selected="true"] { color: var(--zamrud); border-bottom-color: var(--zamrud); }
+
+/* ---------- HALAMAN HADITS ---------- */
+.remah { font: 400 .9rem/1.4 var(--f-ui); color: var(--tinta-2); display: flex; gap: 6px; flex-wrap: wrap; }
+.judul-hadits { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: baseline; }
+.judul-hadits h1 { font-size: clamp(1.9rem, 4vw, 2.8rem); font-weight: 800; color: var(--zamrud); }
+.meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.meta .chip { font-size: .85rem; }
+.halaman { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 0; margin-top: 22px; border: 1px solid var(--garis); background: var(--kertas); box-shadow: 0 1px 0 var(--garis), 0 14px 30px -18px rgb(0 0 0 / .35); }
+@media (max-width: 960px) { .halaman { grid-template-columns: 1fr; } }
+.lembar { padding: clamp(18px, 4vw, 44px); display: grid; gap: 18px; min-width: 0; align-content: start; }
+.hamisy { border-left: 1px solid var(--garis); padding: 22px 20px; display: grid; gap: 26px; align-content: start; background: color-mix(in srgb, var(--kertas-2) 45%, var(--kertas)); min-width: 0; }
+@media (max-width: 960px) { .hamisy { border-left: 0; border-top: 1px solid var(--garis); } }
+.hamisy h2 { font-size: 1.1rem; color: var(--zamrud); margin-bottom: 8px; }
+.sanad { font-size: calc(1.32rem * var(--ar)); line-height: 2.15; color: var(--tinta-2); }
+.sg { color: var(--rubrik); font-weight: 700; cursor: help; border-bottom: 1px solid transparent; }
+.sg:hover, .sg:focus { border-bottom-color: var(--rubrik); }
+.sg-an { font-weight: 400; border-bottom: 1px dotted var(--rubrik); }
+.matan { font-size: calc(1.9rem * var(--ar)); line-height: 2.05; color: var(--tinta); }
+.pemisah { display: flex; align-items: center; gap: 12px; color: var(--emas); }
+.pemisah::before, .pemisah::after { content: ""; flex: 1; height: 1px; background: var(--garis); }
+.pemisah svg { width: 18px; height: 18px; fill: currentColor; }
+.terjemah { font-size: 1.12rem; line-height: 1.7; max-width: 68ch; }
+.perawi { font-variant: small-caps; letter-spacing: .02em; color: var(--zamrud); font-weight: 500; }
+.aksi { display: flex; gap: 8px; flex-wrap: wrap; }
+.aksi button, .aksi a { background: transparent; border: 1px solid var(--garis); border-radius: var(--r); padding: 8px 12px; font: 500 .9rem/1 var(--f-ui); color: var(--tinta); cursor: pointer; text-decoration: none; }
+.aksi button:hover, .aksi a:hover { background: var(--kertas-2); }
+.jalur { display: grid; gap: 10px; font: 400 .93rem/1.35 var(--f-ui); }
+.jalur .kitab { font-weight: 700; color: var(--tinta); }
+.jalur .nomor { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
+.jalur .nomor span { border: 1px solid var(--garis); padding: 2px 6px; border-radius: 2px; font-variant-numeric: lining-nums tabular-nums; background: var(--kertas); }
+.asal { font: 400 .86rem/1.5 var(--f-ui); color: var(--tinta-2); display: grid; gap: 6px; }
+.asal code { font-size: .82rem; }
+
+/* rantai sanad: untaian dari Nabi ﷺ turun sampai penyusun */
+.rantai-wrap { margin-top: 40px; }
+.rantai { list-style: none; margin: 18px auto 0; padding: 0; max-width: 640px; position: relative; }
+.rantai::before { content: ""; position: absolute; left: 26px; top: 26px; bottom: 26px; width: 2px; background: repeating-linear-gradient(180deg, var(--emas) 0 10px, transparent 10px 14px); }
+.simpul { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 4px 14px; position: relative; animation: untai .5s ease-out backwards; }
+.simpul .manik { width: 54px; height: 54px; border-radius: 50%; background: var(--kertas); border: 2px solid var(--emas); display: grid; place-items: center; font: 700 .9rem/1 var(--f-ui); color: var(--zamrud); font-variant-numeric: lining-nums; z-index: 1; }
+.simpul.nabi .manik { background: var(--zamrud); color: var(--kertas); border-color: var(--emas-terang); }
+.simpul .orang { padding: 6px 0 4px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 14px; align-items: baseline; }
+.simpul .orang b { font: 700 1.12rem/1.25 var(--f-tampil); }
+.simpul .orang .ar { font-size: calc(1.3rem * var(--ar)); color: var(--zamrud); line-height: 1.5; }
+.simpul .peran { font: 700 .7rem/1 var(--f-label); letter-spacing: .08em; color: var(--tinta-2); width: 100%; }
+.mata { grid-column: 2; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; padding: 6px 0 14px; font: 400 .9rem/1.4 var(--f-ui); color: var(--tinta-2); }
+.mata .ar { color: var(--rubrik); font-size: calc(1.15rem * var(--ar)); font-weight: 700; }
+.mata em { font-style: normal; color: var(--tinta); }
+@keyframes untai { from { opacity: 0; transform: translateY(-8px); } }
+@media (prefers-reduced-motion: reduce) { .simpul, [data-view].aktif { animation: none; } .punggung { transition: none; } }
+.kotak-info { border: 1px dashed var(--garis); padding: 12px 14px; font: 400 .9rem/1.5 var(--f-ui); color: var(--tinta-2); }
+
+/* ---------- CEK ---------- */
+.vonis { margin-top: 22px; border: 1px solid var(--garis); background: var(--kertas); }
+.vonis > header { display: flex; gap: 14px 22px; align-items: center; padding: 18px clamp(16px, 3vw, 28px); border-bottom: 1px solid var(--garis); flex-wrap: wrap; }
+.stempel { font: 800 1rem/1 var(--f-label); letter-spacing: .14em; padding: 12px 16px; border: 3px double currentColor; transform: rotate(-2deg); white-space: nowrap; }
+.stempel.ok { color: var(--terima); }
+.stempel.tidak { color: var(--palsu); }
+.vonis > header p { font-size: 1.15rem; line-height: 1.45; flex: 1 1 280px; }
+.vonis .isi { padding: 18px clamp(16px, 3vw, 28px) 24px; display: grid; gap: 22px; }
+.klaim { display: grid; gap: 8px; }
+.klaim div { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.klaim .tanda { font: 700 1.1rem/1 var(--f-ui); }
+.klaim .ya { color: var(--terima); }
+.klaim .tidak { color: var(--palsu); }
+.langkah { display: flex; flex-wrap: wrap; gap: 8px; }
+.langkah .chip b { font-variant-numeric: lining-nums tabular-nums; }
+.langkah .chip.nol { border-color: var(--palsu); color: var(--palsu); border-style: dashed; }
+.keluarga { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 12px; }
+.keluarga article { border: 1px solid var(--garis); padding: 12px 14px; display: grid; gap: 8px; align-content: start; background: color-mix(in srgb, var(--kertas) 50%, var(--meja)); }
+.keluarga h4 { margin: 0; font: 700 1rem/1.25 var(--f-tampil); color: var(--zamrud); }
+.keluarga .nomor { display: flex; flex-wrap: wrap; gap: 4px; }
+.keluarga .nomor a, .keluarga .nomor span { border: 1px solid var(--garis); padding: 2px 6px; font: 500 .85rem/1.2 var(--f-ui); font-variant-numeric: lining-nums tabular-nums; border-radius: 2px; text-decoration: none; }
+.slot-kosong { border: 2px dashed var(--garis); padding: 16px; display: grid; gap: 6px; color: var(--tinta-2); font: 400 .95rem/1.5 var(--f-ui); }
+.slot-kosong b { color: var(--tinta); }
+
+/* ---------- METODE ---------- */
+.prosa { max-width: 70ch; display: grid; gap: 14px; font-size: 1.08rem; }
+.prosa h2 { color: var(--zamrud); font-size: 1.6rem; margin-top: 18px; }
+.prosa ol, .prosa ul { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; }
+
+footer.kaki { border-top: 3px double var(--emas); background: var(--meja-2); }
+footer.kaki .wrap { padding-block: 26px 40px; display: grid; gap: 10px; font: 400 .88rem/1.55 var(--f-ui); color: var(--tinta-2); max-width: 1180px; }
+footer.kaki b { color: var(--tinta); }
+.sembunyi { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+
+<div class="pita" role="note"><div class="wrap"><span><b>Prototipe desain</b>, belum situs final. Semua teks, nomor, dan penilaian diambil langsung dari database hasil build.</span><span id="ringkas-data"></span></div></div>
+
+<header class="kepala">
+  <div class="wrap">
+    <a class="merek" href="#beranda" aria-label="Teman Hadits, ke beranda">
+      <img src="__EMBLEM__" alt="" width="46" height="38">
+      <span><b>Teman Hadits</b><small>cek dulu sumbernya, baru sebarkan</small></span>
+    </a>
+    <nav class="nav" aria-label="Utama">
+      <a href="#beranda">Beranda</a>
+      <a href="#cari">Cari</a>
+      <a href="#cek">Cek Hadits</a>
+      <a href="#hadits">Contoh Hadits</a>
+      <a href="#metode">Metode</a>
+    </nav>
+    <div class="alat">
+      <button id="btn-harakat" class="ar-btn" aria-pressed="true" title="Tampilkan / sembunyikan harakat">حَـ</button>
+      <button id="btn-kecil" title="Perkecil teks Arab" aria-label="Perkecil teks Arab">A−</button>
+      <button id="btn-besar" title="Perbesar teks Arab" aria-label="Perbesar teks Arab">A+</button>
+      <button id="btn-tema" title="Ganti tema terang/gelap" aria-label="Ganti tema terang atau gelap"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ====================== BERANDA ====================== -->
+<section data-view="beranda" aria-labelledby="h-beranda">
+  <div class="pembuka">
+    <img class="logo" src="__LOGO__" alt="Logo Teman Hadits" width="300" height="274">
+    <div>
+      <h1 id="h-beranda">Sebelum dibagikan, <em>cek dulu sumbernya.</em></h1>
+      <p class="lead">Ketik kata kunci, tema, atau tempel teks hadits yang beredar. Teman Hadits menunjukkan kitab, nomor, rantai sanad, dan penilaian para ulama, lengkap dengan sumbernya. Bila tidak ditemukan, kami katakan tidak ditemukan.</p>
+    </div>
+  </div>
+
+  <div class="mihrab">
+    <svg class="lengkung" viewBox="0 0 1000 64" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 64 V44 C150 44 330 40 420 22 C455 15 480 8 500 0 C520 8 545 15 580 22 C670 40 850 44 1000 44 V64"/>
+    </svg>
+    <div class="mihrab-isi">
+      <div class="mode" role="tablist" aria-label="Cara mencari">
+        <button role="tab" id="mode-cari" aria-selected="true">Cari kata atau tema</button>
+        <button role="tab" id="mode-cek" aria-selected="false">Cek teks yang beredar</button>
+      </div>
+      <form class="kolom-cari" id="form-beranda">
+        <label class="sembunyi" for="q-beranda">Kata kunci</label>
+        <input id="q-beranda" type="search" placeholder="mis. hukum makan babi, niat, sabar, Abu Hurairah" autocomplete="off">
+        <button class="tombol" type="submit">Cari</button>
+      </form>
+      <div class="contoh"><span class="label">contoh</span>
+        <a href="#cari" data-tab="0">apakah makan babi itu hukumnya haram?</a>
+        <a href="#cari" data-tab="1">hadits yang membolehkan makan babi</a>
+        <a href="#cek" data-cek="0">“Sesungguhnya amalan itu tergantung niatnya…” (HR. Bukhari dan Muslim)</a>
+      </div>
+      <p class="cakupan" id="cakupan"></p>
+    </div>
+  </div>
+
+  <section class="bagian" aria-labelledby="h-rak">
+    <header>
+      <h2 id="h-rak">Rak kitab</h2>
+      <p>Lebar punggung = banyaknya riwayat yang terbit. Pita emas = jumlah ulama penilai yang datanya sudah kami miliki untuk kitab itu.</p>
+    </header>
+    <div class="rak" id="rak" role="group" aria-label="Pilih kitab"></div>
+    <div class="kartu-kitab" id="kartu-kitab" aria-live="polite"></div>
+    <div class="legenda"><span><i></i> 1 pita = 1 ulama penilai</span><span>Punggung bergaris = dalam perbaikan, belum ditampilkan</span></div>
+  </section>
+
+  <section class="bagian" aria-labelledby="h-tingkat">
+    <header>
+      <h2 id="h-tingkat">Seberapa yakin kami pada datanya</h2>
+      <p>Setiap riwayat diberi tingkat. Tingkat menilai <b>data digitalnya</b>, bukan derajat haditsnya. Derajat hadits selalu ditulis atas nama ulama yang menilainya.</p>
+    </header>
+    <div class="tingkat-grid" id="tingkat-grid"></div>
+  </section>
+</section>
+
+<!-- ====================== HASIL CARI ====================== -->
+<section data-view="cari" aria-labelledby="h-cari">
+  <h1 id="h-cari" class="sembunyi">Hasil pencarian</h1>
+  <div class="tab-kueri" role="tablist" aria-label="Contoh pencarian">
+    <button role="tab" id="tab-q0" aria-selected="true">apakah makan babi itu hukumnya haram?</button>
+    <button role="tab" id="tab-q1" aria-selected="false">hadits yang membolehkan makan babi</button>
+  </div>
+  <div class="kepala-hasil" style="margin-top:18px">
+    <form class="kolom-cari" id="form-cari">
+      <label class="sembunyi" for="q-cari">Kata kunci</label>
+      <input id="q-cari" type="search" autocomplete="off">
+      <button class="tombol" type="submit">Cari</button>
+    </form>
+    <div class="tafsir-kueri" id="tafsir-kueri"></div>
+  </div>
+  <div class="dua-kolom">
+    <div>
+      <div class="catatan" id="catatan-cari"></div>
+      <ol class="daftar-hasil" id="daftar-hasil"></ol>
+    </div>
+    <aside class="panel-samping" aria-labelledby="h-sebaran">
+      <h3 id="h-sebaran">Sebaran per kitab</h3>
+      <div class="sebaran" id="sebaran"></div>
+      <p class="label" id="sebaran-ket"></p>
+    </aside>
+  </div>
+</section>
+
+<!-- ====================== HALAMAN HADITS ====================== -->
+<section data-view="hadits" aria-labelledby="h-hadits">
+  <nav class="remah" aria-label="Lokasi"><a href="#beranda">Rak kitab</a> › <span id="remah-kitab"></span> › <span id="remah-no"></span></nav>
+  <div class="judul-hadits"><h1 id="h-hadits"></h1></div>
+  <div class="meta" id="meta-hadits"></div>
+
+  <article class="halaman">
+    <div class="lembar">
+      <div class="label">sanad · rantai periwayat <span style="text-transform:none;letter-spacing:0;font-family:var(--f-ui);font-weight:400">(lafaz periwayatan bertinta merah; sentuh untuk artinya)</span></div>
+      <p class="ar sanad" id="sanad"></p>
+      <div class="pemisah" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 0l2.6 6.3L21 3l-3.3 6.4L24 12l-6.3 2.6L21 21l-6.4-3.3L12 24l-2.6-6.3L3 21l3.3-6.4L0 12l6.3-2.6L3 3l6.4 3.3z"/></svg></div>
+      <div class="label">matan · isi hadits</div>
+      <p class="ar matan" id="matan"></p>
+      <div class="pemisah" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 0l2.6 6.3L21 3l-3.3 6.4L24 12l-6.3 2.6L21 21l-6.4-3.3L12 24l-2.6-6.3L3 21l3.3-6.4L0 12l6.3-2.6L3 3l6.4 3.3z"/></svg></div>
+      <div class="label">terjemahan · Lidwa Pusaka</div>
+      <p class="terjemah" id="terjemah"></p>
+      <div class="aksi">
+        <button id="salin-rujukan" type="button">Salin rujukan</button>
+        <button id="salin-arab" type="button">Salin teks Arab</button>
+        <a href="#metode">Laporkan kesalahan</a>
+      </div>
+      <p class="label" id="status-salin" aria-live="polite"></p>
+    </div>
+    <aside class="hamisy" aria-label="Catatan pinggir">
+      <section><h2>Derajat</h2><div id="derajat"></div></section>
+      <section><h2>Diriwayatkan juga oleh</h2><div class="jalur" id="jalur"></div></section>
+      <section><h2>Asal data</h2><div class="asal" id="asal"></div></section>
+    </aside>
+  </article>
+
+  <section class="rantai-wrap" aria-labelledby="h-rantai">
+    <header class="bagian" style="margin-top:0"><h2 id="h-rantai" style="color:var(--zamrud);font-size:1.7rem">Rantai sanad</h2></header>
+    <p style="color:var(--tinta-2);max-width:66ch;font-size:1rem">Dibaca dari atas: Rasulullah ﷺ menyampaikan kepada sahabat, lalu turun dari guru ke murid sampai ke penyusun kitab. Di antara dua nama tertulis lafaz yang dipakai murid saat menerima hadits.</p>
+    <ol class="rantai" id="rantai"></ol>
+    <p class="kotak-info" style="max-width:640px;margin:18px auto 0">Biodata dan penilaian tiap perawi (jarh wa ta'dil, mis. dari <i>Taqrib at-Tahdzib</i> karya Ibnu Hajar) belum dimuat. Bagian ini sengaja dikosongkan sampai datanya terverifikasi.</p>
+  </section>
+</section>
+
+<!-- ====================== CEK ====================== -->
+<section data-view="cek" aria-labelledby="h-cek">
+  <h1 id="h-cek" style="font-size:clamp(1.8rem,3.6vw,2.5rem);color:var(--zamrud);font-weight:800">Cek teks hadits yang beredar</h1>
+  <p style="color:var(--tinta-2);margin-top:8px;max-width:64ch">Tempel teks dari pesan berantai, poster, atau ceramah. Kami cari padanannya di kitab-kitab hadits dan memeriksa klaim “HR. …” di belakangnya.</p>
+  <div class="tab-kueri" role="tablist" aria-label="Contoh teks" style="margin-top:20px">
+    <button role="tab" id="tab-c0" aria-selected="true">Hadits niat</button>
+    <button role="tab" id="tab-c1" aria-selected="false">“Tuntutlah ilmu walau ke negeri Cina”</button>
+  </div>
+  <form class="kolom-cari" id="form-cek" style="margin-top:16px">
+    <label class="sembunyi" for="teks-cek">Teks yang ingin dicek</label>
+    <textarea id="teks-cek"></textarea>
+    <button class="tombol" type="submit">Cek</button>
+  </form>
+  <div id="vonis"></div>
+</section>
+
+<!-- ====================== METODE ====================== -->
+<section data-view="metode" aria-labelledby="h-metode">
+  <div class="prosa">
+    <h1 id="h-metode" style="font-size:clamp(1.8rem,3.6vw,2.5rem);color:var(--zamrud);font-weight:800">Cara kami menjaga kebenaran data</h1>
+    <p>Teman Hadits tidak menilai hadits sendiri. Kami mengumpulkan teks dari kitab, mencocokkannya antar sumber, dan menampilkan penilaian ulama apa adanya, atas nama ulama tersebut.</p>
+    <h2>Tingkat data</h2>
+    <ul id="metode-tingkat"></ul>
+    <h2>Yang tidak akan kami lakukan</h2>
+    <ul>
+      <li>Membuat “nilai akhir” sendiri bila para ulama berbeda pendapat. Semua penilaian ditampilkan berdampingan.</li>
+      <li>Menerjemahkan atau menilai hadits dengan AI.</li>
+      <li>Menampilkan hadits yang datanya rusak, terpotong, atau belum jelas nomornya. Data seperti itu masuk karantina.</li>
+      <li>Menyatakan sebuah hadits “tidak ada” hanya karena tidak ada di koleksi kami. Kami menyebut cakupan pencarian.</li>
+    </ul>
+    <h2>Sumber</h2>
+    <ul>
+      <li>Teks Arab bernomor standar dan penilaian ulama: <a href="https://github.com/fawazahmed0/hadith-api" rel="noopener">fawazahmed0/hadith-api</a> (Unlicense), commit <code>df57907</code>.</li>
+      <li>Teks Arab dan terjemah Indonesia: Ensiklopedi Hadits 9 Imam (Lidwa Pusaka) melalui carihadis.com dan <a href="https://github.com/irsyadulibad/hadits-database" rel="noopener">irsyadulibad/hadits-database</a> (MIT), commit <code>db43bda</code>.</li>
+    </ul>
+    <h2>Laporkan kesalahan</h2>
+    <p>Setiap halaman hadits akan punya tombol lapor yang membuka formulir berisi nomor riwayat. Laporan diperiksa terhadap kitab cetak sebelum data diubah, dan setiap perubahan tercatat.</p>
+  </div>
+</section>
+</main>
+
+<footer class="kaki">
+  <div class="wrap">
+    <p><b>Teman Hadits</b> adalah layanan umum tanpa iklan. Teks Arab: fawazahmed0/hadith-api. Terjemahan: Lidwa Pusaka via carihadis.com. Penilaian derajat selalu disertai nama ulama penilainya.</p>
+    <p>Teman Hadits menampilkan riwayat, bukan fatwa. Untuk hukum suatu perkara, tanyakan kepada ulama yang Anda percaya.</p>
+  </div>
+</footer>
+
+<script>
+const D = __DATA__;
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const fmt = n => Number(n).toLocaleString("id-ID");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const simpan = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+const baca = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+const NAMA_KITAB = Object.fromEntries(D.rak.map(k => [k.id, k.nama]));
+const PENDEK = { bukhari: "Bukhari", muslim: "Muslim", abudawud: "Abu Dawud", tirmidzi: "Tirmidzi", nasai: "Nasa'i", ibnumajah: "Ibnu Majah", malik: "Malik", ahmad: "Ahmad", darimi: "Darimi", syafii: "Syafi'i", riyadh: "Riyadhus Shalihin" };
+const KITAB_SHAHIH = new Set(["bukhari", "muslim"]);
+
+/* ---------- alat: harakat, ukuran, tema ---------- */
+const HARAKAT = /[ً-ْٰـ]/g;
+function terapkanHarakat() {
+  const on = $("#btn-harakat").getAttribute("aria-pressed") === "true";
+  $$(".ar").forEach(el => {
+    if (!el.dataset.asli) el.dataset.asli = el.innerHTML;
+    el.innerHTML = on ? el.dataset.asli : el.dataset.asli.replace(HARAKAT, "");
+  });
+}
+$("#btn-harakat").addEventListener("click", e => {
+  const b = e.currentTarget; b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") !== "true");
+  terapkanHarakat(); simpan("th-harakat", b.getAttribute("aria-pressed"));
+});
+let skala = parseFloat(baca("th-ar") || "1") || 1;
+const aturSkala = () => { document.documentElement.style.setProperty("--ar", skala); simpan("th-ar", skala); };
+$("#btn-besar").addEventListener("click", () => { skala = Math.min(1.6, +(skala + .1).toFixed(2)); aturSkala(); });
+$("#btn-kecil").addEventListener("click", () => { skala = Math.max(.8, +(skala - .1).toFixed(2)); aturSkala(); });
+const temaSimpan = baca("th-tema");
+if (temaSimpan) document.documentElement.dataset.theme = temaSimpan;
+$("#btn-tema").addEventListener("click", () => {
+  const gelapSekarang = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = gelapSekarang ? "light" : "dark";
+  simpan("th-tema", document.documentElement.dataset.theme);
+});
+
+/* ---------- komponen ---------- */
+function bukuBesar(pen, kitab) {
+  if (!pen || !pen.length) {
+    return KITAB_SHAHIH.has(kitab)
+      ? `<p class="tanpa-nilai">Kitab Shahih. Sumber data kami tidak memuat penilaian per hadits untuk kitab ini, dan kami tidak mengisinya sendiri.</p>`
+      : `<p class="tanpa-nilai">Belum ada penilaian ulama yang tercatat di sumber kami.</p>`;
+  }
+  return `<ul class="buku-besar">${pen.map(p => `<li class="k-${esc(p.kategori)}"><span class="siapa">${esc(p.penilai)}</span><span class="titik"></span><span class="hukum">${esc(p.hukum)}</span></li>`).join("")}</ul>`;
+}
+const lencana = t => `<span class="tk tk-${t}" title="${t === "A" ? "Teks Arab cocok di 2 sumber digital" : t === "B" ? "Baru 1 sumber digital" : "Karantina"}">${t === "K" ? "karantina" : "tingkat " + t}</span>`;
+
+/* ---------- BERANDA ---------- */
+$("#ringkas-data").textContent = `${fmt(D.terbit)} riwayat terbit · ${D.rak.length} kitab`;
+$("#cakupan").innerHTML = `Mencari di <b>${D.rak.filter(k => !k.karantina).length} kitab</b> · <b>${fmt(D.terbit)}</b> riwayat terbit · teks Arab dan terjemah Indonesia.`;
+const maks = Math.max(...D.rak.map(k => k.A + k.B));
+$("#rak").innerHTML = D.rak.map(k => {
+  const n = k.A + k.B, w = k.karantina ? 44 : Math.round(34 + 60 * Math.sqrt(n / maks));
+  const pita = k.penilai.length ? `<span class="pita-emas">${k.penilai.map(() => "<i></i>").join("")}</span>` : `<span class="pita-emas"></span>`;
+  return `<button class="punggung${k.karantina ? " karantina" : ""}" style="--w:${w}px" data-id="${k.id}" aria-pressed="false" aria-label="${esc(k.nama)}">${pita}<span class="judul">${esc(PENDEK[k.id])}</span></button>`;
+}).join("");
+function pilihKitab(id) {
+  $$("#rak .punggung").forEach(b => b.setAttribute("aria-pressed", b.dataset.id === id));
+  const k = D.rak.find(x => x.id === id);
+  $("#kartu-kitab").innerHTML = k.karantina
+    ? `<div><span class="label">dalam perbaikan</span><h3>${esc(k.nama)}</h3><p class="ar">${esc(k.arab)}</p><p style="margin-top:8px">${esc(k.alasan)}</p></div>
+       <dl><dt>Penyusun</dt><dd>${esc(k.penyusun)} (w. ${k.wafat} H)</dd><dt>Status</dt><dd>${lencana("K")} tidak ditampilkan di hasil pencarian</dd></dl>`
+    : `<div><span class="label">kitab</span><h3>${esc(k.nama)}</h3><p class="ar">${esc(k.arab)}</p><p style="margin-top:6px;color:var(--tinta-2)">${esc(k.penyusun)} (w. ${k.wafat} H)</p></div>
+       <dl class="num">
+         <dt>Riwayat terbit</dt><dd><b>${fmt(k.A + k.B)}</b></dd>
+         <dt>${lencana("A")}</dt><dd>${fmt(k.A)} · cocok di 2 sumber</dd>
+         <dt>${lencana("B")}</dt><dd>${fmt(k.B)} · baru 1 sumber</dd>
+         <dt>Karantina</dt><dd>${fmt(k.K)}</dd>
+         <dt>Ada penilaian</dt><dd>${fmt(k.dinilai)}${k.penilai.length ? " · " + k.penilai.map(esc).join(", ") : KITAB_SHAHIH.has(k.id) ? " · kitab Shahih" : " · belum ada data penilai"}</dd>
+       </dl>`;
+  terapkanHarakat();
+}
+$("#rak").addEventListener("click", e => { const b = e.target.closest(".punggung"); if (b) pilihKitab(b.dataset.id); });
+pilihKitab("bukhari");
+const ket = {
+  A: "Teks Arab cocok di dua sumber digital berbeda dan terjemahannya terpasang pada teks yang sama.",
+  B: "Baru ada di satu sumber digital, atau belum menemukan pasangan terjemahan yang pasti. Tetap tampil, dengan label.",
+  K: "Data kosong, terpotong, atau tersimpan per bab/halaman. Tidak tampil sampai diperbaiki."
+};
+$("#tingkat-grid").innerHTML = ["A", "B", "K"].map(t => `<div>${lencana(t)}<b>${fmt(D.tingkat[t] || 0)}</b><p>${ket[t]}</p></div>`).join("");
+$("#metode-tingkat").innerHTML = ["A", "B", "K"].map(t => `<li>${lencana(t)} <b class="num">${fmt(D.tingkat[t] || 0)}</b> riwayat. ${ket[t]}</li>`).join("");
+$("#mode-cari").addEventListener("click", () => { location.hash = "#cari"; });
+$("#mode-cek").addEventListener("click", () => { location.hash = "#cek"; });
+$("#form-beranda").addEventListener("submit", e => { e.preventDefault(); location.hash = "#cari"; });
+$$(".contoh a").forEach(a => a.addEventListener("click", () => {
+  if (a.dataset.tab) tabCari = +a.dataset.tab;
+  if (a.dataset.cek) tabCek = +a.dataset.cek;
+}));
+
+/* ---------- CARI ---------- */
+let tabCari = 0;
+function renderCari() {
+  $$("#cari [role=tab]").forEach((b, i) => b.setAttribute("aria-selected", i === tabCari));
+  const C = D.cari;
+  $("#q-cari").value = tabCari === 0 ? C.kueri : "hadits yang membolehkan makan babi";
+  $("#tafsir-kueri").innerHTML = `<span>Kami membaca:</span>
+    <span class="chip">babi</span><span>juga dicari sebagai</span><span class="chip"><span class="ar">خِنْزِير</span> khinzīr</span>
+    ${tabCari === 0 ? `<span>· kata <span class="chip">haram</span> <span class="chip">makan</span> dipakai untuk mengurutkan</span>`
+                    : `<span>· kata <span class="chip">membolehkan</span> dicari sebagai</span> ${C.kataBoleh.map(k => `<span class="chip">${esc(k)}</span>`).join("")}`}`;
+  const kitabAda = Object.keys(C.perKitab).length;
+  if (tabCari === 0) {
+    $("#catatan-cari").innerHTML = `<b>${fmt(C.total)} riwayat</b> di ${kitabAda} kitab menyebut babi. Teman Hadits menampilkan riwayat, bukan fatwa. Dalil utama haramnya daging babi ada di Al-Qur'an: QS. Al-Baqarah: 173, Al-Ma'idah: 3, Al-An'am: 145, dan An-Nahl: 115. Di bawah ini riwayat yang teks Arabnya memuat kata <span class="ar" style="font-size:1.15em">خنزير</span>, didahulukan yang juga menyebut haram dan makan.`;
+    $("#daftar-hasil").innerHTML = C.hasil.map(h => `
+      <li class="hasil">
+        <header><span class="rujukan">${esc(h.kitabNama)} <span class="num">no. ${esc(h.no)}</span>${h.noLidwa ? `<small class="num">Lidwa ${h.noLidwa}</small>` : ""}</span>${lencana(h.tingkat)}</header>
+        ${h.cuplikanId ? `<p class="id">${h.cuplikanId}</p>` : `<p class="tanpa-nilai">Terjemahan belum terpasang untuk nomor ini.</p>`}
+        <p class="ar">${h.cuplikanAr}</p>
+        <footer>${bukuBesar(h.penilaian, h.kitab)}</footer>
+      </li>`).join("");
+  } else {
+    $("#catatan-cari").innerHTML = `Pencarian kata tidak bisa membuktikan sesuatu <i>tidak ada</i>. Yang bisa kami tunjukkan: dari <b>${fmt(C.total)} riwayat</b> yang menyebut babi, <b>${C.boleh.length}</b> terjemahannya memuat kata “boleh” atau “halal”. Semuanya kami tampilkan di bawah, dengan kalimat sekitarnya, supaya Anda bisa membaca konteksnya sendiri.`;
+    $("#daftar-hasil").innerHTML = C.boleh.map(h => `
+      <li class="hasil">
+        <header><span class="rujukan">${esc(h.kitabNama)} <span class="num">no. ${esc(h.no)}</span></span>${lencana(h.tingkat)}</header>
+        <p class="id">${h.cuplikan}</p>
+        <footer>${bukuBesar(h.penilaian, h.id.split(":")[0])}</footer>
+      </li>`).join("");
+  }
+  const mx = Math.max(...Object.values(C.perKitab));
+  $("#sebaran").innerHTML = D.rak.filter(k => !k.karantina).map(k => {
+    const n = C.perKitab[k.id] || 0;
+    return `<div><span>${esc(PENDEK[k.id])}</span><span class="batang"><i style="width:${(n / mx * 100).toFixed(1)}%"></i></span><span class="n">${n}</span></div>`;
+  }).join("");
+  $("#sebaran-ket").textContent = `${fmt(C.total)} riwayat menyebut babi / خنزير`;
+  terapkanHarakat();
+}
+$$("#cari [role=tab]").forEach((b, i) => b.addEventListener("click", () => { tabCari = i; renderCari(); }));
+$("#form-cari").addEventListener("submit", e => e.preventDefault());
+
+/* ---------- HADITS ---------- */
+function renderHadits() {
+  const H = D.detail;
+  $("#remah-kitab").textContent = H.kitabNama; $("#remah-no").textContent = "No. " + H.no;
+  $("#h-hadits").innerHTML = `${esc(H.kitabNama)} <span class="num">no. ${esc(H.no)}</span>`;
+  const sig = Object.fromEntries(H.sighah.map(s => [s.k, s]));
+  $("#meta-hadits").innerHTML = `${lencana("A")}<span class="chip num">nomor Lidwa ${H.noLidwa}</span><span class="chip">teks Arab cocok 100% di 2 sumber</span><span class="chip">bab (nama dari sumber): ${esc(H.babSumber)}</span>`;
+  const s = document.createElement("div"); s.innerHTML = H.sanadHtml;
+  $$(".sg", s).forEach(el => { const g = sig[el.dataset.k]; if (g) { el.title = `${g.latin}: “${g.arti}”. ${g.ket}`; el.tabIndex = 0; } });
+  $("#sanad").innerHTML = s.innerHTML;
+  $("#matan").innerHTML = H.matnHtml;
+  $("#terjemah").innerHTML = esc(H.terjemah).replace(/\[([^\]]+)\]/g, '<span class="perawi">$1</span>');
+  const jalur = {};
+  H.jalur.forEach(j => (jalur[j.kitab] = jalur[j.kitab] || []).push(j));
+  $("#jalur").innerHTML = Object.entries(jalur).map(([k, js]) => `<div><span class="kitab">${esc(NAMA_KITAB[k])}</span><div class="nomor">${js.map(j => `<span title="kemiripan matan ${Math.round(j.kemiripan * 100)}%">${esc(j.no)}</span>`).join("")}</div></div>`).join("")
+    + `<p class="label" style="margin-top:4px">dicocokkan otomatis lewat kemiripan matan Arab ≥ 40%</p>`;
+  const dinilai = H.jalur.filter(j => j.penilaian.length);
+  $("#derajat").innerHTML = bukuBesar([], "bukhari")
+    + `<p style="margin:12px 0 6px;font:500 .9rem/1.4 var(--f-ui)">Penilaian ulama atas jalur lain hadits ini:</p>`
+    + dinilai.map(j => `<div style="margin-top:10px"><div class="label" style="margin-bottom:4px">${esc(PENDEK[j.kitab])} no. ${esc(j.no)}</div>${bukuBesar(j.penilaian, j.kitab)}</div>`).join("");
+  $("#asal").innerHTML = `<span>Teks Arab: fawazahmed0/hadith-api <code>df57907</code></span><span>Terjemah: Lidwa Pusaka via carihadis.com <code>db43bda</code></span><span>Kecocokan teks Arab 2 sumber: <b class="num">1,00</b></span>`;
+  $("#rantai").innerHTML = [...H.rantai].reverse().map((r, i, arr) => {
+    const nabi = r.peran === "Nabi";
+    // r.sighah = lafaz yang diucapkan perawi di bawahnya ketika meriwayatkan dari r.
+    const bawah = arr[i + 1];
+    const g = sig[r.sighah];
+    const mata = bawah && r.sighah ? `<div class="mata"><span>${esc(bawah.namaId.split(" ").slice(0, 3).join(" "))} menerima dari ${esc(r.namaId.split(" ").slice(0, 2).join(" "))} dengan lafaz</span><span class="ar">${esc(r.lafaz)}</span><em>${esc(g ? g.latin + ", “" + g.arti + "”" : "")}</em></div>` : "";
+    return `<li class="simpul${nabi ? " nabi" : ""}" style="animation-delay:${i * 70}ms">
+      <span class="manik" aria-hidden="true">${nabi ? "ﷺ" : i}</span>
+      <div class="orang"><span class="peran">${esc(nabi ? "Nabi" : r.peran === "penyusun kitab" ? "penyusun kitab" : r.peran === "sahabat" ? "sahabat" : "perawi ke-" + i)}</span><b>${esc(r.namaId)}</b><span class="ar">${esc(r.namaAr)}</span></div>
+      ${mata}</li>`;
+  }).join("");
+  terapkanHarakat();
+}
+async function salin(teks, pesan) {
+  try { await navigator.clipboard.writeText(teks); $("#status-salin").textContent = pesan; }
+  catch (e) { $("#status-salin").textContent = "Tidak bisa menyalin otomatis. Pilih teksnya lalu salin manual."; }
+}
+$("#salin-rujukan").addEventListener("click", () => salin(`HR. al-Bukhari no. 1 (penomoran Fath al-Bari). Teks: fawazahmed0/hadith-api; terjemah: Lidwa Pusaka.`, "Rujukan tersalin."));
+$("#salin-arab").addEventListener("click", () => salin($("#sanad").textContent + " " + $("#matan").textContent, "Teks Arab tersalin."));
+
+/* ---------- CEK ---------- */
+let tabCek = 0;
+function renderCek() {
+  $$("#cek [role=tab]").forEach((b, i) => b.setAttribute("aria-selected", i === tabCek));
+  const C = D.cek[tabCek];
+  $("#teks-cek").value = C.teks;
+  const langkah = `<div><div class="label" style="margin-bottom:8px">cara kami mencocokkan · kata kunci khas dan jumlah riwayat yang memuatnya</div><div class="langkah">${C.langkah.map(l => `<span class="chip${l.muncul ? "" : " nol"}">${esc(l.kata)} <b>${fmt(l.muncul)}</b></span>`).join("")}</div></div>`;
+  if (C.ditemukan) {
+    const grup = {};
+    C.keluarga.forEach(f => (grup[f.kitab] = grup[f.kitab] || []).push(f));
+    const nKitab = Object.keys(grup).length;
+    $("#vonis").innerHTML = `<section class="vonis">
+      <header><span class="stempel ok">DITEMUKAN</span><p>Teks ini cocok dengan hadits yang tercatat di <b>${nKitab} kitab</b>, dalam <b>${C.keluarga.length} riwayat</b>.</p></header>
+      <div class="isi">
+        <div class="klaim"><div class="label">klaim di teks Anda: “HR. Bukhari dan Muslim”</div>
+          ${C.klaimHasil.map(k => `<div><span class="tanda ${k.ada ? "ya" : "tidak"}">${k.ada ? "✓" : "✗"}</span><b>${esc(k.nama)}</b><span class="num">${k.ada ? "no. " + k.nomor.map(esc).join(", ") : "tidak ditemukan"}</span></div>`).join("")}
+          <p style="font:500 1rem/1.4 var(--f-ui);color:var(--terima)">Atribusi sesuai.</p></div>
+        ${langkah}
+        <div><div class="label" style="margin-bottom:10px">semua riwayat yang ditemukan</div><div class="keluarga">
+          ${Object.entries(grup).map(([k, fs]) => `<article><h4>${esc(NAMA_KITAB[k])}</h4><div class="nomor">${fs.map(f => f.id === "bukhari:1" ? `<a href="#hadits">${esc(f.no)}</a>` : `<span>${esc(f.no)}</span>`).join("")}</div>${bukuBesar(fs.find(f => f.penilaian.length)?.penilaian, k)}</article>`).join("")}
+        </div></div>
+      </div></section>`;
+  } else {
+    $("#vonis").innerHTML = `<section class="vonis">
+      <header><span class="stempel tidak">TIDAK DITEMUKAN</span><p>Kalimat ini <b>tidak ada</b> di ${D.rak.filter(k => !k.karantina).length} kitab yang kami muat (${fmt(D.terbit)} riwayat).</p></header>
+      <div class="isi">
+        ${langkah}
+        <p>Kata <b>“${esc(C.absen.join(", "))}”</b> tidak muncul dalam satu pun dari ${fmt(C.dicari)} terjemahan, dan <span class="ar" style="font-size:1.2em">${esc(C.arabDicek)}</span> muncul di <b>${C.arabMuncul}</b> teks Arab. Jadi kalimat ini bukan hadits dari kitab-kitab tersebut.</p>
+        <p style="color:var(--tinta-2)">Ini belum membuktikan kalimat tersebut palsu. Para ulama mencatat hadits palsu dalam kitab khusus (mis. <i>al-Maudhu'at</i>). Penilaian mereka akan tampil di bawah ini setelah datanya kami muat dan verifikasi.</p>
+        <div class="slot-kosong"><b>Catatan ulama hadits tentang kalimat ini</b><span>Belum tersedia di database. Bagian ini akan memuat nama ulama, hukumnya (mis. maudhu', batil, tidak ada asalnya), dan halaman kitab rujukannya.</span></div>
+      </div></section>`;
+  }
+  terapkanHarakat();
+}
+$$("#cek [role=tab]").forEach((b, i) => b.addEventListener("click", () => { tabCek = i; renderCek(); }));
+$("#form-cek").addEventListener("submit", e => e.preventDefault());
+
+/* ---------- rute ---------- */
+const RUTE = { beranda: () => {}, cari: renderCari, hadits: renderHadits, cek: renderCek, metode: () => {} };
+function rute() {
+  const r = (location.hash || "#beranda").slice(1);
+  const v = RUTE[r] ? r : "beranda";
+  $$("[data-view]").forEach(s => s.classList.toggle("aktif", s.dataset.view === v));
+  $$(".nav a").forEach(a => a.toggleAttribute("aria-current", a.getAttribute("href") === "#" + v) || a.setAttribute("aria-current", "page"));
+  $$(".nav a").forEach(a => { if (a.getAttribute("href") === "#" + v) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+  RUTE[v]();
+  window.scrollTo({ top: 0 });
+}
+addEventListener("hashchange", rute);
+if (baca("th-harakat") === "false") $("#btn-harakat").setAttribute("aria-pressed", "false");
+aturSkala();
+rute();
+</script>
