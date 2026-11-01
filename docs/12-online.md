@@ -10,7 +10,7 @@ Langkah yang memerlukan akun Cloudflare (login, membuat database, membayar, doma
 
 ## Batas paket Cloudflare yang relevan
 
-Angka di bawah ini diambil dari dokumentasi resmi lewat hasil pencarian. Halaman developers.cloudflare.com sendiri tidak bisa dibuka dari lingkungan build. **Periksa lagi halaman resminya sebelum memilih paket**: [harga D1](https://developers.cloudflare.com/d1/platform/pricing/), [batas Workers](https://developers.cloudflare.com/workers/platform/limits/), [harga Workers](https://developers.cloudflare.com/workers/platform/pricing/).
+Angka di bawah ini diambil dari dokumentasi resmi lewat hasil pencarian (batas 500 MB per database paket gratis dicek ulang November 2026). Halaman developers.cloudflare.com sendiri tidak bisa dibuka dari lingkungan build. **Periksa lagi halaman resminya sebelum memilih paket**: [harga D1](https://developers.cloudflare.com/d1/platform/pricing/), [batas Workers](https://developers.cloudflare.com/workers/platform/limits/), [harga Workers](https://developers.cloudflare.com/workers/platform/pricing/).
 
 | | Workers Free | Workers Paid (US$5/bulan) |
 |---|---|---|
@@ -18,7 +18,7 @@ Angka di bawah ini diambil dari dokumentasi resmi lewat hasil pencarian. Halaman
 | CPU per permintaan | 10 ms (waktu menunggu D1 **tidak** dihitung) | sampai 5 menit |
 | D1 baris dibaca | 5 juta/hari | 25 miliar/bulan termasuk |
 | D1 baris ditulis | **100.000/hari** | 50 juta/bulan termasuk |
-| D1 penyimpanan | 5 GB total per akun; **per database seingat kami 500 MB** (belum bisa dipastikan dari sini, cek halaman batas D1) | 10 GB per database |
+| D1 penyimpanan | 5 GB total per akun; **500 MB per database** | 10 GB per database |
 
 Bila batas harian D1 paket gratis habis, D1 **berhenti melayani semua kueri** sampai 00:00 UTC.
 
@@ -102,7 +102,7 @@ Catatan: angka ini dari Node di mesin pengembangan, bukan dari Cloudflare. Sesud
 ## Rekomendasi jalur terbit
 
 1. **Impor awal memakai Workers Paid selama 1 bulan** (US$5, ±Rp 85 ribu). Impor penuh menulis ±564 ribu baris. Di paket gratis itu butuh ±6 hari, dan setiap kali batas harian habis, situs ikut mati sampai 00:00 UTC.
-2. Sesudah impor dan pengecekan, **kembali ke paket gratis.** Ukuran 275 MB masih di bawah batas per database paket gratis (seingat kami 500 MB; pastikan di halaman batas D1).
+2. Sesudah impor dan pengecekan, **kembali ke paket gratis.** Ukuran 275 MB masih di bawah batas 500 MB per database paket gratis.
 3. **Pembaruan data besar berikutnya** (impor ulang penuh) juga sebaiknya dilakukan dalam bulan berbayar. Pembaruan kecil bisa langsung dilakukan di paket gratis.
 
 Sisa tulisan terbesar: tabel `riwayat` sendiri beserta 3 indeksnya (±310 ribu), tabel bayangan pencarian teks (±97 ribu), dan `kata_df` (±47 ribu). Semuanya dipakai langsung oleh halaman, jadi tidak dipangkas.
@@ -110,6 +110,16 @@ Sisa tulisan terbesar: tabel `riwayat` sendiri beserta 3 indeksnya (±310 ribu),
 ## Langkah menerbitkan (dari komputer pemilik proyek)
 
 Prasyarat: Node.js ≥ 20, Python 3, repo ini, dan data sudah dibangun (`bash pipeline/run_all.sh`).
+
+Membangun data dari nol mengunduh ±300 MB sumber, termasuk unduhan HadeethEnc yang sengaja dibatasi (≤ 3 permintaan/detik), lalu menjalankan seluruh pipeline dan ujinya. Hasilnya `build/d1/` (9 berkas SQL, ±290 MB). Waktu totalnya belum diukur ulang; siapkan beberapa jam dan koneksi yang stabil.
+
+**Jalur lain: terbit dari sesi Claude Code di cloud.** Bila tidak ingin membangun data di komputer sendiri:
+1. Buat API token Cloudflare dengan izin *Workers Scripts: Edit* dan *D1: Edit* (Cloudflare → My Profile → API Tokens), lalu catat *Account ID* Anda.
+2. Simpan keduanya sebagai rahasia lingkungan, bukan di chat: `CLOUDFLARE_API_TOKEN` dan `CLOUDFLARE_ACCOUNT_ID`.
+3. Izinkan domain `api.cloudflare.com` di pengaturan *Network access* lingkungan.
+4. Mulai sesi baru. Sesi itu membangun data, membuat database, mengimpor, menerbitkan, dan menjalankan uji. Pembayaran Workers Paid dan domain tetap Anda lakukan sendiri di dashboard.
+
+Token itu bisa mengubah Worker dan database di akun Anda. Cabut token itu di dashboard setelah situs terbit.
 
 1. Buat akun Cloudflare (gratis) di <https://dash.cloudflare.com/sign-up>.
 2. Masuk ke folder situs:
@@ -158,7 +168,7 @@ Prasyarat: Node.js ≥ 20, Python 3, repo ini, dan data sudah dibangun (`bash pi
 | 5 | Data **Ifta' Sunnah** | Hanya untuk uji, tidak diterbitkan | Tidak perlu tindakan |
 | 6 | **Glosarium** nama kitab & **daftar ucapan populer** | Ditandai "belum ditinjau" di situs | Sebaiknya ditinjau orang yang paham hadits sebelum diumumkan luas |
 | 7 | **Domain** | Belum | Untuk `.my.id`, registrar PANDI biasanya meminta identitas WNI. Alternatif: `.com` atau `.id` |
-| 8 | **Privasi** | Tidak ada analitik pihak ketiga dan tidak ada cookie | Teks yang ditempel di Cek Hadits ada di URL dan bisa tersimpan di cache tepi selama 1 jam. Sebutkan hal ini di halaman Metode, atau ubah Cek Hadits menjadi POST bila perlu |
+| 8 | **Privasi** | Sudah dijelaskan di halaman Metode (#privasi) | Tidak ada cookie, iklan, atau analitik pihak ketiga. Teks Cek Hadits dan kata pencarian ada di alamat halaman dan bisa tersimpan di cache Cloudflare ±1 jam; pengguna diminta tidak menempel data pribadi |
 
 ## Anggaran tahun pertama (batas Rp 500.000)
 

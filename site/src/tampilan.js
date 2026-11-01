@@ -486,6 +486,8 @@ export function halamanMetode({ info }) {
       <li>Tema dan terjemah yang ditinjau: HadeethEnc.com, ditampilkan tanpa diubah.</li>
       <li>Versi data: ${sumber.map(([s, c]) => `<code>${esc(s)}@${esc(c)}</code>`).join(", ")}, dibangun ${esc(info.dibangun)}.</li>
     </ul>
+    <h2 id="privasi">Privasi</h2>
+    <p>Situs ini tidak memakai cookie, iklan, atau analitik pihak ketiga. Teks yang Anda tempel di Cek Hadits dan kata yang Anda cari dikirim sebagai bagian alamat halaman, supaya hasilnya bisa dibagikan. Karena itu, hasilnya bisa tersimpan di cache server Cloudflare selama sekitar 1 jam. Jangan menempel data pribadi di kolom itu.</p>
     <h2>Laporkan kesalahan</h2>
     <p>Setiap halaman hadits punya tombol “Laporkan kesalahan”. Laporan diperiksa terhadap kitab cetak sebelum data diubah, dan setiap perubahan tercatat di riwayat kode.</p>
   </div>`;
