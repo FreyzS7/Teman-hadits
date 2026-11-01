@@ -97,3 +97,10 @@ class KoreksiCetak(unittest.TestCase):
         self.assertEqual(judul("bukhari:3659")[1], "باب")
         self.assertEqual(judul("bukhari:3678")[1], "باب")
         self.assertNotEqual(judul("bukhari:3679")[1], "باب")      # bab 6: مناقب عمر
+
+    def test_bab_tanpa_judul_lain_dari_fihris(self):
+        # fihris cetak hlm. 185 (dilihat langsung): "باب: حدثنا ابن أبي مريم", "باب: حدثنا معاذ بن فضالة"
+        for no in (18, 435, 437, 745, 797, 799, 899, 900):
+            self.assertEqual(judul(f"bukhari:{no}")[1], "باب", no)
+        for no in (17, 19, 434, 438, 744, 746, 796, 800, 898, 901):
+            self.assertNotEqual(judul(f"bukhari:{no}")[1], "باب", no)

@@ -87,10 +87,36 @@ Scan ini: archive.org `alfirdwsiy2018_gmail_2698_201808`. Teks OCR-nya terlalu r
 - **Kesalahan ditemukan.** Fihris mencatat **bab tanpa judul** («باب: حدثنا الحميدي ومحمد بن عبد الله») antara bab «لو كنت متخذا خليلا» dan «مناقب عمر». Teks digital OpenITI **melewatkan** baris «باب» itu. Akibatnya, hadits no. 3659–3678 tampil di bawah judul «لو كنت متخذا خليلا», padahal al-Bukhari menaruhnya di bab tersendiri. Sudah dikoreksi lewat `pipeline/koreksi_bab.json`, yang mencantumkan buktinya. Halaman hadits kini menampilkan «باب (bab tanpa judul) · dikoreksi dengan kitab cetak». Diuji di `test_bab.py`.
 - **Judul kitab berbeda.** Fihris menulis «كتاب **فضائل** أصحاب النبي ﷺ», teks digital «كتاب أصحاب النبي». Ini belum dikoreksi, karena perlu dilihat di halaman isinya (fihris kadang menyeragamkan judul).
 
+### Fihris Bukhari seluruh juz: mencari bab tanpa judul yang terlewat
+
+Edisi Dar Thauq an-Najah mencatat setiap bab tanpa judul di fihrisnya sebagai «باب: حدثنا <perawi pertama>», tepat sebelum bab bertajuk berikutnya. Fihris (leaf 4–80 di scan) OCR-nya cukup terbaca, sehingga pencocokan bisa otomatis:
+
+1. Temukan pola «باب: حدثنا X» lalu judul bab berikutnya di teks OCR fihris. Hasilnya 33 entri.
+2. Di data kita, cari bab bertajuk itu, bergerak maju sesuai urutan kitab.
+3. Di bab tepat sebelumnya, cari hadits yang diawali «حدثنا X». Hanya diterima bila hadits seperti itu **tepat satu**.
+4. Bila hadits itu belum berada di bab tanpa judul, bab tersebut terlewat di teks digital.
+
+| Hasil | Jumlah |
+|---|---:|
+Skrip: `pipeline/cek_fihris_bukhari.py` (mengunduh OCR fihris sendiri; hasil di `build/cek_fihris_bukhari.json`).
+
+| Hasil skrip | Jumlah | Tindakan |
+|---|---:|---|
+| Bab tanpa judul sudah benar di data kita | 3 | — |
+| Kandidat terlewat | 6 | **5 dikoreksi** (no. 18; 435–437; 745; 797–799; 899–900). **1 dibuang**: 7122–7131, karena no. 7122 justru hadits pertama «باب ذكر الدجال» |
+| Ragu (perawi tidak ditemukan unik di bab sebelumnya) | 6 | tidak dikoreksi, kecuali 3659–3678 yang sudah dikoreksi dari pemeriksaan visual (OCR membaca «عبد الله», teksnya «عبيد الله») |
+| Judul bab berikutnya tidak terbaca di OCR | 10 | perlu dilihat manual |
+
+**Dua temuan dilihat langsung di gambar fihris** (hlm. 185, Kitab al-Adzan):
+- bab 89 «ما يقول بعد التكبير» → **bab 90 «بابٌ: حدثنا ابن أبي مريم»** → bab 91 «رفع البصر إلى الإمام في الصلاة»;
+- bab 125 «فضل اللهم ربنا ولك الحمد» → **bab 126 «بابٌ: حدثنا معاذ بن فضالة»** → bab 127 «الاطمأنينة حين يرفع رأسه من الركوع».
+
+Keenam koreksi beserta buktinya ada di `pipeline/koreksi_bab.json` dan diuji di `test_bab.py`, termasuk bahwa hadits tetangganya tidak ikut berpindah.
+
 ## Batasan dan yang belum
 
 - **Nomor entri belum diverifikasi.** OCR mengacaukan angka Arab-Hindi di kolom nomor.
 - **Kasyf al-Khafa'** hanya 11 dari 40 entri yang ditemukan, karena OCR cetakan 1351 H sangat rusak.
 - **Teks hadits** (Bukhari, Muslim, dst.) belum dibandingkan dengan cetakan. Scan Bukhari di archive.org tidak punya OCR. Teks hadits saat ini diverifikasi dengan cara lain: dua sumber digital yang sepakat (tingkat A) dan uji silang atribusi.
 - **Teks dan nomor hadits Bukhari** belum dicek visual satu per satu. Halamannya harus dicari manual di scan (OCR-nya tidak bisa dipakai untuk mencari), atau dengan scan lain yang OCR-nya lebih baik.
-- **Bab tanpa judul lain** yang mungkin juga terlewat di teks digital belum diperiksa. Teks digital Bukhari punya 93 baris «باب» tanpa judul; perlu dibandingkan dengan fihris cetak per juz.
+- **Bab tanpa judul** yang belum terjangkau pencocokan otomatis: 6 entri ragu dan 10 entri dengan judul berikutnya yang tak terbaca OCR. Ini perlu dilihat manual di gambar fihris. Daftarnya dibuat ulang oleh skrip pencocokan.
