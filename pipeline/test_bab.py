@@ -187,3 +187,13 @@ class Penguraian(unittest.TestCase):
         # fihris menyingkat "غرز الخشب في الجدار", halaman isi = teks digital: tidak dikoreksi
         cara = q("SELECT cara FROM riwayat_bab WHERE bab_ar = 'باب غرز الخشب في جدار الجار'")
         self.assertTrue(cara and all(c != "koreksi-cetak" for (c,) in cara))
+
+    def test_judul_bab_baris_biasa_ibnu_majah(self):
+        # 121 judul bab Ibnu Majah ditulis "# باب ..." (bukan "### | باب"); fihris cetakan al-Halabi memuatnya
+        self.assertEqual(judul("ibnumajah:639")[1], "باب النهي عن إتيان الحائض")
+        self.assertEqual(judul("ibnumajah:638")[1], "باب ما للرجل من امرأته إذا كانت حائضا")
+        self.assertEqual(judul("ibnumajah:690")[1], "باب وقت صلاة العشاء")              # "# باب / # وقت / # صلاة / # العشاء"
+        self.assertEqual(judul("ibnumajah:1404")[1],
+                         "باب ما جاء في فضل الصلاة في المسجد الحرام ومسجد النبي صلى الله عليه وسلم")
+        n = q("SELECT count(DISTINCT kitab_ar || bab_ar) FROM riwayat_bab WHERE riwayat_id LIKE 'ibnumajah:%'")[0][0]
+        self.assertGreater(n, 1450)                                          # dulu 1.415 judul berbeda

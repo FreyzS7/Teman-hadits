@@ -180,6 +180,14 @@ Contoh koreksi: hadits 1841 dulu berjudul «في الإمام إذا أمر بت
 
 Batasan: halaman fihris 2–4 (Muqaddimah dan Kitab al-Iman bab 1–18) tidak ada di scan ini, jadi bagian itu belum dicek. Judul yang OCR-nya cocok ≥ 60% kata dianggap sama; perbedaan kecil di dalamnya (mis. satu kata) mungkin belum tertangkap.
 
+### Sunan Ibnu Majah: fihris Fu'ad 'Abd al-Baqi (cetakan al-Halabi)
+
+Teks digital Ibnu Majah kita adalah cetakan Dar Ihya' al-Kutub al-'Arabiyyah (al-Halabi), tahqiq Fu'ad 'Abd al-Baqi. Scan cetakan yang sama ada di archive.org (`SunanIbnMajaHalabi`). Fihrisnya di akhir jilid 1 (leaf 689–717) dan jilid 2 (leaf 810–845); halaman-halamannya dibaca dengan Tesseract dan disejajarkan seperti untuk Muslim.
+
+- **Temuan utama: 121 bab hilang di data kita.** Di teks digital, 121 judul bab ditulis sebagai baris biasa («# باب النهي عن إتيان الحائض»), bukan baris judul («### | باب …»). Kadang judulnya terpotong ke beberapa baris («# باب / # وقت / # صلاة / # العشاء»). Parser hanya mengenali baris judul, jadi **346 hadits** tampil di bawah judul bab sebelumnya. Contoh: no. 639 dulu berjudul «ما للرجل من امرأته إذا كانت حائضا», padahal babnya «النهي عن إتيان الحائض». No. 690 dulu «وقت صلاة المغرب», padahal «وقت صلاة العشاء». Kini parser membaca baris itu (khusus Ibnu Majah; di kitab lain baris serupa adalah teks biasa).
+- Buktinya: sebelum perbaikan, 114 entri fihris tidak berpasangan dengan bab mana pun di data; sesudahnya tinggal 7, dan ketujuhnya sampah OCR.
+- Judul: judul yang OCR-nya tidak cocok dilihat langsung di 3 halaman dengan kandidat terbanyak (±25 judul, mis. Kitab ath-Thibb dan awal Kitab at-Tijarat). Semuanya sama dengan data; perbedaannya hanya salah OCR. Judul lain belum dilihat satu per satu.
+
 ## Batasan dan yang belum
 
 - **Nomor entri belum diverifikasi.** OCR mengacaukan angka Arab-Hindi di kolom nomor.

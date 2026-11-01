@@ -113,6 +113,9 @@ def urai(path, kid=None):
     # "### | باب" lalu judulnya di baris "# ..." berikutnya (gaya teks digital Bukhari). Bab tanpa judul sungguhan
     # langsung diikuti sanad ("حدثنا ..."), jadi baris pertama yang BUKAN awal sanad adalah judul bab itu.
     tunggu_judul = False
+    # Ibnu Majah: 121 judul bab ditulis sebagai baris biasa "# باب ..." (bukan "### | باب"), kadang terpotong ke
+    # beberapa baris ("# باب" / "# وقت" / "# صلاة" / "# العشاء"). judul_terbuka = baris pendek berikutnya ikut judul.
+    judul_terbuka = False
 
     def tutup():
         if teks:
@@ -123,6 +126,7 @@ def urai(path, kid=None):
         if baris.startswith("#META#") or baris.startswith("######"):
             continue
         if baris.startswith("### "):
+            judul_terbuka = False
             m = re.match(r"^### (\|+|\$)\s*(.*)$", baris)
             if not m:
                 continue
@@ -192,6 +196,18 @@ def urai(path, kid=None):
             if mode_tahqiq:
                 tahqiq.append(_SAMPAH.sub(" ", isi).strip())
                 continue
+            if kid == "ibnumajah":
+                kal = norm_ar(_SAMPAH.sub(" ", isi)).strip()
+                if baris.startswith("# ") and re.match(r"^باب(?:\s|:|$)", kal) and len(kal.split()) <= 40:
+                    tutup()
+                    teks, tahqiq, no = [], [], None
+                    bab = bersihkan_judul(_SAMPAH.sub(" ", isi))
+                    judul_terbuka = True
+                    continue
+                if judul_terbuka and kal and not _AWAL_SANAD.match(kal) and len(kal.split()) <= 12:
+                    bab = bersihkan_judul(bab + " " + _SAMPAH.sub(" ", isi))
+                    continue
+                judul_terbuka = False
             if (kid == "bukhari" and baris.startswith("# ") and kitab and "تفسير" in kitab
                     and re.match(r"^سوره\s", norm_ar(_SAMPAH.sub(" ", isi))) and len(norm_ar(isi).split()) <= 14):
                 # Kitab at-Tafsir: judul surah ditulis sebagai baris biasa ("# سورة إذا جاء نصر الله") dan bab tanpa

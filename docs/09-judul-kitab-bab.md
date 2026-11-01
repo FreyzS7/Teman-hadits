@@ -37,6 +37,7 @@ Nomor hadits **tidak dipakai** saat mencocokkan menurut isi (kolom "Nomor sama" 
 - Muslim: baris sanad pendek («### $ حدثنا قتيبة …», ≤ 12 kata) dulu terbaca sebagai judul bab, sehingga 128 riwayat berjudul «وحدثني محمد بن حاتم…». Kini baris yang diawali حدثنا/أخبرنا/… adalah awal hadits.
 - Tirmidzi: penanda riwayat tambahan «(م ٢) - …» dan potongan baris akibat penanda catatan kaki («### || (١) عمرو بن نفيل رضي الله عنه») terbaca sebagai judul bab. Judul bab Tirmidzi selalu diawali «باب»/«ما جاء», selain itu kini menjadi lanjutan teks. Pencocokan Tirmidzi naik dari 3.695 ke 3.872 riwayat.
 - Ibnu Majah: «باب حدثنا سويد بن سعيد» (gaya fihris) kini «باب» (bab tanpa judul).
+- Ibnu Majah: 121 judul bab ditulis sebagai baris biasa «# باب …» (kadang terpotong ke beberapa baris) dan dulu terlewat, sehingga 346 hadits tampil di bawah bab sebelumnya. Kini dikenali (diverifikasi dengan fihris cetakan al-Halabi, lihat docs/13).
 - Muslim: 59 judul bertanda «*» («### || * باب …») adalah tambahan teks digital, tidak ada di cetakan Fu'ad 'Abd al-Baqi (dibuktikan dengan fihris dan halaman isinya, lihat docs/13). Kini diabaikan; haditsnya tetap di bab cetakan.
 
 Selisih nomor Bukhari yang tersisa kebanyakan +1. Penyebabnya, dua nomor di edisi Dar Thauq an-Najah berada dalam satu blok, sehingga bab dan kitabnya tetap benar.

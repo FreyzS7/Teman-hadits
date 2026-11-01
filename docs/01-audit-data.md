@@ -59,7 +59,7 @@ Lihat `docs/09-judul-kitab-bab.md`. Tingkat di tabel "Per kitab" di atas adalah 
 | abudawud | — | 5264/5272 | 5169 | 5262/5263 | 5246/5258 | 0 |
 | tirmidzi | — | 3872/3924 | 2875 | 3864/3871 | 3812/3827 | 0 |
 | nasai | — | 5672/5679 | 5572 | 5664/5671 | 5637/5654 | 0 |
-| ibnumajah | — | 4334/4338 | 3971 | 4331/4333 | 4317/4327 | 0 |
+| ibnumajah | — | 4334/4338 | 3970 | 4331/4333 | 4317/4326 | 0 |
 | malik | — | 1827/1829 | 1813 | 1826/1826 | — | 0 |
 | ahmad | ar-Risalah (tahqiq Syu'aib al-Arna'uth dkk.) | 25855/26363 | 23247 | 25781/25854 | — | 0 |
 | darimi | Dar al-Mughni (tahqiq Husain Salim Asad) | 3267/3367 | 2891 | 3265/3266 | — | 2823 |
