@@ -72,9 +72,15 @@ for k, n in beda.most_common():
 w("")
 
 w("## Temuan kualitas data\n")
-w("- **Riyadhus Shalihin** (2 berkas) dikarantina: satu baris = satu *bab* (372 baris, versi Indonesia, "
-  "penuh HTML) atau satu *potongan halaman* (850 baris, versi Arab tahqiq Mahir Yasin al-Fahl, kadang "
-  "terpotong di tengah hadits, terjemah kosong). Perlu disegmentasi ulang per nomor hadits (1–1896) sebelum terbit.")
+ry_path = os.path.join(BUILD, "riyadh.sqlite")
+if os.path.exists(ry_path):
+    ri = dict(sqlite3.connect(ry_path).execute("SELECT kunci, nilai FROM info"))
+    w(f"- **Riyadhus Shalihin** dipecah ulang per hadits oleh `pipeline/riyadh.py` (lihat `docs/08-riyadhus-shalihin.md`): "
+      f"{ri['hadits_arab']} hadits; terjemah terpasang pasti {ri['terjemah_pasti']}; terhubung ke sumber {ri['punya_sumber']}; "
+      f"uji silang atribusi an-Nawawi {ri['uji_silang_cocok']}/{ri['uji_silang_dicek']}. "
+      "Berkas versi Arab tahqiq al-Fahl (850 potongan halaman) belum dipakai.")
+else:
+    w("- **Riyadhus Shalihin** belum diproses (jalankan `pipeline/riyadh.py`).")
 w("- Penomoran Lidwa **berbeda** dari penomoran standar (mis. Bukhari Lidwa 7.008 vs standar 7.563; "
   "Muslim 5.362 vs 7.563). Situs memakai nomor standar sebagai alamat utama dan menampilkan nomor Lidwa sebagai pembanding.")
 w("- Teks identik di nomor berbeda **tidak** dianggap rusak: al-Bukhari dan penyusun lain memang mengulang "

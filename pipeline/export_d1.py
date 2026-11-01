@@ -26,18 +26,20 @@ from common import BUILD, DB_PATH, KITAB, akar_ar, norm_ar, norm_id
 OUT = os.path.join(BUILD, "d1")
 MAKS_PERNYATAAN = 90_000      # D1 membatasi panjang satu pernyataan SQL (~100 KB)
 MAKS_BERKAS = 40_000_000
+MAKS_BARIS = 500              # baris per INSERT; VALUES majemuk yang terlalu panjang -> SQLITE_NOMEM di D1 lokal
 
 SKEMA = """
 DROP TABLE IF EXISTS info; DROP TABLE IF EXISTS kitab; DROP TABLE IF EXISTS bab; DROP TABLE IF EXISTS riwayat;
 DROP TABLE IF EXISTS penilaian; DROP TABLE IF EXISTS mirip; DROP TABLE IF EXISTS kata_df; DROP TABLE IF EXISTS cari;
 DROP TABLE IF EXISTS tema; DROP TABLE IF EXISTS he_hadits; DROP TABLE IF EXISTS he_tema; DROP TABLE IF EXISTS he_riwayat;
+DROP TABLE IF EXISTS riyadh_info; DROP TABLE IF EXISTS sumber;
 CREATE TABLE info (kunci TEXT PRIMARY KEY, nilai TEXT);
 CREATE TABLE kitab (
   id TEXT PRIMARY KEY, urut INT, nama TEXT, nama_arab TEXT, penyusun TEXT, wafat_h INT, sistem_nomor TEXT,
   jumlah_lidwa INT, jumlah_standar INT, terbit INT, tingkat_a INT, tingkat_b INT, karantina INT, dinilai INT,
   penilai TEXT
 );
-CREATE TABLE bab (kitab_id TEXT, no INT, nama TEXT, jumlah INT, n_awal INT, PRIMARY KEY (kitab_id, no));
+CREATE TABLE bab (kitab_id TEXT, no INT, nama TEXT, jumlah INT, n_awal INT, nama_ar TEXT, PRIMARY KEY (kitab_id, no));
 CREATE TABLE riwayat (
   n INTEGER PRIMARY KEY, id TEXT UNIQUE, kitab_id TEXT, slug TEXT, urut INT, no_tampil TEXT,
   no_standar TEXT, no_arab TEXT, no_lidwa INT, bab_no INT, arab TEXT, terjemah TEXT, rantai_json TEXT,
@@ -63,6 +65,11 @@ CREATE INDEX ix_he_tema ON he_tema (tema_id);
 CREATE TABLE he_riwayat (he_id TEXT, n INT, skor REAL);
 CREATE INDEX ix_he_riwayat_n ON he_riwayat (n);
 CREATE INDEX ix_he_riwayat_he ON he_riwayat (he_id);
+-- Riyadhus Shalihin: kitab himpunan (an-Nawawi menyebut sumbernya); sumber = tautan ke riwayat di kitab asal
+CREATE TABLE riyadh_info (n INTEGER PRIMARY KEY, atribusi_ar TEXT, kitab_atribusi TEXT, catatan_ar TEXT, no_terjemah INT);
+CREATE TABLE sumber (a INT, b INT, skor REAL, kitab_disebut INT, sahabat_sama INT, peringkat INT);
+CREATE INDEX ix_sumber_a ON sumber (a);
+CREATE INDEX ix_sumber_b ON sumber (b);
 """
 
 # Stem Indonesia ringan untuk tabel frekuensi kata (dipakai fitur "cek teks"); harus sama dengan site/src/teks.js
@@ -78,7 +85,10 @@ def sql_val(v):
         return "NULL"
     if isinstance(v, (int, float)):
         return repr(v)
-    return "'" + str(v).replace("'", "''") + "'"
+    s = str(v).replace("\r\n", "\n").replace("\r", "\n")
+    # Baris baru di dalam literal membingungkan pemecah pernyataan `wrangler d1 execute`;
+    # tulis sebagai char(10) supaya isi teks tetap sama persis.
+    return " || char(10) || ".join("'" + bagian.replace("'", "''") + "'" for bagian in s.split("\n"))
 
 
 class Penulis:
@@ -108,7 +118,7 @@ class Penulis:
         buf, pjg = [], len(kepala)
         for b in baris:
             v = "(" + ",".join(sql_val(x) for x in b) + ")"
-            if buf and pjg + len(v.encode("utf8")) + 2 > MAKS_PERNYATAAN:
+            if buf and (pjg + len(v.encode("utf8")) + 2 > MAKS_PERNYATAAN or len(buf) >= MAKS_BARIS):
                 self.tulis(kepala + ",".join(buf) + ";\n")
                 buf, pjg = [], len(kepala)
             buf.append(v)
@@ -176,13 +186,55 @@ def main():
         nama = " ".join(json.loads(rantai)) if rantai else ""
         data_cari.append((n, na, akar_ar(na), norm_id(terj), norm_id(nama)))
         if babno is not None:
-            b = bab.setdefault((kid, babno), [babnama, 0, n])
+            b = bab.setdefault((kid, babno), [babnama, 0, n, None])
             b[1] += 1
+
+    # --- Riyadhus Shalihin (build/riyadh.sqlite, dari pipeline/riyadh.py) -------------------------
+    ry_path = os.path.join(BUILD, "riyadh.sqlite")
+    data_ry_info, data_sumber, ry_kitab, ry_info = [], [], None, {}
+    if os.path.exists(ry_path):
+        ry = sqlite3.connect(ry_path)
+        bab_ry = {no: (ar, idn) for no, ar, idn in ry.execute("SELECT no, nama_ar, nama_id FROM riyadh_bab")}
+        sumber_ry = collections.defaultdict(list)
+        for u, rid, sk, kd, sh, pk in ry.execute("SELECT urut, riwayat_id, skor, kitab_disebut, sahabat_sama, peringkat FROM riyadh_sumber"):
+            sumber_ry[u].append((rid, sk, kd, sh, pk))
+        n = len(rows)
+        hit = collections.Counter()
+        for u, no, babno, arab, catatan, atr, katr, terj, noter, st in ry.execute(
+                "SELECT urut, no, bab_no, arab, catatan_ar, atribusi_ar, kitab_atribusi, terjemah, no_terjemah, "
+                "status_terjemah FROM riyadh ORDER BY no"):
+            n += 1
+            src_ok = any(kd for _, _, kd, _, _ in sumber_ry[u])
+            pasti = st == "pasti"
+            tk = "A" if (pasti and src_ok) else "B"
+            alasan = "; ".join(x for x in [
+                None if pasti else "terjemah belum terpasang: pasangannya di sumber terjemah tidak pasti",
+                None if sumber_ry[u] else "sumbernya belum ditemukan di kitab-kitab kami",
+                None if (src_ok or not sumber_ry[u]) else "sumber yang ditemukan bukan kitab yang disebut an-Nawawi"] if x) or None
+            hit[tk] += 1
+            data_riwayat.append((n, f"riyadh:{no}", "riyadh", str(no), no, str(no), str(no), None, None, babno, arab,
+                                 terj if pasti else None, None, None, tk, alasan))
+            na = norm_ar(arab)
+            data_cari.append((n, na, akar_ar(na), norm_id(terj if pasti else ""), ""))
+            data_ry_info.append((n, atr, katr, catatan or None, noter if pasti else None))
+            for rid, sk, kd, sh, pk in sumber_ry[u]:
+                if rid in n_of:
+                    data_sumber.append((n, n_of[rid], sk, kd, sh, pk))
+            if babno is not None:
+                ar, idn = bab_ry.get(babno, (None, None))
+                b = bab.setdefault(("riyadh", babno), [idn or ar, 0, n, ar])
+                b[1] += 1
+        ry_info = dict(ry.execute("SELECT kunci, nilai FROM info"))
+        ry_kitab = ("riyadh", len(KITAB), "Riyadhus Shalihin", "رياض الصالحين", "Yahya bin Syaraf an-Nawawi", 676,
+                    "Riyadhus Shalihin (1–1896)", int(ry_info.get("entri_terjemah", 0)), 1896, hit["A"] + hit["B"],
+                    hit["A"], hit["B"], 0, 0, "[]")
 
     # info + kitab
     total = dict(q("SELECT tingkat, count(*) FROM riwayat GROUP BY tingkat"))
-    info = {"dibangun": datetime.date.today().isoformat(), "terbit": str(len(rows)),
-            "tingkat_a": str(total.get("A", 0)), "tingkat_b": str(total.get("B", 0)), "karantina": str(total.get("K", 0))}
+    tk_total = collections.Counter(r[14] for r in data_riwayat)
+    info = {"dibangun": datetime.date.today().isoformat(), "terbit": str(len(data_riwayat)),
+            "tingkat_a": str(tk_total["A"]), "tingkat_b": str(tk_total["B"]), "karantina": str(total.get("K", 0))}
+    info.update({f"riyadh_{k}": v for k, v in ry_info.items()})
     lock = json.load(open(os.path.join(os.path.dirname(DB_PATH), "..", "pipeline", "sources.lock.json"), encoding="utf8"))
     info["sumber"] = json.dumps(sorted({(k.split('/')[0], v["commit"][:7]) for k, v in lock.items()}))
     w.sisip("info", ["kunci", "nilai"], info.items())
@@ -194,10 +246,14 @@ def main():
         pen = [r[0] for r in q("SELECT DISTINCT penilai FROM penilaian WHERE riwayat_id LIKE ? ORDER BY 1", kid + ":%")]
         kit.append((kid, urut_kitab[kid], nama, nama_ar, penyusun, wafat, sistem, nl, ns, t.get("A", 0) + t.get("B", 0),
                     t.get("A", 0), t.get("B", 0), t.get("K", 0), dinilai, json.dumps(pen, ensure_ascii=False)))
+    if ry_kitab:
+        kit.append(ry_kitab)
     w.sisip("kitab", ["id", "urut", "nama", "nama_arab", "penyusun", "wafat_h", "sistem_nomor", "jumlah_lidwa",
                       "jumlah_standar", "terbit", "tingkat_a", "tingkat_b", "karantina", "dinilai", "penilai"], kit)
-    w.sisip("bab", ["kitab_id", "no", "nama", "jumlah", "n_awal"],
-            [(k, no, v[0], v[1], v[2]) for (k, no), v in sorted(bab.items())])
+    w.sisip("bab", ["kitab_id", "no", "nama", "jumlah", "n_awal", "nama_ar"],
+            [(k, no, v[0], v[1], v[2], v[3]) for (k, no), v in sorted(bab.items())])
+    w.sisip("riyadh_info", ["n", "atribusi_ar", "kitab_atribusi", "catatan_ar", "no_terjemah"], data_ry_info)
+    w.sisip("sumber", ["a", "b", "skor", "kitab_disebut", "sahabat_sama", "peringkat"], data_sumber)
     w.sisip("riwayat", ["n", "id", "kitab_id", "slug", "urut", "no_tampil", "no_standar", "no_arab", "no_lidwa", "bab_no",
                         "arab", "terjemah", "rantai_json", "kecocokan", "tingkat", "alasan"], data_riwayat)
     w.sisip("cari", ["rowid", "arab_polos", "arab_akar", "terjemah_polos", "perawi"], data_cari)
@@ -241,7 +297,7 @@ def main():
     w.tutup()
     berkas = sorted(f for f in os.listdir(OUT) if f.endswith(".sql"))
     ukuran = sum(os.path.getsize(os.path.join(OUT, f)) for f in berkas)
-    print(f"{len(rows)} riwayat, {n_mirip} pasangan takhrij, {n_he} hadits HadeethEnc, {len(df)} kata -> "
+    print(f"{len(data_riwayat)} riwayat (termasuk {len(data_ry_info)} Riyadhus Shalihin), {len(data_sumber)} tautan sumber Riyadh, {n_mirip} pasangan takhrij, {n_he} hadits HadeethEnc, {len(df)} kata -> "
           f"{len(berkas)} berkas, {ukuran / 1e6:.0f} MB di build/d1/", file=sys.stderr)
 
 

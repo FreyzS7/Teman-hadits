@@ -22,6 +22,7 @@ Pustaka hadits berbahasa Indonesia. Pengguna bisa mencari dengan kata kunci atau
 | `docs/05-rencana-dan-hosting.md` | Tahapan kerja, arsitektur, hosting, anggaran |
 | `docs/06-pencarian-dan-ai.md` | Pencarian pintar tanpa AI, dan peran AI yang dibatasi |
 | `docs/07-hadeethenc.md` | Impor tema & hadits HadeethEnc, syarat pemakaian, uji silang atribusi |
+| `docs/08-riyadhus-shalihin.md` | Riyadhus Shalihin: pemecahan per hadits, pemasangan terjemah menurut isi, validasi |
 | `site/` | Situs sungguhan: Cloudflare Worker + database D1, jalan lokal dengan `wrangler dev` |
 | `design/` | Prototipe desain (`prototipe.html`), diisi data asli dari database |
 
@@ -75,7 +76,7 @@ python3 pipeline/cari.py "tolong carikan hadits tentang sholat tarawih"
 
 ## Status saat ini
 
-- 10 kitab dimuat, 67.512 riwayat terbit (32.578 tingkat A, 34.934 tingkat B), 408 dikarantina. Riyadhus Shalihin dikarantina sampai disegmentasi ulang.
+- 11 kitab dimuat, 69.408 riwayat terbit, 408 dikarantina. Termasuk Riyadhus Shalihin (1.896 hadits): sumbernya dicocokkan dengan atribusi an-Nawawi (98,2% cocok).
 - 21.185 riwayat sudah punya penilaian derajat bernama: al-Albani, Syu'aib al-Arna'uth, Zubair 'Ali Za'i, Ahmad Syakir, Basyar 'Awwad, Abu Ghuddah, Salim al-Hilali, dan lainnya.
 - 447 tema berbahasa Indonesia dan 2.260 hadits dari HadeethEnc.com. 1.998 di antaranya terhubung ke riwayat kita; uji silang atribusi: 98,8% cocok dengan atribusi HadeethEnc sendiri.
 - Uji: uji emas data (Python, termasuk HadeethEnc), 9 uji unit + paritas Python↔JavaScript, 9 uji emas lewat HTTP. Contohnya: hadits niat ditemukan di ketujuh tempatnya dalam Shahih al-Bukhari, dan tidak ada di al-Muwaththa' riwayat Yahya.

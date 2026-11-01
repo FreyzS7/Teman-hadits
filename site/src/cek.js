@@ -80,6 +80,7 @@ export async function cek(db, teks) {
             CASE WHEN r.n = ?1 THEN 'terbaik' ELSE m.tingkat END AS hubungan
      FROM riwayat r JOIN kitab k ON k.id = r.kitab_id LEFT JOIN mirip m ON m.a = ?1 AND m.b = r.n
      WHERE r.n = ?1 OR r.n IN (SELECT b FROM mirip WHERE a = ?1)
+        OR r.n IN (SELECT b FROM sumber WHERE a = ?1 AND peringkat <= 12) OR r.n IN (SELECT a FROM sumber WHERE b = ?1)
      ORDER BY k.urut, r.urut`).bind(terbaik).all()).results;
   const pen = (await db.prepare("SELECT n, penilai, hukum, kategori FROM penilaian WHERE n IN (SELECT value FROM json_each(?1)) ORDER BY penilai").bind(JSON.stringify(kel.map((x) => x.n))).all()).results;
   const byN = new Map(kel.map((x) => [x.n, { ...x, penilaian: [] }]));

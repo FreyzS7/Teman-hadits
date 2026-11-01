@@ -10,6 +10,7 @@
 - **Catatan penting:** README repo menyebut sumbernya carihadis.com. Gaya terjemahannya, yaitu nama perawi dalam `[kurung siku]` dan penomoran (Bukhari 7.008, Muslim 5.362, Darimi 3.367), identik dengan *Ensiklopedi Hadits Kitab 9 Imam* terbitan Lidwa Pusaka. Lisensi MIT hanya berlaku untuk karya si pengunggah (kompilasi SQL). Lisensi itu **tidak bisa** memberi izin atas terjemahan yang hak ciptanya milik pihak lain.
 - **Izin:** pemilik proyek menyatakan sudah **mendapat izin** dari Lidwa Pusaka (dicatat 1 November 2026). Simpan bukti tertulisnya (email/surat) di arsip pribadi, bukan di repo publik, dan cantumkan di halaman Metode: "Terjemah digunakan dengan izin Lidwa Pusaka".
 - **Atribusi:** "Terjemah: Lidwa Pusaka" tetap dicantumkan di setiap halaman hadits.
+- **Pengecualian, Riyadhus Shalihin:** terjemah Indonesianya di repo yang sama **bukan** dari Ensiklopedi 9 Imam Lidwa, dan penerjemahnya belum dipastikan. Izin Lidwa belum tentu mencakupnya. Lihat `docs/08-riyadhus-shalihin.md` dan pengaturan `TERJEMAH_RIYADH`.
 
 ### 2. fawazahmed0/hadith-api
 

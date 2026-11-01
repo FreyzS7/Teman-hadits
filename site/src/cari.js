@@ -12,6 +12,7 @@ const KATA_KLAIM = /\b(membolehkan|boleh|halal|menghalalkan|mengharamkan|melaran
 
 // nama kitab yang dikenali untuk rujukan langsung ("muslim 1907", "HR. Tirmidzi no 1647")
 export const NAMA_KITAB = [
+  [/\briyadh(?:us)? ?(?:sh|s)(?:a|o)lihin\b/, "riyadh"],
   [/\b(?:al ?)?bukhari\b/, "bukhari"], [/\bmuslim\b/, "muslim"], [/\babu ?da(?:w|u)u?d\b/, "abudawud"],
   [/\b(?:at ?)?tirmi(?:dz|dh|z)i\b/, "tirmidzi"], [/\b(?:an ?)?nasa ?i\b/, "nasai"], [/\bibnu? ?majah\b/, "ibnumajah"],
   [/\b(?:imam )?malik\b|\bmuwatha?\b/, "malik"], [/\bahmad\b/, "ahmad"], [/\b(?:ad ?)?darimi\b/, "darimi"],

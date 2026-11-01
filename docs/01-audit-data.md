@@ -50,7 +50,7 @@ Satu hadits bisa dinilai berbeda oleh ulama yang berbeda. Situs menampilkan **se
 
 ## Temuan kualitas data
 
-- **Riyadhus Shalihin** (2 berkas) dikarantina: satu baris = satu *bab* (372 baris, versi Indonesia, penuh HTML) atau satu *potongan halaman* (850 baris, versi Arab tahqiq Mahir Yasin al-Fahl, kadang terpotong di tengah hadits, terjemah kosong). Perlu disegmentasi ulang per nomor hadits (1–1896) sebelum terbit.
+- **Riyadhus Shalihin** dipecah ulang per hadits oleh `pipeline/riyadh.py` (lihat `docs/08-riyadhus-shalihin.md`): 1896 hadits; terjemah terpasang pasti 1726; terhubung ke sumber 1645; uji silang atribusi an-Nawawi 1613/1642. Berkas versi Arab tahqiq al-Fahl (850 potongan halaman) belum dipakai.
 - Penomoran Lidwa **berbeda** dari penomoran standar (mis. Bukhari Lidwa 7.008 vs standar 7.563; Muslim 5.362 vs 7.563). Situs memakai nomor standar sebagai alamat utama dan menampilkan nomor Lidwa sebagai pembanding.
 - Teks identik di nomor berbeda **tidak** dianggap rusak: al-Bukhari dan penyusun lain memang mengulang hadits yang sama di bab berbeda. Ditandai sebagai "pengulangan".
 - Musnad Ahmad, Sunan ad-Darimi, Musnad asy-Syafi'i baru punya **satu** sumber digital (Lidwa) dan belum ada penilaian derajat per hadits → tingkat B, label "belum ada penilaian tercatat".

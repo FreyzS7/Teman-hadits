@@ -14,3 +14,8 @@ directory = "./public"
 binding = "DB"
 database_name = "teman-hadits"
 database_id = "00000000-0000-0000-0000-000000000000"
+
+[vars]
+# Terjemah Indonesia Riyadhus Shalihin BUKAN dari Lidwa Pusaka; penerjemahnya belum dipastikan.
+# Ubah ke "sembunyi" sebelum online bila izinnya belum ada. Teks Arab & tautan sumber tetap tampil.
+TERJEMAH_RIYADH = "tampil"

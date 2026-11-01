@@ -68,3 +68,15 @@ test("tema HadeethEnc: daftar tema & saran tema di pencarian", opsi, async () =>
   assert.match(tema.teks, /HadeethEnc\.com/);
   assert.match(tema.teks, /href="\/bukhari\/1442"/);
 });
+
+test("Riyadhus Shalihin: terjemah dipasangkan menurut isi, sumber diperiksa", opsi, async () => {
+  const r727 = await ambil("/riyadh/727");
+  assert.match(r727.teks, /nomor di terjemah: 725/);
+  assert.match(r727.teks, /Abu Salamah/);
+  const r1 = await ambil("/riyadh/1");
+  assert.match(r1.teks, /<b>al-Bukhari<\/b> <span class="num">no\. <a href="\/bukhari\/1">1<\/a>/);
+  assert.match(r1.teks, /href="\/muslim\/1907a"/);
+  const r = await ambil("/cari?q=" + encodeURIComponent("riyadhus shalihin 918"));
+  assert.equal(r.status, 302);
+  assert.match((await ambil("/bukhari/1")).teks, /Dikutip dalam[\s\S]*href="\/riyadh\/1"/);
+});

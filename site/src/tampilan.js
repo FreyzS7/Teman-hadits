@@ -1,8 +1,8 @@
 // Template HTML. Semua teks dari database melewati esc() kecuali yang sudah dibangun aman (rubrik, cuplik).
 import { cuplik, cuplikAr, esc, fmt, SIGHAH_MAP } from "./teks.js";
 
-const HR = { bukhari: "al-Bukhari", muslim: "Muslim", abudawud: "Abu Dawud", tirmidzi: "at-Tirmidzi", nasai: "an-Nasa'i", ibnumajah: "Ibnu Majah", malik: "Malik (al-Muwaththa')", ahmad: "Ahmad", darimi: "ad-Darimi", syafii: "asy-Syafi'i" };
-export const PENDEK = { bukhari: "Bukhari", muslim: "Muslim", abudawud: "Abu Dawud", tirmidzi: "Tirmidzi", nasai: "Nasa'i", ibnumajah: "Ibnu Majah", malik: "Malik", ahmad: "Ahmad", darimi: "Darimi", syafii: "Syafi'i" };
+const HR = { riyadh: "an-Nawawi, Riyadhus Shalihin", bukhari: "al-Bukhari", muslim: "Muslim", abudawud: "Abu Dawud", tirmidzi: "at-Tirmidzi", nasai: "an-Nasa'i", ibnumajah: "Ibnu Majah", malik: "Malik (al-Muwaththa')", ahmad: "Ahmad", darimi: "ad-Darimi", syafii: "asy-Syafi'i" };
+export const PENDEK = { riyadh: "Riyadhus Shalihin", bukhari: "Bukhari", muslim: "Muslim", abudawud: "Abu Dawud", tirmidzi: "Tirmidzi", nasai: "Nasa'i", ibnumajah: "Ibnu Majah", malik: "Malik", ahmad: "Ahmad", darimi: "Darimi", syafii: "Syafi'i" };
 const KITAB_SHAHIH = new Set(["bukhari", "muslim"]);
 const PENILAI = {
   "Al-Albani": "al-Albani", "Shuaib Al Arnaut": "Syu'aib al-Arna'uth", "Zubair Ali Zai": "Zubair 'Ali Za'i",
@@ -79,7 +79,7 @@ export function beranda({ kitab, info }) {
     const pen = JSON.parse(k.penilai || "[]");
     const w = Math.round(34 + 60 * Math.sqrt(k.terbit / maks));
     return `<a class="punggung" style="--w:${w}px" href="/kitab/${esc(k.id)}" title="${esc(k.nama)}: ${fmt(k.terbit)} riwayat${pen.length ? ", " + pen.length + " ulama penilai" : ""}"><span class="pita-emas">${pen.map(() => "<i></i>").join("")}</span><span class="judul">${esc(PENDEK[k.id] || k.nama)}</span></a>`;
-  }).join("") + `<span class="punggung karantina" style="--w:44px" title="Riyadhus Shalihin: data sumber tersimpan per bab/halaman, sedang dipecah ulang per hadits"><span class="pita-emas"></span><span class="judul">Riyadhus Shalihin</span></span>`;
+  }).join("");
   const contoh = [
     ["/cari?q=" + encodeURIComponent("tolong carikan hadits tentang sholat tarawih"), "tolong carikan hadits tentang sholat tarawih"],
     ["/cari?q=" + encodeURIComponent("apakah makan babi itu hukumnya haram?"), "apakah makan babi itu hukumnya haram?"],
@@ -116,7 +116,7 @@ export function beranda({ kitab, info }) {
   <section class="bagian" aria-labelledby="h-rak">
     <header><h2 id="h-rak">Rak kitab</h2><p>Lebar punggung = banyaknya riwayat. Pita emas = jumlah ulama penilai yang datanya sudah kami miliki untuk kitab itu. Ketuk untuk membuka.</p></header>
     <div class="rak">${rak}</div>
-    <div class="legenda"><span><i></i> 1 pita = 1 ulama penilai</span><span>Punggung bergaris = dalam perbaikan, belum ditampilkan</span></div>
+    <div class="legenda"><span><i></i> 1 pita = 1 ulama penilai</span></div>
   </section>
   <section class="bagian" aria-labelledby="h-tingkat">
     <header><h2 id="h-tingkat">Seberapa yakin kami pada datanya</h2><p>Tingkat menilai <b>data digitalnya</b>, bukan derajat haditsnya. Derajat hadits selalu ditulis atas nama ulama yang menilainya.</p></header>
@@ -127,7 +127,7 @@ export function beranda({ kitab, info }) {
 // ------------------------------------------------------------------------------------------------
 // HASIL CARI
 // ------------------------------------------------------------------------------------------------
-export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan, tema = [] }) {
+export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan, tema = [], sembunyiRiyadh = false }) {
   const r = out.rencana;
   const urlDengan = (ubah) => {
     const p = new URLSearchParams({ q, ...filter, ...ubah });
@@ -157,7 +157,7 @@ export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan, tema = 
   const daftar = out.hasil.map((h) => `
     <li class="hasil">
       <header><span class="rujukan"><a href="/${esc(h.kitab_id)}/${esc(h.slug)}">${esc(kitab.find((k) => k.id === h.kitab_id)?.nama)} <span class="num">no. ${esc(h.no_tampil)}</span></a>${h.no_lidwa && h.kitab_id !== "ahmad" && h.kitab_id !== "darimi" && h.kitab_id !== "syafii" ? `<small class="num">Lidwa ${h.no_lidwa}</small>` : ""}</span>${lencana(h.tingkat)}</header>
-      ${h.terjemah ? `<p class="id">${cuplik(h.terjemah.replace(/\[|\]/g, ""), sorot)}</p>` : `<p class="tanpa-nilai">Terjemahan belum terpasang untuk nomor ini.</p>`}
+      ${h.terjemah && !(sembunyiRiyadh && h.kitab_id === "riyadh") ? `<p class="id">${cuplik(h.terjemah.replace(/\[|\]/g, ""), sorot)}</p>` : `<p class="tanpa-nilai">Terjemahan belum ditampilkan untuk nomor ini.</p>`}
       <p class="ar">${cuplikAr(h.arab, akar)}</p>
       <p class="alasan">Muncul karena: ${h.alasan.map((a) => `<b>${esc(a)}</b>`).join(" · ")}</p>
       <footer>${bukuBesar(h.penilaian, h.kitab_id)}</footer>
@@ -196,7 +196,7 @@ export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan, tema = 
 // HALAMAN HADITS
 // ------------------------------------------------------------------------------------------------
 export function halamanHadits(d) {
-  const { r, kitab, bab, penilaian, jalur, jalurPenilaian, pisah, sanadHtml, rantai, tirmidzi, tema, sebelum, sesudah, kanonik } = d;
+  const { r, kitab, bab, penilaian, jalur, jalurPenilaian, pisah, sanadHtml, rantai, tirmidzi, tema, sebelum, sesudah, kanonik, dikutip = [] } = d;
   const tambahan = tirmidzi ? [{ siapa: "at-Tirmidzi (dalam kitabnya)", hukum: tirmidzi, kategori: /ضعيف|منكر/.test(tirmidzi) ? "lemah" : /صحيح/.test(tirmidzi) ? "shahih" : /حسن/.test(tirmidzi) ? "hasan" : "lainnya" }] : [];
   const kelompok = {};
   for (const j of jalur) (kelompok[j.kitab_id] ||= { nama: j.kitab_nama, xs: [] }).xs.push(j);
@@ -253,6 +253,7 @@ export function halamanHadits(d) {
         <p class="kecil" style="margin-top:8px">Kotak utuh = matan sama. Kotak putus-putus = mirip, periksa sendiri. Dicocokkan otomatis lewat kemiripan matan Arab.</p>`
         : `<p class="tanpa-nilai">${pisah ? "Belum ditemukan riwayat lain dengan matan yang sama di kitab-kitab kami." : "Belum dihitung, karena matannya belum bisa dipisahkan otomatis dari sanad."}</p>`}
       </section>
+      ${dikutip.length ? `<section><h2>Dikutip dalam</h2><p class="kecil" style="margin-bottom:6px">Riyadhus Shalihin (an-Nawawi)</p><div class="jalur"><div class="nomor">${dikutip.map((x) => `<a href="/riyadh/${esc(x.slug)}">no. ${esc(x.no_tampil)}</a>`).join("")}</div></div></section>` : ""}
       ${tema.length ? `<section><h2>Tema</h2><div class="nomor" style="display:flex;flex-wrap:wrap;gap:6px">${tema.map((t) => `<a class="chip" href="/tema/${esc(t.id)}">${esc(t.judul)}</a>`).join("")}</div><p class="kecil" style="margin-top:6px">Tema dari HadeethEnc.com</p></section>` : ""}
       <section><h2>Asal data</h2><div class="asal">
         <span>Teks Arab: ${kitab.jumlah_standar ? "fawazahmed0/hadith-api" : "Lidwa Pusaka via carihadis.com"}</span>
@@ -270,7 +271,7 @@ export function halamanHadits(d) {
 // KITAB
 // ------------------------------------------------------------------------------------------------
 export function daftarKitab({ kitab }) {
-  return `<h1 class="halaman-judul">Kitab</h1><p class="sub">Kitab-kitab yang sudah dimuat. Riyadhus Shalihin sedang dipecah ulang per hadits dan belum ditampilkan.</p>
+  return `<h1 class="halaman-judul">Kitab</h1><p class="sub">Kitab-kitab yang sudah dimuat. Riyadhus Shalihin adalah kitab himpunan: an-Nawawi mengutip hadits dari kitab-kitab lain dan menyebut sumbernya.</p>
   <div class="tema-daftar" style="margin-top:22px">${kitab.map((k) => `<a href="/kitab/${esc(k.id)}"><span style="color:var(--tinta)"><b>${esc(k.nama)}</b><br><span class="ar" style="color:var(--zamrud);font-size:1.2rem">${esc(k.nama_arab)}</span></span><span>${fmt(k.terbit)}</span></a>`).join("")}</div>`;
 }
 
@@ -289,18 +290,19 @@ export function halamanKitab({ k, bab, daftar, halaman, halMaks }) {
   const kepala = `<nav class="remah"><a href="/kitab">Kitab</a> › <span>${esc(k.nama)}</span></nav>
   <h1 class="halaman-judul" style="margin-top:10px">${esc(k.nama)}</h1>
   <p class="ar" style="font-size:1.8rem;color:var(--zamrud);text-align:left;direction:rtl">${esc(k.nama_arab)}</p>
-  <p class="sub">${esc(k.penyusun)} (w. ${k.wafat_h} H). Penomoran: ${k.jumlah_standar ? "standar (fawazahmed0), dengan nomor Lidwa sebagai pembanding" : "Lidwa Pusaka"}.</p>
+  <p class="sub">${esc(k.penyusun)} (w. ${k.wafat_h} H). Penomoran: ${k.id === "riyadh" ? "nomor hadits Riyadhus Shalihin pada teks Arab (1–1896); terjemah memakai penomoran edisinya sendiri, ditampilkan sebagai pembanding" : k.jumlah_standar ? "standar (fawazahmed0), dengan nomor Lidwa sebagai pembanding" : "Lidwa Pusaka"}.</p>
   ${ringkasKitab(k)}`;
   if (bab.length) {
-    return kepala + `<section class="bagian" style="margin-top:34px"><header><h2>Daftar kitab/bab</h2><p>Nama bab dari sumber (bahasa Inggris). Nama Arab dan Indonesia menyusul.</p></header>
-      <ol class="daftar-bab">${bab.map((b) => `<li><a href="/kitab/${esc(k.id)}/bab/${b.no}">${b.no}. ${esc(b.nama || "(tanpa nama)")}</a><span class="nb">${fmt(b.jumlah)}</span></li>`).join("")}</ol></section>`;
+    const ket = k.id === "riyadh" ? "Nama bab Indonesia dari terjemahnya; nama Arab dari teks an-Nawawi." : "Nama bab dari sumber (bahasa Inggris). Nama Arab dan Indonesia menyusul.";
+    return kepala + `<section class="bagian" style="margin-top:34px"><header><h2>Daftar bab</h2><p>${ket}</p></header>
+      <ol class="daftar-bab">${bab.map((b) => `<li><a href="/kitab/${esc(k.id)}/bab/${b.no}">${b.no}. ${esc(b.nama || "(tanpa nama)")}${b.nama_ar ? `<br><span class="ar" style="font-size:1.05rem;color:var(--tinta-2);display:block">${esc(b.nama_ar)}</span>` : ""}</a><span class="nb">${fmt(b.jumlah)}</span></li>`).join("")}</ol></section>`;
   }
   return kepala + `<section class="bagian" style="margin-top:34px"><header><h2>Daftar riwayat</h2><p>Kitab ini belum punya pembagian bab di sumber kami.</p></header>${daftarRiwayat(k.id, daftar)}${navHalaman(`/kitab/${k.id}`, halaman, halMaks)}</section>`;
 }
 
 export function halamanBab({ k, b, daftar, halaman, halMaks }) {
   return `<nav class="remah"><a href="/kitab">Kitab</a> › <a href="/kitab/${esc(k.id)}">${esc(k.nama)}</a> › <span>${esc(b.nama || "Bab " + b.no)}</span></nav>
-  <h1 class="halaman-judul" style="margin-top:10px">${esc(b.nama || "Bab " + b.no)}</h1>
+  <h1 class="halaman-judul" style="margin-top:10px">${esc(b.nama || "Bab " + b.no)}</h1>${b.nama_ar ? `<p class="ar" style="font-size:1.5rem;color:var(--zamrud);text-align:left;direction:rtl;margin-top:6px">${esc(b.nama_ar)}</p>` : ""}
   <p class="sub">${esc(k.nama)} · kitab/bab ke-${b.no} · ${fmt(b.jumlah)} riwayat</p>
   ${daftarRiwayat(k.id, daftar)}${navHalaman(`/kitab/${k.id}/bab/${b.no}`, halaman, halMaks)}`;
 }
@@ -416,3 +418,65 @@ export function halamanMetode({ info }) {
 }
 
 export const halamanGalat = (judul, pesan) => `<div class="galat"><h1 class="halaman-judul">${esc(judul)}</h1><p>${pesan}</p><form class="kolom-cari" action="/cari" method="get"><label class="sembunyi" for="q-galat">Cari</label><input id="q-galat" name="q" type="search" placeholder="Cari hadits…"><button class="tombol" type="submit">Cari</button></form></div>`;
+
+// ------------------------------------------------------------------------------------------------
+// RIYADHUS SHALIHIN: kitab himpunan — an-Nawawi menyebut sahabat & sumbernya, tanpa sanad lengkap
+// ------------------------------------------------------------------------------------------------
+const NAMA_SUMBER = { bukhari: "al-Bukhari", muslim: "Muslim", abudawud: "Abu Dawud", tirmidzi: "at-Tirmidzi", nasai: "an-Nasa'i", ibnumajah: "Ibnu Majah", malik: "Malik", ahmad: "Ahmad", darimi: "ad-Darimi", syafii: "asy-Syafi'i" };
+
+export function halamanRiyadh(d) {
+  const { r, kitab, bab, info, sumber, penilaianSumber, tema, sebelum, sesudah, kanonik, sembunyiTerjemah } = d;
+  const disebut = JSON.parse(info?.kitab_atribusi || "[]");
+  const kelompok = {};
+  for (const s of sumber) (kelompok[s.kitab_id] ||= { nama: s.kitab_nama, xs: [] }).xs.push(s);
+  const cek = disebut.map((k) => {
+    const xs = (kelompok[k]?.xs || []);
+    return `<div><span class="tanda ${xs.length ? "ya" : "tidak"}">${xs.length ? "✓" : "–"}</span><b>${esc(NAMA_SUMBER[k] || k)}</b> <span class="num">${xs.length ? "no. " + xs.slice(0, 6).map((x) => `<a href="/${esc(x.kitab_id)}/${esc(x.slug)}">${esc(x.no_tampil)}</a>`).join(", ") : "belum ditemukan di kitab kami"}</span></div>`;
+  }).join("");
+  const dinilai = sumber.filter((s) => penilaianSumber.has(s.n)).slice(0, 4);
+  const terjemah = r.terjemah && !sembunyiTerjemah;
+  const rujukanTeks = `Riyadhus Shalihin no. ${r.no_tampil} (${info?.atribusi_ar || ""}). Sumber: Teman Hadits, ${kanonik}`;
+  return `
+  <nav class="remah" aria-label="Lokasi"><a href="/kitab">Kitab</a> › <a href="/kitab/riyadh">Riyadhus Shalihin</a>${bab ? ` › <a href="/kitab/riyadh/bab/${bab.no}">${esc(bab.nama || "Bab " + bab.no)}</a>` : ""} › <span>No. ${esc(r.no_tampil)}</span></nav>
+  <div class="judul-hadits"><h1>Riyadhus Shalihin <span class="num">no. ${esc(r.no_tampil)}</span></h1></div>
+  <div class="meta">${lencana(r.tingkat)}${info?.no_terjemah && String(info.no_terjemah) !== String(r.no_tampil) ? `<span class="chip num">nomor di terjemah: ${info.no_terjemah}</span>` : ""}<span class="chip">kitab himpunan an-Nawawi</span></div>
+  ${r.alasan ? `<p class="kotak-info" style="margin-top:12px">${esc(r.alasan)}</p>` : ""}
+  <article class="halaman">
+    <div class="lembar">
+      <div class="label">teks Riyadhus Shalihin · an-Nawawi menyebut sahabatnya, tanpa sanad lengkap</div>
+      <p class="ar teks-utuh" id="teks-matan">${esc(r.arab)}</p>
+      <div class="pemisah" aria-hidden="true">${SVG_BINTANG}</div>
+      <div class="label">terjemahan Riyadhus Shalihin · bukan dari Lidwa Pusaka</div>
+      ${terjemah ? `<p class="terjemah">${esc(r.terjemah)}</p>` : `<p class="tanpa-nilai">${r.terjemah ? "Terjemahan Riyadhus Shalihin belum ditampilkan sampai izin penerjemahnya dipastikan." : "Terjemahan belum terpasang untuk nomor ini, karena pasangannya di sumber terjemah tidak pasti."} Terjemahan riwayat sumbernya bisa dibaca lewat tautan di samping.</p>`}
+      ${info?.catatan_ar ? `<details><summary class="kecil" style="cursor:pointer">Catatan kaki dalam teks digital ini (bukan teks an-Nawawi)</summary><p class="ar sanad" style="margin-top:8px">${esc(info.catatan_ar)}</p></details>` : ""}
+      <div class="aksi">
+        <button type="button" data-salin="${esc(rujukanTeks)}" data-pesan="Rujukan tersalin.">Salin rujukan</button>
+        <button type="button" data-salin="1" data-salin-dari="#teks-matan" data-pesan="Teks Arab tersalin.">Salin teks Arab</button>
+        <a href="https://github.com/FreyzS7/Teman-hadits/issues/new?title=${encodeURIComponent("Laporan: " + r.id)}&body=${encodeURIComponent("Halaman: " + kanonik + "\n\nApa yang keliru:\n\nRujukan pembanding (kitab cetak, halaman):\n")}" rel="noopener">Laporkan kesalahan</a>
+      </div>
+      <p class="label" id="status-salin" aria-live="polite"></p>
+    </div>
+    <aside class="hamisy" aria-label="Catatan pinggir">
+      <section><h2>Sumber menurut an-Nawawi</h2>
+        ${info?.atribusi_ar ? `<p class="ar" style="font-size:calc(1.25rem * var(--ar));line-height:1.8">${esc(info.atribusi_ar)}</p>` : `<p class="tanpa-nilai">Kalimat atribusi tidak ditemukan pada teks ini.</p>`}
+        ${cek ? `<div class="klaim" style="margin-top:8px">${cek}</div><p class="kecil" style="margin-top:6px">✓ = riwayat dengan matan yang sama ditemukan di kitab tersebut dalam koleksi kami.</p>` : ""}
+      </section>
+      <section><h2>Derajat</h2>
+        ${dinilai.length ? `<p style="margin:0 0 6px;font:500 .9rem/1.4 var(--f-ui)">${disebut.some((k) => k === "bukhari" || k === "muslim") ? `Riwayat ${disebut.filter((k) => k === "bukhari" || k === "muslim").map((k) => NAMA_SUMBER[k]).join(" dan ")} ada di kitab Shahih, yang di sumber kami tidak punya penilaian per hadits. Penilaian di bawah untuk jalur lain dengan matan yang sama:` : "Penilaian ulama atas riwayat sumbernya:"}</p>${dinilai.map((s) => `<div style="margin-top:10px"><div class="label" style="margin-bottom:4px"><a href="/${esc(s.kitab_id)}/${esc(s.slug)}">${esc(PENDEK[s.kitab_id])} no. ${esc(s.no_tampil)}</a></div>${bukuBesar(penilaianSumber.get(s.n), s.kitab_id)}</div>`).join("")}`
+          : disebut.some((k) => k === "bukhari" || k === "muslim") ? `<p class="tanpa-nilai">Bersumber dari kitab Shahih menurut an-Nawawi. Sumber data kami tidak memuat penilaian per hadits untuk kitab Shahih, dan kami tidak mengisinya sendiri.</p>`
+          : `<p class="tanpa-nilai">Belum ada penilaian ulama yang tercatat untuk riwayat sumbernya.</p>`}
+      </section>
+      <section><h2>Ditemukan di kitab kami</h2>
+        ${sumber.length ? `<div class="jalur">${Object.entries(kelompok).map(([k, g]) => `<div><span class="kitab">${esc(g.nama)}</span><div class="nomor">${g.xs.map((x) => `<a class="${x.sahabat_sama ? "" : "mirip"}" href="/${esc(x.kitab_id)}/${esc(x.slug)}" title="matan ${Math.round(x.skor * 100)}% cocok${x.sahabat_sama ? ", sahabat sama" : ", sahabat berbeda"}">${esc(x.no_tampil)}</a>`).join("")}</div></div>`).join("")}</div>
+        <p class="kecil" style="margin-top:8px">Kotak utuh = sahabat sama. Kotak putus-putus = matan sama dari sahabat lain.</p>` : `<p class="tanpa-nilai">Belum ditemukan riwayat dengan matan yang sama di kitab-kitab kami.</p>`}
+      </section>
+      ${tema.length ? `<section><h2>Tema</h2><div style="display:flex;flex-wrap:wrap;gap:6px">${tema.map((t) => `<a class="chip" href="/tema/${esc(t.id)}">${esc(t.judul)}</a>`).join("")}</div></section>` : ""}
+      <section><h2>Asal data</h2><div class="asal">
+        <span>Teks Arab dan terjemah: Riyadhus Shalihin via carihadis.com (irsyadulibad/hadits-database)</span>
+        ${info?.no_terjemah ? "<span>Terjemah dipasangkan menurut isi (nama sahabat & atribusi), bukan menurut nomor</span>" : ""}
+        <span>ID data: <code>${esc(r.id)}</code></span>
+      </div></section>
+    </aside>
+  </article>
+  <nav class="navigasi-hadits" aria-label="Hadits sebelum dan sesudah">${sebelum ? `<a href="/riyadh/${esc(sebelum.slug)}" rel="prev">← No. ${esc(sebelum.no_tampil)}</a>` : "<span></span>"}${sesudah ? `<a href="/riyadh/${esc(sesudah.slug)}" rel="next">No. ${esc(sesudah.no_tampil)} →</a>` : ""}</nav>`;
+}

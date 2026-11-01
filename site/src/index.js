@@ -60,7 +60,7 @@ async function halamanHadits(env, url, kid, slug) {
   const { r, alih } = await cariRiwayat(db, kid, slug);
   if (alih) return alihkan(alih, 301);
   if (!r) return html(T.layout({ judul: "Tidak ditemukan · Teman Hadits", noindex: true, isi: T.halamanGalat("Nomor tidak ditemukan", `${T.PENDEK[kid] || kid} no. ${slug} tidak ada di data kami. Penomoran bisa berbeda antar-edisi; coba cari dengan kata kunci.`) }), 404);
-  const [pen, jalurA, jalurB, penJalur, tetangga, tema, bab] = await db.batch([
+  const [pen, jalurA, jalurB, penJalur, tetangga, tema, bab, dikutip] = await db.batch([
     db.prepare("SELECT penilai, hukum, kategori FROM penilaian WHERE n = ?1 ORDER BY penilai").bind(r.n),
     db.prepare("SELECT m.skor, m.tingkat AS tingkat_mirip, x.n, x.kitab_id, x.slug, x.no_tampil, k.nama AS kitab_nama, k.urut AS ku, x.urut FROM mirip m JOIN riwayat x ON x.n = m.b JOIN kitab k ON k.id = x.kitab_id WHERE m.a = ?1").bind(r.n),
     db.prepare("SELECT m.skor, m.tingkat AS tingkat_mirip, x.n, x.kitab_id, x.slug, x.no_tampil, k.nama AS kitab_nama, k.urut AS ku, x.urut FROM mirip m JOIN riwayat x ON x.n = m.a JOIN kitab k ON k.id = x.kitab_id WHERE m.b = ?1").bind(r.n),
@@ -68,6 +68,7 @@ async function halamanHadits(env, url, kid, slug) {
     db.prepare("SELECT slug, no_tampil, urut FROM riwayat WHERE kitab_id = ?1 AND urut IN (?2, ?3)").bind(kid, r.urut - 1, r.urut + 1),
     db.prepare("SELECT DISTINCT t.id, t.judul FROM he_riwayat hr JOIN he_tema ht ON ht.he_id = hr.he_id JOIN tema t ON t.id = ht.tema_id WHERE hr.n = ?1 LIMIT 8").bind(r.n),
     db.prepare("SELECT no, nama FROM bab WHERE kitab_id = ?1 AND no = ?2").bind(kid, r.bab_no ?? -1),
+    db.prepare("SELECT x.slug, x.no_tampil FROM sumber s JOIN riwayat x ON x.n = s.a WHERE s.b = ?1 ORDER BY x.urut").bind(r.n),
   ]);
   const jalurMap = new Map();
   for (const j of [...jalurA.results, ...jalurB.results]) {
@@ -77,6 +78,7 @@ async function halamanHadits(env, url, kid, slug) {
   const jalur = [...jalurMap.values()].sort((a, b) => a.ku - b.ku || a.urut - b.urut);
   const jalurPenilaian = new Map();
   for (const p of penJalur.results) (jalurPenilaian.get(p.n) || jalurPenilaian.set(p.n, []).get(p.n)).push(p);
+  if (kid === "riyadh") return halamanRiyadh(env, url, kitab, r);
   const pisah = pisahSanad(r.arab);
   if (pisah && kid === "tirmidzi") Object.assign(pisah, pisahKomentar(pisah.matan));
   const kanonik = `${url.origin}/${kid}/${r.slug}`;
@@ -85,9 +87,32 @@ async function halamanHadits(env, url, kid, slug) {
     sanadHtml: pisah ? rubrik(pisah.sanad) : "", rantai: susunRantai(r, kitab, pisah),
     tirmidzi: kid === "tirmidzi" ? hukumTirmidzi(r.arab) : null, tema: tema.results,
     sebelum: tetangga.results.find((x) => x.urut === r.urut - 1), sesudah: tetangga.results.find((x) => x.urut === r.urut + 1), kanonik,
+    dikutip: dikutip.results,
   });
   const desk = (r.terjemah || "").replace(/\[|\]/g, "").replace(/\s+/g, " ").slice(0, 155);
   return html(T.layout({ judul: `${kitab.nama} no. ${r.no_tampil} · Teman Hadits`, deskripsi: desk, isi, kanonik }));
+}
+
+async function halamanRiyadh(env, url, kitab, r) {
+  const db = env.DB;
+  const [info, sumber, penSumber, tetangga, tema, bab] = await db.batch([
+    db.prepare("SELECT * FROM riyadh_info WHERE n = ?1").bind(r.n),
+    db.prepare("SELECT s.skor, s.kitab_disebut, s.sahabat_sama, s.peringkat, x.n, x.kitab_id, x.slug, x.no_tampil, k.nama AS kitab_nama FROM sumber s JOIN riwayat x ON x.n = s.b JOIN kitab k ON k.id = x.kitab_id WHERE s.a = ?1 ORDER BY s.peringkat").bind(r.n),
+    db.prepare("SELECT p.n, p.penilai, p.hukum, p.kategori FROM penilaian p WHERE p.n IN (SELECT b FROM sumber WHERE a = ?1) ORDER BY p.penilai").bind(r.n),
+    db.prepare("SELECT slug, no_tampil, urut FROM riwayat WHERE kitab_id = 'riyadh' AND urut IN (?1, ?2)").bind(r.urut - 1, r.urut + 1),
+    db.prepare("SELECT DISTINCT t.id, t.judul FROM he_riwayat hr JOIN he_tema ht ON ht.he_id = hr.he_id JOIN tema t ON t.id = ht.tema_id WHERE hr.n IN (SELECT b FROM sumber WHERE a = ?1 AND peringkat <= 3) LIMIT 8").bind(r.n),
+    db.prepare("SELECT no, nama, nama_ar FROM bab WHERE kitab_id = 'riyadh' AND no = ?1").bind(r.bab_no ?? -1),
+  ]);
+  const penilaianSumber = new Map();
+  for (const p of penSumber.results) (penilaianSumber.get(p.n) || penilaianSumber.set(p.n, []).get(p.n)).push(p);
+  const kanonik = `${url.origin}/riyadh/${r.slug}`;
+  const isi = T.halamanRiyadh({
+    r, kitab, bab: bab.results[0] || null, info: info.results[0] || null, sumber: sumber.results, penilaianSumber, tema: tema.results,
+    sebelum: tetangga.results.find((x) => x.urut === r.urut - 1), sesudah: tetangga.results.find((x) => x.urut === r.urut + 1), kanonik,
+    sembunyiTerjemah: env.TERJEMAH_RIYADH === "sembunyi",
+  });
+  const desk = (env.TERJEMAH_RIYADH === "sembunyi" ? "" : (r.terjemah || "")).replace(/\s+/g, " ").slice(0, 155) || `Riyadhus Shalihin no. ${r.no_tampil}: teks Arab, sumber menurut an-Nawawi, dan riwayat sumbernya.`;
+  return html(T.layout({ judul: `Riyadhus Shalihin no. ${r.no_tampil} · Teman Hadits`, deskripsi: desk, isi, kanonik }));
 }
 
 async function halamanCari(env, url) {
@@ -123,7 +148,7 @@ async function halamanCari(env, url) {
   const tema = inti.length ? (await db.prepare("SELECT id, judul, jumlah FROM tema WHERE jumlah > 0").all()).results
     .map((t) => { const j = normId(t.judul); return { ...t, skor: 2 * inti.filter((w) => memuat(j, w)).length + maksud.filter((w) => memuat(j, w)).length, kena: inti.some((w) => memuat(j, w)) }; })
     .filter((t) => t.kena).sort((a, b) => b.skor - a.skor || b.jumlah - a.jumlah).slice(0, 6) : [];
-  const isi = T.hasilCari({ q, out, kitab, sorot: kataSorot(out.rencana), akar: akarSorot(out.rencana), filter, rujukan, tema });
+  const isi = T.hasilCari({ q, out, kitab, sorot: kataSorot(out.rencana), akar: akarSorot(out.rencana), filter, rujukan, tema, sembunyiRiyadh: env.TERJEMAH_RIYADH === "sembunyi" });
   return html(T.layout({ judul: `${q} · Cari · Teman Hadits`, aktif: "cari", isi, noindex: true }));
 }
 
@@ -139,7 +164,7 @@ async function halamanKitab(env, url, kid, babNo) {
     const daftar = (await db.prepare(`${kolom} WHERE r.kitab_id = ?1 AND r.bab_no = ?2 ORDER BY r.urut LIMIT ${PER_HALAMAN} OFFSET ?3`).bind(kid, babNo, (halaman - 1) * PER_HALAMAN).all()).results;
     return html(T.layout({ judul: `${b.nama || "Bab " + b.no} · ${k.nama} · Teman Hadits`, aktif: "kitab", kanonik: `${url.origin}/kitab/${kid}/bab/${babNo}`, isi: T.halamanBab({ k, b, daftar, halaman, halMaks: Math.ceil(b.jumlah / PER_HALAMAN) }) }));
   }
-  const bab = (await db.prepare("SELECT no, nama, jumlah FROM bab WHERE kitab_id = ?1 ORDER BY no").bind(kid).all()).results;
+  const bab = (await db.prepare("SELECT no, nama, nama_ar, jumlah FROM bab WHERE kitab_id = ?1 ORDER BY no").bind(kid).all()).results;
   let daftar = [], halMaks = 1;
   if (!bab.length) {
     daftar = (await db.prepare(`${kolom} WHERE r.kitab_id = ?1 ORDER BY r.urut LIMIT ${PER_HALAMAN} OFFSET ?2`).bind(kid, (halaman - 1) * PER_HALAMAN).all()).results;
