@@ -18,7 +18,13 @@ pyu pipeline/fetch_sources.py
 pyu pipeline/build_db.py
 pyu pipeline/takhrij.py
 # HadeethEnc: unduhan bisa dilanjutkan; ulangi sampai lengkap (sopan, <= 3 permintaan/detik)
-until pyu -I pipeline/hadeethenc.py unduh --maks-detik 500 | tee /dev/stderr | grep -q "unduhan lengkap"; do :; done
+# (pesan "unduhan lengkap" dicetak ke stderr; dulu hanya stdout yang diperiksa sehingga putaran ini tak pernah berhenti)
+for coba in $(seq 1 40); do
+  keluaran="$(pyu -I pipeline/hadeethenc.py unduh --maks-detik 500 2>&1)" || { echo "$keluaran" >&2; echo "Unduhan HadeethEnc gagal; periksa koneksi lalu jalankan lagi skrip ini." >&2; exit 1; }
+  echo "$keluaran" | tail -n 3
+  if grep -q "unduhan lengkap" <<<"$keluaran"; then break; fi
+  [ "$coba" -lt 40 ] || { echo "HadeethEnc belum lengkap sesudah 40 putaran; jalankan lagi skrip ini." >&2; exit 1; }
+done
 pyu -I pipeline/hadeethenc.py bangun
 pyu -I pipeline/riyadh.py
 pyu -I pipeline/bab_openiti.py
