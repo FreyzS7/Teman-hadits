@@ -45,6 +45,10 @@ class Taqrib(unittest.TestCase):
         self.assertEqual(tq(565)["tingkat"], 1)     # Anas: خادم رسول الله
         self.assertEqual(penilaian_ibnu_hajar("فلان بن فلان صدوق يهم من السابعة")[1], 5)
         self.assertEqual(penilaian_ibnu_hajar("فلانة مقبولة من الثالثة")[1], 6)
+        # diverifikasi dengan scan cetak hlm. 480: Muhammad bin Sa'id al-Mashlub "كذبوه" (dulu tanpa penilaian)
+        self.assertEqual(tq(5907)["tingkat"], 12)
+        # tuduhan dusta yang hanya KUTIPAN sesudah penilaian Ibnu Hajar sendiri tidak menaikkan tingkat
+        self.assertEqual(penilaian_ibnu_hajar("فلان متروك كذبه أبو داود من السابعة")[1], 10)
 
 
 class TahdzibKamal(unittest.TestCase):

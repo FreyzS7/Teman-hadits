@@ -88,3 +88,12 @@ class NamaKitab(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class KoreksiCetak(unittest.TestCase):
+    def test_bab_tanpa_judul_bukhari_3659(self):
+        # Teks digital melewatkan "باب" tanpa judul; fihris cetak Dar Thauq an-Najah juz 5 menunjukkannya
+        self.assertEqual(judul("bukhari:3658")[1].endswith("خليلا»"), True)
+        self.assertEqual(judul("bukhari:3659")[1], "باب")
+        self.assertEqual(judul("bukhari:3678")[1], "باب")
+        self.assertNotEqual(judul("bukhari:3679")[1], "باب")      # bab 6: مناقب عمر

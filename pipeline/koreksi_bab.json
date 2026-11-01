@@ -1,0 +1,10 @@
+{
+  "_catatan": "Koreksi judul bab yang DIVERIFIKASI terhadap kitab cetak (lihat docs/13-verifikasi-cetak.md). Hanya diisi dari bukti cetak; setiap entri menyebut sumbernya.",
+  "koreksi": [
+    {
+      "kitab_id": "bukhari", "dari": 3659, "sampai": 3678, "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul sebelum no. 3659, sehingga 3659-3678 tergabung ke bab «لو كنت متخذا خليلا».",
+      "bukti": "Shahih al-Bukhari, Dar Thauq an-Najah, fihris rinci juz 5 hlm. 183: «باب: حدثنا الحميدي ومحمد بن عبد الله» (hlm. 5) di antara bab 5 «لو كنت متخذا خليلا» (hlm. 4) dan bab 6 «مناقب عمر» (hlm. 10). Scan: archive.org alfirdwsiy2018_gmail_2698_201808, leaf 43."
+    }
+  ]
+}

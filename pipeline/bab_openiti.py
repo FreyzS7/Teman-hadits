@@ -216,6 +216,17 @@ def petakan(kid, blok, riwayat):
     return hasil
 
 
+_KOREKSI = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "koreksi_bab.json"), encoding="utf8"))["koreksi"]
+
+
+def koreksi_cetak(rid):
+    """Koreksi judul bab yang sudah diverifikasi terhadap kitab cetak (pipeline/koreksi_bab.json)."""
+    kid, _, no = rid.partition(":")
+    if not no.isdigit():
+        return None
+    return next((k for k in _KOREKSI if k["kitab_id"] == kid and k["dari"] <= int(no) <= k["sampai"]), None)
+
+
 def main():
     t0 = time.time()
     src = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
@@ -249,8 +260,12 @@ def main():
             b = blok[i]
             # Penilaian muhaqqiq hanya dipasang bila teks riwayat jelas ada di blok edisi itu (>= 0.9)
             tq = b.get("tahqiq") if (cara[rid] == "teks" and s >= 0.9) else None
+            bab_ar, cr = b["bab"], cara[rid]
+            k = koreksi_cetak(rid)
+            if k:
+                bab_ar, cr = k["bab_ar"], "koreksi-cetak"
             db.execute("INSERT INTO riwayat_bab VALUES (?,?,?,?,?,?,?,?,?)",
-                       (rid, b["kitab"], b["bab"], s, cara[rid], b["no"], nama_indonesia(b["kitab"]), tq, i))
+                       (rid, b["kitab"], bab_ar, s, cr, b["no"], nama_indonesia(b["kitab"]), tq, i))
 
         # uji: urutan & nomor
         idx = [peta[rid][0] for rid in urut if rid in peta]

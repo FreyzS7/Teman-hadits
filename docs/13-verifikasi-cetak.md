@@ -53,13 +53,44 @@ Beberapa butir al-Maqashid berskor rendah karena lokasinya keliru. Penyebabnya, 
 
 ### Kesimpulan
 
-Dari 160 entri sampel (122 di antaranya ditemukan di OCR), **tidak ada satu pun perbedaan isi** antara yang tampil di situs dan cetakan. Semua ketidakcocokan otomatis berasal dari OCR. Untuk Taqrib, tabaqah cocok penuh di 68 dari 69 entri yang bisa dicek; satu sisanya tidak terbaca.
+Dari 160 entri sampel (122 di antaranya ditemukan di OCR), **tidak ada satu pun perbedaan isi** antara yang tampil di situs dan cetakan. Pemeriksaan visual sesudahnya (di bawah) menemukan dua hal: penilaian «كذبوه» yang tidak terbaca, dan satu bab tanpa judul yang hilang di teks digital Bukhari. Keduanya sudah diperbaiki. Semua ketidakcocokan otomatis berasal dari OCR. Untuk Taqrib, tabaqah cocok penuh di 68 dari 69 entri yang bisa dicek; satu sisanya tidak terbaca.
+
+## Pemeriksaan visual halaman scan
+
+Setelah server unduhan archive.org dibuka, halaman cetak dilihat langsung sebagai gambar. Halaman dipilih lewat penanda halaman OpenITI (`PageV01P094` = hlm. 94). Penanda ini tepat: entri 248 → hlm. 94, persis seperti di scan. Untuk Taqrib, leaf scan = halaman cetak + 6.
+
+### Taqrib at-Tahdzib: 3 halaman, 50 entri, semua isi dibandingkan
+
+| Halaman cetak | Entri | Nomor entri | Penilaian · tabaqah · wafat · kode | Temuan |
+|---|---|---:|---|---|
+| 94 (dipakai untuk kalibrasi) | 248–265 | 18/18 sama | semua sama | 257 «**كذبوه**» tidak terbaca sebagai penilaian |
+| 480 (acak) | 5903–5917 | 15/15 sama | semua sama | 5907 Muhammad bin Sa'id **al-Mashlub**: «**كذبوه** … وضع أربعة آلاف حديث» tidak terbaca sebagai penilaian |
+| 570 (berisi 7258, yang tak terbaca OCR) | 7252–7268 | 17/17 sama | semua sama | 7258 terkonfirmasi: «ثقة، من السادسة، مات سنة بضع وأربعين» |
+
+Contoh yang terbaca jelas di cetakan dan sama dengan situs:
+- 248 «من الحادية عشرة، مات سنة سبعين» → situs menampilkan wafat **270 H** (kaidah abad Ibnu Hajar).
+- 256 «مات سنة أربع — وقيل خمس — وعشرين» → **224 H** (ada pendapat lain).
+- 261 «قتل سنة إحدى وثلاثين» → 131 H.
+- 7256 «مات سنة سبع ومائتين» → 207 H.
+
+**Perbaikan dari temuan ini:**
+- «كذبوه» kini dikenali sebagai penilaian (tingkat 12, pendusta/pemalsu), tetapi **hanya bila menjadi kata pertama Ibnu Hajar**.
+- «متروك، كذبه أبو داود» tetap *matruk*, karena tuduhan dusta di situ kutipan dari ulama lain.
+- «كذبه الشعبي في رأيه» tidak diberi padanan tingkat.
+- Diuji di `test_rijal.py`.
+
+### Shahih al-Bukhari (cetakan Dar Thauq an-Najah)
+
+Scan ini: archive.org `alfirdwsiy2018_gmail_2698_201808`. Teks OCR-nya terlalu rusak untuk menemukan halaman hadits secara otomatis; teks berharakat penuh merusak OCR. Satu halaman yang terbuka ternyata **fihris rinci juz 5** (leaf 43, hlm. 183), dan halaman itu tetap berguna:
+
+- **14 judul bab pertama Kitab 62** («باب فضائل أصحاب النبي ﷺ», «سدوا الأبواب إلا باب أبي بكر», «قصة البيعة والاتفاق على عثمان … وفيه مقتل عمر», dst.) **sama persis** dengan judul bab di situs.
+- **Kesalahan ditemukan.** Fihris mencatat **bab tanpa judul** («باب: حدثنا الحميدي ومحمد بن عبد الله») antara bab «لو كنت متخذا خليلا» dan «مناقب عمر». Teks digital OpenITI **melewatkan** baris «باب» itu. Akibatnya, hadits no. 3659–3678 tampil di bawah judul «لو كنت متخذا خليلا», padahal al-Bukhari menaruhnya di bab tersendiri. Sudah dikoreksi lewat `pipeline/koreksi_bab.json`, yang mencantumkan buktinya. Halaman hadits kini menampilkan «باب (bab tanpa judul) · dikoreksi dengan kitab cetak». Diuji di `test_bab.py`.
+- **Judul kitab berbeda.** Fihris menulis «كتاب **فضائل** أصحاب النبي ﷺ», teks digital «كتاب أصحاب النبي». Ini belum dikoreksi, karena perlu dilihat di halaman isinya (fihris kadang menyeragamkan judul).
 
 ## Batasan dan yang belum
 
 - **Nomor entri belum diverifikasi.** OCR mengacaukan angka Arab-Hindi di kolom nomor.
 - **Kasyf al-Khafa'** hanya 11 dari 40 entri yang ditemukan, karena OCR cetakan 1351 H sangat rusak.
 - **Teks hadits** (Bukhari, Muslim, dst.) belum dibandingkan dengan cetakan. Scan Bukhari di archive.org tidak punya OCR. Teks hadits saat ini diverifikasi dengan cara lain: dua sumber digital yang sepakat (tingkat A) dan uji silang atribusi.
-- **Pemeriksaan visual halaman scan** (melihat gambar halamannya langsung, termasuk nomor entri dan nomor hadits) membutuhkan server unduhan archive.org: `ia800000.us.archive.org` (semua `*.us.archive.org`) dan `*.ca.archive.org`. Server-server ini **diblokir** oleh pengaturan jaringan lingkungan build. Teks OCR di atas diambil lewat halaman `/stream/` di domain utama archive.org. Bila domain itu dibuka (Network access → Allowed domains), langkah berikutnya:
-  1. Petakan halaman cetak ↔ halaman scan memakai penanda halaman OpenITI (`PageV01P076` = jilid 1 hlm. 76).
-  2. Lihat gambar halaman untuk sampel yang sama: nomor entri, Taqrib 7258, dan 20 hadits Bukhari pada cetakan Dar Thauq an-Najah.
+- **Teks dan nomor hadits Bukhari** belum dicek visual satu per satu. Halamannya harus dicari manual di scan (OCR-nya tidak bisa dipakai untuk mencari), atau dengan scan lain yang OCR-nya lebih baik.
+- **Bab tanpa judul lain** yang mungkin juga terlewat di teks digital belum diperiksa. Teks digital Bukhari punya 93 baris «باب» tanpa judul; perlu dibandingkan dengan fihris cetak per juz.
