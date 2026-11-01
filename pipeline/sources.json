@@ -9,9 +9,18 @@
       "lisensi_repo": "MIT (atas berkas SQL/kompilasi)",
       "catatan_lisensi": "Terjemahan Indonesia berasal dari Ensiklopedi Hadits 9 Imam (Lidwa Pusaka) via carihadis.com. Lisensi MIT dari pengunggah tidak otomatis mencakup hak cipta terjemahan Lidwa. Wajib atribusi; izin Lidwa sebaiknya dimintakan sebelum situs publik.",
       "berkas": [
-        "shahih-bukhari.sql", "shahih-muslim.sql", "sunan-abu-daud.sql", "sunan-tirmidzi.sql",
-        "sunan-nasai.sql", "sunan-ibnu-majah.sql", "muwatho_malik.sql", "musnad-ahmad.sql",
-        "musnad_darimi.sql", "musnad-syafii.sql", "riyadhus-shalihin.sql", "riyadhus-shalihin-arab.sql"
+        "shahih-bukhari.sql",
+        "shahih-muslim.sql",
+        "sunan-abu-daud.sql",
+        "sunan-tirmidzi.sql",
+        "sunan-nasai.sql",
+        "sunan-ibnu-majah.sql",
+        "muwatho_malik.sql",
+        "musnad-ahmad.sql",
+        "musnad_darimi.sql",
+        "musnad-syafii.sql",
+        "riyadhus-shalihin.sql",
+        "riyadhus-shalihin-arab.sql"
       ]
     },
     {
@@ -23,9 +32,62 @@
       "catatan_lisensi": "Teks Arab bernomor standar + penilaian derajat per ulama (Albani, Syu'aib al-Arna'uth, Zubair Ali Zai, Ahmad Syakir, Basyar 'Awwad, Abu Ghuddah, Salim al-Hilali, dll). Asal data hulu tidak didokumentasikan lengkap oleh repo; diperlakukan sebagai sumber digital kedua, bukan sumber primer.",
       "berkas": [
         "info.json",
-        "editions/ara-bukhari.json", "editions/ara-muslim.json", "editions/ara-abudawud.json",
-        "editions/ara-tirmidhi.json", "editions/ara-nasai.json", "editions/ara-ibnmajah.json",
-        "editions/ara-malik.json", "editions/ara-nawawi.json", "editions/ara-qudsi.json"
+        "editions/ara-bukhari.json",
+        "editions/ara-muslim.json",
+        "editions/ara-abudawud.json",
+        "editions/ara-tirmidhi.json",
+        "editions/ara-nasai.json",
+        "editions/ara-ibnmajah.json",
+        "editions/ara-malik.json",
+        "editions/ara-nawawi.json",
+        "editions/ara-qudsi.json"
+      ]
+    },
+    {
+      "id": "openiti-0200AH",
+      "nama": "OpenITI 0200AH (teks Arab dengan judul kitab & bab)",
+      "repo": "https://github.com/OpenITI/0200AH",
+      "commit": "599f22fe249871f602efe2e0ddc801d3742960a3",
+      "lisensi_repo": "BELUM TERVERIFIKASI: README OpenITI tidak mencantumkan lisensi; lihat rilis Zenodo doi:10.5281/zenodo.3082463 (tidak terjangkau dari lingkungan build)",
+      "catatan_lisensi": "Situs hanya memakai judul kitab/bab (metadata struktur), bukan teks hadits. Sitasi yang diminta: Romanov, Maxim, dan Masoumeh Seydi, 'OpenITI: A Machine-Readable Corpus of Islamicate Texts', Zenodo, doi:10.5281/zenodo.3082463. Pastikan lisensinya sebelum situs online.",
+      "berkas": [
+        "data/0179MalikIbnAnas/0179MalikIbnAnas.Muwatta/0179MalikIbnAnas.Muwatta.Shamela0001699-ara1.completed"
+      ]
+    },
+    {
+      "id": "openiti-0275AH",
+      "nama": "OpenITI 0275AH (teks Arab dengan judul kitab & bab)",
+      "repo": "https://github.com/OpenITI/0275AH",
+      "commit": "44e1c36738a2bf5c14dafa232a6ae1891e6171cd",
+      "lisensi_repo": "BELUM TERVERIFIKASI: README OpenITI tidak mencantumkan lisensi; lihat rilis Zenodo doi:10.5281/zenodo.3082463 (tidak terjangkau dari lingkungan build)",
+      "catatan_lisensi": "Situs hanya memakai judul kitab/bab (metadata struktur), bukan teks hadits. Sitasi yang diminta: Romanov, Maxim, dan Masoumeh Seydi, 'OpenITI: A Machine-Readable Corpus of Islamicate Texts', Zenodo, doi:10.5281/zenodo.3082463. Pastikan lisensinya sebelum situs online.",
+      "berkas": [
+        "data/0256Bukhari/0256Bukhari.Sahih/0256Bukhari.Sahih.Shamela0001681-ara1",
+        "data/0261Muslim/0261Muslim.Sahih/0261Muslim.Sahih.Shamela0001727-ara1.mARkdown",
+        "data/0275AbuDawudSijistani/0275AbuDawudSijistani.Sunan/0275AbuDawudSijistani.Sunan.Shamela0001726-ara1",
+        "data/0273IbnMaja/0273IbnMaja.Sunan/0273IbnMaja.Sunan.Shamela0001198-ara1"
+      ]
+    },
+    {
+      "id": "openiti-0300AH",
+      "nama": "OpenITI 0300AH (teks Arab dengan judul kitab & bab)",
+      "repo": "https://github.com/OpenITI/0300AH",
+      "commit": "01a1544130e0236850ef2698923ad01575c5bd7c",
+      "lisensi_repo": "BELUM TERVERIFIKASI: README OpenITI tidak mencantumkan lisensi; lihat rilis Zenodo doi:10.5281/zenodo.3082463 (tidak terjangkau dari lingkungan build)",
+      "catatan_lisensi": "Situs hanya memakai judul kitab/bab (metadata struktur), bukan teks hadits. Sitasi yang diminta: Romanov, Maxim, dan Masoumeh Seydi, 'OpenITI: A Machine-Readable Corpus of Islamicate Texts', Zenodo, doi:10.5281/zenodo.3082463. Pastikan lisensinya sebelum situs online.",
+      "berkas": [
+        "data/0279Tirmidhi/0279Tirmidhi.Sunan/0279Tirmidhi.Sunan.Shamela0007895-ara2"
+      ]
+    },
+    {
+      "id": "openiti-0325AH",
+      "nama": "OpenITI 0325AH (teks Arab dengan judul kitab & bab)",
+      "repo": "https://github.com/OpenITI/0325AH",
+      "commit": "089e665b4958e0f145a46941987fb81cf3dda1b8",
+      "lisensi_repo": "BELUM TERVERIFIKASI: README OpenITI tidak mencantumkan lisensi; lihat rilis Zenodo doi:10.5281/zenodo.3082463 (tidak terjangkau dari lingkungan build)",
+      "catatan_lisensi": "Situs hanya memakai judul kitab/bab (metadata struktur), bukan teks hadits. Sitasi yang diminta: Romanov, Maxim, dan Masoumeh Seydi, 'OpenITI: A Machine-Readable Corpus of Islamicate Texts', Zenodo, doi:10.5281/zenodo.3082463. Pastikan lisensinya sebelum situs online.",
+      "berkas": [
+        "data/0303Nasai/0303Nasai.SunanSughra/0303Nasai.SunanSughra.Shamela0000829-ara1"
       ]
     }
   ]

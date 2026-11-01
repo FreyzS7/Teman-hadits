@@ -19,6 +19,12 @@
 - **Lisensi:** Unlicense (domain publik).
 - **Catatan:** repo tidak mendokumentasikan sumber hulunya secara lengkap. Karena itu ia diperlakukan sebagai *sumber digital kedua* untuk pembanding, bukan sumber primer. Terjemah Indonesianya juga berasal dari Lidwa, sehingga **tidak** dipakai sebagai verifikasi terjemahan.
 
+### 3. OpenITI (judul kitab & bab)
+
+- **Isi yang dipakai:** hanya **judul kitab dan bab** (struktur), bukan teks hadits. Teks hadits tetap dari sumber 1 dan 2.
+- **Berkas & edisi** (commit terkunci di `pipeline/sources.json`): Bukhari (Dar Thauq an-Najah, tahqiq Muhammad Zuhair an-Nashir, 1422 H), Muslim (Dar Ihya' at-Turats al-'Arabi), Abu Dawud (tahqiq Muhyiddin 'Abdul Hamid, al-Maktabah al-'Ashriyyah), Ibnu Majah (tahqiq Fu'ad 'Abdul Baqi), Nasa'i (tahqiq Abu Ghuddah), Tirmidzi, al-Muwaththa' (Dar Ihya' at-Turats al-'Arabi).
+- **Lisensi:** **belum terverifikasi**. README OpenITI tidak mencantumkannya, dan rilis Zenodo (doi:10.5281/zenodo.3082463) tidak terjangkau dari lingkungan build. Sitasi yang diminta: Romanov & Seydi, "OpenITI: A Machine-Readable Corpus of Islamicate Texts", Zenodo. Pastikan lisensinya sebelum situs online.
+
 ## Kandidat sumber berikutnya
 
 Prioritas ditentukan oleh nilai tambahnya bagi kebenaran data.

@@ -23,6 +23,7 @@ Pustaka hadits berbahasa Indonesia. Pengguna bisa mencari dengan kata kunci atau
 | `docs/06-pencarian-dan-ai.md` | Pencarian pintar tanpa AI, dan peran AI yang dibatasi |
 | `docs/07-hadeethenc.md` | Impor tema & hadits HadeethEnc, syarat pemakaian, uji silang atribusi |
 | `docs/08-riyadhus-shalihin.md` | Riyadhus Shalihin: pemecahan per hadits, pemasangan terjemah menurut isi, validasi |
+| `docs/09-judul-kitab-bab.md` | Judul kitab & bab Arab (OpenITI) dan nama kitab Indonesia (glosarium) |
 | `site/` | Situs sungguhan: Cloudflare Worker + database D1, jalan lokal dengan `wrangler dev` |
 | `design/` | Prototipe desain (`prototipe.html`), diisi data asli dari database |
 
@@ -78,6 +79,7 @@ python3 pipeline/cari.py "tolong carikan hadits tentang sholat tarawih"
 
 - 11 kitab dimuat, 69.408 riwayat terbit, 408 dikarantina. Termasuk Riyadhus Shalihin (1.896 hadits): sumbernya dicocokkan dengan atribusi an-Nawawi (98,2% cocok).
 - 21.185 riwayat sudah punya penilaian derajat bernama: al-Albani, Syu'aib al-Arna'uth, Zubair 'Ali Za'i, Ahmad Syakir, Basyar 'Awwad, Abu Ghuddah, Salim al-Hilali, dan lainnya.
+- Judul kitab & bab Arab dari teks kitabnya (OpenITI) untuk 7 kitab, dipetakan menurut isi; nomor hadits cocok dengan edisi cetak 96–99,8% tanpa dipakai saat mencocokkan. Nama kitab Indonesia dari glosarium yang belum ditinjau ahli.
 - 447 tema berbahasa Indonesia dan 2.260 hadits dari HadeethEnc.com. 1.998 di antaranya terhubung ke riwayat kita; uji silang atribusi: 98,8% cocok dengan atribusi HadeethEnc sendiri.
 - Uji: uji emas data (Python, termasuk HadeethEnc), 9 uji unit + paritas Python↔JavaScript, 9 uji emas lewat HTTP. Contohnya: hadits niat ditemukan di ketujuh tempatnya dalam Shahih al-Bukhari, dan tidak ada di al-Muwaththa' riwayat Yahya.
 

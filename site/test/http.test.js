@@ -80,3 +80,11 @@ test("Riyadhus Shalihin: terjemah dipasangkan menurut isi, sumber diperiksa", op
   assert.equal(r.status, 302);
   assert.match((await ambil("/bukhari/1")).teks, /Dikutip dalam[\s\S]*href="\/riyadh\/1"/);
 });
+
+test("judul kitab & bab dari teks kitabnya tampil di halaman hadits", opsi, async () => {
+  const { teks } = await ambil("/bukhari/2009");
+  assert.match(teks, /كتاب صلاة التراويح/);
+  assert.match(teks, /Kitab Shalat Tarawih/);
+  assert.match(teks, /باب فضل من قام رمضان/);
+  assert.match((await ambil("/bukhari/1")).teks, /Permulaan Wahyu/);
+});

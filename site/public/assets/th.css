@@ -333,3 +333,5 @@ footer.kaki b { color: var(--tinta); }
 a.punggung:hover { color: var(--sampul-teks); }
 .mode a { background: var(--kertas); border: 1px solid var(--garis); padding: 7px 14px; border-radius: 999px; font: 500 .92rem/1 var(--f-ui); color: var(--tinta-2); text-decoration: none; }
 .mode a.aktif { background: var(--zamrud); border-color: var(--zamrud); color: var(--kertas); }
+.judul-bab { display: grid; gap: 4px; padding-bottom: 14px; border-bottom: 1px solid var(--garis); }
+.judul-bab .ar { margin: 0; }

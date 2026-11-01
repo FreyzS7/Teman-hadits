@@ -83,3 +83,10 @@ Satu hadits bisa dinilai berbeda oleh ulama yang berbeda. Situs menampilkan **se
 | `lidwa-carihadis/sunan-ibnu-majah.sql` | `db43bda` | `b017e6cfe6df` | 6,502,240 |
 | `lidwa-carihadis/sunan-nasai.sql` | `db43bda` | `27a38643817e` | 9,041,176 |
 | `lidwa-carihadis/sunan-tirmidzi.sql` | `db43bda` | `79c5710963a1` | 9,385,426 |
+| `openiti-0200AH/0179MalikIbnAnas.Muwatta.Shamela0001699-ara1.completed` | `599f22f` | `1402840d20bf` | 1,397,896 |
+| `openiti-0275AH/0256Bukhari.Sahih.Shamela0001681-ara1` | `44e1c36` | `16f95173b9ea` | 6,039,255 |
+| `openiti-0275AH/0261Muslim.Sahih.Shamela0001727-ara1.mARkdown` | `44e1c36` | `8126f063f535` | 4,933,663 |
+| `openiti-0275AH/0273IbnMaja.Sunan.Shamela0001198-ara1` | `44e1c36` | `a8ca42780445` | 2,535,073 |
+| `openiti-0275AH/0275AbuDawudSijistani.Sunan.Shamela0001726-ara1` | `44e1c36` | `f153a439d58e` | 3,398,133 |
+| `openiti-0300AH/0279Tirmidhi.Sunan.Shamela0007895-ara2` | `01a1544` | `8ac7c1a66705` | 3,826,249 |
+| `openiti-0325AH/0303Nasai.SunanSughra.Shamela0000829-ara1` | `089e665` | `be25ffbca47a` | 3,460,338 |

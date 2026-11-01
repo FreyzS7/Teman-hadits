@@ -32,14 +32,17 @@ SKEMA = """
 DROP TABLE IF EXISTS info; DROP TABLE IF EXISTS kitab; DROP TABLE IF EXISTS bab; DROP TABLE IF EXISTS riwayat;
 DROP TABLE IF EXISTS penilaian; DROP TABLE IF EXISTS mirip; DROP TABLE IF EXISTS kata_df; DROP TABLE IF EXISTS cari;
 DROP TABLE IF EXISTS tema; DROP TABLE IF EXISTS he_hadits; DROP TABLE IF EXISTS he_tema; DROP TABLE IF EXISTS he_riwayat;
-DROP TABLE IF EXISTS riyadh_info; DROP TABLE IF EXISTS sumber;
+DROP TABLE IF EXISTS riyadh_info; DROP TABLE IF EXISTS sumber; DROP TABLE IF EXISTS judul;
 CREATE TABLE info (kunci TEXT PRIMARY KEY, nilai TEXT);
 CREATE TABLE kitab (
   id TEXT PRIMARY KEY, urut INT, nama TEXT, nama_arab TEXT, penyusun TEXT, wafat_h INT, sistem_nomor TEXT,
   jumlah_lidwa INT, jumlah_standar INT, terbit INT, tingkat_a INT, tingkat_b INT, karantina INT, dinilai INT,
   penilai TEXT
 );
-CREATE TABLE bab (kitab_id TEXT, no INT, nama TEXT, jumlah INT, n_awal INT, nama_ar TEXT, PRIMARY KEY (kitab_id, no));
+CREATE TABLE bab (kitab_id TEXT, no INT, nama TEXT, jumlah INT, n_awal INT, nama_ar TEXT, nama_en TEXT, nama_id_sumber TEXT,
+  PRIMARY KEY (kitab_id, no));
+-- judul kitab & bab per riwayat dari teks OpenITI (cara: 'teks' = dicocokkan isi, 'urutan' = dari tetangga)
+CREATE TABLE judul (n INTEGER PRIMARY KEY, kitab_ar TEXT, kitab_nama_id TEXT, bab_ar TEXT, cara TEXT);
 CREATE TABLE riwayat (
   n INTEGER PRIMARY KEY, id TEXT UNIQUE, kitab_id TEXT, slug TEXT, urut INT, no_tampil TEXT,
   no_standar TEXT, no_arab TEXT, no_lidwa INT, bab_no INT, arab TEXT, terjemah TEXT, rantai_json TEXT,
@@ -54,7 +57,7 @@ CREATE TABLE mirip (a INT, b INT, skor REAL, tingkat TEXT);
 CREATE INDEX ix_mirip_a ON mirip (a);
 CREATE TABLE kata_df (kata TEXT PRIMARY KEY, n INT) WITHOUT ROWID;
 CREATE VIRTUAL TABLE cari USING fts5 (
-  arab_polos, arab_akar, terjemah_polos, perawi,
+  arab_polos, arab_akar, terjemah_polos, perawi, judul,
   content = '', tokenize = 'unicode61 remove_diacritics 2'
 );
 CREATE TABLE tema (id TEXT PRIMARY KEY, judul TEXT, induk TEXT, jumlah INT);
@@ -162,6 +165,13 @@ def main():
         return (urut_kitab[kid], float(r[4] or 0))
 
     rows.sort(key=kunci_urut)
+    bab_path = os.path.join(BUILD, "bab.sqlite")
+    judul_rw, nama_bagian = {}, {}
+    if os.path.exists(bab_path):
+        bj = sqlite3.connect(bab_path)
+        judul_rw = {r[0]: r[1:] for r in bj.execute("SELECT riwayat_id, kitab_ar, kitab_nama_id, bab_ar, cara FROM riwayat_bab")}
+        nama_bagian = {(k, no): (ar, idn) for k, no, ar, idn in bj.execute("SELECT kitab_id, bab_no, nama_ar, nama_id FROM kitab_nama")}
+    data_judul = []
     n_of = {}
     data_riwayat, data_cari = [], []
     urut_dalam = collections.Counter()
@@ -184,9 +194,13 @@ def main():
         data_riwayat.append((n, rid, kid, slug, urut_dalam[kid], tampil, nos, noa, nol, babno, arab, terj, rantai, kc, tk, al))
         na = norm_ar(arab)
         nama = " ".join(json.loads(rantai)) if rantai else ""
-        data_cari.append((n, na, akar_ar(na), norm_id(terj), norm_id(nama)))
+        j = judul_rw.get(rid)
+        if j:
+            data_judul.append((n, j[0], j[1], j[2], j[3]))
+        teks_judul = " ".join(x for x in [norm_id(j[1] or ""), akar_ar(norm_ar((j[0] or "") + " " + (j[2] or "")))] if x) if j else ""
+        data_cari.append((n, na, akar_ar(na), norm_id(terj), norm_id(nama), teks_judul))
         if babno is not None:
-            b = bab.setdefault((kid, babno), [babnama, 0, n, None])
+            b = bab.setdefault((kid, babno), [babnama, 0, n, None, babnama, None])
             b[1] += 1
 
     # --- Riyadhus Shalihin (build/riyadh.sqlite, dari pipeline/riyadh.py) -------------------------
@@ -215,14 +229,16 @@ def main():
             data_riwayat.append((n, f"riyadh:{no}", "riyadh", str(no), no, str(no), str(no), None, None, babno, arab,
                                  terj if pasti else None, None, None, tk, alasan))
             na = norm_ar(arab)
-            data_cari.append((n, na, akar_ar(na), norm_id(terj if pasti else ""), ""))
+            ar_b, id_b = bab_ry.get(babno, (None, None))
+            data_cari.append((n, na, akar_ar(na), norm_id(terj if pasti else ""), "",
+                              (norm_id(id_b or "") + " " + akar_ar(norm_ar(ar_b or ""))).strip()))
             data_ry_info.append((n, atr, katr, catatan or None, noter if pasti else None))
             for rid, sk, kd, sh, pk in sumber_ry[u]:
                 if rid in n_of:
                     data_sumber.append((n, n_of[rid], sk, kd, sh, pk))
             if babno is not None:
                 ar, idn = bab_ry.get(babno, (None, None))
-                b = bab.setdefault(("riyadh", babno), [idn or ar, 0, n, ar])
+                b = bab.setdefault(("riyadh", babno), [idn or ar, 0, n, ar, None, idn])
                 b[1] += 1
         ry_info = dict(ry.execute("SELECT kunci, nilai FROM info"))
         ry_kitab = ("riyadh", len(KITAB), "Riyadhus Shalihin", "رياض الصالحين", "Yahya bin Syaraf an-Nawawi", 676,
@@ -250,20 +266,28 @@ def main():
         kit.append(ry_kitab)
     w.sisip("kitab", ["id", "urut", "nama", "nama_arab", "penyusun", "wafat_h", "sistem_nomor", "jumlah_lidwa",
                       "jumlah_standar", "terbit", "tingkat_a", "tingkat_b", "karantina", "dinilai", "penilai"], kit)
-    w.sisip("bab", ["kitab_id", "no", "nama", "jumlah", "n_awal", "nama_ar"],
-            [(k, no, v[0], v[1], v[2], v[3]) for (k, no), v in sorted(bab.items())])
+    # Nama bagian kitab: Indonesia (glosarium Teman Hadits, belum ditinjau) > Inggris (fawazahmed0); Arab dari OpenITI.
+    baris_bab = []
+    for (k, no), v in sorted(bab.items()):
+        ar, idn = nama_bagian.get((k, no), (None, None))
+        if k == "riyadh":
+            baris_bab.append((k, no, v[0], v[1], v[2], v[3], None, v[5]))
+        else:
+            baris_bab.append((k, no, idn or v[0], v[1], v[2], ar, v[4], None))
+    w.sisip("bab", ["kitab_id", "no", "nama", "jumlah", "n_awal", "nama_ar", "nama_en", "nama_id_sumber"], baris_bab)
+    w.sisip("judul", ["n", "kitab_ar", "kitab_nama_id", "bab_ar", "cara"], data_judul)
     w.sisip("riyadh_info", ["n", "atribusi_ar", "kitab_atribusi", "catatan_ar", "no_terjemah"], data_ry_info)
     w.sisip("sumber", ["a", "b", "skor", "kitab_disebut", "sahabat_sama", "peringkat"], data_sumber)
     w.sisip("riwayat", ["n", "id", "kitab_id", "slug", "urut", "no_tampil", "no_standar", "no_arab", "no_lidwa", "bab_no",
                         "arab", "terjemah", "rantai_json", "kecocokan", "tingkat", "alasan"], data_riwayat)
-    w.sisip("cari", ["rowid", "arab_polos", "arab_akar", "terjemah_polos", "perawi"], data_cari)
+    w.sisip("cari", ["rowid", "arab_polos", "arab_akar", "terjemah_polos", "perawi", "judul"], data_cari)
     w.sisip("penilaian", ["n", "penilai", "hukum", "kategori"],
             [(n_of[r[0]], r[1], r[2], r[3]) for r in q("SELECT riwayat_id, penilai, hukum, kategori FROM penilaian")
              if r[0] in n_of])
 
     # frekuensi kata Indonesia (untuk "cek teks"): berapa riwayat memuat kata (setelah stem ringan)
     df = collections.Counter()
-    for _, _, _, terj_polos, _ in data_cari:
+    for _, _, _, terj_polos, _, _ in data_cari:
         df.update({stem_id(x) for x in terj_polos.split()})
     w.sisip("kata_df", ["kata", "n"], sorted(df.items()))
 

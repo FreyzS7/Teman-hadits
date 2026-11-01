@@ -196,7 +196,11 @@ export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan, tema = 
 // HALAMAN HADITS
 // ------------------------------------------------------------------------------------------------
 export function halamanHadits(d) {
-  const { r, kitab, bab, penilaian, jalur, jalurPenilaian, pisah, sanadHtml, rantai, tirmidzi, tema, sebelum, sesudah, kanonik, dikutip = [] } = d;
+  const { r, kitab, bab, penilaian, jalur, jalurPenilaian, pisah, sanadHtml, rantai, tirmidzi, tema, sebelum, sesudah, kanonik, dikutip = [], judul = null } = d;
+  const judulHtml = judul && (judul.kitab_ar || judul.bab_ar) ? `<div class="judul-bab">
+      ${judul.kitab_ar ? `<p class="ar" style="font-size:calc(1.15rem * var(--ar));color:var(--tinta-2)">${esc(judul.kitab_ar)}${judul.kitab_nama_id ? ` <span class="kecil" style="direction:ltr;unicode-bidi:isolate">· ${esc(judul.kitab_nama_id)}</span>` : ""}</p>` : ""}
+      ${judul.bab_ar ? `<p class="ar" style="font-size:calc(1.3rem * var(--ar));color:var(--zamrud);font-weight:700;line-height:1.9">${esc(judul.bab_ar)}</p>` : ""}
+      <p class="label">judul kitab & bab dari teks kitabnya${judul.cara === "urutan" ? " · disimpulkan dari urutan hadits sebelum & sesudahnya" : ""}</p></div>` : "";
   const tambahan = tirmidzi ? [{ siapa: "at-Tirmidzi (dalam kitabnya)", hukum: tirmidzi, kategori: /ضعيف|منكر/.test(tirmidzi) ? "lemah" : /صحيح/.test(tirmidzi) ? "shahih" : /حسن/.test(tirmidzi) ? "hasan" : "lainnya" }] : [];
   const kelompok = {};
   for (const j of jalur) (kelompok[j.kitab_id] ||= { nama: j.kitab_nama, xs: [] }).xs.push(j);
@@ -225,6 +229,7 @@ export function halamanHadits(d) {
   ${r.alasan ? `<p class="kotak-info" style="margin-top:12px">${esc(r.alasan)}</p>` : ""}
   <article class="halaman">
     <div class="lembar">
+      ${judulHtml}
       ${pisah ? `
       <div class="label">sanad · rantai periwayat <span style="text-transform:none;letter-spacing:0;font-family:var(--f-ui);font-weight:400">(lafaz periwayatan bertinta merah; sentuh untuk artinya)</span></div>
       <p class="ar sanad" id="teks-sanad">${sanadHtml}</p>
@@ -293,9 +298,10 @@ export function halamanKitab({ k, bab, daftar, halaman, halMaks }) {
   <p class="sub">${esc(k.penyusun)} (w. ${k.wafat_h} H). Penomoran: ${k.id === "riyadh" ? "nomor hadits Riyadhus Shalihin pada teks Arab (1–1896); terjemah memakai penomoran edisinya sendiri, ditampilkan sebagai pembanding" : k.jumlah_standar ? "standar (fawazahmed0), dengan nomor Lidwa sebagai pembanding" : "Lidwa Pusaka"}.</p>
   ${ringkasKitab(k)}`;
   if (bab.length) {
-    const ket = k.id === "riyadh" ? "Nama bab Indonesia dari terjemahnya; nama Arab dari teks an-Nawawi." : "Nama bab dari sumber (bahasa Inggris). Nama Arab dan Indonesia menyusul.";
+    const ket = k.id === "riyadh" ? "Nama bab Indonesia dari terjemahnya; nama Arab dari teks an-Nawawi."
+      : "Nama Arab dari teks kitabnya (korpus OpenITI). Nama Indonesia disusun Teman Hadits dan belum ditinjau ahli; nama Inggris dari fawazahmed0.";
     return kepala + `<section class="bagian" style="margin-top:34px"><header><h2>Daftar bab</h2><p>${ket}</p></header>
-      <ol class="daftar-bab">${bab.map((b) => `<li><a href="/kitab/${esc(k.id)}/bab/${b.no}">${b.no}. ${esc(b.nama || "(tanpa nama)")}${b.nama_ar ? `<br><span class="ar" style="font-size:1.05rem;color:var(--tinta-2);display:block">${esc(b.nama_ar)}</span>` : ""}</a><span class="nb">${fmt(b.jumlah)}</span></li>`).join("")}</ol></section>`;
+      <ol class="daftar-bab">${bab.map((b) => `<li><a href="/kitab/${esc(k.id)}/bab/${b.no}">${b.no}. ${esc(b.nama || "Riwayat tanpa nomor kitab di sumber penomoran (campuran)")}${b.nama_ar ? `<br><span class="ar" style="font-size:1.05rem;color:var(--tinta-2);display:block;text-align:left">${esc(b.nama_ar)}</span>` : ""}${b.nama_en && b.nama_en !== b.nama ? `<span class="kecil" style="display:block">${esc(b.nama_en)}</span>` : ""}</a><span class="nb">${fmt(b.jumlah)}</span></li>`).join("")}</ol></section>`;
   }
   return kepala + `<section class="bagian" style="margin-top:34px"><header><h2>Daftar riwayat</h2><p>Kitab ini belum punya pembagian bab di sumber kami.</p></header>${daftarRiwayat(k.id, daftar)}${navHalaman(`/kitab/${k.id}`, halaman, halMaks)}</section>`;
 }
@@ -303,7 +309,8 @@ export function halamanKitab({ k, bab, daftar, halaman, halMaks }) {
 export function halamanBab({ k, b, daftar, halaman, halMaks }) {
   return `<nav class="remah"><a href="/kitab">Kitab</a> › <a href="/kitab/${esc(k.id)}">${esc(k.nama)}</a> › <span>${esc(b.nama || "Bab " + b.no)}</span></nav>
   <h1 class="halaman-judul" style="margin-top:10px">${esc(b.nama || "Bab " + b.no)}</h1>${b.nama_ar ? `<p class="ar" style="font-size:1.5rem;color:var(--zamrud);text-align:left;direction:rtl;margin-top:6px">${esc(b.nama_ar)}</p>` : ""}
-  <p class="sub">${esc(k.nama)} · kitab/bab ke-${b.no} · ${fmt(b.jumlah)} riwayat</p>
+  ${b.nama_en && b.nama_en !== b.nama ? `<p class="kecil">${esc(b.nama_en)} (fawazahmed0)</p>` : ""}
+  <p class="sub">${esc(k.nama)} · bagian ke-${b.no} · ${fmt(b.jumlah)} riwayat</p>
   ${daftarRiwayat(k.id, daftar)}${navHalaman(`/kitab/${k.id}/bab/${b.no}`, halaman, halMaks)}`;
 }
 

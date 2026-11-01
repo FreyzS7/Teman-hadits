@@ -108,5 +108,40 @@
   "bytes": 9385426,
   "commit": "db43bdaa70ee528a0e663c089d3dab5bb4d855f0",
   "sha256": "79c5710963a1505787178e48c97a6220f91bb7b3e35c0d8429f7ba9bdb2748fc"
+ },
+ "openiti-0200AH/0179MalikIbnAnas.Muwatta.Shamela0001699-ara1.completed": {
+  "bytes": 1397896,
+  "commit": "599f22fe249871f602efe2e0ddc801d3742960a3",
+  "sha256": "1402840d20bf094e127d75450d0e77df82ca2f056c9c426300f6758a3ca1d3fb"
+ },
+ "openiti-0275AH/0256Bukhari.Sahih.Shamela0001681-ara1": {
+  "bytes": 6039255,
+  "commit": "44e1c36738a2bf5c14dafa232a6ae1891e6171cd",
+  "sha256": "16f95173b9ea1927b577ff85dc7e2a8351b8287e4ea9863782c4c5fc87ac8132"
+ },
+ "openiti-0275AH/0261Muslim.Sahih.Shamela0001727-ara1.mARkdown": {
+  "bytes": 4933663,
+  "commit": "44e1c36738a2bf5c14dafa232a6ae1891e6171cd",
+  "sha256": "8126f063f53504b68d6e9e133cec049c10acf498c501f5f4897013efc1e56d9e"
+ },
+ "openiti-0275AH/0273IbnMaja.Sunan.Shamela0001198-ara1": {
+  "bytes": 2535073,
+  "commit": "44e1c36738a2bf5c14dafa232a6ae1891e6171cd",
+  "sha256": "a8ca427804457198efc8cb516bb5ad91da500a9d8fe1a697a7e11e5239a07782"
+ },
+ "openiti-0275AH/0275AbuDawudSijistani.Sunan.Shamela0001726-ara1": {
+  "bytes": 3398133,
+  "commit": "44e1c36738a2bf5c14dafa232a6ae1891e6171cd",
+  "sha256": "f153a439d58e7fbeded321cd6ba9cba3b5402c5d3b3286ca3dde9b620d6feef6"
+ },
+ "openiti-0300AH/0279Tirmidhi.Sunan.Shamela0007895-ara2": {
+  "bytes": 3826249,
+  "commit": "01a1544130e0236850ef2698923ad01575c5bd7c",
+  "sha256": "8ac7c1a66705c26ab2c968a691c885c008735def6d748995e747dee44375f270"
+ },
+ "openiti-0325AH/0303Nasai.SunanSughra.Shamela0000829-ara1": {
+  "bytes": 3460338,
+  "commit": "089e665b4958e0f145a46941987fb81cf3dda1b8",
+  "sha256": "be25ffbca47a4274c181e8955c1f91e5abaeabcebb826c0ef1997650ea27c50c"
  }
 }

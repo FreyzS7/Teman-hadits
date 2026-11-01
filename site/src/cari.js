@@ -69,7 +69,7 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
   for (const k of r.konsep) {
     for (const frasa of k.arab) for (const n of await ftsIds(`arab_akar:"${akarAr(normAr(frasa))}"`)) tambah(n, 3, `teks Arab memuat ${frasa}`);
     for (const [kid, bab] of k.bab) {
-      const rs = await db.prepare("SELECT r.n FROM riwayat r JOIN bab b ON b.kitab_id = r.kitab_id AND b.no = r.bab_no WHERE b.kitab_id = ?1 AND b.nama = ?2").bind(kid, bab).all();
+      const rs = await db.prepare("SELECT r.n FROM riwayat r JOIN bab b ON b.kitab_id = r.kitab_id AND b.no = r.bab_no WHERE b.kitab_id = ?1 AND (b.nama = ?2 OR b.nama_en = ?2 OR b.nama_ar = ?2)").bind(kid, bab).all();
       for (const x of rs.results) tambah(x.n, 3, `masuk kitab/bab "${bab}"`);
     }
     for (const t of k.terjemah) for (const n of await ftsIds(`terjemah_polos:"${normId(t)}"`)) tambah(n, 2, `terjemah memuat "${t}"`);
@@ -87,6 +87,14 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
     }
     const ids = await ftsIds(match, 400);
     ids.forEach((n, i) => tambah(n, 1 + (ids.length - i) / (10 * ids.length), `terjemah memuat ${mode}: ${r.kata.join(", ")}`));
+  }
+
+  // judul kitab/bab (Arab & Indonesia) yang memuat kata kunci: "haid" -> riwayat di "Kitab Haid"
+  if (r.kata.length && !r.konsep.length) {
+    for (const w of r.kata) {
+      const match = "judul:(" + varianDari(w).map(fraseId).join(" OR ") + ")";
+      for (const n of await ftsIds(match, 400)) tambah(n, 1, `judul kitab/bab memuat "${w}"`);
+    }
   }
 
   // penguat: kata sisa (bila ada konsep) + kata maksud — tidak diwajibkan, hanya menaikkan peringkat
