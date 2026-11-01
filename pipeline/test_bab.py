@@ -167,3 +167,23 @@ class Penguraian(unittest.TestCase):
         self.assertEqual(lain, [])
         self.assertEqual(judul("tirmidzi:13")[1], "باب ما جاء في الرخصة في ذلك")
         self.assertGreater(int(info("tirmidzi", "cocok_teks")), 3850)
+
+    def test_judul_tambahan_muslim_bertanda_bintang(self):
+        # "### || * باب ..." tidak ada di cetakan Fu'ad 'Abd al-Baqi: fihris Kitab al-Haid bab 6 = hadits 305-309,
+        # halaman isi hlm. 249 tanpa judul sebelum no. 308 dan 309 (scan archive.org alfirdwsiy2018_gmail_2778)
+        self.assertEqual(q("SELECT count(*) FROM riwayat_bab WHERE bab_ar LIKE '*%'")[0][0], 0)
+        for rid in ("muslim:707", "muslim:708"):                    # Fu'ad no. 308, 309
+            self.assertTrue(judul(rid)[1].startswith("باب جواز نوم الجنب"), rid)
+        self.assertEqual(judul("muslim:709")[1], "باب وجوب الغسل على المرأة بخروج المني منها")
+
+    def test_judul_muslim_sesuai_cetakan(self):
+        # teks digital memakai judul lain untuk 5 bab ini; halaman isi cetakan Fu'ad 'Abd al-Baqi dilihat langsung
+        self.assertEqual(judul("muslim:5494")[1], "باب استحباب لبس النعال وما في معناها")
+        self.assertTrue(judul("muslim:5498")[1].startswith("باب استحباب لبس النعل في اليمنى أولا"))
+        self.assertTrue(judul("muslim:5538")[1].startswith("باب تحريم تصوير صورة الحيوان"))
+        self.assertEqual(judul("muslim:3590")[1], "باب في المصة والمصتان")
+        self.assertEqual(judul("muslim:4772")[1], "باب الإمام جنة يقاتل به من ورائه ويتقى به")
+        self.assertEqual(judul("muslim:5546")[1], "باب كراهة الكلب والجرس في السفر")      # bab 27 tidak ikut berubah
+        # fihris menyingkat "غرز الخشب في الجدار", halaman isi = teks digital: tidak dikoreksi
+        cara = q("SELECT cara FROM riwayat_bab WHERE bab_ar = 'باب غرز الخشب في جدار الجار'")
+        self.assertTrue(cara and all(c != "koreksi-cetak" for (c,) in cara))

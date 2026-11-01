@@ -376,6 +376,46 @@
       "bab_ar": "باب",
       "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini, sehingga no. 7222–7223 tergabung ke bab «الاستخلاف».",
       "bukti": "Fihris rinci juz 9 hlm. 170 (leaf 78, dilihat langsung): «بابٌ: حدثني محمد بن المثنى» antara bab «الاستخلاف» dan bab «إخراج الخصوم وأهل الريب من البيوت بعد المعرفة». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "muslim",
+      "dari": 3590,
+      "sampai": 3596,
+      "bab_ar": "باب في المصة والمصتان",
+      "alasan": "Judul di teks digital (Shamela/OpenITI) berbeda dari cetakan: «باب في المصة والمصتين». Nomor babnya sama.",
+      "bukti": "Kitab ar-Radha' bab 5 (hadits Fu'ad 1450–1451): halaman isi hlm. 1073 (leaf 1072, dilihat langsung) dan fihris (leaf 2359) mencetak «باب في المصة والمصتان». Scan: archive.org alfirdwsiy2018_gmail_2778 (Shahih Muslim, tahqiq Muhammad Fu'ad 'Abd al-Baqi, cetakan al-Halabi; sama dengan dasar teks digital kita)."
+    },
+    {
+      "kitab_id": "muslim",
+      "dari": 4772,
+      "sampai": 4772,
+      "bab_ar": "باب الإمام جنة يقاتل به من ورائه ويتقى به",
+      "alasan": "Judul di teks digital (Shamela/OpenITI) berbeda dari cetakan: «باب في الإمام إذا أمر بتقوى الله وعدل كان له أجر». Nomor babnya sama.",
+      "bukti": "Kitab al-Imarah bab 9 (hadits Fu'ad 1841): halaman isi hlm. 1471 (leaf 1470, dilihat langsung) dan fihris (leaf 2377) mencetak «باب الإمام جنة يقاتل به من ورائه ويتقى به». Scan: archive.org alfirdwsiy2018_gmail_2778 (Shahih Muslim, tahqiq Muhammad Fu'ad 'Abd al-Baqi, cetakan al-Halabi; sama dengan dasar teks digital kita)."
+    },
+    {
+      "kitab_id": "muslim",
+      "dari": 5494,
+      "sampai": 5494,
+      "bab_ar": "باب استحباب لبس النعال وما في معناها",
+      "alasan": "Judul di teks digital (Shamela/OpenITI) berbeda dari cetakan: «باب ما جاء في الانتعال والاستكثار من النعال». Nomor babnya sama.",
+      "bukti": "Kitab al-Libas bab 18 (hadits Fu'ad 2096): halaman isi hlm. 1660 (leaf 1659, dilihat langsung) dan fihris (leaf 2384) mencetak «باب استحباب لبس النعال وما في معناها». Scan: archive.org alfirdwsiy2018_gmail_2778 (Shahih Muslim, tahqiq Muhammad Fu'ad 'Abd al-Baqi, cetakan al-Halabi; sama dengan dasar teks digital kita)."
+    },
+    {
+      "kitab_id": "muslim",
+      "dari": 5495,
+      "sampai": 5498,
+      "bab_ar": "باب استحباب لبس النعل في اليمنى أولا، والخلع من اليسرى أولا، وكراهة المشي في نعل واحدة",
+      "alasan": "Judul di teks digital (Shamela/OpenITI) berbeda dari cetakan: «باب إذا انتعل فليبدأ باليمين وإذا خلع فليبدأ بالشمال». Nomor babnya sama.",
+      "bukti": "Kitab al-Libas bab 19 (hadits Fu'ad 2097–2098): halaman isi hlm. 1660 (leaf 1659, dilihat langsung) dan fihris (leaf 2384) mencetak «باب استحباب لبس النعل في اليمنى أولا، والخلع من اليسرى أولا، وكراهة المشي في نعل واحدة». Scan: archive.org alfirdwsiy2018_gmail_2778 (Shahih Muslim, tahqiq Muhammad Fu'ad 'Abd al-Baqi, cetakan al-Halabi; sama dengan dasar teks digital kita)."
+    },
+    {
+      "kitab_id": "muslim",
+      "dari": 5511,
+      "sampai": 5545,
+      "bab_ar": "باب تحريم تصوير صورة الحيوان، وتحريم اتخاذ ما فيه صورة غير ممتهنة بالفرش ونحوه، وأن الملائكة عليهم السلام لا يدخلون بيتا فيه صورة ولا كلب",
+      "alasan": "Judul di teks digital (Shamela/OpenITI) berbeda dari cetakan: «باب لا تدخل الملائكة بيتا فيه كلب ولا صورة». Nomor babnya sama.",
+      "bukti": "Kitab al-Libas bab 26 (hadits Fu'ad 2104–2112): halaman isi hlm. 1664 (leaf 1663, dilihat langsung) dan fihris (leaf 2385) mencetak «باب تحريم تصوير صورة الحيوان، وتحريم اتخاذ ما فيه صورة غير ممتهنة بالفرش ونحوه، وأن الملائكة عليهم السلام لا يدخلون بيتا فيه صورة ولا كلب». Scan: archive.org alfirdwsiy2018_gmail_2778 (Shahih Muslim, tahqiq Muhammad Fu'ad 'Abd al-Baqi, cetakan al-Halabi; sama dengan dasar teks digital kita)."
     }
   ]
 }

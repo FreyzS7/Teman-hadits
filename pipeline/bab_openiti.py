@@ -159,6 +159,10 @@ def urai(path, kid=None):
                 tutup()
                 teks, tahqiq, no = [isi], [], None
                 continue
+            if kid == "muslim" and isi.lstrip().startswith("*"):
+                # "### || * باب ..." (59 baris) = judul tambahan teks digital, TIDAK ada di cetakan Fu'ad 'Abd al-Baqi:
+                # fihrisnya (mis. Kitab al-Haid bab 6 = hadits 305-309) dan halaman isinya (hlm. 249) tanpa judul itu.
+                continue
             if _MUKARRAR.match(isi):                        # Tirmidzi: "### || (م ١) - وسمعت ..." = lanjutan hadits bernomor
                 teks.append(_MUKARRAR.sub("", isi))
                 continue

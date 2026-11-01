@@ -55,7 +55,7 @@ Lihat `docs/09-judul-kitab-bab.md`. Tingkat di tabel "Per kitab" di atas adalah 
 | Kitab | Edisi | Terpetakan menurut isi | Cocok ≥ 90% | Urutan naik | Nomor sama | Penilaian muhaqqiq |
 |---|---|---:|---:|---:|---:|---:|
 | bukhari | — | 7375/7580 | 7143 | 7362/7374 | 7057/7318 | 1 |
-| muslim | — | 7298/7360 | 7231 | 7286/7297 | 0/7085 | 0 |
+| muslim | — | 7298/7360 | 7231 | 7286/7297 | 0/7086 | 0 |
 | abudawud | — | 5264/5272 | 5169 | 5262/5263 | 5246/5258 | 0 |
 | tirmidzi | — | 3872/3924 | 2875 | 3864/3871 | 3812/3827 | 0 |
 | nasai | — | 5672/5679 | 5572 | 5664/5671 | 5637/5654 | 0 |

@@ -154,11 +154,31 @@ Koreksi baru (nomor hadits): 149; 218; 506; 882; 946; 1153; 1293; 1386; 1420; 23
 
 Di Kitab at-Tafsir, bab tanpa judul di awal surah (mis. «سورة الأنبياء: بابٌ: حدثنا محمد بن بشار») tampil di situs dengan judul **nama surahnya**. Ini tidak salah (hadits itu memang di bagian surah tersebut), jadi tidak diubah.
 
-Total koreksi bertanda bukti: **47 rentang**, semuanya Bukhari. Diuji di `test_bab.py` (`test_fihris_dibaca_utuh`), termasuk hadits tetangga yang harus tetap di babnya.
+Total koreksi bertanda bukti untuk Bukhari: **47 rentang** (ditambah 5 untuk Muslim, lihat di bawah). Diuji di `test_bab.py` (`test_fihris_dibaca_utuh`), termasuk hadits tetangga yang harus tetap di babnya.
 
 Pemeriksaan ini juga menemukan dua masalah lain di judul bab, keduanya sudah diperbaiki (rincian di `docs/09-judul-kitab-bab.md`):
 - **141 hadits Bukhari bernomor ganda** (mis. 299–301, 3164–3165) sebelumnya tanpa judul bab sama sekali. Kini dicocokkan lewat nomor dengan syarat ketat.
 - **507 riwayat Tirmidzi, Muslim, dan Ibnu Majah berjudul bab berupa potongan sanad atau potongan teks** (mis. «وحدثني محمد بن حاتم…», «(م ٢) - حدثنا…», «(غلبت الروم)»). Penyebabnya parser kita. Kini 0, dan riwayat Tirmidzi yang berjudul bab naik dari 3.711 ke 3.919.
+
+### Shahih Muslim: fihris Fu'ad 'Abd al-Baqi
+
+Teks digital Muslim kita (OpenITI/Shamela) berasal dari edisi Dar Ihya' at-Turath, yaitu tahqiq Muhammad Fu'ad 'Abd al-Baqi. Scan cetakan al-Halabi dari tahqiq yang sama ada di archive.org (`alfirdwsiy2018_gmail_2778`), lengkap dengan jilid indeksnya. «فهرس الموضوعات» di jilid itu mencantumkan **setiap bab bernomor beserta rentang nomor hadits (nomor Fu'ad)**. Data kita menyimpan nomor Fu'ad di setiap riwayat (`no_arab`), jadi batas bab bisa dicocokkan langsung.
+
+Cara:
+1. OCR bawaan archive.org untuk halaman indeks terlalu rusak, jadi 80 halamannya dibaca ulang dengan Tesseract (bahasa Arab). Judul terbaca cukup baik, angka tidak.
+2. Urutan judul fihris (OCR) disejajarkan dengan urutan judul bab teks digital (pemrograman dinamis).
+3. Judul yang tidak berpasangan, atau yang kata-katanya tidak ditemukan di teks OCR halamannya, dilihat langsung di gambar (±40 halaman). Bila judul berbeda, halaman isi cetakan juga dilihat.
+
+| Hasil | |
+|---|---|
+| Entri fihris tanpa pasangan di data (bab hilang di data) | 0 (yang tersisa hanya sampah OCR) |
+| **Judul tambahan teks digital bertanda «*»** (bukan bab cetakan) | **59 baris**. Contoh: «* باب من أتى أهله ثم أراد أن يعود» di tengah bab 6 Kitab al-Haid (hadits 305–309); halaman isi hlm. 249 mencetak hadits 308 dan 309 tanpa judul. Kini diabaikan parser |
+| Judul berbeda dari cetakan, terbukti di halaman isi | **5 → dikoreksi**: al-Libas bab 18, 19, 26; ar-Radha' bab 5; al-Imarah bab 9 |
+| Judul di fihris berbeda, tetapi halaman isi sama dengan data | 1 (al-Musaqah bab 29: fihris menyingkat «غرز الخشب في الجدار»; halaman isi «في جدار الجار») → tidak dikoreksi |
+
+Contoh koreksi: hadits 1841 dulu berjudul «في الإمام إذا أمر بتقوى الله وعدل كان له أجر», sedangkan cetakannya (hlm. 1471) «باب الإمام جنة يقاتل به من ورائه ويتقى به».
+
+Batasan: halaman fihris 2–4 (Muqaddimah dan Kitab al-Iman bab 1–18) tidak ada di scan ini, jadi bagian itu belum dicek. Judul yang OCR-nya cocok ≥ 60% kata dianggap sama; perbedaan kecil di dalamnya (mis. satu kata) mungkin belum tertangkap.
 
 ## Batasan dan yang belum
 
@@ -166,4 +186,5 @@ Pemeriksaan ini juga menemukan dua masalah lain di judul bab, keduanya sudah dip
 - **Kasyf al-Khafa'** hanya 11 dari 40 entri yang ditemukan, karena OCR cetakan 1351 H sangat rusak.
 - **Teks hadits** (Bukhari, Muslim, dst.) belum dibandingkan dengan cetakan. Scan Bukhari di archive.org tidak punya OCR. Teks hadits saat ini diverifikasi dengan cara lain: dua sumber digital yang sepakat (tingkat A) dan uji silang atribusi.
 - **Teks dan nomor hadits Bukhari** belum dicek visual satu per satu. Halamannya harus dicari manual di scan (OCR-nya tidak bisa dipakai untuk mencari), atau dengan scan lain yang OCR-nya lebih baik.
+- Muslim: halaman fihris Muqaddimah dan Kitab al-Iman bab 1–18 belum dicek (tidak ada di scan).
 - **Fihris Bukhari sudah dibaca utuh**, tetapi hanya untuk bab tanpa judul. Judul bab bertajuk belum dibandingkan satu per satu dengan fihris; baru 14 judul Kitab 62 yang dicek persis. Kitab lain (Muslim, dst.) belum dicek dengan fihris cetak.
