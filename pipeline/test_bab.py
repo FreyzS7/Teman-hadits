@@ -197,3 +197,18 @@ class Penguraian(unittest.TestCase):
                          "باب ما جاء في فضل الصلاة في المسجد الحرام ومسجد النبي صلى الله عليه وسلم")
         n = q("SELECT count(DISTINCT kitab_ar || bab_ar) FROM riwayat_bab WHERE riwayat_id LIKE 'ibnumajah:%'")[0][0]
         self.assertGreater(n, 1450)                                          # dulu 1.415 judul berbeda
+
+    def test_judul_bab_nasai_utuh(self):
+        # judul terpecah ke beberapa baris di teks digital; fihris cetakan Abu Ghuddah (jilid 9) memuatnya utuh
+        self.assertEqual(judul("nasai:158")[1], "باب الوضوء من الغائط والبول")
+        self.assertTrue(judul("nasai:1011")[1].endswith("[الإسراء: 110]"))
+        self.assertEqual(judul("nasai:543")[1], "أول وقت الصبح")                  # judul tanpa "###" di antara dua hadits
+        self.assertEqual(judul("nasai:1066")[1], "ما يقول في قيامه ذلك")
+        n = q("SELECT count(*) FROM riwayat_bab WHERE bab_ar GLOB '*0' OR bab_ar LIKE '%</%'")[0][0]
+        self.assertEqual(n, 0)
+
+    def test_judul_abu_dawud_sesuai_fihris(self):
+        self.assertEqual(judul("abudawud:867")[1], "باب تفريع أبواب الركوع والسجود ووضع اليدين على الركبتين")
+        self.assertEqual(judul("abudawud:3253")[1], "باب كراهية الحلف بالأمانة")
+        self.assertEqual(judul("abudawud:3416")[1], "باب في كسب المعلم")
+        self.assertEqual(q("SELECT count(*) FROM riwayat_bab WHERE bab_ar LIKE '%حكم الألباني%'")[0][0], 0)

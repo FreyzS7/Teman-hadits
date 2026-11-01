@@ -188,6 +188,24 @@ Teks digital Ibnu Majah kita adalah cetakan Dar Ihya' al-Kutub al-'Arabiyyah (al
 - Buktinya: sebelum perbaikan, 114 entri fihris tidak berpasangan dengan bab mana pun di data; sesudahnya tinggal 7, dan ketujuhnya sampah OCR.
 - Judul: judul yang OCR-nya tidak cocok dilihat langsung di 3 halaman dengan kandidat terbanyak (±25 judul, mis. Kitab ath-Thibb dan awal Kitab at-Tijarat). Semuanya sama dengan data; perbedaannya hanya salah OCR. Judul lain belum dilihat satu per satu.
 
+### Sunan Abu Dawud: fihris cetakan Muhyiddin 'Abd al-Hamid
+
+Scan `04-8461-2` (al-Maktabah al-'Ashriyyah, sama dengan dasar teks digital kita). Fihrisnya ada di akhir setiap jilid (39 halaman), dua kolom, dan berisi nomor halaman, bukan nomor hadits. Setiap halaman dipotong pada garis pemisah kolom lalu di-OCR per kolom.
+
+- **Jumlah bab cocok:** data kita punya 1.873 urutan bab (1.868 diawali «باب»); jumlah yang lazim dikutip untuk Sunan Abu Dawud ±1.871.
+- Judul yang kata-katanya tidak ditemukan di OCR fihris tinggal 30, hampir semuanya judul satu kata yang terlewat OCR (mis. «المزارعة», terlihat jelas di gambar).
+- **3 judul dikoreksi** (dilihat di gambar fihris): «باب تفريع أبواب الركوع والسجود ووضع اليدين على الركبتين» (dipecah dua di teks digital; hadits 867–868), «باب كراهية الحلف بالأمانة» (teks digital: «في باب …»; 3253), «باب في كسب المعلم» (teks digital tanpa «باب»; 3416–3417).
+- Baris «### | [حكم الألباني] :» (catatan penilaian al-Albani, 5 kali) kini diperlakukan sebagai catatan, bukan judul bab.
+
+### Sunan an-Nasa'i: fihris cetakan Abu Ghuddah (jilid 9)
+
+Scan `SunanNissa3AbuGuda` tidak punya OCR, jadi 367 halaman jilid 9 di-OCR sendiri. «فهرس تفصيلي لذكر أسماء الكتب وعناوين الأبواب» ada di leaf 34–103 (dua kolom, ±2.590 entri).
+
+- Sejajar sangat baik: 2.435 pasangan judul cocok.
+- **Judul terpotong.** Di teks digital, banyak judul terpecah ke beberapa baris («### || باب» + «### || الوضوء من الغائط» + «# والبول»), sehingga situs dulu hanya menampilkan potongannya. Ada juga 2 judul yang ditulis tanpa baris judul sama sekali («# أول وقت الصبح», «# (25 ما يقول في قيامه ذلك)»). Kini digabung/dibaca (khusus Nasa'i): **94 riwayat** sekarang berjudul lengkap, mis. «باب الوضوء من الغائط والبول», «باب تأويل قول الله عز وجل: {ويسألونك عن المحيض} [البقرة: 222]».
+- Entri fihris tanpa pasangan hampir seluruhnya rangkaian «نوع آخر. أخبرنا …» (fihris mendaftar setiap «نوع آخر» terpisah) dan header kolom. Satu-satunya bab yang benar-benar tidak ada di teks digital adalah «باب المسح على الجوربين والنعلين»; haditsnya (no. 125) tidak punya teks Arab di sumber kita, jadi tidak ada yang salah tampil.
+- Teks digital mengulang «التيمم في الحضر» untuk hadits 312–313, sedangkan fihris hanya punya satu bab (no. 195). Karena kalimatnya sama, tidak diubah.
+
 ## Batasan dan yang belum
 
 - **Nomor entri belum diverifikasi.** OCR mengacaukan angka Arab-Hindi di kolom nomor.
@@ -196,4 +214,4 @@ Teks digital Ibnu Majah kita adalah cetakan Dar Ihya' al-Kutub al-'Arabiyyah (al
 - **Teks dan nomor hadits Bukhari** belum dicek visual satu per satu. Halamannya harus dicari manual di scan (OCR-nya tidak bisa dipakai untuk mencari), atau dengan scan lain yang OCR-nya lebih baik.
 - Muslim: halaman fihris Muqaddimah dan Kitab al-Iman bab 1–18 belum dicek (tidak ada di scan).
 - **Fihris Bukhari sudah dibaca utuh**, tetapi hanya untuk bab tanpa judul. Judul bab bertajuk belum dibandingkan satu per satu dengan fihris; baru 14 judul Kitab 62 yang dicek persis.
-- **Sudah dicek dengan fihris cetak:** Bukhari, Muslim, Ibnu Majah. **Belum:** Abu Dawud (scan edisi Muhyiddin 'Abd al-Hamid ada di archive.org `04-8461-2`, tetapi fihrisnya berkolom rapat sehingga OCR-nya perlu ditangani khusus), Nasa'i (scan edisi Abu Ghuddah `SunanNissa3AbuGuda` ada, belum di-OCR), Tirmidzi (scan edisi Basyar 'Awwad dengan berkas yang bisa dibaca belum ditemukan), Malik, Ahmad, ad-Darimi, asy-Syafi'i.
+- **Sudah dicek dengan fihris cetak:** Bukhari, Muslim, Ibnu Majah, Abu Dawud, Nasa'i (untuk Abu Dawud dan Nasa'i: struktur dan judul lewat OCR, kandidat dilihat di gambar). **Belum:** Tirmidzi (scan edisi Basyar 'Awwad dengan berkas yang bisa dibaca belum ditemukan), Malik, Ahmad, ad-Darimi, asy-Syafi'i.

@@ -2,6 +2,30 @@
   "_catatan": "Koreksi judul bab yang DIVERIFIKASI terhadap kitab cetak (lihat docs/13-verifikasi-cetak.md). Hanya diisi dari bukti cetak; setiap entri menyebut sumbernya.",
   "koreksi": [
     {
+      "kitab_id": "abudawud",
+      "dari": 867,
+      "sampai": 868,
+      "bab_ar": "باب تفريع أبواب الركوع والسجود ووضع اليدين على الركبتين",
+      "alasan": "Judul di teks digital tidak lengkap/berbeda: «وضع اليدين على الركبتين».",
+      "bukti": "Fihris jilid 1 hlm. 229 (leaf 319, dilihat langsung): satu judul «باب تفريع أبواب الركوع والسجود ووضع اليدين على الركبتين»; teks digital memecahnya menjadi dua baris judul. Scan: archive.org 04-8461-2 (Sunan Abi Dawud, tahqiq Muhammad Muhyiddin 'Abd al-Hamid, al-Maktabah al-'Ashriyyah; sama dengan dasar teks digital kita)."
+    },
+    {
+      "kitab_id": "abudawud",
+      "dari": 3253,
+      "sampai": 3253,
+      "bab_ar": "باب كراهية الحلف بالأمانة",
+      "alasan": "Judul di teks digital tidak lengkap/berbeda: «في باب كراهية الحلف بالأمانة».",
+      "bukti": "Fihris jilid 3 hlm. 222 (leaf 377, dilihat langsung): «« كراهية الحلف بالأمانة» (« = باب), sesudah «في كراهية الحلف بالآباء». Scan: archive.org 04-8461-2 (Sunan Abi Dawud, tahqiq Muhammad Muhyiddin 'Abd al-Hamid, al-Maktabah al-'Ashriyyah; sama dengan dasar teks digital kita)."
+    },
+    {
+      "kitab_id": "abudawud",
+      "dari": 3416,
+      "sampai": 3417,
+      "bab_ar": "باب في كسب المعلم",
+      "alasan": "Judul di teks digital tidak lengkap/berbeda: «في كسب المعلم».",
+      "bukti": "Fihris jilid 3 hlm. 264 (leaf 378, dilihat langsung): «باب في كسب المعلم», bab pertama Kitab al-Ijarah. Scan: archive.org 04-8461-2 (Sunan Abi Dawud, tahqiq Muhammad Muhyiddin 'Abd al-Hamid, al-Maktabah al-'Ashriyyah; sama dengan dasar teks digital kita)."
+    },
+    {
       "kitab_id": "bukhari",
       "dari": 18,
       "sampai": 18,

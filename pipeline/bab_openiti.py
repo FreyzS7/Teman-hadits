@@ -87,6 +87,7 @@ def bersihkan_judul(t):
     t = re.sub(r"[\"“”]+", "", t)
     t = re.sub(r"</?[a-zA-Z][^>]*>", " ", t)          # sisa markup HTML di teks digital ("</span>")
     t = re.sub(r"\s*«\s*$", "", t)                   # tanda kutip pembuka yang tertinggal di akhir judul
+    t = re.sub(r"(?<!\d)0\s*$", "", t)                # Nasa'i: penanda akhir hadits "0" yang ikut ke lanjutan judul
     return re.sub(r"\s+", " ", t).strip(" :.-–،")
 
 
@@ -121,22 +122,24 @@ def urai(path, kid=None):
         if teks:
             blok.append({"kitab": kitab, "bab": bab, "no": no, "teks": " ".join(teks), "tahqiq": " ".join(tahqiq) or None})
 
-    for baris in open(path, encoding="utf8"):
-        baris = baris.rstrip("\n")
+    semua = open(path, encoding="utf8").read().split("\n")
+    for idx, baris in enumerate(semua):
         if baris.startswith("#META#") or baris.startswith("######"):
             continue
         if baris.startswith("### "):
-            judul_terbuka = False
             m = re.match(r"^### (\|+|\$)\s*(.*)$", baris)
             if not m:
                 continue
             isi = m.group(2)
             if re.search(r"\[ص\s*:", isi) and len(norm_ar(re.sub(r"\[ص\s*:[^\]]*\]", " ", _SAMPAH.sub(" ", isi)))) < 5:
                 continue                                  # penanda halaman cetak: bukan batas hadits/bab
-            if "تعليق المحقق" in isi or re.search(r"\[\s*تعليق", isi):   # Darimi (Asad): penilaian muhaqqiq; Bukhari dll.: "[تعليق مصطفى البغا]" = komentar editor, BUKAN judul bab
+            # Darimi (Asad): penilaian muhaqqiq; Bukhari dll.: "[تعليق مصطفى البغا]" = komentar editor; Abu Dawud:
+            # "[حكم الألباني] :" = catatan penilaian. Semuanya BUKAN judul bab.
+            if "تعليق المحقق" in isi or re.search(r"\[\s*(?:تعليق|حكم الألباني)", isi):
                 mode_tahqiq = True
                 continue
             mode_tahqiq = False
+            sambung, judul_terbuka = judul_terbuka, False
             polos = norm_ar(_AWALAN_NOMOR.sub("", isi))
             mn = _NOMOR_SAJA.match(isi)
             if mn:                                         # "### | 12 - " = awal hadits bernomor
@@ -180,6 +183,11 @@ def urai(path, kid=None):
                 # Judul bab Tirmidzi selalu diawali "باب"/"ما جاء"; selain itu = lanjutan teks.
                 teks.append(_AWALAN_NOMOR.sub("", isi))
                 continue
+            if kid == "nasai" and sambung and bab is not None and polos and len(polos.split()) <= 30:
+                # Nasa'i: judul terpecah ke beberapa baris "###" ("### || باب" + "### || الوضوء من الغائط")
+                bab = bersihkan_judul(bab + " " + _AWALAN_NOMOR.sub("", isi))
+                judul_terbuka = True
+                continue
             if len(polos.split()) <= 60 and polos:         # judul bab (dengan/tanpa kata "باب")
                 if _BAB_FIHRIS.match(polos):                # Ibnu Majah: "باب حدثنا سويد بن سعيد" = bab tanpa judul (gaya fihris)
                     isi = "باب"
@@ -187,6 +195,7 @@ def urai(path, kid=None):
                 teks, tahqiq, no = [], [], None
                 bab = bersihkan_judul(_AWALAN_NOMOR.sub("", isi))
                 tunggu_judul = kid == "bukhari" and norm_ar(bab) == "باب"
+                judul_terbuka = kid == "nasai"
                 continue
             teks.append(isi)
         elif baris.startswith("# ") or baris.startswith("~~"):
@@ -196,6 +205,21 @@ def urai(path, kid=None):
             if mode_tahqiq:
                 tahqiq.append(_SAMPAH.sub(" ", isi).strip())
                 continue
+            if kid == "nasai":
+                kal = norm_ar(_SAMPAH.sub(" ", re.sub(r"</?[a-zA-Z][^>]*>", " ", isi))).strip()
+                if judul_terbuka and baris.startswith("# ") and kal and not _AWAL_SANAD.match(kal) and len(kal.split()) <= 14:
+                    bab = bersihkan_judul(bab + " " + _SAMPAH.sub(" ", isi))     # "# والبول</span>", "# [البقرة: 222]"
+                    continue
+                judul_terbuka = False
+                if baris.startswith("# ") and kal and not _AWAL_SANAD.match(kal) and len(kal.split()) <= 10:
+                    # judul tanpa "###" di antara dua hadits: "# أول وقت الصبح", "# (25 ما يقول في قيامه ذلك)"
+                    sblm = next((x for x in reversed(semua[:idx]) if x.strip() and "PageV" not in x[:12]), "")
+                    ssdh = next((x for x in semua[idx + 1:] if x.strip() and not re.match(r"^#\s*PageV\d+P\d+\s*$", x)), "")
+                    if re.search(r"0\s*$", sblm) and re.match(r"^### \|+ \d+ -", ssdh):
+                        tutup()
+                        teks, tahqiq, no = [], [], None
+                        bab = bersihkan_judul(re.sub(r"^\(\s*\d+\s*|\)\s*$", "", _SAMPAH.sub(" ", isi).strip(' "')))
+                        continue
             if kid == "ibnumajah":
                 kal = norm_ar(_SAMPAH.sub(" ", isi)).strip()
                 if baris.startswith("# ") and re.match(r"^باب(?:\s|:|$)", kal) and len(kal.split()) <= 40:
