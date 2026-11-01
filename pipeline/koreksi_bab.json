@@ -440,6 +440,48 @@
       "bab_ar": "باب تحريم تصوير صورة الحيوان، وتحريم اتخاذ ما فيه صورة غير ممتهنة بالفرش ونحوه، وأن الملائكة عليهم السلام لا يدخلون بيتا فيه صورة ولا كلب",
       "alasan": "Judul di teks digital (Shamela/OpenITI) berbeda dari cetakan: «باب لا تدخل الملائكة بيتا فيه كلب ولا صورة». Nomor babnya sama.",
       "bukti": "Kitab al-Libas bab 26 (hadits Fu'ad 2104–2112): halaman isi hlm. 1664 (leaf 1663, dilihat langsung) dan fihris (leaf 2385) mencetak «باب تحريم تصوير صورة الحيوان، وتحريم اتخاذ ما فيه صورة غير ممتهنة بالفرش ونحوه، وأن الملائكة عليهم السلام لا يدخلون بيتا فيه صورة ولا كلب». Scan: archive.org alfirdwsiy2018_gmail_2778 (Shahih Muslim, tahqiq Muhammad Fu'ad 'Abd al-Baqi, cetakan al-Halabi; sama dengan dasar teks digital kita)."
+    },
+    {
+      "kitab_id": "tirmidzi",
+      "dari": 611,
+      "sampai": 612,
+      "bab_ar": "باب ما ذكر في مسح النبي صلى الله عليه وسلم بعد نزول المائدة",
+      "cara": "catatan-cetak",
+      "catatan_id": "Bab ini dan hadits 611–612 adalah tambahan Ahmad Syakir dari naskah as-Sindi. Menurut Basyar 'Awwad Ma'ruf, bab ini tidak ada di naskah mana pun dan at-Tirmidzi tidak menyebutnya di tempat ini, jadi ia menghapusnya dari cetakannya (hadits 610 langsung disusul 613). Hadits Jarir tentang mengusap khuf ini sudah ada di no. 94.",
+      "alasan": "Teks digital (dan penomoran kita) memuat bab tambahan edisi Ahmad Syakir yang dihapus di cetakan Basyar 'Awwad.",
+      "bukti": "Jilid 1 hlm. 600, catatan kaki (2) (leaf 599, dilihat langsung): «أضاف العلامة أحمد شاكر بعد هذا بابا من نسخة السندي ساق فيه طريقين لحديث جرير بن عبد الله في المسح على الخفين احتلا الرقمين (٦١١) و(٦١٢)، وقد تقدم هذا الحديث برقم (٩٤)، وصرح العلامة بأن هذا الباب لم يرد في شيء من النسخ، وهو كذلك، فالصواب حذفه». Fihris jilid 1 (leaf 621): bab 77 (313) «ما ذكر في نضح بول الغلام الرضيع» lalu bab 78 (314) «في الرخصة للجنب…», tanpa bab ini. Scan: archive.org gkt6_20251231 (al-Jami' al-Kabir, tahqiq Basyar 'Awwad Ma'ruf, Dar al-Gharb al-Islami 1996; sama dengan dasar teks digital kita, Shamela 7895)."
+    },
+    {
+      "kitab_id": "tirmidzi",
+      "dari": 1311,
+      "sampai": 1311,
+      "bab_ar": "باب ما جاء في السلف في الطعام والتمر",
+      "alasan": "Teks digital: «والثمر» (ث); cetakan: «والتمر» (ت).",
+      "bukti": "Halaman isi jilid 2 hlm. 579 (leaf 578, dilihat langsung): «(٧٠) (70) باب ما جاء في السلف في الطعام والتمر»; fihris jilid 2 (leaf 610) sama. Scan: archive.org gkt6_20251231 (al-Jami' al-Kabir, tahqiq Basyar 'Awwad Ma'ruf, Dar al-Gharb al-Islami 1996; sama dengan dasar teks digital kita, Shamela 7895)."
+    },
+    {
+      "kitab_id": "tirmidzi",
+      "dari": 2374,
+      "sampai": 2374,
+      "bab_ar": "باب ما جاء في أخذ المال",
+      "alasan": "Teks digital menambahkan «بحقه» yang tidak ada di cetakan.",
+      "bukti": "Halaman isi jilid 4 hlm. 184 (leaf 183, dilihat langsung): «(٤١) (41) باب ما جاء في أخذ المال»; fihris jilid 4 (leaf 561) sama. Scan: archive.org gkt6_20251231 (al-Jami' al-Kabir, tahqiq Basyar 'Awwad Ma'ruf, Dar al-Gharb al-Islami 1996; sama dengan dasar teks digital kita, Shamela 7895)."
+    },
+    {
+      "kitab_id": "tirmidzi",
+      "dari": 3276,
+      "sampai": 3284,
+      "bab_ar": "باب ومن سورة النجم",
+      "alasan": "Teks digital: «ومن سورة والنجم»; cetakan: «ومن سورة النجم».",
+      "bukti": "Halaman isi jilid 5 hlm. 314 (leaf 313, dilihat langsung): «(٥٣) (53) باب «ومن سورة النجم»»; fihris jilid 5 (leaf 566) sama. Bandingkan «ومن سورة والشمس وضحاها» dan «ومن سورة والتين», yang di halaman isi memang memakai «و». Scan: archive.org gkt6_20251231 (al-Jami' al-Kabir, tahqiq Basyar 'Awwad Ma'ruf, Dar al-Gharb al-Islami 1996; sama dengan dasar teks digital kita, Shamela 7895)."
+    },
+    {
+      "kitab_id": "tirmidzi",
+      "dari": 3363,
+      "sampai": 3363,
+      "bab_ar": "باب ومن سورة تبت",
+      "alasan": "Teks digital: «ومن سورة تبت يدا»; cetakan: «ومن سورة تبت».",
+      "bukti": "Halaman isi jilid 5 hlm. 379 (leaf 378, dilihat langsung): «(١١٠) (91) باب «ومن سورة تبت»»; fihris jilid 5 (leaf 568) sama. Scan: archive.org gkt6_20251231 (al-Jami' al-Kabir, tahqiq Basyar 'Awwad Ma'ruf, Dar al-Gharb al-Islami 1996; sama dengan dasar teks digital kita, Shamela 7895)."
     }
   ]
 }

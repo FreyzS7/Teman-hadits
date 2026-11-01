@@ -14,13 +14,16 @@ Teks kitab-kitab hadits di korpus **OpenITI**, yang memuat judul kitab dan bab d
 
 1. Setiap baris judul di berkas OpenITI diklasifikasi menjadi kitab, bab, penanda nomor hadits, atau penanda halaman cetak. Penanda halaman ("[ص: 30]") bisa muncul di tengah hadits, jadi ia tidak dianggap batas.
 2. **Pencocokan menurut isi:** teks Arab setiap riwayat kita dicocokkan ke blok OpenITI yang paling memuatnya (≥ 70% bobot 2-gram). Bila beberapa blok sama cocoknya (al-Bukhari sering mengulang hadits yang persis sama di kitab lain), dipilih blok yang posisinya sesuai dengan urutan riwayat tetangga.
+   - **Teks yang diulang di bab lain** (November 2026): di kitab yang nomor OpenITI-nya sama dengan nomor standar kita (Bukhari, Tirmidzi, Abu Dawud, Ibnu Majah, Nasa'i), blok yang **bernomor sama** dengan riwayat didahulukan bila isinya juga lolos 70%. Sebelumnya skor isi di tempat lain kadang sedikit lebih tinggi, sehingga riwayatnya tampil di kitab yang salah. Contoh: Tirmidzi 2700 (bab salam kepada ahludz dzimmah) dulu tampil di Bab Siyar (= no. 1602); Tirmidzi 3227 (tafsir Yasin) di Bab Fitan; Tirmidzi 3875 (keutamaan Khadijah) di Bab Birr; Bukhari 2776 (Kitab Wasiat) di Kitab Fardh al-Khumus. Muslim, Malik, Ahmad, ad-Darimi, dan asy-Syafi'i tidak ikut, karena penomoran OpenITI-nya lain sehingga kesamaan nomor di sana hanya kebetulan.
+   - **Letak yang melompat:** riwayat yang terpasang jauh dari tetangganya dipindah ke blok bernomor sama di antara tetangga itu, bila isi keduanya saling memuat ≥ 60%. Contoh: Tirmidzi 624 («سألت أبا عبيدة هل تذكر من عبد الله شيئا؟ قال: لا», bab zakat sapi) dulu terpasang ke bab istinja' (no. 17), karena kalimat yang sama dikutip dalam komentar at-Tirmidzi di sana; contoh lain Nasa'i 290.
+   - Kedua aturan ini memindahkan 14 riwayat: Bukhari 1, Ibnu Majah 2, Tirmidzi 5, Nasa'i 6. Pada 13 riwayat, kitab atau judul bab yang tampil ikut berubah; satu lagi (Tirmidzi 3729) hanya pindah ke bab tanpa judul lain di Bab Manaqib. Semuanya diperiksa satu per satu.
    - **Hadits bernomor ganda** (mis. Bukhari 299–301, 3164–3165): sumber kita memuat teks gabungan di setiap nomornya, sedangkan OpenITI memecahnya per nomor, sehingga skor isi tiap potongan di bawah 70%. Riwayat seperti ini diberi blok OpenITI **bernomor sama**, hanya bila blok bernomor itu tepat satu, letaknya di antara blok tetangga yang sudah cocok, dan ≥ 80% 2-gram blok itu memang ada di teks riwayat. Aturan yang sama juga menolong riwayat lain yang teksnya di sumber kita lebih panjang dari blok OpenITI (mis. Tirmidzi 13, yang memuat komentar at-Tirmidzi). Hasilnya: Bukhari 141, Tirmidzi 31, Abu Dawud 2, Nasa'i 1 riwayat. Halaman hadits menandainya «dicocokkan lewat nomor hadits yang sama».
 3. Nama Arab tiap bagian kitab fawazahmed0 diambil dari judul kitab OpenITI yang dimiliki mayoritas riwayat di bagian itu, dengan syarat mayoritasnya ≥ 60%. Bagian "0" Bukhari dan Muslim di fawazahmed0 ternyata tampungan riwayat tanpa nomor kitab dari seluruh kitab, jadi tidak diberi nama paksa.
 4. **Nama Indonesia:** hanya untuk nama kitab, dari glosarium 215 istilah yang **disusun Teman Hadits dan belum ditinjau ahli** (`"ditinjau": false`). Judul bab tidak diterjemahkan.
 
 ## Validasi
 
-Nomor hadits **tidak dipakai** saat mencocokkan menurut isi (kolom "Nomor sama" hanya menghitung riwayat yang cocok menurut isi; pengecualian hadits bernomor ganda di atas tidak ikut dihitung). Karena itu kesamaan nomor dengan nomor edisi cetak di OpenITI adalah uji independen.
+Pencocokan memakai isi teks. Nomor hadits hanya dipakai untuk **memilih** di antara blok yang isinya sudah lolos ambang (14 riwayat, lihat di atas). Kolom "Nomor sama" hanya menghitung riwayat yang cocok menurut isi; pengecualian hadits bernomor ganda tidak ikut dihitung. Karena itu kesamaan nomor dengan nomor edisi cetak di OpenITI hampir sepenuhnya uji independen.
 
 | Kitab | Terpetakan menurut isi | Urutan naik | Nomor sama dengan edisi cetak | Kitab sepakat |
 |---|---|---|---|---|
@@ -40,6 +43,11 @@ Nomor hadits **tidak dipakai** saat mencocokkan menurut isi (kolom "Nomor sama" 
 - Ibnu Majah: 121 judul bab ditulis sebagai baris biasa «# باب …» (kadang terpotong ke beberapa baris) dan dulu terlewat, sehingga 346 hadits tampil di bawah bab sebelumnya. Kini dikenali (diverifikasi dengan fihris cetakan al-Halabi, lihat docs/13).
 - Nasa'i: judul yang terpecah ke beberapa baris («### || باب» + «### || الوضوء من الغائط» + «# والبول») kini digabung, dan judul tanpa baris judul («# أول وقت الصبح») dikenali; 94 riwayat kini berjudul lengkap.
 - Abu Dawud: «### | [حكم الألباني] :» adalah catatan penilaian, bukan judul bab.
+- Tirmidzi (diverifikasi dengan fihris dan halaman isi cetakan Basyar 'Awwad, lihat docs/13):
+  - Judul kitab «# بسم الله الرحمن الرحيم أبواب النذور والأيمان» ditulis sebagai baris biasa, sehingga 24 hadits nadzar dan sumpah (1524–1547) dulu tampil di bawah «أبواب الأضاحي». Kini dikenali.
+  - Judul kitab «أبواب ٣٠ الجمعة»: angka lepas di judul kitab dibuang.
+  - Judul bab yang berlanjut ke baris berikutnya sebelum hadits pertama («باب ما جاء في قول النبي ﷺ:» + «# أمرت بقتالهم…», «فضل سورة البقرة» + «# وآية الكرسي»), termasuk baris kedua blok judul di Bab Manaqib («يقال وله كنيتان: أبو تراب، وأبو الحسن»), kini ikut judul.
+  - Penanda ayat «@QUR@» dibuang dari judul (7 judul), dan «ب بسم الله» ditulis «ببسم الله» seperti cetakannya.
 - Muslim: 59 judul bertanda «*» («### || * باب …») adalah tambahan teks digital, tidak ada di cetakan Fu'ad 'Abd al-Baqi (dibuktikan dengan fihris dan halaman isinya, lihat docs/13). Kini diabaikan; haditsnya tetap di bab cetakan.
 
 Selisih nomor Bukhari yang tersisa kebanyakan +1. Penyebabnya, dua nomor di edisi Dar Thauq an-Najah berada dalam satu blok, sehingga bab dan kitabnya tetap benar.

@@ -45,8 +45,9 @@ CREATE TABLE kitab (
 CREATE TABLE bab (kitab_id TEXT, no INT, nama TEXT, jumlah INT, n_awal INT, nama_ar TEXT, nama_en TEXT, nama_id_sumber TEXT,
   PRIMARY KEY (kitab_id, no));
 -- judul kitab & bab dari teks OpenITI, unik (riwayat.judul_id); cara per riwayat di riwayat.judul_cara
--- ('teks' = dicocokkan isi, 'urutan' = dari tetangga, 'nomor' = nomor sama, 'koreksi-cetak' = koreksi dari kitab cetak)
-CREATE TABLE judul_bab (id INTEGER PRIMARY KEY, kitab_ar TEXT, kitab_nama_id TEXT, bab_ar TEXT);
+-- ('teks' = dicocokkan isi, 'urutan' = dari tetangga, 'nomor' = nomor sama, 'koreksi-cetak' = koreksi dari kitab cetak,
+-- 'catatan-cetak' = judul tetap, dengan catatan dari cetakan di judul_bab.catatan)
+CREATE TABLE judul_bab (id INTEGER PRIMARY KEY, kitab_ar TEXT, kitab_nama_id TEXT, bab_ar TEXT, catatan TEXT);
 CREATE TABLE riwayat (
   n INTEGER PRIMARY KEY, id TEXT, kitab_id TEXT, slug TEXT, urut INT, no_tampil TEXT,
   no_standar TEXT, no_arab TEXT, no_lidwa INT, bab_no INT, arab TEXT, terjemah TEXT, rantai_json TEXT,
@@ -274,7 +275,7 @@ def main():
         na = norm_ar(arab)
         nama = " ".join(json.loads(rantai)) if rantai else ""
         if j:
-            judul_n[n] = (j["kitab_ar"], j["kitab_nama_id"], j["bab_ar"], j["cara"])
+            judul_n[n] = (j["kitab_ar"], j["kitab_nama_id"], j["bab_ar"], j.get("catatan"), j["cara"])
         teks_judul = " ".join(x for x in [norm_id(j["kitab_nama_id"] or ""), akar_ar(norm_ar((j["kitab_ar"] or "") + " " + (j["bab_ar"] or "")))] if x) if j else ""
         data_cari.append((n, na, akar_ar(na), norm_id(terj), norm_id(nama), teks_judul))
         if babno is not None and kid not in LIDWA_SAJA:
@@ -392,14 +393,14 @@ def main():
                 pos_perawi[n_of[rid]].append([pos, ids0[tk]])
                 n_pr += 1
     judul_id = {}
-    for n_, (ka, kn, ba, _) in sorted(judul_n.items()):
-        judul_id.setdefault((ka, kn, ba), len(judul_id) + 1)
+    for n_, (ka, kn, ba, ct, _) in sorted(judul_n.items()):
+        judul_id.setdefault((ka, kn, ba, ct), len(judul_id) + 1)
     data_riwayat = [r + (js(nilai.get(r[0])),
                          js([[y, round(sk, 3), tk] for y, (sk, tk) in sorted(jalur[r[0]].items())]) if r[0] in jalur else None,
                          js(pos_perawi.get(r[0])),
-                         judul_id[judul_n[r[0]][:3]] if r[0] in judul_n else None,
-                         judul_n[r[0]][3] if r[0] in judul_n else None) for r in data_riwayat]
-    w.sisip("judul_bab", ["id", "kitab_ar", "kitab_nama_id", "bab_ar"], [(i,) + k for k, i in judul_id.items()])
+                         judul_id[judul_n[r[0]][:4]] if r[0] in judul_n else None,
+                         judul_n[r[0]][4] if r[0] in judul_n else None) for r in data_riwayat]
+    w.sisip("judul_bab", ["id", "kitab_ar", "kitab_nama_id", "bab_ar", "catatan"], [(i,) + k for k, i in judul_id.items()])
     # Peta n -> kitab & tingkat untuk pencarian (site/src/cari.js): n sudah urut (urutan kitab, urutan riwayat) dan
     # setiap kitab menempati rentang n yang bersambung, jadi pencarian tidak perlu membaca baris riwayat setiap hasil.
     rentang = []

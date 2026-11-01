@@ -74,7 +74,7 @@ async function halamanHadits(env, url, kid, slug) {
     db.prepare("SELECT DISTINCT t.id, t.judul FROM he_riwayat hr JOIN he_tema ht ON ht.he_id = hr.he_id JOIN tema t ON t.id = ht.tema_id WHERE hr.n = ?1 LIMIT 8").bind(r.n),
     db.prepare("SELECT no, nama FROM bab WHERE kitab_id = ?1 AND no = ?2").bind(kid, r.bab_no ?? -1),
     db.prepare("SELECT x.slug, x.no_tampil FROM sumber s JOIN riwayat x ON x.n = s.a WHERE s.b = ?1 ORDER BY x.urut").bind(r.n),
-    db.prepare("SELECT kitab_ar, kitab_nama_id, bab_ar FROM judul_bab WHERE id = ?1").bind(r.judul_id ?? -1),
+    db.prepare("SELECT kitab_ar, kitab_nama_id, bab_ar, catatan FROM judul_bab WHERE id = ?1").bind(r.judul_id ?? -1),
   ]);
   const pen = { results: nilai(r.nilai_json) };
   const per = new Map(anggota.results.map((x) => [x.n, x]));

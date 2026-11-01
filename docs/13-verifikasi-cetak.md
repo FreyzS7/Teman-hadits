@@ -206,6 +206,31 @@ Scan `SunanNissa3AbuGuda` tidak punya OCR, jadi 367 halaman jilid 9 di-OCR sendi
 - Entri fihris tanpa pasangan hampir seluruhnya rangkaian «نوع آخر. أخبرنا …» (fihris mendaftar setiap «نوع آخر» terpisah) dan header kolom. Satu-satunya bab yang benar-benar tidak ada di teks digital adalah «باب المسح على الجوربين والنعلين»; haditsnya (no. 125) tidak punya teks Arab di sumber kita, jadi tidak ada yang salah tampil.
 - Teks digital mengulang «التيمم في الحضر» untuk hadits 312–313, sedangkan fihris hanya punya satu bab (no. 195). Karena kalimatnya sama, tidak diubah.
 
+### Jami' at-Tirmidzi: fihris dan halaman isi cetakan Basyar 'Awwad Ma'ruf
+
+Teks digital Tirmidzi kita (Shamela 7895) berasal dari tahqiq Basyar 'Awwad Ma'ruf (Dar al-Gharb al-Islami, 1996, 6 jilid). Scan cetakan yang sama ada di archive.org (`gkt6_20251231`, berkas `gkt1`–`gkt6`, diunggah Desember 2025). Fihris babnya ada di akhir setiap jilid (112 halaman, satu kolom: nomor bab, judul, halaman). Fihris menulis «باب» hanya di entri pertama; sesudahnya diganti tanda ulang «.
+
+Cara:
+1. Kolom judul dipotong dari setiap halaman fihris lalu di-OCR dengan Tesseract. Judul kitab yang berhuruf besar dibaca dengan OCR tata letak penuh.
+2. Urutan judul fihris disejajarkan dengan 2.315 judul bab mentah teks digital (pemrograman dinamis). 2.179 pasangan cocok; sisanya kebanyakan judul pendek («باب منه», «باب») yang rusak di OCR.
+3. Judul yang tidak berpasangan atau berbeda kata dicek di gambar fihris. **Bila fihris berbeda dari data, halaman isi cetakan yang menentukan.** Fihris Basyar sering menyingkat (mis. «أبواب الطهارة» untuk «أبواب الطهارة عن رسول الله ﷺ», «مناقب جعفر بن أبي طالب» untuk «… أخي علي»), dan kadang berbeda dari judul di halaman isi.
+4. Nomor bab di teks digital (dari cetakan) dicek berurutan per kitab untuk mencari bab yang hilang. Tidak ada yang hilang; selisih nomor yang ada memang begitu di cetakan (mis. Abwab ad-Da'awat).
+
+| Temuan | Tindakan |
+|---|---|
+| **Judul kitab «أبواب النذور والأيمان» terlewat** (di teks digital ditulis sebagai baris biasa) → 24 hadits (1524–1547) tampil di bawah «أبواب الأضاحي» | Parser diperbaiki (fihris jilid 3, leaf 631) |
+| Judul kitab «أبواب ٣٠ الجمعة» | Angka dibuang → «أبواب الجمعة» (fihris jilid 1, leaf 618) |
+| Judul yang berlanjut ke baris berikutnya terpotong: «باب ما جاء في قول النبي ﷺ:» (tanpa «أمرت بقتالهم…»), «فضل سورة البقرة» (tanpa «وآية الكرسي»), «وعون الله» (tanpa «إياهم»), «والضرب» (tanpa «والوسم في الوجه») | Parser diperbaiki |
+| Baris kedua blok judul di Bab Manaqib («يقال وله كنيتان: أبو تراب، وأبو الحسن», «واسم أبي وقاص: مالك بن وهيب», «واسمه سعيد بن زيد…»), yang di halaman isi dicetak tebal dan rata tengah seperti judulnya | Kini ikut judul (halaman isi jilid 6 hlm. 78, 103, 106) |
+| Penanda ayat «@QUR@» di 7 judul; «ب بسم الله» (cetakan: «ببسم الله», jilid 1 hlm. 284) | Dibersihkan |
+| **4 judul berbeda dari halaman isi:** «والثمر» → «والتمر» (no. 1311, jilid 2 hlm. 579); «في أخذ المال بحقه» → «في أخذ المال» (2374, jilid 4 hlm. 184); «ومن سورة والنجم» → «ومن سورة النجم» (3276–3284, jilid 5 hlm. 314); «ومن سورة تبت يدا» → «ومن سورة تبت» (3363, jilid 5 hlm. 379) | Dikoreksi (`koreksi_bab.json`) |
+| **Bab tambahan edisi Ahmad Syakir:** «باب ما ذكر في مسح النبي ﷺ بعد نزول المائدة» (hadits 611–612). Catatan kaki Basyar (jilid 1 hlm. 600, no. 2): Ahmad Syakir menambahkannya dari naskah as-Sindi, padahal bab ini tidak ada di naskah mana pun. Karena itu Basyar menghapusnya (hadits 610 langsung disusul 613), dan haditsnya sudah ada di no. 94 | Judul tetap, halaman hadits menampilkan **catatan cetakan** (cara baru «catatan-cetak») |
+| Fihris berbeda, tetapi halaman isi sama dengan data: «يأخذ المؤذن» (fihris «يؤخذ»), «في القراءة في المغرب», «التبكير بالتجارة», «بعضه بيع نصيب», «يحلف بالشيء» (fihris «بالمشي»), «ستة وأربعين», «دعا»; «والشمس وضحاها», «والتين», «إذا زلزلت الأرض» | Tidak dikoreksi |
+
+**Temuan sampingan: teks yang diulang penyusun.** Penyelarasan memperlihatkan riwayat yang letaknya melompat jauh dari tetangganya, mis. Tirmidzi 2700 (di cetakan: Abwab al-Isti'dzan, bab salam kepada ahludz dzimmah) tampil di Abwab as-Siyar, karena teksnya sama dengan no. 1602. Penyebabnya di pencocokan kita (lihat docs/09). Setelah diperbaiki, 13 riwayat di Bukhari, Ibnu Majah, Tirmidzi, dan Nasa'i kini tampil di kitab dan bab yang benar.
+
+Batasan: judul yang OCR-nya cocok dan kata-katanya ada di halaman fihris dianggap sama. Perbedaan satu huruf (mis. ث/ت) hanya tertangkap bila OCR membaca kata itu berbeda; judul pendek («باب منه») tidak dicek satu per satu.
+
 ## Batasan dan yang belum
 
 - **Nomor entri belum diverifikasi.** OCR mengacaukan angka Arab-Hindi di kolom nomor.
@@ -214,4 +239,4 @@ Scan `SunanNissa3AbuGuda` tidak punya OCR, jadi 367 halaman jilid 9 di-OCR sendi
 - **Teks dan nomor hadits Bukhari** belum dicek visual satu per satu. Halamannya harus dicari manual di scan (OCR-nya tidak bisa dipakai untuk mencari), atau dengan scan lain yang OCR-nya lebih baik.
 - Muslim: halaman fihris Muqaddimah dan Kitab al-Iman bab 1–18 belum dicek (tidak ada di scan).
 - **Fihris Bukhari sudah dibaca utuh**, tetapi hanya untuk bab tanpa judul. Judul bab bertajuk belum dibandingkan satu per satu dengan fihris; baru 14 judul Kitab 62 yang dicek persis.
-- **Sudah dicek dengan fihris cetak:** Bukhari, Muslim, Ibnu Majah, Abu Dawud, Nasa'i (untuk Abu Dawud dan Nasa'i: struktur dan judul lewat OCR, kandidat dilihat di gambar). **Belum:** Tirmidzi (scan edisi Basyar 'Awwad dengan berkas yang bisa dibaca belum ditemukan), Malik, Ahmad, ad-Darimi, asy-Syafi'i.
+- **Sudah dicek dengan fihris cetak:** Bukhari, Muslim, Ibnu Majah, Abu Dawud, Nasa'i, Tirmidzi (untuk Abu Dawud, Nasa'i, dan Tirmidzi: struktur dan judul lewat OCR, kandidat dilihat di gambar; Tirmidzi juga di halaman isi). **Belum:** Malik, Ahmad, ad-Darimi, asy-Syafi'i.

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Uji judul kitab & bab dari OpenITI (build/bab.sqlite dari pipeline/bab_openiti.py).
 
-Nomor hadits TIDAK dipakai untuk mencocokkan (hanya isi teks), sehingga kesamaan nomor dengan edisi
-cetak adalah uji independen.  Jalankan:  python3 -m unittest pipeline/test_bab.py -v
+Pencocokan memakai isi teks. Nomor hadits hanya dipakai untuk MEMILIH di antara blok yang isinya sudah lolos
+ambang (teks yang diulang penyusun di beberapa bab; 14 riwayat), jadi kesamaan nomor dengan edisi cetak tetap
+hampir sepenuhnya uji independen.  Jalankan:  python3 -m unittest pipeline/test_bab.py -v
 """
 import os
 import sqlite3
@@ -212,3 +213,54 @@ class Penguraian(unittest.TestCase):
         self.assertEqual(judul("abudawud:3253")[1], "باب كراهية الحلف بالأمانة")
         self.assertEqual(judul("abudawud:3416")[1], "باب في كسب المعلم")
         self.assertEqual(q("SELECT count(*) FROM riwayat_bab WHERE bab_ar LIKE '%حكم الألباني%'")[0][0], 0)
+
+
+class TirmidziCetak(unittest.TestCase):
+    """Fihris & halaman isi cetakan Basyar 'Awwad (Dar al-Gharb 1996), lihat docs/13-verifikasi-cetak.md."""
+
+    def test_teks_berulang_di_tempat_bernomor_sama(self):
+        # Teks yang diulang penyusun di bab lain: dulu terpasang ke tempat yang salah (kitab & bab salah tampil)
+        for rid, kitab, bab in (("tirmidzi:2700", "الاستيذان", "اهل الذمه"), ("tirmidzi:3227", "تفسير", "سوره يس"),
+                                ("tirmidzi:3875", "المناقب", "خديجه"), ("tirmidzi:624", "الزكاه", "زكاه البقر"),
+                                ("bukhari:2776", "الوصايا", "نفقه القيم للوقف"), ("ibnumajah:3441", "الطب", "يشتهي"),
+                                ("ibnumajah:3584", "اللباس", "العمامه السودا"), ("nasai:290", "الطهاره", "المحرمه اذا حاضت"),
+                                ("nasai:1588", "العيدين", "ذبح الامام")):
+            k, bb = judul(rid)
+            self.assertIn(kitab, norm_ar(k), rid)
+            self.assertIn(bab, norm_ar(bb), rid)
+
+    def test_kitab_nadzar_dan_sumpah(self):
+        # «# بسم الله الرحمن الرحيم أبواب النذور والأيمان» = baris biasa di teks digital; fihris jilid 3 hlm. 630
+        for no in (1524, 1536, 1547):
+            self.assertTrue(judul(f"tirmidzi:{no}")[0].startswith("أبواب النذور والأيمان"), no)
+        self.assertEqual(judul("tirmidzi:1493")[0], "أبواب الأضاحي")
+        self.assertEqual(judul("tirmidzi:488")[0], "أبواب الجمعة")                 # teks digital: «أبواب ٣٠ الجمعة»
+
+    def test_judul_bersih_dan_utuh(self):
+        self.assertEqual(q("SELECT count(*) FROM riwayat_bab WHERE bab_ar LIKE '%@QUR@%' OR bab_ar LIKE '% ب بسم%'")[0][0], 0)
+        self.assertEqual(judul("tirmidzi:244")[1], "باب ما جاء في ترك الجهر ببسم الله الرحمن الرحيم")
+        self.assertEqual(judul("tirmidzi:3232")[1], "باب ومن سورة {ص}")
+        # judul yang berlanjut ke baris berikutnya (cetakan: satu blok judul)
+        self.assertTrue(judul("tirmidzi:2608")[1].endswith("أمرت بقتالهم حتى يقولوا: لا إله إلا الله ويقيموا الصلاة"))
+        self.assertTrue(judul("tirmidzi:2876")[1].endswith("سورة البقرة وآية الكرسي"))
+        self.assertTrue(judul("tirmidzi:1655")[1].endswith("وعون الله إياهم"))
+        self.assertIn("أبو تراب، وأبو الحسن", judul("tirmidzi:3712")[1])
+        self.assertTrue(judul("tirmidzi:3757")[1].endswith("واسمه سعيد بن زيد بن عمرو بن نفيل رضي الله عنه"))
+        self.assertNotIn("@MATN@", " ".join(r[0] for r in q("SELECT bab_ar FROM riwayat_bab WHERE riwayat_id LIKE 'tirmidzi:%'")))
+
+    def test_koreksi_dari_halaman_isi(self):
+        self.assertEqual(judul("tirmidzi:1311")[1], "باب ما جاء في السلف في الطعام والتمر")
+        self.assertEqual(judul("tirmidzi:2374")[1], "باب ما جاء في أخذ المال")
+        self.assertEqual({judul(f"tirmidzi:{n}")[1] for n in range(3276, 3285)}, {"باب ومن سورة النجم"})
+        self.assertEqual(judul("tirmidzi:3363")[1], "باب ومن سورة تبت")
+        # fihris berbeda, tetapi halaman isi = teks digital: TIDAK dikoreksi
+        self.assertEqual(judul("tirmidzi:3343")[1], "باب ومن سورة والشمس وضحاها")
+        self.assertEqual(judul("tirmidzi:1536")[1], "باب ما جاء فيمن يحلف بالشيء ولا يستطيع")
+        self.assertEqual(judul("tirmidzi:1212")[1], "باب ما جاء في التبكير بالتجارة")
+
+    def test_bab_tambahan_ahmad_syakir_diberi_catatan(self):
+        for rid in ("tirmidzi:611", "tirmidzi:612"):
+            cara, catatan = q("SELECT cara, catatan FROM riwayat_bab WHERE riwayat_id=?", rid)[0]
+            self.assertEqual(cara, "catatan-cetak")
+            self.assertIn("Ahmad Syakir", catatan)
+        self.assertEqual(q("SELECT catatan FROM riwayat_bab WHERE riwayat_id='tirmidzi:613'")[0][0], None)

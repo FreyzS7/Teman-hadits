@@ -59,6 +59,10 @@ LIDWA_SAJA = {"ahmad", "darimi", "syafii"}
 # Musnad Ahmad: judul tingkat 1–2 ("مسند الصحابة بعد العشرة") = kelompok besar; tingkat 3+ ("مسند عمر بن الخطاب") = bab.
 TINGKAT_KITAB = {"ahmad": 2}
 AMBANG = 0.7
+# Kitab yang nomor hadits OpenITI-nya = nomor standar riwayat kita (info nomor_sama: Bukhari 96%, Tirmidzi 99,6%,
+# Abu Dawud/Ibnu Majah/Nasa'i 99,7-99,8%). Muslim (penomoran lain), Malik (blok tanpa nomor), Ahmad/Darimi/Syafi'i
+# (nomor Lidwa) tidak termasuk: kesamaan nomor di sana kebetulan.
+NOMOR_SEJAJAR = {"bukhari", "tirmidzi", "abudawud", "ibnumajah", "nasai"}
 _GLOSARIUM = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "glosarium_kitab.json"), encoding="utf8"))
 _GLOS = {norm_ar(k): v for k, v in _GLOSARIUM["nama"].items()}
 
@@ -82,13 +86,20 @@ _SAMPAH = re.compile(r"ms\d+|PageV\d+P\d+|\[ص:\s*\d+\]")
 
 
 def bersihkan_judul(t):
-    t = _SAMPAH.sub(" ", t)
+    t = _SAMPAH.sub(" ", t).replace("@QUR@", " ")    # penanda ayat OpenITI ("باب ومن سورة @QUR@ {ص}")
+    t = re.sub(r"(?<!\S)ب بسم الله", "ببسم الله", t)  # Tirmidzi: cetakannya «ترك الجهر ببسم الله الرحمن الرحيم»
     t = re.sub(r"\(\s*\d+\s*\)", " ", t)            # penanda catatan kaki "(1)" di judul
     t = re.sub(r"[\"“”]+", "", t)
     t = re.sub(r"</?[a-zA-Z][^>]*>", " ", t)          # sisa markup HTML di teks digital ("</span>")
     t = re.sub(r"\s*«\s*$", "", t)                   # tanda kutip pembuka yang tertinggal di akhir judul
     t = re.sub(r"(?<!\d)0\s*$", "", t)                # Nasa'i: penanda akhir hadits "0" yang ikut ke lanjutan judul
     return re.sub(r"\s+", " ", t).strip(" :.-–،")
+
+
+def bersihkan_kitab(t):
+    """Judul kitab: seperti judul bab, ditambah membuang angka lepas («أبواب ٣٠ الجمعة» di teks digital Tirmidzi;
+    fihris cetaknya «أبواب الجمعة»)."""
+    return bersihkan_judul(re.sub(r"(?<!\S)[0-9٠-٩]+(?!\S)", " ", t))
 
 
 # Judul tingkat kitab. "أبواب" hanya tingkat kitab di Jami' at-Tirmidzi; di Abu Dawud ia sub-bagian
@@ -117,6 +128,13 @@ def urai(path, kid=None):
     # Ibnu Majah: 121 judul bab ditulis sebagai baris biasa "# باب ..." (bukan "### | باب"), kadang terpotong ke
     # beberapa baris ("# باب" / "# وقت" / "# صلاة" / "# العشاء"). judul_terbuka = baris pendek berikutnya ikut judul.
     judul_terbuka = False
+    # Tirmidzi: satu judul kitab ditulis sebagai baris biasa, «# بسم الله الرحمن الرحيم أبواب النذور والأيمان» +
+    # «# عن رسول الله صلى الله عليه وسلم». Tanpa ini, 24 hadits nadzar & sumpah tampil di bawah «أبواب الأضاحي».
+    kitab_terbuka = False
+    # Tirmidzi: blok judul bab di cetakan kadang dua baris («باب مناقب علي بن أبي طالب رضي الله عنه» / «يقال وله
+    # كنيتان: أبو تراب، وأبو الحسن»), dan teks digital memotong judul di akhir baris («باب ما جاء في قول النبي ﷺ:» /
+    # «# أمرت بقتالهم…»). judul_tir = baris pendek sesudah judul bab, sebelum hadits pertama, ikut judul.
+    judul_tir, judul_tir_mentah = False, ""
 
     def tutup():
         if teks:
@@ -143,7 +161,7 @@ def urai(path, kid=None):
             polos = norm_ar(_AWALAN_NOMOR.sub("", isi))
             mn = _NOMOR_SAJA.match(isi)
             if mn:                                         # "### | 12 - " = awal hadits bernomor
-                tunggu_judul = False
+                tunggu_judul = judul_tir = False
                 tutup()
                 teks, tahqiq, no = [], [], int(mn.group(1).translate(_ANGKA_TIMUR))
                 continue
@@ -160,7 +178,7 @@ def urai(path, kid=None):
             if inti_polos.startswith(awalan) or polos == "بد الوحي" or polos.startswith("مقدمه الامام"):   # hamzah sudah dibuang norm_ar
                 tutup()
                 teks, tahqiq, no = [], [], None
-                kitab, bab = bersihkan_judul(_AWALAN_NOMOR.sub("", isi)), None
+                kitab, bab = bersihkan_kitab(_AWALAN_NOMOR.sub("", isi)), None
                 continue
             if m.group(1) == "$" and len(polos.split()) > 12:   # Muslim: "### $ وحدثنا ..." = awal hadits
                 tutup()
@@ -180,7 +198,12 @@ def urai(path, kid=None):
             if kid == "tirmidzi" and polos and not re.match(r"^(?:باب|ما جاء)\b", polos):
                 # Teks digital Tirmidzi memecah baris di penanda catatan kaki "(١)", sehingga potongan judul/teks
                 # ("### || (١) عمرو بن نفيل رضي الله عنه", "### || (غلبت الروم)") tampil sebagai baris "###".
-                # Judul bab Tirmidzi selalu diawali "باب"/"ما جاء"; selain itu = lanjutan teks.
+                # Judul bab Tirmidzi selalu diawali "باب"/"ما جاء"; selain itu = lanjutan teks (atau lanjutan judul
+                # bila tepat sesudah judul bab, sebelum hadits pertama).
+                if judul_tir and not teks and "@MATN@" not in isi and not _AWAL_SANAD.match(polos) and len(polos.split()) <= 16:
+                    judul_tir_mentah += " " + _AWALAN_NOMOR.sub("", isi)
+                    bab = bersihkan_judul(judul_tir_mentah)
+                    continue
                 teks.append(_AWALAN_NOMOR.sub("", isi))
                 continue
             if kid == "nasai" and sambung and bab is not None and polos and len(polos.split()) <= 30:
@@ -196,6 +219,7 @@ def urai(path, kid=None):
                 bab = bersihkan_judul(_AWALAN_NOMOR.sub("", isi))
                 tunggu_judul = kid == "bukhari" and norm_ar(bab) == "باب"
                 judul_terbuka = kid == "nasai"
+                judul_tir, judul_tir_mentah = kid == "tirmidzi", _AWALAN_NOMOR.sub("", isi)
                 continue
             teks.append(isi)
         elif baris.startswith("# ") or baris.startswith("~~"):
@@ -247,6 +271,25 @@ def urai(path, kid=None):
                 if kalimat and not _AWAL_SANAD.match(kalimat) and len(kalimat.split()) <= 60:
                     bab = bersihkan_judul("باب " + _SAMPAH.sub(" ", isi))
                     continue
+            if kid == "tirmidzi" and baris.startswith("# "):
+                kal = norm_ar(_SAMPAH.sub(" ", isi)).strip()
+                if (judul_tir and not teks and kal and "@MATN@" not in isi and not _AWAL_SANAD.match(kal)
+                        and len(kal.split()) <= 16):
+                    judul_tir_mentah += " " + _SAMPAH.sub(" ", isi)                 # «# وآية الكرسي», «# إياهم»
+                    bab = bersihkan_judul(judul_tir_mentah)
+                    continue
+                judul_tir = judul_tir and not kal and not re.search(r"[0-9٠-٩]", isi)   # «# ١٧٧٠» = awal hadits
+                if re.match(r"^(?:بسم الله الرحمن الرحيم\s+)?ابواب\s", kal) and len(kal.split()) <= 10:
+                    tutup()
+                    teks, tahqiq, no = [], [], None
+                    kitab, bab = bersihkan_kitab(re.sub(r"^\s*بسم الله الرحمن الرحيم\s*", "", _SAMPAH.sub(" ", isi))), None
+                    kitab_terbuka = True
+                    continue
+                if kitab_terbuka and re.match(r"^عن رسول الله", kal) and len(kal.split()) <= 8:
+                    kitab = bersihkan_kitab(kitab + " " + _SAMPAH.sub(" ", isi))
+                    kitab_terbuka = False
+                    continue
+                kitab_terbuka = False
             mt = re.match(r"^#\s+(\d+)\s+-\s+(.*)$", baris) if kid == "ahmad" else None
             if mt:                                         # Musnad Ahmad: "# 12 - حدثنا ..." = awal hadits bernomor
                 tutup()
@@ -265,6 +308,7 @@ def petakan(kid, blok, riwayat):
     for g in gr.values():
         df.update(g)
     N = max(1, len(gr))
+    no_std = {rid: int(nos) for rid, _, nos, _ in riwayat if re.fullmatch(r"\d+", str(nos or ""))} if kid in NOMOR_SEJAJAR else {}
     post = collections.defaultdict(list)
     for i, g in enumerate(gb):
         for x in g:
@@ -285,8 +329,13 @@ def petakan(kid, blok, riwayat):
         skor = [(s, i) for s, i in skor if s >= AMBANG]
         if skor:
             top = max(s for s, _ in skor)
+            # Blok bernomor SAMA dengan nomor riwayat yang juga lolos AMBANG didahulukan. Penyusun kadang mengulang
+            # teks yang sama di bab lain (mis. at-Tirmidzi 2700 = 1602, 3227 = 2186, 3875 = 2017), dan skor isi bisa
+            # sedikit lebih tinggi di tempat lain; nomornya yang memastikan letak yang benar (dicek dengan fihris cetak).
+            nos = no_std.get(rid)
+            senomor = [(i, s) for s, i in skor if nos is not None and blok[i]["no"] == nos]
             # semua blok yang hampir sama baiknya: teks yang diulang penyusun (umum di al-Bukhari)
-            kandidat[rid] = [(i, s) for s, i in skor if s >= top - 0.03]
+            kandidat[rid] = senomor or [(i, s) for s, i in skor if s >= top - 0.03]
     # Pilih kandidat yang paling dekat dengan posisi tetangga yang tidak ambigu (urutan kitab).
     urut = [rid for rid, *_ in riwayat if rid in kandidat]
     pasti = [(k, kandidat[rid][0][0]) for k, rid in enumerate(urut) if len(kandidat[rid]) == 1]
@@ -335,6 +384,38 @@ def isi_dari_nomor(kid, blok, riwayat, akhir, cara):
             akhir[rid], cara[rid] = (calon[0], round(isi, 3)), "nomor"
 
 
+MIN_ISI_LETAK = 0.6
+
+
+def betulkan_letak(kid, blok, riwayat, akhir, cara):
+    """Riwayat yang terpasang ke blok JAUH dari tetangganya (urutan kitab terlompat), padahal blok bernomor sama
+    dengan nomornya ada tepat di antara tetangga itu. Contoh: at-Tirmidzi 624 («سألت أبا عبيدة هل تذكر من عبد الله
+    شيئا؟ قال: لا», bab zakat sapi) terpasang ke blok no. 17 (bab istinja'), karena kalimat yang sama dikutip dalam
+    komentar at-Tirmidzi di sana. Dipindah hanya bila: kitab bernomor sejajar, tepat satu blok bernomor itu di antara
+    tetangga, dan isi keduanya saling memuat >= 60% (cara "nomor")."""
+    if kid not in NOMOR_SEJAJAR:
+        return
+    per_no = collections.defaultdict(list)
+    for i, b in enumerate(blok):
+        if b["no"] is not None:
+            per_no[b["no"]].append(i)
+    urut = [r[0] for r in riwayat]
+    for k, (rid, arab, nos, _) in enumerate(riwayat):
+        if rid not in akhir or not re.fullmatch(r"\d+", str(nos or "")) or blok[akhir[rid][0]]["no"] == int(nos):
+            continue
+        a = next((akhir[urut[j]][0] for j in range(k - 1, -1, -1) if urut[j] in akhir), None)
+        c = next((akhir[urut[j]][0] for j in range(k + 1, len(urut)) if urut[j] in akhir), None)
+        if a is None or c is None or a <= akhir[rid][0] <= c:
+            continue
+        calon = [i for i in per_no.get(int(nos), ()) if a <= i <= c]
+        if len(calon) != 1:
+            continue
+        gb, gr = grams(norm_ar(_SAMPAH.sub(" ", blok[calon[0]]["teks"]))), grams(norm_ar(arab))
+        sama = len(gb & gr)
+        if sama / max(1, len(gb)) >= MIN_ISI_LETAK and sama / max(1, len(gr)) >= MIN_ISI_LETAK:
+            akhir[rid], cara[rid] = (calon[0], round(sama / max(1, len(gb)), 3)), "nomor"
+
+
 _KOREKSI = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "koreksi_bab.json"), encoding="utf8"))["koreksi"]
 
 
@@ -354,7 +435,7 @@ def main():
     db = sqlite3.connect(OUT)
     db.executescript("""
     CREATE TABLE riwayat_bab (riwayat_id TEXT PRIMARY KEY, kitab_ar TEXT, bab_ar TEXT, skor REAL, cara TEXT, no_openiti INT,
-      kitab_nama_id TEXT, tahqiq TEXT, urut_openiti INT);
+      kitab_nama_id TEXT, tahqiq TEXT, urut_openiti INT, catatan TEXT);
     CREATE TABLE kitab_nama (kitab_id TEXT, bab_no INT, nama_ar TEXT, setuju INT, total INT, nama_id TEXT, PRIMARY KEY (kitab_id, bab_no));
     CREATE TABLE info (kitab_id TEXT, kunci TEXT, nilai TEXT);
     """)
@@ -376,16 +457,18 @@ def main():
             if a and b and blok[a[0]]["bab"] == blok[b[0]]["bab"] and blok[a[0]]["kitab"] == blok[b[0]]["kitab"]:
                 akhir[rid], cara[rid] = (a[0], 0.0), "urutan"
         isi_dari_nomor(kid, blok, riwayat, akhir, cara)
+        betulkan_letak(kid, blok, riwayat, akhir, cara)
         for rid, (i, s) in akhir.items():
             b = blok[i]
             # Penilaian muhaqqiq hanya dipasang bila teks riwayat jelas ada di blok edisi itu (>= 0.9)
             tq = b.get("tahqiq") if (cara[rid] == "teks" and s >= 0.9) else None
-            bab_ar, cr = b["bab"], cara[rid]
+            bab_ar, cr, catatan = b["bab"], cara[rid], None
             k = koreksi_cetak(rid)
             if k:
-                bab_ar, cr = k["bab_ar"], "koreksi-cetak"
-            db.execute("INSERT INTO riwayat_bab VALUES (?,?,?,?,?,?,?,?,?)",
-                       (rid, b["kitab"], bab_ar, s, cr, b["no"], nama_indonesia(b["kitab"]), tq, i))
+                # cara "catatan-cetak": judul tetap, tetapi cetakan memberi catatan penting (mis. bab tambahan edisi lain)
+                bab_ar, cr, catatan = k["bab_ar"], k.get("cara", "koreksi-cetak"), k.get("catatan_id")
+            db.execute("INSERT INTO riwayat_bab VALUES (?,?,?,?,?,?,?,?,?,?)",
+                       (rid, b["kitab"], bab_ar, s, cr, b["no"], nama_indonesia(b["kitab"]), tq, i, catatan))
 
         # uji: urutan & nomor
         idx = [peta[rid][0] for rid in urut if rid in peta]
