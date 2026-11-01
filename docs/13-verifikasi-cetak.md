@@ -231,6 +231,18 @@ Cara:
 
 Batasan: judul yang OCR-nya cocok dan kata-katanya ada di halaman fihris dianggap sama. Perbedaan satu huruf (mis. ث/ت) hanya tertangkap bila OCR membaca kata itu berbeda; judul pendek («باب منه») tidak dicek satu per satu.
 
+### al-Muwaththa': fihris dan halaman isi cetakan Fu'ad 'Abd al-Baqi
+
+Teks digital al-Muwaththa' kita berasal dari cetakan Dar Ihya' at-Turath al-'Arabi (tahqiq Muhammad Fu'ad 'Abd al-Baqi). Scan cetakan yang sama (1406 H, dua jilid dalam satu berkas) ada di archive.org (`16241406`). «فهرس الموضوعات حسب ترتيبها في الكتاب» ada di akhir jilid 1 (leaf 458–470) dan jilid 2 (leaf 1072–1091): setiap kitab dan bab bernomor, judul lengkap. Jenis hurufnya lama, jadi OCR-nya lebih lemah daripada cetakan Tirmidzi. Hanya kolom judul yang di-OCR, pada resolusi tinggi.
+
+- 547 pasangan judul cocok langsung. Semua 34 judul data yang tidak berpasangan dicek: semuanya ada di fihris (terlewat OCR, terutama judul kitab berhuruf besar) dan ada di data. Kitab dan bab tidak ada yang hilang.
+- Perbedaan kata antara fihris dan data hampir semuanya salah baca OCR. Sembilan calon yang tersisa dilihat di gambar fihris, lalu di halaman isi:
+  - **«باب ما جاء بالتأمين خلف الإمام» → «باب ما جاء في التأمين خلف الإمام»** (hadits 193–196; halaman isi jilid 1 hlm. 87). Dikoreksi.
+  - Fihris berbeda, tetapi halaman isi sama dengan data, jadi tidak dikoreksi: «من علة» (fihris «عن علة», hlm. 307), «في الإحرام» (fihris «للإحرام», hlm. 324), «من ولدهما», «إذا توفي سيدها» (fihris «توفي عنها»), «باب ما جاء فيما أفسد العبيد» (fihris tanpa «ما جاء»).
+  - «باب القضاء فيمن هلك وله دين، وعليه دين له، فيه شاهد واحد»: koma di teks digital salah tempat (cetakan: «وعليه دين، له فيه شاهد واحد»). Bab ini hanya berisi perkataan Malik, tanpa riwayat di data kita, jadi tidak ada yang tampil.
+
+Batasan: karena OCR lebih lemah, perbedaan satu huruf di judul yang OCR-nya rusak bisa terlewat.
+
 ## Batasan dan yang belum
 
 - **Nomor entri belum diverifikasi.** OCR mengacaukan angka Arab-Hindi di kolom nomor.
@@ -239,4 +251,4 @@ Batasan: judul yang OCR-nya cocok dan kata-katanya ada di halaman fihris diangga
 - **Teks dan nomor hadits Bukhari** belum dicek visual satu per satu. Halamannya harus dicari manual di scan (OCR-nya tidak bisa dipakai untuk mencari), atau dengan scan lain yang OCR-nya lebih baik.
 - Muslim: halaman fihris Muqaddimah dan Kitab al-Iman bab 1–18 belum dicek (tidak ada di scan).
 - **Fihris Bukhari sudah dibaca utuh**, tetapi hanya untuk bab tanpa judul. Judul bab bertajuk belum dibandingkan satu per satu dengan fihris; baru 14 judul Kitab 62 yang dicek persis.
-- **Sudah dicek dengan fihris cetak:** Bukhari, Muslim, Ibnu Majah, Abu Dawud, Nasa'i, Tirmidzi (untuk Abu Dawud, Nasa'i, dan Tirmidzi: struktur dan judul lewat OCR, kandidat dilihat di gambar; Tirmidzi juga di halaman isi). **Belum:** Malik, Ahmad, ad-Darimi, asy-Syafi'i.
+- **Sudah dicek dengan fihris cetak:** Bukhari, Muslim, Ibnu Majah, Abu Dawud, Nasa'i, Tirmidzi, Malik (untuk Abu Dawud, Nasa'i, dan Tirmidzi: struktur dan judul lewat OCR, kandidat dilihat di gambar; Tirmidzi juga di halaman isi). Al-Muwaththa' juga sudah dicek (OCR lebih lemah, lihat di atas). **Belum:** Ahmad, ad-Darimi, asy-Syafi'i.

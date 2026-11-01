@@ -264,3 +264,12 @@ class TirmidziCetak(unittest.TestCase):
             self.assertEqual(cara, "catatan-cetak")
             self.assertIn("Ahmad Syakir", catatan)
         self.assertEqual(q("SELECT catatan FROM riwayat_bab WHERE riwayat_id='tirmidzi:613'")[0][0], None)
+
+
+class MalikCetak(unittest.TestCase):
+    """Fihris & halaman isi al-Muwaththa' cetakan Fu'ad 'Abd al-Baqi (Dar Ihya' at-Turath 1406 H)."""
+
+    def test_judul_sesuai_halaman_isi(self):
+        self.assertEqual({judul(f"malik:{n}")[1] for n in range(193, 197)}, {"باب ما جاء في التأمين خلف الإمام"})
+        # fihris berbeda, halaman isi = teks digital: tidak dikoreksi
+        self.assertEqual(judul("malik:102")[1], "باب واجب الغسل إذا التقى الختانان")
