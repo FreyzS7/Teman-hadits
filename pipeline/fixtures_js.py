@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+"""Buat site/test/fixtures/paritas.json: masukan + keluaran normalisasi & rencana versi Python,
+supaya site/src (JavaScript) diuji menghasilkan hal yang SAMA PERSIS."""
+import json
+import os
+import random
+import sqlite3
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from common import DB_PATH, ROOT, akar_ar, norm_ar, norm_id
+from cari import rencana
+
+db = sqlite3.connect(DB_PATH)
+random.seed(20261101)
+ids = [r[0] for r in db.execute("SELECT id FROM riwayat WHERE tingkat IN ('A','B')")]
+contoh = random.sample(ids, 300)
+teks = []
+for rid in contoh:
+    ar, tr = db.execute("SELECT arab, terjemah FROM riwayat WHERE id=?", (rid,)).fetchone()
+    teks.append({"id": rid, "arab": ar, "terjemah": tr or ""})
+TEPI = ["", "   ", "Shalat Jum'at", "SHOLAT  tarawih!!", "Ṣalāt al-‘Īd", "إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ", "ﷺ صلى الله عليه وسلم",
+        "وَالْخِنْزِيرِ والأصنام", "آمَنَ بِاللَّهِ وَمَلَائِكَتِهِ", "مسند الشافعي 900: أَخْبَرَنَا", "Tuntutlah ilmu walau ke negeri Cina", "Abu Hurairah r.a. berkata:"]
+for t in TEPI:
+    teks.append({"id": "tepi", "arab": t, "terjemah": t})
+KUERI = ["tolong carikan hadits tentang sholat tarawih", "apakah makan babi itu hukumnya haram?", "hadits yang membolehkan makan babi",
+         "min ada hadist tentang keutamaan sedekah ga", "niat", "Terawih di bulan Romadhon", "adab makan dan minum", "wudu",
+         "muslim 1907", "hr bukhari no 1", "sholat subuh berjamaah", "keutamaan shodaqoh di hari jum'at", ""]
+out = {
+    "normalisasi": [{"masuk": x, "norm_ar": norm_ar(x["arab"]), "akar_ar": akar_ar(norm_ar(x["arab"])), "norm_id": norm_id(x["terjemah"])} for x in teks],
+    "rencana": [{"kueri": k, **{f: rencana(k)[f] for f in ("ejaan", "dibuang", "kata", "maksud", "pertanyaan_hukum")},
+                 "konsep": [c["id"] for c in rencana(k)["konsep"]]} for k in KUERI],
+}
+p = os.path.join(ROOT, "site", "test", "fixtures", "paritas.json")
+json.dump(out, open(p, "w"), ensure_ascii=False)
+print(f"{p}: {len(out['normalisasi'])} teks, {len(out['rencana'])} kueri ({os.path.getsize(p) // 1024} KB)")

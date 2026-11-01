@@ -21,42 +21,61 @@ Pustaka hadits berbahasa Indonesia. Pengguna bisa mencari dengan kata kunci atau
 | `docs/04-protokol-verifikasi.md` | Cara membuktikan data benar tanpa bergantung pada pembuat situs |
 | `docs/05-rencana-dan-hosting.md` | Tahapan kerja, arsitektur, hosting, anggaran |
 | `docs/06-pencarian-dan-ai.md` | Pencarian pintar tanpa AI, dan peran AI yang dibatasi |
+| `site/` | Situs sungguhan: Cloudflare Worker + database D1, jalan lokal dengan `wrangler dev` |
 | `design/` | Prototipe desain (`prototipe.html`), diisi data asli dari database |
 
 ## Menjalankan
 
+Butuh Python 3 dan Node.js ≥ 20.
+
+**1. Bangun data** (sekali, ±4 menit):
+
 ```bash
-python3 pipeline/fetch_sources.py
+bash pipeline/run_all.sh
+```
+
+**2. Jalankan situs di komputer sendiri:**
+
+```bash
+cd site
 ```
 
 ```bash
-python3 pipeline/build_db.py
+npm install
 ```
 
 ```bash
-python3 -m unittest pipeline/test_golden.py -v
+npm run impor
 ```
 
 ```bash
-python3 pipeline/audit.py
+npm run dev
 ```
+
+Buka <http://127.0.0.1:8787>. `npm run impor` cukup diulang bila data dibangun ulang.
+
+**3. Uji:**
 
 ```bash
-python3 design/build_prototype.py
+npm test
 ```
 
-Coba pencarian dari terminal:
+Uji emas lewat HTTP (saat `npm run dev` sedang jalan di terminal lain):
+
+```bash
+BASE_URL=http://127.0.0.1:8787 npm run test:http
+```
+
+Pencarian juga bisa dicoba dari terminal tanpa situs:
 
 ```bash
 python3 pipeline/cari.py "tolong carikan hadits tentang sholat tarawih"
 ```
 
-Hasil build ada di `build/teman-hadits.sqlite` (±430 MB, tidak di-commit). Langkah fetch, build, dan uji di atas makan waktu sekitar satu menit.
-
 ## Status saat ini
 
 - 10 kitab dimuat, 67.512 riwayat terbit (32.578 tingkat A, 34.934 tingkat B), 408 dikarantina. Riyadhus Shalihin dikarantina sampai disegmentasi ulang.
 - 21.185 riwayat sudah punya penilaian derajat bernama: al-Albani, Syu'aib al-Arna'uth, Zubair 'Ali Za'i, Ahmad Syakir, Basyar 'Awwad, Abu Ghuddah, Salim al-Hilali, dan lainnya.
-- 14 uji emas lulus. Contohnya: hadits niat ditemukan di ketujuh tempatnya dalam Shahih al-Bukhari, dan tidak ada di al-Muwaththa' riwayat Yahya.
+- Uji: 15 uji emas data (Python), 9 uji unit + paritas Python↔JavaScript, 8 uji emas lewat HTTP. Contohnya: hadits niat ditemukan di ketujuh tempatnya dalam Shahih al-Bukhari, dan tidak ada di al-Muwaththa' riwayat Yahya.
 
 Angka terbaru selalu ada di [docs/01-audit-data.md](docs/01-audit-data.md).

@@ -25,7 +25,7 @@ URUT = {k[0]: i for i, k in enumerate(KITAB)}
 PENGISI = set(KAMUS["pengisi"])
 MAKSUD = set(KAMUS["kata_maksud"])
 VARIAN = {v: grup for grup in KAMUS["varian"] for v in grup}  # tiap varian -> seluruh grupnya
-PERTANYAAN_HUKUM = re.compile(r"\b(hukum|hukumnya|halal|haram|boleh|bolehkah|wajib|sunnah|makruh|mubah)\b")
+PERTANYAAN_HUKUM = re.compile(r"\b(hukum|hukumnya|halal|haram|boleh|bolehkah|wajib|sunnah|makruh|mubah|membolehkan|melarang|mengharamkan|menghalalkan)\b")
 
 
 def _fts_frasa(teks_ar):

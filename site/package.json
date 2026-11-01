@@ -1,0 +1,14 @@
+{
+  "name": "teman-hadits-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --ip 127.0.0.1 --port 8787",
+    "impor": "bash scripts/impor-lokal.sh",
+    "test": "node --test test/paritas.test.js test/teks.test.js",
+    "test:http": "node --test test/http.test.js"
+  },
+  "devDependencies": {
+    "wrangler": "4.151.1"
+  }
+}

@@ -1,0 +1,16 @@
+# Konfigurasi Cloudflare Worker untuk Teman Hadits.
+# Lokal: `npm run impor` (sekali, setelah pipeline) lalu `npm run dev`.
+# Online (nanti): buat database dengan `npx wrangler d1 create teman-hadits`, ganti database_id di bawah,
+# impor dengan --remote, lalu `npx wrangler deploy`.
+name = "teman-hadits"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+send_metrics = false
+
+[assets]
+directory = "./public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "teman-hadits"
+database_id = "00000000-0000-0000-0000-000000000000"

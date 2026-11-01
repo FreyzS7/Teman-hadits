@@ -77,6 +77,21 @@ class Takhrij(unittest.TestCase):
         self.assertEqual(ketemu, {f"bukhari:{n}" for n in (1, 54, 2529, 3898, 5070, 6689, 6953)})
 
 
+class TakhrijTersimpan(unittest.TestCase):
+    """Tabel mirip di build/takhrij.sqlite (pipeline/takhrij.py) harus memuat keluarga hadits niat."""
+
+    def test_keluarga_hadits_niat(self):
+        t = sqlite3.connect(os.path.join(os.path.dirname(DB_PATH), "takhrij.sqlite"))
+        b = {r[0] for r in t.execute("SELECT b FROM mirip WHERE a='bukhari:1'")}
+        for n in (54, 2529, 3898, 5070, 6689, 6953):
+            self.assertIn(f"bukhari:{n}", b)
+        for rid in ("muslim:4927", "abudawud:2201", "tirmidzi:1647", "nasai:75", "ibnumajah:4227"):
+            self.assertIn(rid, b)
+        # tidak boleh ada pasangan dengan hadits lain dari Bukhari selain 7 tempat itu
+        self.assertEqual({x for x in b if x.startswith("bukhari:")},
+                         {f"bukhari:{n}" for n in (54, 2529, 3898, 5070, 6689, 6953)})
+
+
 class TidakAdaDiKitab(unittest.TestCase):
     """Situs wajib jujur: yang tidak ada harus dilaporkan tidak ada."""
 

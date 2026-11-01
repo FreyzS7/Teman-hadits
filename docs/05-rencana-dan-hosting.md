@@ -10,7 +10,7 @@
 | 2 | Riyadhus Shalihin disegmentasi per hadits; teks Darimi, Ahmad, dan Syafi'i dicocokkan dengan OpenITI agar naik ke tingkat A; nama bab Arab/Indonesia | Berikutnya |
 | 3 | Rantai sanad tertaut ke data rijal (Taqrib at-Tahdzib): nama, tahun wafat, penilaian perawi | |
 | 4 | Katalog hadits palsu populer dengan penilaian ulama bernama (perlu akses Dorar atau sumber setara) | |
-| 5 | Situs sungguhan: halaman per riwayat, pencarian, cek teks, SEO | |
+| 5 | Situs sungguhan: halaman per riwayat, pencarian, cek teks, SEO | **Berjalan lokal** (`site/`): beranda, cari, cek, halaman riwayat + rantai sanad + takhrij, kitab/bab, tema, metode, sitemap |
 | 6 | Verifikasi sampel kitab cetak + peninjau independen, lalu rilis publik | |
 
 ## Lokal dulu, Cloudflare kemudian
@@ -21,7 +21,7 @@ Kebutuhan di komputer: Node.js ≥ 20 dan Python 3 (untuk pipeline data).
 
 ## Arsitektur yang disarankan
 
-- **Situs:** Astro. Halaman beranda, metode, dan rak kitab dibuat statis.
+- **Situs:** satu Cloudflare Worker yang merender semua halaman di server (tanpa kerangka tambahan seperti Astro), jadi hanya ada satu runtime, satu cara deploy, dan semua halaman tetap berupa HTML utuh untuk SEO.
 - **Halaman hadits dan pencarian:** Cloudflare Worker + **Cloudflare D1** (SQLite di server). Datanya ±67 ribu riwayat, padahal Cloudflare Pages versi gratis membatasi jumlah berkas per situs (sekitar 20 ribu). Karena itu halaman hadits dirender oleh Worker dari D1, dan tetap ramah SEO karena HTML-nya dikirim utuh dari server.
 - **Database produksi:** versi ramping dari `build/teman-hadits.sqlite`, tanpa kolom pembanding `arab_lidwa`, kira-kira < 300 MB. Masih di bawah batas ukuran D1 gratis (sekitar 500 MB per database).
 - **Pencarian:** FTS5 di D1. Normalisasi Arab dan pemotongan awalan sudah ada di `pipeline/common.py` dan harus dipakai sama persis saat membuat kueri.
