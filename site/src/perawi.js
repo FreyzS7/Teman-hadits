@@ -30,15 +30,18 @@ export const RUMUZ = {
   "تمييز": "disebut hanya untuk membedakan",
 };
 
-/** Perawi teridentifikasi per posisi segmen sanad riwayat n: Map(pos -> perawi). */
-export async function perawiSanad(db, n) {
-  const rows = (await db.prepare(`SELECT sp.pos, p.id, p.taqrib, p.nama, p.penilaian, p.tingkat, p.tabaqah, p.wafat, p.wafat_ragu
-    FROM sanad_perawi sp JOIN perawi p ON p.id = sp.perawi_id WHERE sp.n = ?1`).bind(n).all()).results;
-  return new Map(rows.map((r) => [r.pos, r]));
+/** Perawi teridentifikasi per posisi segmen sanad: Map(pos -> perawi). perawiJson = riwayat.perawi_json [[pos, id], ...]. */
+export async function perawiSanad(db, perawiJson) {
+  const pos = JSON.parse(perawiJson || "[]");
+  if (!pos.length) return new Map();
+  const rows = (await db.prepare(`SELECT id, taqrib, nama, penilaian, tingkat, tabaqah, wafat, wafat_ragu FROM perawi
+    WHERE id IN (SELECT value FROM json_each(?1))`).bind(JSON.stringify([...new Set(pos.map(([, id]) => id))])).all()).results;
+  const byId = new Map(rows.map((p) => [p.id, p]));
+  return new Map(pos.filter(([, id]) => byId.has(id)).map(([p, id]) => [p, { pos: p, ...byId.get(id) }]));
 }
 
 export async function dataPerawi(db, id) {
-  // Satu baris: guru/murid/riwayat sudah dihitung pipeline (export_d1.py) supaya halaman tidak memindai sanad_perawi.
+  // Satu baris: guru/murid/riwayat sudah dihitung pipeline (export_d1.py) supaya halaman tidak memindai sanad semua riwayat.
   const p = await db.prepare("SELECT * FROM perawi WHERE id = ?1").bind(id).first();
   if (!p) return null;
   const orang = (j) => JSON.parse(j || "[]").map(([id, nama, tingkat, n]) => ({ id, nama, tingkat, n }));

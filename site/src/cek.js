@@ -2,7 +2,7 @@
 // Prinsip: kata kunci khas harus ADA. Bila satu saja tidak muncul di terjemahan mana pun, jawabannya
 // "tidak ditemukan" dan kata itu disebutkan. Tidak ada tebakan.
 import { akarAr, adaArab, normAr, normId, stemAr, stemId } from "./teks.js";
-import { NAMA_KITAB } from "./cari.js";
+import { NAMA_KITAB, nilai } from "./cari.js";
 
 const STOP = new Set(("yang dan itu ini dengan akan ia dia ke di dari pada untuk apa sesuai seseorang sesungguhnya kepada kami " +
   "telah adalah bahwa atau juga tidak orang dalam saya beliau bersabda berkata hr bukhari muslim sampai shallallahu alaihi " +
@@ -75,17 +75,17 @@ export async function cek(db, teks) {
   }
 
   // perluas ke keluarga riwayat (takhrij) dari hasil terbaik
+  // jalur takhrij (kedua arah) tersimpan di baris riwayat terbaik: riwayat.jalur_json
+  const jr = await db.prepare("SELECT jalur_json FROM riwayat WHERE n = ?1").bind(terbaik).first();
+  const jal = new Map(JSON.parse(jr?.jalur_json || "[]").map(([n, , tingkat]) => [n, tingkat]));
   const kel = (await db.prepare(
-    `SELECT r.n, r.kitab_id, r.slug, r.no_tampil, r.tingkat, k.nama AS kitab_nama, k.urut AS ku, r.urut,
-            CASE WHEN r.n = ?1 THEN 'terbaik' ELSE m.tingkat END AS hubungan
-     FROM riwayat r JOIN kitab k ON k.id = r.kitab_id LEFT JOIN mirip m ON m.a = ?1 AND m.b = r.n
-     WHERE r.n = ?1 OR r.n IN (SELECT b FROM mirip WHERE a = ?1)
+    `SELECT r.n, r.kitab_id, r.slug, r.no_tampil, r.tingkat, r.nilai_json, k.nama AS kitab_nama, k.urut AS ku, r.urut
+     FROM riwayat r JOIN kitab k ON k.id = r.kitab_id
+     WHERE r.n = ?1 OR r.n IN (SELECT value FROM json_each(?2))
         OR r.n IN (SELECT b FROM sumber WHERE a = ?1 AND peringkat <= 12) OR r.n IN (SELECT a FROM sumber WHERE b = ?1)
-     ORDER BY k.urut, r.urut`).bind(terbaik).all()).results;
-  const pen = (await db.prepare("SELECT n, penilai, hukum, kategori FROM penilaian WHERE n IN (SELECT value FROM json_each(?1)) ORDER BY penilai").bind(JSON.stringify(kel.map((x) => x.n))).all()).results;
-  const byN = new Map(kel.map((x) => [x.n, { ...x, penilaian: [] }]));
-  for (const p of pen) byN.get(p.n)?.penilaian.push(p);
-  const keluarga = [...byN.values()];
+     ORDER BY k.urut, r.urut`).bind(terbaik, JSON.stringify([...jal.keys()])).all()).results;
+  const keluarga = kel.map(({ nilai_json, ...x }) => ({
+    ...x, hubungan: x.n === terbaik ? "terbaik" : jal.get(x.n) ?? null, penilaian: nilai(nilai_json) }));
   const adaDi = new Set(keluarga.map((x) => x.kitab_id));
   return {
     ...hasil, status: "ditemukan", terbaik, keluarga,

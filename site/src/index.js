@@ -1,5 +1,5 @@
 // Teman Hadits — Cloudflare Worker. Semua halaman dirender di server dari database D1.
-import { cari, akarSorot, kataSorot, NAMA_KITAB } from "./cari.js";
+import { cari, akarSorot, kataSorot, NAMA_KITAB, nilai } from "./cari.js";
 import { cek } from "./cek.js";
 import { hukumTirmidzi, normId, pisahKomentar, pisahSanad, rantaiArab, rubrik } from "./teks.js";
 import * as T from "./tampilan.js";
@@ -66,36 +66,34 @@ async function halamanHadits(env, url, kid, slug) {
   const { r, alih } = await cariRiwayat(db, kid, slug);
   if (alih) return alihkan(alih, 301);
   if (!r) return html(T.layout({ judul: "Tidak ditemukan · Teman Hadits", noindex: true, isi: T.halamanGalat("Nomor tidak ditemukan", `${T.PENDEK[kid] || kid} no. ${slug} tidak ada di data kami. Penomoran bisa berbeda antar-edisi; coba cari dengan kata kunci.`) }), 404);
-  const [pen, jalurA, jalurB, penJalur, tetangga, tema, bab, dikutip, judul] = await db.batch([
-    db.prepare("SELECT penilai, hukum, kategori FROM penilaian WHERE n = ?1 ORDER BY penilai").bind(r.n),
-    db.prepare("SELECT m.skor, m.tingkat AS tingkat_mirip, x.n, x.kitab_id, x.slug, x.no_tampil, k.nama AS kitab_nama, k.urut AS ku, x.urut FROM mirip m JOIN riwayat x ON x.n = m.b JOIN kitab k ON k.id = x.kitab_id WHERE m.a = ?1").bind(r.n),
-    db.prepare("SELECT m.skor, m.tingkat AS tingkat_mirip, x.n, x.kitab_id, x.slug, x.no_tampil, k.nama AS kitab_nama, k.urut AS ku, x.urut FROM mirip m JOIN riwayat x ON x.n = m.a JOIN kitab k ON k.id = x.kitab_id WHERE m.b = ?1").bind(r.n),
-    db.prepare("SELECT n, penilai, hukum, kategori FROM penilaian WHERE n IN (SELECT b FROM mirip WHERE a = ?1 UNION SELECT a FROM mirip WHERE b = ?1) ORDER BY penilai").bind(r.n),
+  // takhrij, penilaian, perawi, dan judul tersimpan di baris riwayat (kolom *_json, judul_id): lihat pipeline/export_d1.py
+  const jal = JSON.parse(r.jalur_json || "[]");
+  const [anggota, tetangga, tema, bab, dikutip, judul] = await db.batch([
+    db.prepare("SELECT x.n, x.kitab_id, x.slug, x.no_tampil, x.urut, x.nilai_json, k.nama AS kitab_nama, k.urut AS ku FROM riwayat x JOIN kitab k ON k.id = x.kitab_id WHERE x.n IN (SELECT value FROM json_each(?1))").bind(JSON.stringify(jal.map(([n]) => n))),
     db.prepare("SELECT slug, no_tampil, urut FROM riwayat WHERE kitab_id = ?1 AND urut IN (?2, ?3)").bind(kid, r.urut - 1, r.urut + 1),
     db.prepare("SELECT DISTINCT t.id, t.judul FROM he_riwayat hr JOIN he_tema ht ON ht.he_id = hr.he_id JOIN tema t ON t.id = ht.tema_id WHERE hr.n = ?1 LIMIT 8").bind(r.n),
     db.prepare("SELECT no, nama FROM bab WHERE kitab_id = ?1 AND no = ?2").bind(kid, r.bab_no ?? -1),
     db.prepare("SELECT x.slug, x.no_tampil FROM sumber s JOIN riwayat x ON x.n = s.a WHERE s.b = ?1 ORDER BY x.urut").bind(r.n),
-    db.prepare("SELECT kitab_ar, kitab_nama_id, bab_ar, cara FROM judul WHERE n = ?1").bind(r.n),
+    db.prepare("SELECT kitab_ar, kitab_nama_id, bab_ar FROM judul_bab WHERE id = ?1").bind(r.judul_id ?? -1),
   ]);
-  const jalurMap = new Map();
-  for (const j of [...jalurA.results, ...jalurB.results]) {
-    const ada = jalurMap.get(j.n);
-    if (!ada || (ada.tingkat_mirip !== "sama" && j.tingkat_mirip === "sama") || (ada.tingkat_mirip === j.tingkat_mirip && j.skor > ada.skor)) jalurMap.set(j.n, j);
-  }
-  const jalur = [...jalurMap.values()].sort((a, b) => a.ku - b.ku || a.urut - b.urut);
+  const pen = { results: nilai(r.nilai_json) };
+  const per = new Map(anggota.results.map((x) => [x.n, x]));
+  const jalur = jal.filter(([n]) => per.has(n))
+    .map(([n, skor, tingkat_mirip]) => { const { nilai_json, ...x } = per.get(n); return { ...x, skor, tingkat_mirip }; })
+    .sort((a, b) => a.ku - b.ku || a.urut - b.urut);
   const jalurPenilaian = new Map();
-  for (const p of penJalur.results) (jalurPenilaian.get(p.n) || jalurPenilaian.set(p.n, []).get(p.n)).push(p);
+  for (const x of anggota.results) { const p = nilai(x.nilai_json); if (p.length) jalurPenilaian.set(x.n, p); }
   if (kid === "riyadh") return halamanRiyadh(env, url, kitab, r);
   const pisah = pisahSanad(r.arab);
   if (pisah && kid === "tirmidzi") Object.assign(pisah, pisahKomentar(pisah.matan));
-  const perawi = pisah ? await perawiSanad(db, r.n) : new Map();
+  const perawi = pisah ? await perawiSanad(db, r.perawi_json) : new Map();
   const kanonik = `${url.origin}/${kid}/${r.slug}`;
   const isi = T.halamanHadits({
     r, kitab, bab: bab.results[0] || null, penilaian: pen.results, jalur, jalurPenilaian, pisah,
     sanadHtml: pisah ? rubrik(pisah.sanad) : "", rantai: susunRantai(r, kitab, pisah, perawi),
     tirmidzi: kid === "tirmidzi" ? hukumTirmidzi(r.arab) : null, tema: tema.results,
     sebelum: tetangga.results.find((x) => x.urut === r.urut - 1), sesudah: tetangga.results.find((x) => x.urut === r.urut + 1), kanonik,
-    dikutip: dikutip.results, judul: judul.results[0] || null,
+    dikutip: dikutip.results, judul: judul.results[0] ? { ...judul.results[0], cara: r.judul_cara } : null,
   });
   const desk = (r.terjemah || "").replace(/\[|\]/g, "").replace(/\s+/g, " ").slice(0, 155);
   return html(T.layout({ judul: `${kitab.nama} no. ${r.no_tampil} · Teman Hadits`, deskripsi: desk, isi, kanonik }));
@@ -103,16 +101,15 @@ async function halamanHadits(env, url, kid, slug) {
 
 async function halamanRiyadh(env, url, kitab, r) {
   const db = env.DB;
-  const [info, sumber, penSumber, tetangga, tema, bab] = await db.batch([
+  const [info, sumber, tetangga, tema, bab] = await db.batch([
     db.prepare("SELECT * FROM riyadh_info WHERE n = ?1").bind(r.n),
-    db.prepare("SELECT s.skor, s.kitab_disebut, s.sahabat_sama, s.peringkat, x.n, x.kitab_id, x.slug, x.no_tampil, k.nama AS kitab_nama FROM sumber s JOIN riwayat x ON x.n = s.b JOIN kitab k ON k.id = x.kitab_id WHERE s.a = ?1 ORDER BY s.peringkat").bind(r.n),
-    db.prepare("SELECT p.n, p.penilai, p.hukum, p.kategori FROM penilaian p WHERE p.n IN (SELECT b FROM sumber WHERE a = ?1) ORDER BY p.penilai").bind(r.n),
+    db.prepare("SELECT s.skor, s.kitab_disebut, s.sahabat_sama, s.peringkat, x.n, x.kitab_id, x.slug, x.no_tampil, x.nilai_json, k.nama AS kitab_nama FROM sumber s JOIN riwayat x ON x.n = s.b JOIN kitab k ON k.id = x.kitab_id WHERE s.a = ?1 ORDER BY s.peringkat").bind(r.n),
     db.prepare("SELECT slug, no_tampil, urut FROM riwayat WHERE kitab_id = 'riyadh' AND urut IN (?1, ?2)").bind(r.urut - 1, r.urut + 1),
     db.prepare("SELECT DISTINCT t.id, t.judul FROM he_riwayat hr JOIN he_tema ht ON ht.he_id = hr.he_id JOIN tema t ON t.id = ht.tema_id WHERE hr.n IN (SELECT b FROM sumber WHERE a = ?1 AND peringkat <= 3) LIMIT 8").bind(r.n),
     db.prepare("SELECT no, nama, nama_ar FROM bab WHERE kitab_id = 'riyadh' AND no = ?1").bind(r.bab_no ?? -1),
   ]);
   const penilaianSumber = new Map();
-  for (const p of penSumber.results) (penilaianSumber.get(p.n) || penilaianSumber.set(p.n, []).get(p.n)).push(p);
+  for (const x of sumber.results) { const p = nilai(x.nilai_json); if (p.length) penilaianSumber.set(x.n, p); delete x.nilai_json; }
   const kanonik = `${url.origin}/riyadh/${r.slug}`;
   const isi = T.halamanRiyadh({
     r, kitab, bab: bab.results[0] || null, info: info.results[0] || null, sumber: sumber.results, penilaianSumber, tema: tema.results,
@@ -164,8 +161,8 @@ async function halamanCari(env, url) {
   const inti = kataSorot({ ...r0, maksud: [] }).map(normId).filter((w) => w.length >= 4);
   const maksud = r0.maksud.map(normId);
   const memuat = (j, w) => (" " + j + " ").includes(" " + w);
-  const tema = inti.length ? (await db.prepare("SELECT id, judul, jumlah FROM tema WHERE jumlah > 0").all()).results
-    .map((t) => { const j = normId(t.judul); return { ...t, skor: 2 * inti.filter((w) => memuat(j, w)).length + maksud.filter((w) => memuat(j, w)).length, kena: inti.some((w) => memuat(j, w)) }; })
+  const tema = inti.length ? (await semuaTema(db)).daftar.filter((t) => t.jumlah > 0)
+    .map(({ judul_norm: j, induk, ...t }) => { return { ...t, skor: 2 * inti.filter((w) => memuat(j, w)).length + maksud.filter((w) => memuat(j, w)).length, kena: inti.some((w) => memuat(j, w)) }; })
     .filter((t) => t.kena).sort((a, b) => b.skor - a.skor || b.jumlah - a.jumlah).slice(0, 6) : [];
   const isi = T.hasilCari({ q, out, kitab, sorot: kataSorot(out.rencana), akar: akarSorot(out.rencana), filter, rujukan, tema, sembunyiRiyadh: env.TERJEMAH_RIYADH === "sembunyi" });
   return html(T.layout({ judul: `${q} · Cari · Teman Hadits`, aktif: "cari", isi, noindex: true }));
@@ -176,7 +173,7 @@ async function halamanKitab(env, url, kid, babNo) {
   const k = await db.prepare("SELECT * FROM kitab WHERE id = ?1").bind(kid).first();
   if (!k) return null;
   const halaman = halamanKe(url);
-  const kolom = "SELECT r.slug, r.no_tampil, substr(r.terjemah, 1, 300) AS terjemah, r.tingkat, (SELECT count(*) FROM penilaian p WHERE p.n = r.n) AS n_nilai FROM riwayat r";
+  const kolom = "SELECT r.slug, r.no_tampil, substr(r.terjemah, 1, 300) AS terjemah, r.tingkat, coalesce(json_array_length(r.nilai_json), 0) AS n_nilai FROM riwayat r";
   if (babNo != null) {
     const b = await db.prepare("SELECT * FROM bab WHERE kitab_id = ?1 AND no = ?2").bind(kid, babNo).first();
     if (!b) return null;
@@ -192,10 +189,17 @@ async function halamanKitab(env, url, kid, babNo) {
   return html(T.layout({ judul: `${k.nama} · Teman Hadits`, aktif: "kitab", kanonik: `${url.origin}/kitab/${kid}`, deskripsi: `${k.nama} karya ${k.penyusun}: ${k.terbit} riwayat dengan teks Arab, terjemah, dan penilaian ulama.`, isi: T.halamanKitab({ k, bab, daftar, halaman, halMaks }) }));
 }
 
+/** Semua tema HadeethEnc dari SATU baris info (tema_json; pipeline/export_d1.py), urut baris tabel tema. */
+async function semuaTema(db) {
+  const info = Object.fromEntries((await db.prepare("SELECT kunci, nilai FROM info WHERE kunci IN ('tema_json', 'hadeethenc_versi')").all()).results.map((x) => [x.kunci, x.nilai]));
+  const daftar = JSON.parse(info.tema_json || "[]").map(([id, judul, induk, jumlah, judul_norm]) => ({ id, judul, induk, jumlah, judul_norm }));
+  return { daftar, versi: info.hadeethenc_versi };
+}
+
 async function halamanTema(env, url, id) {
   const db = env.DB;
-  const versi = (await db.prepare("SELECT nilai FROM info WHERE kunci = 'hadeethenc_versi'").first())?.nilai;
-  const semua = (await db.prepare("SELECT id, judul, induk, jumlah FROM tema ORDER BY CAST(id AS INTEGER)").all()).results;
+  const { daftar, versi } = await semuaTema(db);
+  const semua = daftar.map(({ judul_norm, ...t }) => t).sort((a, b) => Number(a.id) - Number(b.id));
   const akarIdx = (t) => !t.induk || t.induk === "0";
   if (!id) {
     const anak = {};

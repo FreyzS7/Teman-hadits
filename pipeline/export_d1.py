@@ -32,7 +32,7 @@ SKEMA = """
 DROP TABLE IF EXISTS info; DROP TABLE IF EXISTS kitab; DROP TABLE IF EXISTS bab; DROP TABLE IF EXISTS riwayat;
 DROP TABLE IF EXISTS penilaian; DROP TABLE IF EXISTS mirip; DROP TABLE IF EXISTS kata_df; DROP TABLE IF EXISTS cari;
 DROP TABLE IF EXISTS tema; DROP TABLE IF EXISTS he_hadits; DROP TABLE IF EXISTS he_tema; DROP TABLE IF EXISTS he_riwayat;
-DROP TABLE IF EXISTS riyadh_info; DROP TABLE IF EXISTS sumber; DROP TABLE IF EXISTS judul;
+DROP TABLE IF EXISTS riyadh_info; DROP TABLE IF EXISTS sumber; DROP TABLE IF EXISTS judul; DROP TABLE IF EXISTS judul_bab;
 DROP TABLE IF EXISTS katalog_kitab; DROP TABLE IF EXISTS katalog; DROP TABLE IF EXISTS katalog_cari;
 DROP TABLE IF EXISTS populer; DROP TABLE IF EXISTS populer_katalog; DROP TABLE IF EXISTS populer_riwayat; DROP TABLE IF EXISTS populer_sebut;
 DROP TABLE IF EXISTS perawi; DROP TABLE IF EXISTS sanad_perawi;
@@ -44,23 +44,25 @@ CREATE TABLE kitab (
 );
 CREATE TABLE bab (kitab_id TEXT, no INT, nama TEXT, jumlah INT, n_awal INT, nama_ar TEXT, nama_en TEXT, nama_id_sumber TEXT,
   PRIMARY KEY (kitab_id, no));
--- judul kitab & bab per riwayat dari teks OpenITI (cara: 'teks' = dicocokkan isi, 'urutan' = dari tetangga, 'nomor' = hadits bernomor ganda, 'koreksi-cetak' = koreksi dari kitab cetak)
-CREATE TABLE judul (n INTEGER PRIMARY KEY, kitab_ar TEXT, kitab_nama_id TEXT, bab_ar TEXT, cara TEXT);
+-- judul kitab & bab dari teks OpenITI, unik (riwayat.judul_id); cara per riwayat di riwayat.judul_cara
+-- ('teks' = dicocokkan isi, 'urutan' = dari tetangga, 'nomor' = nomor sama, 'koreksi-cetak' = koreksi dari kitab cetak)
+CREATE TABLE judul_bab (id INTEGER PRIMARY KEY, kitab_ar TEXT, kitab_nama_id TEXT, bab_ar TEXT);
 CREATE TABLE riwayat (
-  n INTEGER PRIMARY KEY, id TEXT UNIQUE, kitab_id TEXT, slug TEXT, urut INT, no_tampil TEXT,
+  n INTEGER PRIMARY KEY, id TEXT, kitab_id TEXT, slug TEXT, urut INT, no_tampil TEXT,
   no_standar TEXT, no_arab TEXT, no_lidwa INT, bab_no INT, arab TEXT, terjemah TEXT, rantai_json TEXT,
   kecocokan REAL, tingkat TEXT, alasan TEXT,
-  no_edisi TEXT                 -- nomor pada edisi tahqiq (Ahmad: ar-Risalah; Darimi: Asad; Syafi'i: al-Fahl)
+  no_edisi TEXT,                -- nomor pada edisi tahqiq (Ahmad: ar-Risalah; Darimi: Asad; Syafi'i: al-Fahl)
+  -- Data per riwayat yang dulu tabel terpisah (penilaian, mirip, sanad_perawi, judul) kini kolom JSON di baris ini:
+  -- impor menulis jauh lebih sedikit baris dan halaman hadits membaca lebih sedikit baris (docs/12).
+  nilai_json TEXT,              -- [[penilai, hukum, kategori], ...] urut penilai
+  jalur_json TEXT,              -- takhrij: [[n, skor, tingkat], ...] kedua arah, satu per riwayat ('sama' didahulukan)
+  perawi_json TEXT,             -- [[posisi segmen sanad, id perawi], ...] hanya yang pasti
+  judul_id INT, judul_cara TEXT
 );
-CREATE INDEX ix_riwayat_edisi ON riwayat (kitab_id, no_edisi);
+CREATE INDEX ix_riwayat_edisi ON riwayat (kitab_id, no_edisi) WHERE no_edisi IS NOT NULL;
 CREATE UNIQUE INDEX ix_riwayat_slug ON riwayat (kitab_id, slug);
 CREATE INDEX ix_riwayat_urut ON riwayat (kitab_id, urut);
 CREATE INDEX ix_riwayat_bab ON riwayat (kitab_id, bab_no, urut);
-CREATE TABLE penilaian (n INT, penilai TEXT, hukum TEXT, kategori TEXT);
-CREATE INDEX ix_penilaian_n ON penilaian (n);
-CREATE TABLE mirip (a INT, b INT, skor REAL, tingkat TEXT);
-CREATE INDEX ix_mirip_a ON mirip (a);
-CREATE INDEX ix_mirip_b ON mirip (b);   -- tanpa ini halaman hadits memindai 219 ribu baris (diukur: 450 ribu baris dibaca/halaman)
 CREATE TABLE kata_df (kata TEXT PRIMARY KEY, n INT) WITHOUT ROWID;
 CREATE VIRTUAL TABLE cari USING fts5 (
   arab_polos, arab_akar, terjemah_polos, perawi, judul,
@@ -92,7 +94,6 @@ CREATE TABLE populer_sebut (populer_id TEXT, katalog_id TEXT, kutipan TEXT);
 -- guru_json/murid_json/riwayat_json dihitung di sini supaya halaman perawi hanya membaca 1 baris (batas baca D1 gratis)
 CREATE TABLE perawi (id TEXT PRIMARY KEY, taqrib INT, tk_no INT, nama TEXT, teks_taqrib TEXT, penilaian TEXT, tingkat INT,
   tabaqah INT, wafat INT, wafat_ragu INT, rumuz TEXT, n_riwayat INT, guru_json TEXT, murid_json TEXT, riwayat_json TEXT);
-CREATE TABLE sanad_perawi (n INT, pos INT, perawi_id TEXT, PRIMARY KEY (n, pos));
 CREATE INDEX ix_perawi_n ON perawi (n_riwayat);
 """
 
@@ -221,7 +222,7 @@ def main():
         bj.row_factory = sqlite3.Row
         judul_rw = {r["riwayat_id"]: dict(r) for r in bj.execute("SELECT * FROM riwayat_bab")}
         nama_bagian = {(r["kitab_id"], r["bab_no"]): (r["nama_ar"], r["nama_id"]) for r in bj.execute("SELECT * FROM kitab_nama")}
-    data_judul = []
+    judul_n = {}
     # Bagian (bab_no) untuk kitab Lidwa-saja, diurutkan menurut posisi pertamanya di edisi tahqiq.
     kunci_bagian = lambda kid, j: (j["bab_ar"] or j["kitab_ar"]) if kid == "ahmad" else j["kitab_ar"]
     bagian_lidwa = {}
@@ -273,7 +274,7 @@ def main():
         na = norm_ar(arab)
         nama = " ".join(json.loads(rantai)) if rantai else ""
         if j:
-            data_judul.append((n, j["kitab_ar"], j["kitab_nama_id"], j["bab_ar"], j["cara"]))
+            judul_n[n] = (j["kitab_ar"], j["kitab_nama_id"], j["bab_ar"], j["cara"])
         teks_judul = " ".join(x for x in [norm_id(j["kitab_nama_id"] or ""), akar_ar(norm_ar((j["kitab_ar"] or "") + " " + (j["bab_ar"] or "")))] if x) if j else ""
         data_cari.append((n, na, akar_ar(na), norm_id(terj), norm_id(nama), teks_judul))
         if babno is not None and kid not in LIDWA_SAJA:
@@ -361,13 +362,65 @@ def main():
         else:
             baris_bab.append((k, no, idn or v[0], v[1], v[2], ar, v[4], None))
     w.sisip("bab", ["kitab_id", "no", "nama", "jumlah", "n_awal", "nama_ar", "nama_en", "nama_id_sumber"], baris_bab)
-    w.sisip("judul", ["n", "kitab_ar", "kitab_nama_id", "bab_ar", "cara"], data_judul)
+    # --- data per riwayat sebagai kolom JSON (dulu tabel penilaian, mirip, sanad_perawi, judul) ------------------
+    # Setiap baris tabel DAN setiap entri indeks dihitung D1 sebagai "baris ditulis" saat impor; tabel-tabel itu
+    # (±1 juta tulisan) selalu dibaca per riwayat, jadi cukup disimpan di baris riwayatnya sendiri.
+    js = lambda x: json.dumps(x, ensure_ascii=False, separators=(",", ":")) if x else None
+    nilai = collections.defaultdict(list)
+    for n_, pnl, hk, kat in sorted(penilaian_akhir, key=lambda x: (x[0], x[1] or "")):
+        nilai[n_].append([pnl, hk, kat])
+    jalur = collections.defaultdict(dict)
+    n_mirip = 0
+    tk_path = os.path.join(BUILD, "takhrij.sqlite")
+    if os.path.exists(tk_path):
+        for a, b, sk, tk in sqlite3.connect(tk_path).execute("SELECT a, b, skor, tingkat FROM mirip"):
+            if a not in n_of or b not in n_of:
+                continue
+            n_mirip += 1
+            for x, y in ((n_of[a], n_of[b]), (n_of[b], n_of[a])):
+                ada = jalur[x].get(y)     # aturan sama dengan halaman hadits dulu: 'sama' didahulukan, lalu skor tertinggi
+                if ada is None or (ada[1] != "sama" and tk == "sama") or (ada[1] == tk and sk > ada[0]):
+                    jalur[x][y] = (sk, tk)
+    pos_perawi = collections.defaultdict(list)
+    n_pr = 0
+    pr_path = os.path.join(BUILD, "perawi.sqlite")
+    if os.path.exists(pr_path):
+        pr0 = sqlite3.connect(pr_path)
+        ids0 = {tk: pid for tk, pid in pr0.execute("SELECT tk_id, id FROM perawi")}
+        for rid, pos, tk in pr0.execute("SELECT riwayat_id, pos, tk_id FROM sebutan WHERE label='pasti' ORDER BY riwayat_id, pos"):
+            if rid in n_of and tk in ids0:
+                pos_perawi[n_of[rid]].append([pos, ids0[tk]])
+                n_pr += 1
+    judul_id = {}
+    for n_, (ka, kn, ba, _) in sorted(judul_n.items()):
+        judul_id.setdefault((ka, kn, ba), len(judul_id) + 1)
+    data_riwayat = [r + (js(nilai.get(r[0])),
+                         js([[y, round(sk, 3), tk] for y, (sk, tk) in sorted(jalur[r[0]].items())]) if r[0] in jalur else None,
+                         js(pos_perawi.get(r[0])),
+                         judul_id[judul_n[r[0]][:3]] if r[0] in judul_n else None,
+                         judul_n[r[0]][3] if r[0] in judul_n else None) for r in data_riwayat]
+    w.sisip("judul_bab", ["id", "kitab_ar", "kitab_nama_id", "bab_ar"], [(i,) + k for k, i in judul_id.items()])
+    # Peta n -> kitab & tingkat untuk pencarian (site/src/cari.js): n sudah urut (urutan kitab, urutan riwayat) dan
+    # setiap kitab menempati rentang n yang bersambung, jadi pencarian tidak perlu membaca baris riwayat setiap hasil.
+    rentang = []
+    for r in data_riwayat:
+        if rentang and rentang[-1][0] == r[2] and rentang[-1][2] == r[0] - 1:
+            rentang[-1][2] = r[0]
+        else:
+            assert all(x[0] != r[2] for x in rentang), "rentang n per kitab harus bersambung"
+            rentang.append([r[2], r[0], r[0]])
+    bit = bytearray(len(data_riwayat) // 8 + 2)
+    for r in data_riwayat:
+        if r[14] == "B":
+            bit[r[0] >> 3] |= 1 << (r[0] & 7)
+    import base64
+    w.sisip("info", ["kunci", "nilai"], [("peta_n", json.dumps(rentang)), ("bitmap_tingkat_b", base64.b64encode(bytes(bit)).decode())])
     w.sisip("riyadh_info", ["n", "atribusi_ar", "kitab_atribusi", "catatan_ar", "no_terjemah"], data_ry_info)
     w.sisip("sumber", ["a", "b", "skor", "kitab_disebut", "sahabat_sama", "peringkat"], data_sumber)
     w.sisip("riwayat", ["n", "id", "kitab_id", "slug", "urut", "no_tampil", "no_standar", "no_arab", "no_lidwa", "bab_no",
-                        "arab", "terjemah", "rantai_json", "kecocokan", "tingkat", "alasan", "no_edisi"], data_riwayat)
+                        "arab", "terjemah", "rantai_json", "kecocokan", "tingkat", "alasan", "no_edisi",
+                        "nilai_json", "jalur_json", "perawi_json", "judul_id", "judul_cara"], data_riwayat)
     w.sisip("cari", ["rowid", "arab_polos", "arab_akar", "terjemah_polos", "perawi", "judul"], data_cari)
-    w.sisip("penilaian", ["n", "penilai", "hukum", "kategori"], penilaian_akhir)
 
     # frekuensi kata Indonesia (untuk "cek teks"): berapa riwayat memuat kata (setelah stem ringan)
     df = collections.Counter()
@@ -375,14 +428,6 @@ def main():
         df.update({stem_id(x) for x in terj_polos.split()})
     w.sisip("kata_df", ["kata", "n"], sorted(df.items()))
 
-    tk_path = os.path.join(BUILD, "takhrij.sqlite")
-    n_mirip = 0
-    if os.path.exists(tk_path):
-        t = sqlite3.connect(tk_path)
-        m = [(n_of[a], n_of[b], s, tk) for a, b, s, tk in t.execute("SELECT a, b, skor, tingkat FROM mirip")
-             if a in n_of and b in n_of]
-        n_mirip = len(m)
-        w.sisip("mirip", ["a", "b", "skor", "tingkat"], m)
     he_path = os.path.join(BUILD, "hadeethenc.sqlite")
     n_he = 0
     if os.path.exists(he_path):
@@ -390,7 +435,13 @@ def main():
         try:
             w.sisip("tema", ["id", "judul", "induk", "jumlah"], h.execute("SELECT id, judul, induk, jumlah FROM tema"))
             meta = dict(h.execute("SELECT kunci, nilai FROM hadeethenc_meta"))
-            w.sisip("info", ["kunci", "nilai"], [("hadeethenc_versi", meta.get("versi", "")), ("hadeethenc_sumber", meta.get("sumber", ""))])
+            # Daftar tema sebagai satu baris info: pencarian & halaman tema dulu membaca 447 baris tema per permintaan
+            # dan menormalkan judulnya di Worker. Urutan = urutan baris tabel tema (rowid), judul_norm = norm_id(judul).
+            tema_json = json.dumps([[i, j, ind, jml, norm_id(j)] for i, j, ind, jml in
+                                    h.execute("SELECT id, judul, induk, jumlah FROM tema ORDER BY rowid")],
+                                   ensure_ascii=False, separators=(",", ":"))
+            w.sisip("info", ["kunci", "nilai"], [("hadeethenc_versi", meta.get("versi", "")), ("hadeethenc_sumber", meta.get("sumber", "")),
+                                                 ("tema_json", tema_json)])
             he = h.execute("SELECT id, judul, teks_id, teks_ar, atribusi, derajat, penjelasan, faedah_json, url, "
                            "boleh_tampil FROM he_hadits").fetchall()
             n_he = len(he)
@@ -421,8 +472,6 @@ def main():
         w.sisip("populer_sebut", ["populer_id", "katalog_id", "kutipan"], kt.execute("SELECT * FROM populer_sebut"))
         w.sisip("populer_riwayat", ["populer_id", "n", "skor"],
                 [(p, n_of[r], s_) for p, r, s_ in kt.execute("SELECT * FROM populer_riwayat") if r in n_of])
-    pr_path = os.path.join(BUILD, "perawi.sqlite")
-    n_pr = 0
     if os.path.exists(pr_path):
         pr = sqlite3.connect(pr_path)
         ids = {tk: pid for tk, pid in pr.execute("SELECT tk_id, id FROM perawi")}
@@ -452,10 +501,6 @@ def main():
                 [row + (daftar(guru[row[0]]), daftar(murid[row[0]]),
                         json.dumps([[k[2], k[3], k[4]] for k in sorted(riw[row[0]])[:80]], ensure_ascii=False))
                  for row in pr.execute("SELECT id, taqrib, tk_no_cetak, nama, teks_taqrib, penilaian, tingkat, tabaqah, wafat, wafat_ragu, rumuz, n_riwayat FROM perawi")])
-        sp = [(n_of[rid], pos, ids[tk]) for rid, pos, tk in pr.execute("SELECT riwayat_id, pos, tk_id FROM sebutan WHERE label='pasti'")
-              if rid in n_of and tk in ids]
-        n_pr = len(sp)
-        w.sisip("sanad_perawi", ["n", "pos", "perawi_id"], sp)
     w.tutup()
     berkas = sorted(f for f in os.listdir(OUT) if f.endswith(".sql"))
     ukuran = sum(os.path.getsize(os.path.join(OUT, f)) for f in berkas)

@@ -3,6 +3,9 @@
 import KAMUS from "../../pipeline/kamus_konsep.json" with { type: "json" };
 import { akarAr, normAr, normId } from "./teks.js";
 
+/** Kolom riwayat.nilai_json -> [{penilai, hukum, kategori}] (urut penilai; lihat pipeline/export_d1.py). */
+export const nilai = (j) => (j ? JSON.parse(j) : []).map(([penilai, hukum, kategori]) => ({ penilai, hukum, kategori }));
+
 const PENGISI = new Set(KAMUS.pengisi);
 const MAKSUD = new Set(KAMUS.kata_maksud);
 const VARIAN = new Map();
@@ -50,6 +53,22 @@ const fraseId = (v) => (v.length >= 4 ? `"${v}"*` : `"${v}"`);
 const grupFts = (w) => "(" + varianDari(w).map((v) => `terjemah_polos:${fraseId(v)}`).join(" OR ") + ")";
 const jsonIds = (xs) => JSON.stringify([...xs]);
 
+/** n -> {kitab_id, tingkat, urut, ku} dari dua baris info (2 baris dibaca, berapa pun jumlah hasilnya). */
+async function petaN(db) {
+  const info = Object.fromEntries((await db.prepare("SELECT kunci, nilai FROM info WHERE kunci IN ('peta_n', 'bitmap_tingkat_b')").all()).results.map((x) => [x.kunci, x.nilai]));
+  const rentang = JSON.parse(info.peta_n || "[]");
+  const bit = Uint8Array.from(atob(info.bitmap_tingkat_b || ""), (c) => c.charCodeAt(0));
+  return (n) => {
+    let lo = 0, hi = rentang.length - 1;
+    while (lo <= hi) {
+      const m = (lo + hi) >> 1, [kid, a, b] = rentang[m];
+      if (n < a) hi = m - 1; else if (n > b) lo = m + 1;
+      else return { n, kitab_id: kid, tingkat: (bit[n >> 3] >> (n & 7)) & 1 ? "B" : "A", urut: n, ku: m };
+    }
+    return null;
+  };
+}
+
 /**
  * @param {D1Database} db
  * @returns {Promise<{rencana, total, hasil, perKitab, halaman, perHalaman}>}
@@ -69,7 +88,9 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
   for (const k of r.konsep) {
     for (const frasa of k.arab) for (const n of await ftsIds(`arab_akar:"${akarAr(normAr(frasa))}"`)) tambah(n, 3, `teks Arab memuat ${frasa}`);
     for (const [kid, bab] of k.bab) {
-      const rs = await db.prepare("SELECT r.n FROM riwayat r JOIN bab b ON b.kitab_id = r.kitab_id AND b.no = r.bab_no WHERE b.kitab_id = ?1 AND (b.nama = ?2 OR b.nama_en = ?2 OR b.nama_ar = ?2)").bind(kid, bab).all();
+      // bab dulu (tabel kecil), lalu riwayat lewat indeks (kitab_id, bab_no): versi JOIN dulu memindai semua riwayat kitab
+      // itu (diukur: 22.741 baris D1 untuk satu pencarian "sholat tarawih").
+      const rs = await db.prepare("SELECT r.n FROM riwayat r WHERE r.kitab_id = ?1 AND r.bab_no IN (SELECT no FROM bab WHERE kitab_id = ?1 AND (nama = ?2 OR nama_en = ?2 OR nama_ar = ?2))").bind(kid, bab).all();
       for (const x of rs.results) tambah(x.n, 3, `masuk kitab/bab "${bab}"`);
     }
     for (const t of k.terjemah) for (const n of await ftsIds(`terjemah_polos:"${normId(t)}"`)) tambah(n, 2, `terjemah memuat "${t}"`);
@@ -107,11 +128,13 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
     }
   }
 
-  // metadata untuk mengurutkan & menyaring
+  // metadata untuk mengurutkan & menyaring. Dulu membaca baris riwayat (dan kitab) SETIAP hasil — ribuan baris D1 per
+  // pencarian. n sudah urut menurut (urutan kitab, urutan riwayat) dan tiap kitab menempati rentang n bersambung, jadi
+  // kitab & urutan diturunkan dari n; tingkat B dari bitmap (info: peta_n, bitmap_tingkat_b; pipeline/export_d1.py).
   const meta = new Map();
   if (skor.size) {
-    const rs = await db.prepare("SELECT r.n, r.kitab_id, r.tingkat, r.urut, k.urut AS ku FROM riwayat r JOIN kitab k ON k.id = r.kitab_id WHERE r.n IN (SELECT value FROM json_each(?1))").bind(jsonIds(skor.keys())).all();
-    for (const x of rs.results) meta.set(x.n, x);
+    const peta = await petaN(db);
+    for (const n of skor.keys()) { const m = peta(n); if (m) meta.set(n, m); }
   }
   const urut = [...skor.keys()].filter((n) => meta.has(n)).sort((a, b) => {
     const A = meta.get(a), B = meta.get(b);
@@ -124,10 +147,8 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
 
   let hasil = [];
   if (halamanIni.length) {
-    const rs = await db.prepare("SELECT n, id, kitab_id, slug, no_tampil, no_lidwa, tingkat, arab, terjemah, alasan AS catatan FROM riwayat WHERE n IN (SELECT value FROM json_each(?1))").bind(jsonIds(halamanIni)).all();
-    const pen = await db.prepare("SELECT n, penilai, hukum, kategori FROM penilaian WHERE n IN (SELECT value FROM json_each(?1)) ORDER BY penilai").bind(jsonIds(halamanIni)).all();
-    const byN = new Map(rs.results.map((x) => [x.n, { ...x, penilaian: [] }]));
-    for (const p of pen.results) byN.get(p.n)?.penilaian.push(p);
+    const rs = await db.prepare("SELECT n, id, kitab_id, slug, no_tampil, no_lidwa, tingkat, arab, terjemah, alasan AS catatan, nilai_json FROM riwayat WHERE n IN (SELECT value FROM json_each(?1))").bind(jsonIds(halamanIni)).all();
+    const byN = new Map(rs.results.map(({ nilai_json, ...x }) => [x.n, { ...x, penilaian: nilai(nilai_json) }]));
     hasil = halamanIni.map((n) => ({ ...byN.get(n), skor: skor.get(n), alasan: alasan.get(n) }));
   }
   return { rencana: r, total: Math.max(urut.length, totalKata), tampil: tersaring.length, hasil, perKitab, halaman, perHalaman };

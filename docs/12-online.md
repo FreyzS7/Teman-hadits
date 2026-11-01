@@ -18,7 +18,7 @@ Angka di bawah ini diambil dari dokumentasi resmi lewat hasil pencarian. Halaman
 | CPU per permintaan | 10 ms (waktu menunggu D1 **tidak** dihitung) | sampai 5 menit |
 | D1 baris dibaca | 5 juta/hari | 25 miliar/bulan termasuk |
 | D1 baris ditulis | **100.000/hari** | 50 juta/bulan termasuk |
-| D1 penyimpanan | 5 GB total | lebih besar |
+| D1 penyimpanan | 5 GB total per akun; **per database seingat kami 500 MB** (belum bisa dipastikan dari sini, cek halaman batas D1) | 10 GB per database |
 
 Bila batas harian D1 paket gratis habis, D1 **berhenti melayani semua kueri** sampai 00:00 UTC.
 
@@ -28,13 +28,14 @@ Diukur di database lokal yang sama persis dengan yang akan diunggah.
 
 | Hal | Hasil | Alat |
 |---|---|---|
-| Ukuran database | 285 MB | `npm run estimasi` |
+| Ukuran database | 275 MB (dulu 285 MB) | `npm run estimasi` |
 | Ukuran Worker | 122 KiB (36 KiB gzip) | `wrangler deploy --dry-run` |
-| **Baris ditulis untuk impor penuh** | **±1,72 juta** (baris tabel + entri indeks) | `npm run estimasi` |
-| CPU Worker per halaman | 0,2–3 ms. Pencarian kalimat panjang ±1–3 ms kode sendiri; sisanya di D1, yang tidak dihitung | `npm run ukur:cpu` + profil |
-| Baris dibaca per halaman hadits | **±250** | header `X-D1-Baris` |
+| **Baris ditulis untuk impor penuh** | **±564 ribu** (dulu ±1,72 juta; baris tabel + entri indeks) | `npm run estimasi` |
+| CPU Worker per halaman | 0,2–2 ms. Pencarian & cek: median 1–6 ms; **pencarian kalimat panjang p90 ±17 ms** (lihat di bawah) | `npm run ukur:cpu` + profil |
+| Baris dibaca per halaman hadits | **30–120** (dulu ±40–250) | header `X-D1-Baris` |
 | Baris dibaca per halaman perawi | 1 | header `X-D1-Baris` |
-| Baris dibaca per pencarian | 1.500–30.000 (tergantung banyaknya hasil) | header `X-D1-Baris` |
+| Baris dibaca per pencarian | ±250–3.000 (dulu 700–29.000) | header `X-D1-Baris` |
+| Baris dibaca halaman tema | 4–60 (dulu ±900) | header `X-D1-Baris` |
 
 ### Masalah besar yang ditemukan pengukuran, dan sudah diperbaiki
 
@@ -43,6 +44,20 @@ Diukur di database lokal yang sama persis dengan yang akan diunggah.
 | Halaman hadits: tabel `mirip` (219.657 baris) tidak berindeks pada kolom `b` | **±450.000 baris dibaca per halaman**, artinya kuota gratis habis setelah ±11 kunjungan sehari | 243 | indeks `ix_mirip_b`, `ix_he_tema_he` |
 | Halaman perawi menghitung guru/murid/riwayat setiap kali dibuka | 14.000–28.000 | 1 | dihitung di pipeline, disimpan sebagai JSON di baris perawi |
 | Daftar perawi diurutkan tanpa indeks | 8.630 | 300 | indeks `ix_perawi_n` |
+
+### Peringanan database (November 2026)
+
+Isi semua halaman tidak berubah: 23 halaman (hadits, Riyadh, kitab, bab, pencarian, cek, tema, perawi, API) dibandingkan byte demi byte sebelum dan sesudah, semuanya sama persis.
+
+| Perubahan | Akibat |
+|---|---|
+| Tabel `penilaian`, `mirip` (takhrij), `sanad_perawi`, `judul` (±430 ribu baris + indeks) diganti kolom JSON di baris `riwayat` (`nilai_json`, `jalur_json`, `perawi_json`) dan tabel judul unik `judul_bab` (16 ribu baris) | Impor: 1,72 juta → ±564 ribu baris ditulis. Halaman hadits membaca ±60% lebih sedikit baris (Bukhari 1: 243 → 95) |
+| Indeks nomor edisi hanya untuk riwayat yang punya nomor edisi (indeks parsial); kolom `id` tidak lagi UNIQUE (tidak dipakai untuk mencari) | ±105 ribu tulisan lebih sedikit |
+| Pencarian: kitab, urutan, dan tingkat setiap hasil diturunkan dari nomor `n` (urutan `n` = urutan kitab lalu urutan riwayat; tingkat B dari bitmap di `info`), bukan dibaca baris per baris | «shalat malam»: 7.061 → ±2.900 baris |
+| Pencarian kata konsep yang menyebut bab (mis. «tarawih»): bab dicari dulu, lalu riwayat lewat indeks (kitab, bab). Versi lama memindai semua riwayat kitab itu | «tolong carikan hadits tentang sholat tarawih»: **28.938 → 445 baris** |
+| Daftar tema (447) disimpan sebagai satu baris `info` dengan judul yang sudah dinormalkan | Setiap pencarian −443 baris; halaman tema ±900 → 4–60 |
+
+**CPU.** Pengukuran A/B (versi sebelum dan sesudah peringanan, data sama) memberi angka yang sama: pencarian kalimat panjang median ±6 ms, **p90 ±17 ms**; cek teks Indonesia p90 7–11 ms. Jadi angka "0,2–3 ms" di versi dokumen sebelumnya sudah usang. Profil: ±91% waktu ada di SQLite tiruan (di produksi itu terjadi di D1 dan tidak dihitung), sisanya tersebar di banyak fungsi kecil. Pengukur memakai `process.cpuUsage`, yang ikut menghitung thread GC/JIT, jadi angkanya cenderung lebih tinggi daripada hitungan Cloudflare. Tetapi pencarian kalimat panjang **mungkin sesekali melewati 10 ms di paket gratis** (galat 1102). Pantau "CPU time" di dasbor Workers sesudah terbit. Bila sering terjadi, pilihannya: Workers Paid, atau mengoptimalkan pencarian.
 
 ### Perlindungan lain yang ditambahkan
 
@@ -59,17 +74,17 @@ Diukur di database lokal yang sama persis dengan yang akan diunggah.
 
 ### Perkiraan kapasitas di paket gratis
 
-- **Kunjungan yang tidak dari cache:** 5 juta baris ÷ ±250 = **±20.000 halaman hadits per hari**, atau sekitar 200–3.000 pencarian unik per hari. Halaman dan pencarian yang berulang dilayani dari cache tanpa memakai kuota D1.
-- **CPU:** jauh di bawah 10 ms untuk semua halaman.
+- **Kunjungan yang tidak dari cache:** 5 juta baris ÷ ±100 = **±50.000 halaman hadits per hari**, atau sekitar 1.500–20.000 pencarian unik per hari. Halaman dan pencarian yang berulang dilayani dari cache tanpa memakai kuota D1.
+- **CPU:** di bawah 10 ms untuk semua halaman, kecuali pencarian kalimat panjang yang p90-nya bisa melewati 10 ms (lihat di atas).
 - **Permintaan:** 100.000 per hari, termasuk yang dilayani dari cache.
 
 ## Rekomendasi jalur terbit
 
-1. **Impor awal memakai Workers Paid selama 1 bulan** (US$5, ±Rp 85 ribu). Impor penuh menulis ±1,72 juta baris. Di paket gratis itu butuh ±18 hari, dan setiap kali batas harian habis, situs ikut mati sampai 00:00 UTC.
-2. Sesudah impor dan pengecekan, **kembali ke paket gratis.** Ukuran 285 MB masih jauh di bawah 5 GB.
+1. **Impor awal memakai Workers Paid selama 1 bulan** (US$5, ±Rp 85 ribu). Impor penuh menulis ±564 ribu baris. Di paket gratis itu butuh ±6 hari, dan setiap kali batas harian habis, situs ikut mati sampai 00:00 UTC.
+2. Sesudah impor dan pengecekan, **kembali ke paket gratis.** Ukuran 275 MB masih di bawah batas per database paket gratis (seingat kami 500 MB; pastikan di halaman batas D1).
 3. **Pembaruan data besar berikutnya** (impor ulang penuh) juga sebaiknya dilakukan dalam bulan berbayar. Pembaruan kecil bisa langsung dilakukan di paket gratis.
 
-Bila ingin menekan impor lebih jauh: tabel `mirip`, `sanad_perawi`, dan `judul` (±920 ribu tulisan) bisa diganti kolom JSON di tabel `riwayat`. Ini memangkas impor menjadi ±0,8 juta tulisan, tetapi tetap lebih dari sehari di paket gratis.
+Sisa tulisan terbesar: tabel `riwayat` sendiri beserta 3 indeksnya (±310 ribu), tabel bayangan pencarian teks (±97 ribu), dan `kata_df` (±47 ribu). Semuanya dipakai langsung oleh halaman, jadi tidak dipangkas.
 
 ## Langkah menerbitkan (dari komputer pemilik proyek)
 
