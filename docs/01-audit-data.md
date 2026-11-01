@@ -48,6 +48,23 @@ Satu hadits bisa dinilai berbeda oleh ulama yang berbeda. Situs menampilkan **se
 - **tirmidzi**: 580 riwayat dinilai diterima oleh sebagian ulama dan lemah oleh yang lain. Contoh `tirmidzi:1016`: Ahmad Muhammad Shakir — *Sahih*; Al-Albani — *Sahih*; Zubair Ali Zai — *Daif*
 - **nasai**: 476 riwayat dinilai diterima oleh sebagian ulama dan lemah oleh yang lain. Contoh `nasai:1022`: Abu Ghuddah — *Daif*; Al-Albani — *Daif*; Zubair Ali Zai — *Isnaad Hasan*
 
+## Pencocokan dengan edisi tahqiq (OpenITI)
+
+Lihat `docs/09-judul-kitab-bab.md`. Tingkat di tabel "Per kitab" di atas adalah tingkat **sebelum** pencocokan ini; untuk Ahmad, Darimi, dan Syafi'i, riwayat yang teksnya ≥ 90% cocok dengan edisi tahqiq naik ke tingkat A saat ekspor ke situs.
+
+| Kitab | Edisi | Terpetakan menurut isi | Cocok ≥ 90% | Urutan naik | Nomor sama | Penilaian muhaqqiq |
+|---|---|---:|---:|---:|---:|---:|
+| bukhari | — | 7375/7580 | 7143 | 7362/7374 | 7057/7318 | 0 |
+| muslim | — | 7276/7360 | 7150 | 7264/7275 | 0/7085 | 0 |
+| abudawud | — | 5264/5272 | 5169 | 5262/5263 | 5246/5258 | 0 |
+| tirmidzi | — | 3695/3924 | 2624 | 3686/3694 | 3650/3665 | 0 |
+| nasai | — | 5672/5679 | 5572 | 5664/5671 | 5637/5654 | 0 |
+| ibnumajah | — | 4334/4338 | 3971 | 4331/4333 | 4317/4327 | 0 |
+| malik | — | 1827/1829 | 1813 | 1826/1826 | — | 0 |
+| ahmad | ar-Risalah (tahqiq Syu'aib al-Arna'uth dkk.) | 25855/26363 | 23247 | 25781/25854 | — | 0 |
+| darimi | Dar al-Mughni (tahqiq Husain Salim Asad) | 3267/3367 | 2891 | 3265/3266 | — | 2810 |
+| syafii | Ghiras (tahqiq Mahir Yasin al-Fahl) | 1729/1800 | 1164 | 1177/1728 | — | 0 |
+
 ## Temuan kualitas data
 
 - **Riyadhus Shalihin** dipecah ulang per hadits oleh `pipeline/riyadh.py` (lihat `docs/08-riyadhus-shalihin.md`): 1896 hadits; terjemah terpasang pasti 1726; terhubung ke sumber 1645; uji silang atribusi an-Nawawi 1613/1642. Berkas versi Arab tahqiq al-Fahl (850 potongan halaman) belum dipakai.

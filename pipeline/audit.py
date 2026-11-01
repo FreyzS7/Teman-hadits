@@ -71,6 +71,21 @@ for k, n in beda.most_common():
       f"Contoh `{contoh[k]}`: " + "; ".join(f"{a} — *{b}*" for a, b in pen))
 w("")
 
+bab_path = os.path.join(BUILD, "bab.sqlite")
+if os.path.exists(bab_path):
+    bi = sqlite3.connect(bab_path)
+    w("## Pencocokan dengan edisi tahqiq (OpenITI)\n")
+    w("Lihat `docs/09-judul-kitab-bab.md`. Tingkat di tabel \"Per kitab\" di atas adalah tingkat **sebelum** pencocokan ini; "
+      "untuk Ahmad, Darimi, dan Syafi'i, riwayat yang teksnya ≥ 90% cocok dengan edisi tahqiq naik ke tingkat A saat ekspor ke situs.\n")
+    w("| Kitab | Edisi | Terpetakan menurut isi | Cocok ≥ 90% | Urutan naik | Nomor sama | Penilaian muhaqqiq |")
+    w("|---|---|---:|---:|---:|---:|---:|")
+    for kid in ("bukhari", "muslim", "abudawud", "tirmidzi", "nasai", "ibnumajah", "malik", "ahmad", "darimi", "syafii"):
+        d = dict(bi.execute("SELECT kunci, nilai FROM info WHERE kitab_id=?", (kid,)))
+        if d:
+            w(f"| {kid} | {d.get('edisi') or '—'} | {d['cocok_teks']}/{d['riwayat']} | {d.get('cocok_090', '—')} | {d['urutan_naik']} | "
+              f"{d['nomor_sama'] if d['nomor_sama'] != '0/0' else '—'} | {d.get('tahqiq') or '—'} |")
+    w("")
+
 w("## Temuan kualitas data\n")
 ry_path = os.path.join(BUILD, "riyadh.sqlite")
 if os.path.exists(ry_path):

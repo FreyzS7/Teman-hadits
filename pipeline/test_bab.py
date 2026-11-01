@@ -52,6 +52,30 @@ class ValidasiIndependen(unittest.TestCase):
             self.assertGreaterEqual(rasio(info(kid, "cocok_teks") + "/" + info(kid, "riwayat")), 0.97, kid)
 
 
+class KitabLidwaSaja(unittest.TestCase):
+    """Ahmad, Darimi, Syafi'i: edisi tahqiq OpenITI sebagai sumber kedua, judul, nomor edisi, penilaian muhaqqiq."""
+
+    def test_penilaian_asad_terpasang_ke_hadits_yang_benar(self):
+        # Edisi Asad no. 4: atsar Abu Raja' "كنا في الجاهلية إذا أصبنا حجرا حسنا عبدناه" — dinilai lemah karena 'Abbad bin Manshur.
+        no, tq = q("SELECT no_openiti, tahqiq FROM riwayat_bab WHERE riwayat_id='darimi:L4'")[0]
+        self.assertEqual(no, 4)
+        self.assertIn("عباد بن منصور", tq)
+
+    def test_judul_kitab_gaya_darimi(self):
+        # "من كتاب الأضاحي" harus dikenali sebagai judul kitab (bukan tetap di كتاب الصلاة).
+        self.assertIn("الأضاحي", judul("darimi:L1895")[0])
+        self.assertEqual(norm_ar(judul("darimi:L4")[0]), "المقدمه")
+
+    def test_cakupan_tingkat_a(self):
+        for kid, minimal in (("ahmad", 0.85), ("darimi", 0.8), ("syafii", 0.6)):
+            self.assertGreaterEqual(int(info(kid, "cocok_090")) / int(info(kid, "riwayat")), minimal, kid)
+
+    def test_urutan_ahmad_darimi(self):
+        # Syafi'i dikecualikan: edisi al-Fahl menyusun ulang per bab fiqih.
+        for kid in ("ahmad", "darimi"):
+            self.assertGreaterEqual(rasio(info(kid, "urutan_naik")), 0.99, kid)
+
+
 class NamaKitab(unittest.TestCase):
     def test_bagian_tampungan_tidak_diberi_nama_paksa(self):
         # Bagian "0" Bukhari & Muslim di fawazahmed0 berisi riwayat tanpa nomor kitab dari seluruh kitab.

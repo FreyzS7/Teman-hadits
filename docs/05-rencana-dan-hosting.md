@@ -7,7 +7,7 @@
 | 0 | Audit data, sumber terkunci, laporan otomatis | **Selesai** |
 | 1 | Model data, pencocokan dua sumber, tingkat data, uji emas | **Selesai** (tahap awal) |
 | 1b | Desain prototipe dengan data asli | **Selesai**: `design/prototipe.html` |
-| 2 | Riyadhus Shalihin disegmentasi per hadits; teks Darimi, Ahmad, dan Syafi'i dicocokkan dengan OpenITI agar naik ke tingkat A; nama bab Arab/Indonesia | Berikutnya |
+| 2 | Riyadhus Shalihin disegmentasi per hadits; teks Darimi, Ahmad, dan Syafi'i dicocokkan dengan OpenITI agar naik ke tingkat A; nama bab Arab/Indonesia | **Selesai** (lihat docs/08, docs/09) |
 | 3 | Rantai sanad tertaut ke data rijal (Taqrib at-Tahdzib): nama, tahun wafat, penilaian perawi | |
 | 4 | Katalog hadits palsu populer dengan penilaian ulama bernama (perlu akses Dorar atau sumber setara) | |
 | 5 | Situs sungguhan: halaman per riwayat, pencarian, cek teks, SEO | **Berjalan lokal** (`site/`): beranda, cari, cek, halaman riwayat + rantai sanad + takhrij, kitab/bab, tema, metode, sitemap |

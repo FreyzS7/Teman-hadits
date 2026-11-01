@@ -88,3 +88,13 @@ test("judul kitab & bab dari teks kitabnya tampil di halaman hadits", opsi, asyn
   assert.match(teks, /باب فضل من قام رمضان/);
   assert.match((await ambil("/bukhari/1")).teks, /Permulaan Wahyu/);
 });
+
+test("Ahmad/Darimi/Syafi'i: nomor edisi tahqiq, penilaian Asad, nomor ambigu", opsi, async () => {
+  const d4 = (await ambil("/darimi/4")).teks;
+  assert.match(d4, /no\. 4 di edisi Dar al-Mughni/);
+  assert.match(d4, /Husain Salim Asad[\s\S]*عباد بن منصور/);
+  const r = await ambil("/cari?q=" + encodeURIComponent("darimi 2468"));
+  assert.equal(r.status, 200);                       // tidak langsung dibuka: nomornya ambigu
+  assert.match(r.teks, /Nomor ini ada di dua sistem penomoran/);
+  assert.match((await ambil("/ahmad/163")).teks, /di edisi ar-Risalah/);
+});

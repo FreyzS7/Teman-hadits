@@ -335,3 +335,6 @@ a.punggung:hover { color: var(--sampul-teks); }
 .mode a.aktif { background: var(--zamrud); border-color: var(--zamrud); color: var(--kertas); }
 .judul-bab { display: grid; gap: 4px; padding-bottom: 14px; border-bottom: 1px solid var(--garis); }
 .judul-bab .ar { margin: 0; }
+.buku-besar li.arab { display: block; }
+.buku-besar li.arab .hukum { display: block; text-align: right; font: 700 calc(1.1rem * var(--ar))/1.8 var(--f-arab); margin-top: 2px; }
+.rujukan-langsung a + .kecil { margin-right: 10px; }

@@ -129,16 +129,27 @@ async function halamanCari(env, url) {
   let rujukan = null;
   if (out.rencana.rujukan) {
     const { kitab: kid, no } = out.rencana.rujukan;
-    const { r, alih } = await cariRiwayat(db, kid, no);
-    const slug = r ? r.slug : alih ? alih.split("/").pop() : null;
-    // kueri yang HANYA berisi rujukan ("muslim 1907", "HR Bukhari no 1") langsung dibuka
     const polos = normId(q).replace(/\b(hr|h r|hadits|hadist|hadis|riwayat|no|nomor)\b/g, " ").replace(/\s+/g, " ").trim();
     const hanyaRujukan = NAMA_KITAB.some(([re]) => new RegExp("^" + re.source + "\\s*\\d+[a-z]?$").test(polos));
-    if (slug && hanyaRujukan) return alihkan(`/${kid}/${slug}`);
-    if (slug) {
-      const x = await db.prepare("SELECT r.kitab_id, r.slug, r.no_tampil, k.nama AS kitab_nama, k.jumlah_standar FROM riwayat r JOIN kitab k ON k.id = r.kitab_id WHERE r.kitab_id = ?1 AND r.slug = ?2").bind(kid, slug).first();
-      rujukan = { ...x, catatan: x.jumlah_standar ? "penomoran standar" : "penomoran Lidwa" };
+    const k = await db.prepare("SELECT nama, jumlah_standar, edisi FROM kitab WHERE id = ?1").bind(kid).first();
+    let calon = [];
+    if (k?.edisi) {
+      // Ahmad/Darimi/Syafi'i: nomor bisa berarti penomoran Lidwa ATAU penomoran edisi tahqiq yang lazim dikutip
+      calon = (await db.prepare("SELECT slug, no_tampil, no_edisi FROM riwayat WHERE kitab_id = ?1 AND (slug = ?2 OR no_edisi = ?2)").bind(kid, no).all()).results
+        .map((x) => ({ kitab_id: kid, slug: x.slug, kitab_nama: k.nama, no_tampil: x.no_edisi === no ? no : x.no_tampil,
+          catatan: x.no_edisi === no ? `menurut edisi ${k.edisi}${x.slug !== no ? ` (= no. ${x.no_tampil} Lidwa)` : ""}` : `menurut penomoran Lidwa${x.no_edisi ? ` (= no. ${x.no_edisi} edisi tahqiq)` : ""}` }));
+      calon = [...new Map(calon.map((c) => [c.slug, c])).values()];
+    } else {
+      const { r, alih } = await cariRiwayat(db, kid, no);
+      const slug = r ? r.slug : alih ? alih.split("/").pop() : null;
+      if (slug) {
+        const x = await db.prepare("SELECT slug, no_tampil FROM riwayat WHERE kitab_id = ?1 AND slug = ?2").bind(kid, slug).first();
+        calon = [{ kitab_id: kid, slug: x.slug, kitab_nama: k.nama, no_tampil: x.no_tampil, catatan: k.jumlah_standar ? "penomoran standar" : "penomoran Lidwa" }];
+      }
     }
+    // kueri yang HANYA berisi rujukan langsung dibuka — kecuali nomornya ambigu antara dua sistem penomoran
+    if (calon.length === 1 && hanyaRujukan) return alihkan(`/${kid}/${calon[0].slug}`);
+    if (calon.length) rujukan = calon;
   }
   // Tema HadeethEnc yang judulnya memuat kata kunci — kurasi ulama, ditampilkan di atas hasil.
   // Kata inti (konsep & kata sisa, semua varian ejaan) wajib cocok; kata maksud ("keutamaan") hanya menambah skor.

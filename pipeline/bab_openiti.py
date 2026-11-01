@@ -46,7 +46,16 @@ BERKAS = {
     "tirmidzi": "openiti-0300AH/0279Tirmidhi.Sunan.Shamela0007895-ara2",
     "nasai": "openiti-0325AH/0303Nasai.SunanSughra.Shamela0000829-ara1",
     "malik": "openiti-0200AH/0179MalikIbnAnas.Muwatta.Shamela0001699-ara1.completed",
+    # Kitab yang di sumber kita hanya punya satu sumber digital (Lidwa): OpenITI = sumber kedua + nomor edisi tahqiq.
+    "ahmad": "openiti-0250AH/0241IbnHanbal.Musnad.Shamela0025794-ara1.mARkdown",      # ar-Risalah (al-Arna'uth dkk.)
+    "darimi": "openiti-0275AH/0255CabdAllahDarimi.Sunan.Shamela0021795-ara3",        # Dar al-Mughni (Husain Salim Asad)
+    "syafii": "openiti-0225AH/0204Shafici.Musnad.Shamela0009615-ara1",              # Ghiras (Mahir Yasin al-Fahl)
 }
+EDISI = {"ahmad": "ar-Risalah (tahqiq Syu'aib al-Arna'uth dkk.)", "darimi": "Dar al-Mughni (tahqiq Husain Salim Asad)",
+         "syafii": "Ghiras (tahqiq Mahir Yasin al-Fahl)"}
+LIDWA_SAJA = {"ahmad", "darimi", "syafii"}
+# Musnad Ahmad: judul tingkat 1–2 ("مسند الصحابة بعد العشرة") = kelompok besar; tingkat 3+ ("مسند عمر بن الخطاب") = bab.
+TINGKAT_KITAB = {"ahmad": 2}
 AMBANG = 0.7
 _GLOSARIUM = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "glosarium_kitab.json"), encoding="utf8"))
 _GLOS = {norm_ar(k): v for k, v in _GLOSARIUM["nama"].items()}
@@ -58,7 +67,8 @@ def nama_indonesia(kitab_ar):
     if not kitab_ar:
         return None
     n = norm_ar(kitab_ar)
-    awal = "Kitab " if n.startswith("كتاب") else "Bab-bab " if n.startswith("ابواب") else ""
+    awal = "Kitab " if re.sub(r"^و?من\s+", "", n).startswith("كتاب") else "Bab-bab " if n.startswith("ابواب") else ""
+    n = re.sub(r"^و?من\s+", "", n)
     inti = re.sub(r"^(كتاب|ابواب)\s+", "", n)
     inti = re.sub(r"\s*عن رسول الله.*$", "", inti).strip()
     v = _GLOS.get(inti)
@@ -71,6 +81,7 @@ _SAMPAH = re.compile(r"ms\d+|PageV\d+P\d+|\[ص:\s*\d+\]")
 
 def bersihkan_judul(t):
     t = _SAMPAH.sub(" ", t)
+    t = re.sub(r"\(\s*\d+\s*\)", " ", t)            # penanda catatan kaki "(1)" di judul
     t = re.sub(r"[\"“”]+", "", t)
     return re.sub(r"\s+", " ", t).strip(" :.-–،")
 
@@ -81,13 +92,17 @@ AWALAN_KITAB = {"tirmidzi": ("كتاب", "ابواب")}
 
 
 def urai(path, kid=None):
-    """Kembalikan daftar blok: {kitab, bab, no, teks}."""
+    """Kembalikan daftar blok: {kitab, bab, no, teks, tahqiq}."""
     awalan = AWALAN_KITAB.get(kid, ("كتاب",))
+    tingkat_kitab = TINGKAT_KITAB.get(kid)
     blok, kitab, bab, no, teks = [], None, None, None, []
+    if kid == "darimi":
+        kitab = "المقدمة"     # Sunan ad-Darimi dibuka dengan Muqaddimah panjang sebelum كتاب الطهارة (tanpa judul di berkas)
+    tahqiq, mode_tahqiq = [], False
 
     def tutup():
         if teks:
-            blok.append({"kitab": kitab, "bab": bab, "no": no, "teks": " ".join(teks)})
+            blok.append({"kitab": kitab, "bab": bab, "no": no, "teks": " ".join(teks), "tahqiq": " ".join(tahqiq) or None})
 
     for baris in open(path, encoding="utf8"):
         baris = baris.rstrip("\n")
@@ -100,29 +115,54 @@ def urai(path, kid=None):
             isi = m.group(2)
             if re.search(r"\[ص\s*:", isi) and len(norm_ar(re.sub(r"\[ص\s*:[^\]]*\]", " ", _SAMPAH.sub(" ", isi)))) < 5:
                 continue                                  # penanda halaman cetak: bukan batas hadits/bab
+            if "تعليق المحقق" in isi:                    # Darimi (Asad): penilaian muhaqqiq untuk hadits sebelumnya
+                mode_tahqiq = True
+                continue
+            mode_tahqiq = False
             polos = norm_ar(_AWALAN_NOMOR.sub("", isi))
             mn = _NOMOR_SAJA.match(isi)
             if mn:                                         # "### | 12 - " = awal hadits bernomor
                 tutup()
-                teks, no = [], int(mn.group(1).translate(_ANGKA_TIMUR))
+                teks, tahqiq, no = [], [], int(mn.group(1).translate(_ANGKA_TIMUR))
                 continue
-            if polos.startswith(awalan) or polos == "بد الوحي" or polos.startswith("مقدمه الامام"):   # hamzah sudah dibuang norm_ar
+            if tingkat_kitab and m.group(1) != "$":       # judul bertingkat (Musnad Ahmad)
                 tutup()
-                teks, no = [], None
+                teks, tahqiq, no = [], [], None
+                if len(m.group(1)) <= tingkat_kitab:
+                    kitab, bab = bersihkan_judul(isi), None
+                else:
+                    bab = bersihkan_judul(isi)
+                continue
+            # "ومن كتاب الزكاة" / "من كتاب المناسك" (gaya ad-Darimi) juga judul kitab
+            inti_polos = re.sub(r"^و?من\s+", "", polos)
+            if inti_polos.startswith(awalan) or polos == "بد الوحي" or polos.startswith("مقدمه الامام"):   # hamzah sudah dibuang norm_ar
+                tutup()
+                teks, tahqiq, no = [], [], None
                 kitab, bab = bersihkan_judul(_AWALAN_NOMOR.sub("", isi)), None
                 continue
             if m.group(1) == "$" and len(polos.split()) > 12:   # Muslim: "### $ وحدثنا ..." = awal hadits
                 tutup()
-                teks, no = [isi], None
+                teks, tahqiq, no = [isi], [], None
                 continue
             if len(polos.split()) <= 60 and polos:         # judul bab (dengan/tanpa kata "باب")
                 tutup()
-                teks, no = [], None
+                teks, tahqiq, no = [], [], None
                 bab = bersihkan_judul(_AWALAN_NOMOR.sub("", isi))
                 continue
             teks.append(isi)
         elif baris.startswith("# ") or baris.startswith("~~"):
-            teks.append(baris.lstrip("#~ "))
+            isi = baris.lstrip("#~ ")
+            if "PageV" in isi and len(_SAMPAH.sub("", isi).strip()) < 3:
+                continue
+            if mode_tahqiq:
+                tahqiq.append(_SAMPAH.sub(" ", isi).strip())
+                continue
+            mt = re.match(r"^#\s+(\d+)\s+-\s+(.*)$", baris) if kid == "ahmad" else None
+            if mt:                                         # Musnad Ahmad: "# 12 - حدثنا ..." = awal hadits bernomor
+                tutup()
+                teks, tahqiq, no = [mt.group(2)], [], int(mt.group(1))
+                continue
+            teks.append(isi)
     tutup()
     return blok
 
@@ -183,7 +223,8 @@ def main():
         os.remove(OUT)
     db = sqlite3.connect(OUT)
     db.executescript("""
-    CREATE TABLE riwayat_bab (riwayat_id TEXT PRIMARY KEY, kitab_ar TEXT, bab_ar TEXT, skor REAL, cara TEXT, no_openiti INT, kitab_nama_id TEXT);
+    CREATE TABLE riwayat_bab (riwayat_id TEXT PRIMARY KEY, kitab_ar TEXT, bab_ar TEXT, skor REAL, cara TEXT, no_openiti INT,
+      kitab_nama_id TEXT, tahqiq TEXT, urut_openiti INT);
     CREATE TABLE kitab_nama (kitab_id TEXT, bab_no INT, nama_ar TEXT, setuju INT, total INT, nama_id TEXT, PRIMARY KEY (kitab_id, bab_no));
     CREATE TABLE info (kitab_id TEXT, kunci TEXT, nilai TEXT);
     """)
@@ -191,14 +232,14 @@ def main():
         blok = urai(os.path.join(SRC, rel), kid)
         riwayat = src.execute(
             "SELECT id, arab, no_standar, bab_no FROM riwayat WHERE kitab_id=? AND tingkat IN ('A','B') "
-            "ORDER BY CAST(no_standar AS REAL)", (kid,)).fetchall()
+            "ORDER BY COALESCE(CAST(no_standar AS REAL), no_lidwa)", (kid,)).fetchall()
         peta = petakan(kid, blok, riwayat)
         # isi celah dari tetangga bila keduanya di bab yang sama
         urut = [rid for rid, *_ in riwayat]
         cara = {rid: "teks" for rid in peta}
         akhir = dict(peta)
         for k, rid in enumerate(urut):
-            if rid in akhir:
+            if rid in akhir or kid == "syafii":   # Syafi'i: susunan edisi al-Fahl berbeda dari Lidwa, tetangga tak bermakna
                 continue
             a = next((akhir[urut[j]] for j in range(k - 1, -1, -1) if urut[j] in akhir), None)
             b = next((akhir[urut[j]] for j in range(k + 1, len(urut)) if urut[j] in akhir), None)
@@ -206,8 +247,10 @@ def main():
                 akhir[rid], cara[rid] = (a[0], 0.0), "urutan"
         for rid, (i, s) in akhir.items():
             b = blok[i]
-            db.execute("INSERT INTO riwayat_bab VALUES (?,?,?,?,?,?,?)",
-                       (rid, b["kitab"], b["bab"], s, cara[rid], b["no"], nama_indonesia(b["kitab"])))
+            # Penilaian muhaqqiq hanya dipasang bila teks riwayat jelas ada di blok edisi itu (>= 0.9)
+            tq = b.get("tahqiq") if (cara[rid] == "teks" and s >= 0.9) else None
+            db.execute("INSERT INTO riwayat_bab VALUES (?,?,?,?,?,?,?,?,?)",
+                       (rid, b["kitab"], b["bab"], s, cara[rid], b["no"], nama_indonesia(b["kitab"]), tq, i))
 
         # uji: urutan & nomor
         idx = [peta[rid][0] for rid in urut if rid in peta]
@@ -224,7 +267,7 @@ def main():
             if rid in akhir and blok[akhir[rid][0]]["kitab"]:
                 per_bagian[bno][blok[akhir[rid][0]]["kitab"]] += 1
         setuju = total = 0
-        for bno, c in per_bagian.items():
+        for bno, c in (per_bagian.items() if kid not in LIDWA_SAJA else []):
             nama, n = c.most_common(1)[0]
             jml = sum(c.values())
             setuju += n
@@ -237,6 +280,8 @@ def main():
         info = {"blok": len(blok), "riwayat": len(riwayat), "cocok_teks": len(peta),
                 "dari_urutan": sum(1 for c in cara.values() if c == "urutan"),
                 "urutan_naik": f"{naik}/{max(1, len(idx) - 1)}", "nomor_sama": f"{nomor_sama}/{nomor_dicek}",
+                "cocok_090": sum(1 for _, sk in peta.values() if sk >= 0.9), "edisi": EDISI.get(kid, ""),
+                "tahqiq": sum(1 for rid, (i, sk) in akhir.items() if cara[rid] == "teks" and sk >= 0.9 and blok[i].get("tahqiq")),
                 "kesepakatan_kitab": f"{setuju}/{total}"}
         db.executemany("INSERT INTO info VALUES (?,?,?)", [(kid, k, str(v)) for k, v in info.items()])
         db.commit()

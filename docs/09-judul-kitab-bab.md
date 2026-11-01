@@ -33,8 +33,28 @@ Nomor hadits **tidak dipakai** saat mencocokkan. Karena itu kesamaan nomor denga
 
 Selisih nomor Bukhari yang tersisa kebanyakan +1. Penyebabnya, dua nomor di edisi Dar Thauq an-Najah berada dalam satu blok, sehingga bab dan kitabnya tetap benar.
 
+## Musnad Ahmad, Sunan ad-Darimi, Musnad asy-Syafi'i
+
+Ketiga kitab ini di sumber penomoran kita hanya punya **satu** sumber digital (Lidwa), sehingga semula semuanya tingkat B tanpa judul. OpenITI memuat **edisi tahqiq standar** ketiganya:
+
+| Kitab | Edisi OpenITI | Terpetakan | Teks cocok ≥ 90% → **tingkat A** | Urutan naik |
+|---|---|---|---|---|
+| Musnad Ahmad | ar-Risalah (Syu'aib al-Arna'uth dkk.) | 25.855/26.363 | **23.247** | 99,7% |
+| Sunan ad-Darimi | Dar al-Mughni (Husain Salim Asad) | 3.267/3.367 | **2.891** | 99,97% |
+| Musnad asy-Syafi'i | Ghiras (Mahir Yasin al-Fahl) | 1.729/1.800 | **1.164** | 68%* |
+
+\* Edisi al-Fahl menyusun ulang Musnad asy-Syafi'i per bab fiqih, jadi urutannya memang berbeda dari versi Lidwa. Untuk Syafi'i hanya kecocokan isi yang dipakai, tanpa pengisian dari tetangga.
+
+Yang didapat:
+
+- **Tingkat A:** teks Arab Lidwa tercakup ≥ 90% di blok edisi tahqiq, dan terjemahnya dari baris Lidwa yang sama.
+- **Nomor edisi tahqiq:** nomor inilah yang lazim dikutip di buku. Nomor Lidwa dan nomor edisi bisa jauh berbeda (mis. Darimi Lidwa 2317 = Asad 2468). Situs menampilkan keduanya. Bila pengguna mengetik "darimi 2468", situs **tidak** langsung membuka salah satunya, tetapi menunjukkan bahwa nomor itu ada di dua sistem penomoran.
+- **Penilaian Husain Salim Asad** untuk 2.810 riwayat Darimi. Penilaian ini diambil dari blok "[تعليق المحقق]" edisinya, ditampilkan apa adanya dalam bahasa Arab, dan hanya dipasang bila teks riwayat ≥ 90% cocok dengan blok tersebut.
+- **Judul:** Darimi dan Syafi'i memakai judul kitab (termasuk *Muqaddimah* Darimi dan gaya "ومن كتاب الزكاة"). Musnad Ahmad memakai judul musnad per sahabat ("مسند عمر بن الخطاب"), dalam bahasa Arab saja.
+- Penilaian al-Arna'uth untuk Musnad Ahmad **tidak** tersedia: catatan kakinya tidak ikut terdigitalkan di kedua versi ar-Risalah di OpenITI.
+
 ## Yang belum
 
 - Peninjauan glosarium nama kitab Indonesia oleh orang yang paham istilah hadits/fiqih.
-- Judul bab untuk Musnad Ahmad, Sunan ad-Darimi, dan Musnad asy-Syafi'i. Berkasnya ada di OpenITI, tetapi penomorannya perlu dicocokkan dulu.
 - Terjemah judul bab, yang perlu penerjemah ahli.
+- Penilaian al-Arna'uth (Ahmad) dan Ahmad Syakir. Perlu sumber yang memuat catatan kaki tahqiqnya.

@@ -37,7 +37,7 @@ CREATE TABLE info (kunci TEXT PRIMARY KEY, nilai TEXT);
 CREATE TABLE kitab (
   id TEXT PRIMARY KEY, urut INT, nama TEXT, nama_arab TEXT, penyusun TEXT, wafat_h INT, sistem_nomor TEXT,
   jumlah_lidwa INT, jumlah_standar INT, terbit INT, tingkat_a INT, tingkat_b INT, karantina INT, dinilai INT,
-  penilai TEXT
+  penilai TEXT, edisi TEXT
 );
 CREATE TABLE bab (kitab_id TEXT, no INT, nama TEXT, jumlah INT, n_awal INT, nama_ar TEXT, nama_en TEXT, nama_id_sumber TEXT,
   PRIMARY KEY (kitab_id, no));
@@ -46,8 +46,10 @@ CREATE TABLE judul (n INTEGER PRIMARY KEY, kitab_ar TEXT, kitab_nama_id TEXT, ba
 CREATE TABLE riwayat (
   n INTEGER PRIMARY KEY, id TEXT UNIQUE, kitab_id TEXT, slug TEXT, urut INT, no_tampil TEXT,
   no_standar TEXT, no_arab TEXT, no_lidwa INT, bab_no INT, arab TEXT, terjemah TEXT, rantai_json TEXT,
-  kecocokan REAL, tingkat TEXT, alasan TEXT
+  kecocokan REAL, tingkat TEXT, alasan TEXT,
+  no_edisi TEXT                 -- nomor pada edisi tahqiq (Ahmad: ar-Risalah; Darimi: Asad; Syafi'i: al-Fahl)
 );
+CREATE INDEX ix_riwayat_edisi ON riwayat (kitab_id, no_edisi);
 CREATE UNIQUE INDEX ix_riwayat_slug ON riwayat (kitab_id, slug);
 CREATE INDEX ix_riwayat_urut ON riwayat (kitab_id, urut);
 CREATE INDEX ix_riwayat_bab ON riwayat (kitab_id, bab_no, urut);
@@ -133,6 +135,32 @@ class Penulis:
         self.f.close()
 
 
+# Kitab yang di sumber penomoran kita hanya punya satu sumber digital (Lidwa). Edisi tahqiq OpenITI menjadi
+# sumber kedua (tingkat A bila >= 90% teks Lidwa ada di blok edisi), sumber judul, dan nomor edisi.
+LIDWA_SAJA = {"ahmad": "ar-Risalah (tahqiq Syu'aib al-Arna'uth dkk.)",
+              "darimi": "Dar al-Mughni (tahqiq Husain Salim Asad)",
+              "syafii": "Ghiras (tahqiq Mahir Yasin al-Fahl)"}
+PENILAI_EDISI = {"darimi": "Husain Salim Asad"}
+
+
+def kategori_ar(t):
+    """Kategori kasar penilaian berbahasa Arab, dari klausa PERTAMA (teks lengkap tetap ditampilkan)."""
+    n = norm_ar(re.split(r"،|\.|\s(?:و?لكن|غير ان)\s", t or "", maxsplit=1)[0])
+    if any(x in n for x in ("موضوع", "باطل", "كذب")):
+        return "palsu"
+    if "ضعيف" in n:
+        return "lemah"
+    if any(x in n for x in ("مرسل", "موقوف", "مقطوع", "منقطع", "معضل")):
+        return "lainnya"
+    if "صحيح" in n and "حسن" in n:
+        return "shahih-hasan"
+    if "صحيح" in n or "جيد" in n:
+        return "shahih"
+    if "حسن" in n:
+        return "hasan"
+    return "lainnya"
+
+
 def slug_muslim(no_arab, no_standar):
     if not no_arab:
         return f"s{no_standar}"
@@ -169,9 +197,22 @@ def main():
     judul_rw, nama_bagian = {}, {}
     if os.path.exists(bab_path):
         bj = sqlite3.connect(bab_path)
-        judul_rw = {r[0]: r[1:] for r in bj.execute("SELECT riwayat_id, kitab_ar, kitab_nama_id, bab_ar, cara FROM riwayat_bab")}
-        nama_bagian = {(k, no): (ar, idn) for k, no, ar, idn in bj.execute("SELECT kitab_id, bab_no, nama_ar, nama_id FROM kitab_nama")}
+        bj.row_factory = sqlite3.Row
+        judul_rw = {r["riwayat_id"]: dict(r) for r in bj.execute("SELECT * FROM riwayat_bab")}
+        nama_bagian = {(r["kitab_id"], r["bab_no"]): (r["nama_ar"], r["nama_id"]) for r in bj.execute("SELECT * FROM kitab_nama")}
     data_judul = []
+    # Bagian (bab_no) untuk kitab Lidwa-saja, diurutkan menurut posisi pertamanya di edisi tahqiq.
+    kunci_bagian = lambda kid, j: (j["bab_ar"] or j["kitab_ar"]) if kid == "ahmad" else j["kitab_ar"]
+    bagian_lidwa = {}
+    for kid in LIDWA_SAJA:
+        awal = {}
+        for rid, j in judul_rw.items():
+            if rid.startswith(kid + ":") and kunci_bagian(kid, j):
+                k = kunci_bagian(kid, j)
+                awal[k] = min(awal.get(k, 1e12), j["urut_openiti"] if j["urut_openiti"] is not None else 1e12)
+        for i, k in enumerate(sorted(awal, key=awal.get), start=1):
+            bagian_lidwa[(kid, k)] = i
+    pen_edisi = []
     n_of = {}
     data_riwayat, data_cari = [], []
     urut_dalam = collections.Counter()
@@ -191,15 +232,30 @@ def main():
         if (kid, slug) in slug_dipakai:
             slug = f"{slug}-{n}"
         slug_dipakai.add((kid, slug))
-        data_riwayat.append((n, rid, kid, slug, urut_dalam[kid], tampil, nos, noa, nol, babno, arab, terj, rantai, kc, tk, al))
+        j = judul_rw.get(rid)
+        no_edisi = None
+        if kid in LIDWA_SAJA:
+            cocok = j is not None and j["cara"] == "teks" and (j["skor"] or 0) >= 0.9
+            k = kunci_bagian(kid, j) if j else None
+            babno = bagian_lidwa.get((kid, k), 0) if k else 0
+            nama_b = (j["kitab_nama_id"] if (j and kid != "ahmad") else None) or k or "Belum terpetakan ke edisi tahqiq"
+            bb = bab.setdefault((kid, babno), [nama_b, 0, n, k, None, None])
+            bb[1] += 1
+            if cocok:
+                tk, kc, no_edisi = "A", j["skor"], (str(j["no_openiti"]) if j["no_openiti"] is not None else None)
+                al = f"teks Arab Lidwa tercakup {round(j['skor'] * 100)}% di edisi {LIDWA_SAJA[kid]} (OpenITI); terjemah dari baris Lidwa yang sama"
+                if kid in PENILAI_EDISI and j["tahqiq"]:
+                    pen_edisi.append((n, PENILAI_EDISI[kid], j["tahqiq"][:400], kategori_ar(j["tahqiq"])))
+            else:
+                al = (al + "; " if al else "") + f"belum cocok >= 90% dengan edisi {LIDWA_SAJA[kid]}"
+        data_riwayat.append((n, rid, kid, slug, urut_dalam[kid], tampil, nos, noa, nol, babno, arab, terj, rantai, kc, tk, al, no_edisi))
         na = norm_ar(arab)
         nama = " ".join(json.loads(rantai)) if rantai else ""
-        j = judul_rw.get(rid)
         if j:
-            data_judul.append((n, j[0], j[1], j[2], j[3]))
-        teks_judul = " ".join(x for x in [norm_id(j[1] or ""), akar_ar(norm_ar((j[0] or "") + " " + (j[2] or "")))] if x) if j else ""
+            data_judul.append((n, j["kitab_ar"], j["kitab_nama_id"], j["bab_ar"], j["cara"]))
+        teks_judul = " ".join(x for x in [norm_id(j["kitab_nama_id"] or ""), akar_ar(norm_ar((j["kitab_ar"] or "") + " " + (j["bab_ar"] or "")))] if x) if j else ""
         data_cari.append((n, na, akar_ar(na), norm_id(terj), norm_id(nama), teks_judul))
-        if babno is not None:
+        if babno is not None and kid not in LIDWA_SAJA:
             b = bab.setdefault((kid, babno), [babnama, 0, n, None, babnama, None])
             b[1] += 1
 
@@ -227,7 +283,7 @@ def main():
                 None if (src_ok or not sumber_ry[u]) else "sumber yang ditemukan bukan kitab yang disebut an-Nawawi"] if x) or None
             hit[tk] += 1
             data_riwayat.append((n, f"riyadh:{no}", "riyadh", str(no), no, str(no), str(no), None, None, babno, arab,
-                                 terj if pasti else None, None, None, tk, alasan))
+                                 terj if pasti else None, None, None, tk, alasan, None))
             na = norm_ar(arab)
             ar_b, id_b = bab_ry.get(babno, (None, None))
             data_cari.append((n, na, akar_ar(na), norm_id(terj if pasti else ""), "",
@@ -254,23 +310,32 @@ def main():
     lock = json.load(open(os.path.join(os.path.dirname(DB_PATH), "..", "pipeline", "sources.lock.json"), encoding="utf8"))
     info["sumber"] = json.dumps(sorted({(k.split('/')[0], v["commit"][:7]) for k, v in lock.items()}))
     w.sisip("info", ["kunci", "nilai"], info.items())
+    # penilaian akhir = fawazahmed0 + muhaqqiq edisi (Asad untuk Darimi)
+    penilaian_akhir = [(n_of[r[0]], r[1], r[2], r[3]) for r in q("SELECT riwayat_id, penilai, hukum, kategori FROM penilaian")
+                       if r[0] in n_of] + pen_edisi
+    kitab_n = {r[0]: r[2] for r in data_riwayat}
+    tk_kitab = collections.Counter((r[2], r[14]) for r in data_riwayat)
+    dinilai_kitab = collections.defaultdict(set)
+    penilai_kitab = collections.defaultdict(set)
+    for n_, pnl, _, _ in penilaian_akhir:
+        dinilai_kitab[kitab_n[n_]].add(n_)
+        penilai_kitab[kitab_n[n_]].add(pnl)
     kit = []
     for kid, nama, nama_ar, penyusun, wafat, sistem, nl, ns in q(
             "SELECT id, nama, nama_arab, penyusun, wafat_h, sistem_nomor, jumlah_lidwa, jumlah_standar FROM kitab"):
-        t = dict(q("SELECT tingkat, count(*) FROM riwayat WHERE kitab_id=? GROUP BY tingkat", kid))
-        dinilai = q("SELECT count(DISTINCT riwayat_id) FROM penilaian WHERE riwayat_id LIKE ?", kid + ":%")[0][0]
-        pen = [r[0] for r in q("SELECT DISTINCT penilai FROM penilaian WHERE riwayat_id LIKE ? ORDER BY 1", kid + ":%")]
-        kit.append((kid, urut_kitab[kid], nama, nama_ar, penyusun, wafat, sistem, nl, ns, t.get("A", 0) + t.get("B", 0),
-                    t.get("A", 0), t.get("B", 0), t.get("K", 0), dinilai, json.dumps(pen, ensure_ascii=False)))
+        karantina = q("SELECT count(*) FROM riwayat WHERE kitab_id=? AND tingkat='K'", kid)[0][0]
+        a_, b_ = tk_kitab[(kid, "A")], tk_kitab[(kid, "B")]
+        kit.append((kid, urut_kitab[kid], nama, nama_ar, penyusun, wafat, sistem, nl, ns, a_ + b_, a_, b_, karantina,
+                    len(dinilai_kitab[kid]), json.dumps(sorted(penilai_kitab[kid]), ensure_ascii=False), LIDWA_SAJA.get(kid)))
     if ry_kitab:
-        kit.append(ry_kitab)
+        kit.append(ry_kitab + (None,))
     w.sisip("kitab", ["id", "urut", "nama", "nama_arab", "penyusun", "wafat_h", "sistem_nomor", "jumlah_lidwa",
-                      "jumlah_standar", "terbit", "tingkat_a", "tingkat_b", "karantina", "dinilai", "penilai"], kit)
+                      "jumlah_standar", "terbit", "tingkat_a", "tingkat_b", "karantina", "dinilai", "penilai", "edisi"], kit)
     # Nama bagian kitab: Indonesia (glosarium Teman Hadits, belum ditinjau) > Inggris (fawazahmed0); Arab dari OpenITI.
     baris_bab = []
     for (k, no), v in sorted(bab.items()):
         ar, idn = nama_bagian.get((k, no), (None, None))
-        if k == "riyadh":
+        if k == "riyadh" or k in LIDWA_SAJA:
             baris_bab.append((k, no, v[0], v[1], v[2], v[3], None, v[5]))
         else:
             baris_bab.append((k, no, idn or v[0], v[1], v[2], ar, v[4], None))
@@ -279,11 +344,9 @@ def main():
     w.sisip("riyadh_info", ["n", "atribusi_ar", "kitab_atribusi", "catatan_ar", "no_terjemah"], data_ry_info)
     w.sisip("sumber", ["a", "b", "skor", "kitab_disebut", "sahabat_sama", "peringkat"], data_sumber)
     w.sisip("riwayat", ["n", "id", "kitab_id", "slug", "urut", "no_tampil", "no_standar", "no_arab", "no_lidwa", "bab_no",
-                        "arab", "terjemah", "rantai_json", "kecocokan", "tingkat", "alasan"], data_riwayat)
+                        "arab", "terjemah", "rantai_json", "kecocokan", "tingkat", "alasan", "no_edisi"], data_riwayat)
     w.sisip("cari", ["rowid", "arab_polos", "arab_akar", "terjemah_polos", "perawi", "judul"], data_cari)
-    w.sisip("penilaian", ["n", "penilai", "hukum", "kategori"],
-            [(n_of[r[0]], r[1], r[2], r[3]) for r in q("SELECT riwayat_id, penilai, hukum, kategori FROM penilaian")
-             if r[0] in n_of])
+    w.sisip("penilaian", ["n", "penilai", "hukum", "kategori"], penilaian_akhir)
 
     # frekuensi kata Indonesia (untuk "cek teks"): berapa riwayat memuat kata (setelah stem ringan)
     df = collections.Counter()

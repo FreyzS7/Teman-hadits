@@ -25,7 +25,9 @@ export function bukuBesar(pen, kitab, tambahan = []) {
       ? `<p class="tanpa-nilai">Kitab Shahih. Sumber data kami tidak memuat penilaian per hadits untuk kitab ini, dan kami tidak mengisinya sendiri.</p>`
       : `<p class="tanpa-nilai">Belum ada penilaian ulama yang tercatat di sumber kami.</p>`;
   }
-  return `<ul class="buku-besar">${baris.map((b) => `<li class="k-${esc(b.kategori)}"><span class="siapa">${esc(b.siapa)}</span><span class="titik"></span><span class="hukum"${b.asli ? ` title="label asli: ${esc(b.asli)}"` : ""}>${esc(b.hukum)}</span></li>`).join("")}</ul>`;
+  return `<ul class="buku-besar">${baris.map((b) => /[\u0600-\u06FF]/.test(b.hukum)
+    ? `<li class="k-${esc(b.kategori)} arab"><span class="siapa">${esc(b.siapa)}</span><span class="hukum ar">${esc(b.hukum)}</span></li>`
+    : `<li class="k-${esc(b.kategori)}"><span class="siapa">${esc(b.siapa)}</span><span class="titik"></span><span class="hukum"${b.asli ? ` title="label asli: ${esc(b.asli)}"` : ""}>${esc(b.hukum)}</span></li>`).join("")}</ul>`;
 }
 
 const SVG_BINTANG = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0l2.6 6.3L21 3l-3.3 6.4L24 12l-6.3 2.6L21 21l-6.4-3.3L12 24l-2.6-6.3L3 21l3.3-6.4L0 12l6.3-2.6L3 3l6.4 3.3z"/></svg>`;
@@ -147,7 +149,8 @@ export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan, tema = 
   const catatan = [];
   for (const k of r.konsep) catatan.push(`<b>${esc(k.label)}.</b> ${esc(k.catatan)}`);
   if (r.pertanyaanHukum) catatan.push(`Pertanyaan Anda menyangkut hukum. Teman Hadits menampilkan riwayat, bukan fatwa.${r.klaim.length ? ` Kata <b>${r.klaim.map(esc).join(", ")}</b> dipakai untuk mengurutkan dan disorot di bawah, tetapi pencarian kata tidak bisa membuktikan isi sebuah hadits. Baca kalimat lengkapnya.` : ""}`);
-  const rujuk = rujukan ? `<div class="rujukan-langsung"><span>Rujukan langsung:</span><a href="/${esc(rujukan.kitab_id)}/${esc(rujukan.slug)}">${esc(rujukan.kitab_nama)} no. ${esc(rujukan.no_tampil)} →</a><span class="kecil">${esc(rujukan.catatan)}</span></div>` : "";
+  const daftarRujuk = rujukan ? (Array.isArray(rujukan) ? rujukan : [rujukan]) : [];
+  const rujuk = daftarRujuk.length ? `<div class="rujukan-langsung"><span>${daftarRujuk.length > 1 ? "Nomor ini ada di dua sistem penomoran:" : "Rujukan langsung:"}</span>${daftarRujuk.map((x) => `<a href="/${esc(x.kitab_id)}/${esc(x.slug)}">${esc(x.kitab_nama)} no. ${esc(x.no_tampil)} →</a><span class="kecil">${esc(x.catatan)}</span>`).join("")}</div>` : "";
   const maksPK = Math.max(1, ...Object.values(out.perKitab));
   const sebaran = kitab.map((k) => {
     const n = out.perKitab[k.id] || 0;
@@ -208,7 +211,7 @@ export function halamanHadits(d) {
   const penJalur = jalur.filter((j) => j.tingkat_mirip === "sama" && jalurPenilaian.has(j.n)).slice(0, 6);
   const terjemahHtml = r.terjemah ? esc(r.terjemah).replace(/\[([^\]]+)\]/g, '<span class="perawi">$1</span>') : null;
   const gabungan = (r.alasan || "").startsWith("teks ini tercakup utuh");
-  const rujukanTeks = `HR. ${HR[kitab.id] || kitab.nama} no. ${r.no_tampil}${kitab.jumlah_standar ? "" : " (penomoran Lidwa)"}. Sumber: Teman Hadits, ${kanonik}`;
+  const rujukanTeks = `HR. ${HR[kitab.id] || kitab.nama} no. ${r.no_edisi ? `${r.no_edisi} (edisi ${kitab.edisi}; no. ${r.no_tampil} penomoran Lidwa)` : r.no_tampil + (kitab.jumlah_standar ? "" : " (penomoran Lidwa)")}. Sumber: Teman Hadits, ${kanonik}`;
   const rantaiHtml = rantai && rantai.simpul.length >= 3 ? `
   <section class="rantai-wrap" aria-labelledby="h-rantai">
     <h2 id="h-rantai" style="color:var(--zamrud);font-size:1.7rem">Rantai sanad</h2>
@@ -225,7 +228,7 @@ export function halamanHadits(d) {
   return `
   <nav class="remah" aria-label="Lokasi"><a href="/kitab">Kitab</a> › <a href="/kitab/${esc(kitab.id)}">${esc(kitab.nama)}</a>${bab ? ` › <a href="/kitab/${esc(kitab.id)}/bab/${bab.no}">${esc(bab.nama || "Bab " + bab.no)}</a>` : ""} › <span>No. ${esc(r.no_tampil)}</span></nav>
   <div class="judul-hadits"><h1>${esc(kitab.nama)} <span class="num">no. ${esc(r.no_tampil)}</span></h1></div>
-  <div class="meta">${lencana(r.tingkat)}${r.no_lidwa && kitab.jumlah_standar ? `<span class="chip num">nomor Lidwa ${r.no_lidwa}</span>` : ""}${!kitab.jumlah_standar ? `<span class="chip">penomoran Lidwa</span>` : ""}${r.kecocokan != null ? `<span class="chip">teks Arab cocok ${Math.round(r.kecocokan * 100)}% di 2 sumber</span>` : ""}</div>
+  <div class="meta">${lencana(r.tingkat)}${r.no_lidwa && kitab.jumlah_standar ? `<span class="chip num">nomor Lidwa ${r.no_lidwa}</span>` : ""}${!kitab.jumlah_standar ? `<span class="chip">penomoran Lidwa</span>` : ""}${r.no_edisi ? `<span class="chip num" title="nomor yang lazim dikutip dari edisi tahqiq ini">no. ${esc(r.no_edisi)} di edisi ${esc(kitab.edisi)}</span>` : ""}${r.kecocokan != null ? `<span class="chip">teks Arab cocok ${Math.round(r.kecocokan * 100)}% ${kitab.edisi ? "dengan edisi tahqiq" : "di 2 sumber"}</span>` : ""}</div>
   ${r.alasan ? `<p class="kotak-info" style="margin-top:12px">${esc(r.alasan)}</p>` : ""}
   <article class="halaman">
     <div class="lembar">
@@ -262,6 +265,7 @@ export function halamanHadits(d) {
       ${tema.length ? `<section><h2>Tema</h2><div class="nomor" style="display:flex;flex-wrap:wrap;gap:6px">${tema.map((t) => `<a class="chip" href="/tema/${esc(t.id)}">${esc(t.judul)}</a>`).join("")}</div><p class="kecil" style="margin-top:6px">Tema dari HadeethEnc.com</p></section>` : ""}
       <section><h2>Asal data</h2><div class="asal">
         <span>Teks Arab: ${kitab.jumlah_standar ? "fawazahmed0/hadith-api" : "Lidwa Pusaka via carihadis.com"}</span>
+        ${kitab.edisi ? `<span>Teks pembanding & judul: edisi ${esc(kitab.edisi)} (OpenITI)</span>` : ""}
         ${r.terjemah ? "<span>Terjemah: Lidwa Pusaka via carihadis.com</span>" : ""}
         ${r.kecocokan != null ? `<span>Kecocokan teks Arab 2 sumber: <b class="num">${r.kecocokan.toFixed(2).replace(".", ",")}</b></span>` : "<span>Baru 1 sumber digital</span>"}
         <span>ID data: <code>${esc(r.id)}</code></span>
@@ -295,7 +299,7 @@ export function halamanKitab({ k, bab, daftar, halaman, halMaks }) {
   const kepala = `<nav class="remah"><a href="/kitab">Kitab</a> › <span>${esc(k.nama)}</span></nav>
   <h1 class="halaman-judul" style="margin-top:10px">${esc(k.nama)}</h1>
   <p class="ar" style="font-size:1.8rem;color:var(--zamrud);text-align:left;direction:rtl">${esc(k.nama_arab)}</p>
-  <p class="sub">${esc(k.penyusun)} (w. ${k.wafat_h} H). Penomoran: ${k.id === "riyadh" ? "nomor hadits Riyadhus Shalihin pada teks Arab (1–1896); terjemah memakai penomoran edisinya sendiri, ditampilkan sebagai pembanding" : k.jumlah_standar ? "standar (fawazahmed0), dengan nomor Lidwa sebagai pembanding" : "Lidwa Pusaka"}.</p>
+  <p class="sub">${esc(k.penyusun)} (w. ${k.wafat_h} H). Penomoran: ${k.id === "riyadh" ? "nomor hadits Riyadhus Shalihin pada teks Arab (1–1896); terjemah memakai penomoran edisinya sendiri, ditampilkan sebagai pembanding" : k.jumlah_standar ? "standar (fawazahmed0), dengan nomor Lidwa sebagai pembanding" : k.edisi ? `Lidwa Pusaka (alamat halaman); nomor edisi ${esc(k.edisi)} ditampilkan di setiap hadits yang teksnya cocok` : "Lidwa Pusaka"}.</p>
   ${ringkasKitab(k)}`;
   if (bab.length) {
     const ket = k.id === "riyadh" ? "Nama bab Indonesia dari terjemahnya; nama Arab dari teks an-Nawawi."

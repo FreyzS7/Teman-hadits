@@ -79,7 +79,8 @@ python3 pipeline/cari.py "tolong carikan hadits tentang sholat tarawih"
 
 - 11 kitab dimuat, 69.408 riwayat terbit, 408 dikarantina. Termasuk Riyadhus Shalihin (1.896 hadits): sumbernya dicocokkan dengan atribusi an-Nawawi (98,2% cocok).
 - 21.185 riwayat sudah punya penilaian derajat bernama: al-Albani, Syu'aib al-Arna'uth, Zubair 'Ali Za'i, Ahmad Syakir, Basyar 'Awwad, Abu Ghuddah, Salim al-Hilali, dan lainnya.
-- Judul kitab & bab Arab dari teks kitabnya (OpenITI) untuk 7 kitab, dipetakan menurut isi; nomor hadits cocok dengan edisi cetak 96–99,8% tanpa dipakai saat mencocokkan. Nama kitab Indonesia dari glosarium yang belum ditinjau ahli.
+- Musnad Ahmad, ad-Darimi, asy-Syafi'i dicocokkan dengan edisi tahqiq (ar-Risalah, Husain Salim Asad, al-Fahl): 27.302 riwayat naik ke tingkat A, nomor edisi tahqiq ditampilkan, 2.810 riwayat Darimi mendapat penilaian Husain Salim Asad.
+- Judul kitab & bab Arab dari teks kitabnya (OpenITI) untuk 10 kitab, dipetakan menurut isi; nomor hadits cocok dengan edisi cetak 96–99,8% tanpa dipakai saat mencocokkan. Nama kitab Indonesia dari glosarium yang belum ditinjau ahli.
 - 447 tema berbahasa Indonesia dan 2.260 hadits dari HadeethEnc.com. 1.998 di antaranya terhubung ke riwayat kita; uji silang atribusi: 98,8% cocok dengan atribusi HadeethEnc sendiri.
 - Uji: uji emas data (Python, termasuk HadeethEnc), 9 uji unit + paritas Python↔JavaScript, 9 uji emas lewat HTTP. Contohnya: hadits niat ditemukan di ketujuh tempatnya dalam Shahih al-Bukhari, dan tidak ada di al-Muwaththa' riwayat Yahya.
 
