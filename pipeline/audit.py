@@ -103,6 +103,19 @@ if os.path.exists(kt_path):
       f"{ki.get('tautan_katalog', 0)}; disebut di pembahasan entri lain: {ki.get('sebut_di_entri_lain', 0)}; "
       f"ada di kitab hadits kita: {ki.get('ada_di_kitab_hadits', 0)}; tidak ada: {ki.get('tidak_ada_di_kitab_hadits', 0)}.\n")
 
+pr_path = os.path.join(BUILD, "perawi.sqlite")
+if os.path.exists(pr_path):
+    pi = dict(sqlite3.connect(pr_path).execute("SELECT kunci, nilai FROM info"))
+    tot = int(pi["sebutan"])
+    w("## Identitas perawi di sanad (enam kitab)\n")
+    w("Lihat `docs/11-perawi.md`. Hanya label **pasti** yang tampil di situs.\n")
+    w("| Label | Sebutan nama | % |")
+    w("|---|---:|---:|")
+    for k in ("pasti", "kuat", "ragu", "tanpa_kandidat"):
+        w(f"| {k} | {int(pi.get(k, 0)):,} | {100 * int(pi.get(k, 0)) / tot:.1f}% |")
+    w(f"\nPerawi teridentifikasi: {int(pi['perawi_teridentifikasi']):,} ({int(pi['perawi_dengan_taqrib']):,} tertaut ke Taqrib). "
+      f"Hubungan guru-murid Tahdzib al-Kamal yang terselesaikan: {int(pi['relasi_terselesaikan']):,} dari {int(pi['relasi']):,}.\n")
+
 w("## Temuan kualitas data\n")
 ry_path = os.path.join(BUILD, "riyadh.sqlite")
 if os.path.exists(ry_path):

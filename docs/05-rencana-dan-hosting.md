@@ -8,7 +8,7 @@
 | 1 | Model data, pencocokan dua sumber, tingkat data, uji emas | **Selesai** (tahap awal) |
 | 1b | Desain prototipe dengan data asli | **Selesai**: `design/prototipe.html` |
 | 2 | Riyadhus Shalihin disegmentasi per hadits; teks Darimi, Ahmad, dan Syafi'i dicocokkan dengan OpenITI agar naik ke tingkat A; nama bab Arab/Indonesia | **Selesai** (lihat docs/08, docs/09) |
-| 3 | Rantai sanad tertaut ke data rijal (Taqrib at-Tahdzib): nama, tahun wafat, penilaian perawi | |
+| 3 | Rantai sanad tertaut ke data rijal (Taqrib at-Tahdzib): nama, tahun wafat, penilaian perawi | **Selesai untuk enam kitab** (lihat docs/11): 58% sebutan nama pasti, 4.315 halaman perawi, 99,85% sama dengan Ifta' Sunnah. Malik/Ahmad/Darimi/Syafi'i belum |
 | 4 | Katalog hadits palsu populer dengan penilaian ulama bernama | **Selesai, tahap awal** (lihat docs/10): 4 kitab klasik (6.044 entri) dari OpenITI, 20 ucapan populer, `/populer`, terintegrasi di `/cek`. Dorar tetap tidak dipakai (menolak bot). Daftar ucapan belum ditinjau ahli |
 | 5 | Situs sungguhan: halaman per riwayat, pencarian, cek teks, SEO | **Berjalan lokal** (`site/`): beranda, cari, cek, halaman riwayat + rantai sanad + takhrij, kitab/bab, tema, metode, sitemap |
 | 6 | Verifikasi sampel kitab cetak + peninjau independen, lalu rilis publik | |

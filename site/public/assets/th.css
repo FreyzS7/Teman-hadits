@@ -355,3 +355,24 @@ a.punggung:hover { color: var(--sampul-teks); }
 .daftar-populer .ar { font-size: calc(1.3rem * var(--ar)); color: var(--zamrud); }
 .baris-status { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
 @media (max-width: 720px) { .nav { flex-wrap: wrap; justify-content: flex-start; gap: 2px 4px; } }
+
+/* Perawi */
+.perawi-ringkas { display: grid; gap: 4px; margin-top: 6px; text-decoration: none; color: inherit; border-top: 1px dashed var(--garis); padding-top: 6px; }
+.perawi-ringkas .ar { font-size: calc(1rem * var(--ar)); color: var(--tinta-2); line-height: 1.7; }
+.perawi-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: .8rem; color: var(--tinta-2); }
+.perawi-meta .lanjut { color: var(--zamrud); font-weight: 600; }
+.perawi-ringkas:hover .lanjut, .perawi-ringkas:focus-visible .lanjut { text-decoration: underline; }
+.kutipan-ulama { font-size: calc(1.2rem * var(--ar)); line-height: 2; background: var(--kertas-2, transparent); border-inline-start: 3px solid var(--emas, #c9a24a); padding: 10px 14px; border-radius: 6px; }
+.kutipan-ulama .kode { color: var(--zamrud); font-weight: 700; }
+.fakta { display: grid; grid-template-columns: max-content 1fr; gap: 8px 16px; margin: 16px 0 0; }
+.fakta dt { font-weight: 700; color: var(--zamrud); }
+.fakta dd { margin: 0; }
+.dua-kolom { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+.kecil-judul { font-size: 1rem; margin: 0 0 8px; color: var(--tinta-2); }
+.daftar-orang { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.daftar-orang li { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.daftar-orang .ar { font-size: calc(1.05rem * var(--ar)); }
+.daftar-perawi { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 0; }
+.daftar-perawi li { display: grid; gap: 4px; padding: 10px 0; border-bottom: 1px solid var(--garis); }
+.daftar-perawi .ar { font-size: calc(1.25rem * var(--ar)); }
+@media (max-width: 560px) { .fakta { grid-template-columns: 1fr; } .fakta dt { margin-top: 6px; } }

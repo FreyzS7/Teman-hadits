@@ -156,6 +156,28 @@
    "berkas": [
     "data/1162IbnMuammadAbuFidaCajluni/1162IbnMuammadAbuFidaCajluni.KashfKhafa/1162IbnMuammadAbuFidaCajluni.KashfKhafa.Shamela0000856-ara1"
    ]
+  },
+  {
+   "id": "openiti-0750AH",
+   "nama": "OpenITI 0750AH (Tahdzib al-Kamal (al-Mizzi), tahqiq Basyar 'Awwad, ar-Risalah: daftar guru & murid tiap perawi beserta kode kitab)",
+   "repo": "https://github.com/OpenITI/0750AH",
+   "commit": "7c9c84d9f98581470aa2b7f8bee00ae285c5c707",
+   "lisensi_repo": "BELUM TERVERIFIKASI: README OpenITI tidak mencantumkan lisensi; lihat rilis Zenodo doi:10.5281/zenodo.3082463 (tidak terjangkau dari lingkungan build)",
+   "catatan_lisensi": "Kitab rijal abad 8-9 H. Situs menampilkan entri Taqrib per perawi dengan atribusi (nomor entri edisi 'Awwamah) dan memakai daftar guru-murid Tahdzib al-Kamal sebagai bukti identifikasi. Pastikan lisensi edisi digital OpenITI sebelum situs online.",
+   "berkas": [
+    "data/0742Mizzi/0742Mizzi.TahdhibKamal/0742Mizzi.TahdhibKamal.Shamela0003722-ara1.mARkdown"
+   ]
+  },
+  {
+   "id": "openiti-0875AH",
+   "nama": "OpenITI 0875AH (Taqrib at-Tahdzib (Ibnu Hajar), tahqiq Muhammad 'Awwamah, Dar ar-Rasyid: penilaian, tabaqah, wafat, kode kitab)",
+   "repo": "https://github.com/OpenITI/0875AH",
+   "commit": "5835c183b8bbf4ea454d5c1be2b168b669403771",
+   "lisensi_repo": "BELUM TERVERIFIKASI: README OpenITI tidak mencantumkan lisensi; lihat rilis Zenodo doi:10.5281/zenodo.3082463 (tidak terjangkau dari lingkungan build)",
+   "catatan_lisensi": "Kitab rijal abad 8-9 H. Situs menampilkan entri Taqrib per perawi dengan atribusi (nomor entri edisi 'Awwamah) dan memakai daftar guru-murid Tahdzib al-Kamal sebagai bukti identifikasi. Pastikan lisensi edisi digital OpenITI sebelum situs online.",
+   "berkas": [
+    "data/0852IbnHajarCasqalani/0852IbnHajarCasqalani.TaqribTahdhib/0852IbnHajarCasqalani.TaqribTahdhib.JK000121-ara1.completed"
+   ]
   }
  ]
 }

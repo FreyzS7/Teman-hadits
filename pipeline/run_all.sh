@@ -11,7 +11,10 @@ python3 -I pipeline/hadeethenc.py bangun
 python3 -I pipeline/riyadh.py
 python3 -I pipeline/bab_openiti.py
 python3 -I pipeline/katalog_palsu.py
-python3 -m unittest pipeline/test_golden.py pipeline/test_hadeethenc.py pipeline/test_riyadh.py pipeline/test_bab.py pipeline/test_katalog.py -v
+python3 -I pipeline/rijal.py
+python3 -I pipeline/perawi.py
+# opsional (unduh data pembanding Ifta'): python3 -I pipeline/uji_perawi_ifta.py
+python3 -m unittest pipeline/test_golden.py pipeline/test_hadeethenc.py pipeline/test_riyadh.py pipeline/test_bab.py pipeline/test_katalog.py pipeline/test_rijal.py -v
 python3 pipeline/audit.py
 python3 pipeline/export_d1.py
 python3 pipeline/fixtures_js.py

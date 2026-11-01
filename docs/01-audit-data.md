@@ -78,6 +78,19 @@ Lihat `docs/10-katalog-palsu.md`. Teks entri apa adanya dari OpenITI; kata kunci
 
 Ucapan populer berbahasa Indonesia: 20 (daftar **belum ditinjau**); tautan ke judul entri: 35; disebut di pembahasan entri lain: 11; ada di kitab hadits kita: 4; tidak ada: 16.
 
+## Identitas perawi di sanad (enam kitab)
+
+Lihat `docs/11-perawi.md`. Hanya label **pasti** yang tampil di situs.
+
+| Label | Sebutan nama | % |
+|---|---:|---:|
+| pasti | 96,281 | 57.9% |
+| kuat | 39,162 | 23.5% |
+| ragu | 18,437 | 11.1% |
+| tanpa_kandidat | 12,461 | 7.5% |
+
+Perawi teridentifikasi: 4,315 (4,173 tertaut ke Taqrib). Hubungan guru-murid Tahdzib al-Kamal yang terselesaikan: 100,861 dari 155,709.
+
 ## Temuan kualitas data
 
 - **Riyadhus Shalihin** dipecah ulang per hadits oleh `pipeline/riyadh.py` (lihat `docs/08-riyadhus-shalihin.md`): 1896 hadits; terjemah terpasang pasti 1726; terhubung ke sumber 1645; uji silang atribusi an-Nawawi 1613/1642. Berkas versi Arab tahqiq al-Fahl (850 potongan halaman) belum dipakai.
@@ -124,6 +137,8 @@ Ucapan populer berbahasa Indonesia: 20 (daftar **belum ditinjau**); tautan ke ju
 | `openiti-0300AH/0279Tirmidhi.Sunan.Shamela0007895-ara2` | `01a1544` | `8ac7c1a66705` | 3,826,249 |
 | `openiti-0325AH/0303Nasai.SunanSughra.Shamela0000829-ara1` | `089e665` | `be25ffbca47a` | 3,460,338 |
 | `openiti-0600AH/0597IbnJawzi.Mawducat.Shamela0000882-ara1` | `ea4bdc6` | `be16979ad3b2` | 2,411,907 |
+| `openiti-0750AH/0742Mizzi.TahdhibKamal.Shamela0003722-ara1.mARkdown` | `7c9c84d` | `f4f26e71dd9c` | 24,585,892 |
+| `openiti-0875AH/0852IbnHajarCasqalani.TaqribTahdhib.JK000121-ara1.completed` | `5835c18` | `178d493bd150` | 1,899,042 |
 | `openiti-0925AH/0902Sakhawi.MaqasidHasana.Shamela0023177-ara1` | `4f0f456` | `76df9ad68656` | 1,503,556 |
 | `openiti-1025AH/1014MullaCaliQari.AsrarMarfuca.Shamela0006056-ara1` | `f2aa39a` | `4cbef7e2d5dc` | 503,884 |
 | `openiti-1175AH/1162IbnMuammadAbuFidaCajluni.KashfKhafa.Shamela0000856-ara1` | `2c367f7` | `641607994c63` | 2,536,775 |

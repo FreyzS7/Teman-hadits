@@ -10,6 +10,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import DB_PATH, ROOT, akar_ar, norm_ar, norm_id
 from cari import rencana
+from sanad import pisah_sanad, rantai_arab
 
 db = sqlite3.connect(DB_PATH)
 random.seed(20261101)
@@ -26,7 +27,13 @@ for t in TEPI:
 KUERI = ["tolong carikan hadits tentang sholat tarawih", "apakah makan babi itu hukumnya haram?", "hadits yang membolehkan makan babi",
          "min ada hadist tentang keutamaan sedekah ga", "niat", "Terawih di bulan Romadhon", "adab makan dan minum", "wudu",
          "muslim 1907", "hr bukhari no 1", "sholat subuh berjamaah", "keutamaan shodaqoh di hari jum'at", ""]
+def _sanad(arab):
+    p = pisah_sanad(arab)
+    return None if p is None else {"sanad": p[0], "matan": p[1], "rantai": [{"lafaz": x["lafaz"], "sighah": x["sighah"], "namaAr": x["nama_ar"], "nabi": x["nabi"]} for x in rantai_arab(p[0])]}
+
+
 out = {
+    "sanad": [{"id": x["id"], "arab": x["arab"], "hasil": _sanad(x["arab"])} for x in teks],
     "normalisasi": [{"masuk": x, "norm_ar": norm_ar(x["arab"]), "akar_ar": akar_ar(norm_ar(x["arab"])), "norm_id": norm_id(x["terjemah"])} for x in teks],
     "rencana": [{"kueri": k, **{f: rencana(k)[f] for f in ("ejaan", "dibuang", "kata", "maksud", "pertanyaan_hukum")},
                  "konsep": [c["id"] for c in rencana(k)["konsep"]]} for k in KUERI],

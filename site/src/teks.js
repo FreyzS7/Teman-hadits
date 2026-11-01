@@ -122,7 +122,9 @@ export function pisahKomentar(matan) {
 }
 
 const HENTI_NAMA = new Set(["قال", "قالت", "ان", "انه", "انها", "يقول", "تقول", "رضي", "يرفعه", "يبلغ", "به", "نحوه", "مثله",
-  "يحدث", "حدثه", "اخبره", "في", "علي", "قالا", "قالوا", "وهو", "ذكر", "عن"]);
+  "يحدث", "حدثه", "اخبره", "في", "قالا", "قالوا", "وهو", "ذكر", "عن"]);
+// "عَلَى" (huruf jar, alif maqshurah) menghentikan nama; "عَلِيّ" (nama) tidak. Setelah normalisasi keduanya "علي".
+const HURUF_JAR_ALA = "على";
 
 /** Rantai dari teks Arab sanad: [{lafaz, sighah, namaAr, nabi}] urut dari guru penyusun ke atas. */
 export function rantaiArab(sanad) {
@@ -134,7 +136,7 @@ export function rantaiArab(sanad) {
     const nama = [];
     for (const w of kata) {
       const bersih = w.replace(/[،,:؛.‏"]+$/u, "");
-      if (!bersih || HENTI_NAMA.has(normAr(bersih))) break;
+      if (!bersih || HENTI_NAMA.has(normAr(bersih)) || stripHarakat(bersih) === HURUF_JAR_ALA) break;
       nama.push(bersih);
       if (bersih !== w) break; // ada tanda baca di akhir kata: nama selesai
     }

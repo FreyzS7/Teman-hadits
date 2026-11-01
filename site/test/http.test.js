@@ -127,3 +127,30 @@ test("katalog: kontrol shahih ditunjukkan ada di kitab hadits; 'disebut' dipisah
   assert.match(tidur, /al-Asrar al-Marfu&#39;ah no\. 567/);
   assert.equal((await ambil("/populer/tidak-ada")).status, 404);
 });
+
+test("perawi: Bukhari 1 — setiap perawi teridentifikasi pasti dengan ringkasan Ibnu Hajar", opsi, async () => {
+  const { teks } = await ambil("/bukhari/1");
+  for (const id of ["t3320", "t2451", "t7559", "t5691", "t4685", "t4888"]) assert.match(teks, new RegExp(`href="/perawi/${id}"`), id);
+  assert.match(teks, /ثقة حافظ فقيه إمام حجة/);            // Sufyan bin 'Uyainah
+  assert.match(teks, /tabaqah 8 · w\. 198 H/);
+  assert.match(teks, /Tahdzib al-Kamal/);
+});
+
+test("perawi: halaman biodata Sufyan bin 'Uyainah (Taqrib no. 2451)", opsi, async () => {
+  const { status, teks } = await ambil("/perawi/t2451");
+  assert.equal(status, 200);
+  assert.match(teks, /Taqrib at-Tahdzib<\/i> no\. 2451/);
+  assert.match(teks, /sangat terpercaya/);
+  assert.match(teks, /tabaqah 8/);
+  assert.match(teks, /href="\/bukhari\/1"/);
+  assert.match(teks, /href="\/perawi\/t3320"/);           // al-Humaidi sebagai murid
+  assert.equal((await ambil("/perawi/t999999")).status, 404);
+});
+
+test("perawi: wafat dengan pendapat lain & daftar perawi", opsi, async () => {
+  const ah = (await ambil("/perawi/t8426")).teks;          // Abu Hurairah
+  assert.match(ah, /w\. 57 H \(ada pendapat lain\)/);
+  assert.match(ah, /sahabat Nabi/);
+  const d = (await ambil("/perawi")).teks;
+  assert.match(d, /href="\/perawi\/t8426"/);
+});

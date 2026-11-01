@@ -25,6 +25,7 @@ Pustaka hadits berbahasa Indonesia. Pengguna bisa mencari dengan kata kunci atau
 | `docs/08-riyadhus-shalihin.md` | Riyadhus Shalihin: pemecahan per hadits, pemasangan terjemah menurut isi, validasi |
 | `docs/09-judul-kitab-bab.md` | Judul kitab & bab Arab (OpenITI) dan nama kitab Indonesia (glosarium) |
 | `docs/10-katalog-palsu.md` | Katalog hadits populer & palsu: 4 kitab klasik, kata kunci penilaian, ucapan populer |
+| `docs/11-perawi.md` | Identitas & biodata perawi: Taqrib at-Tahdzib, Tahdzib al-Kamal, cara identifikasi, uji independen |
 | `site/` | Situs sungguhan: Cloudflare Worker + database D1, jalan lokal dengan `wrangler dev` |
 | `design/` | Prototipe desain (`prototipe.html`), diisi data asli dari database |
 
@@ -82,8 +83,9 @@ python3 pipeline/cari.py "tolong carikan hadits tentang sholat tarawih"
 - 21.185 riwayat sudah punya penilaian derajat bernama: al-Albani, Syu'aib al-Arna'uth, Zubair 'Ali Za'i, Ahmad Syakir, Basyar 'Awwad, Abu Ghuddah, Salim al-Hilali, dan lainnya.
 - Musnad Ahmad, ad-Darimi, asy-Syafi'i dicocokkan dengan edisi tahqiq (ar-Risalah, Husain Salim Asad, al-Fahl): 27.302 riwayat naik ke tingkat A, nomor edisi tahqiq ditampilkan, 2.810 riwayat Darimi mendapat penilaian Husain Salim Asad.
 - Judul kitab & bab Arab dari teks kitabnya (OpenITI) untuk 10 kitab, dipetakan menurut isi; nomor hadits cocok dengan edisi cetak 96–99,8% tanpa dipakai saat mencocokkan. Nama kitab Indonesia dari glosarium yang belum ditinjau ahli.
+- Identitas perawi di sanad enam kitab: 96.281 sebutan nama (58%) ditetapkan **pasti** dari daftar guru-murid *Tahdzib al-Kamal*; 4.315 perawi punya halaman biodata dari *Taqrib at-Tahdzib* (penilaian Ibnu Hajar, tabaqah, wafat). Diuji terhadap identifikasi kurator Ifta' Sunnah: 99,85% sama (45.772 posisi).
 - Katalog hadits populer & palsu: 6.044 entri dari *al-Maudhu'at* (Ibnul Jauzi), *al-Maqashid al-Hasanah* (as-Sakhawi), *al-Asrar al-Marfu'ah* (Mulla 'Ali al-Qari), dan *Kasyf al-Khafa'* (al-'Ajluni). 20 ucapan populer berbahasa Indonesia (belum ditinjau) ditautkan ke pembahasan ulama dan ke kitab hadits, di `/populer` dan `/cek`. Kata kunci penilaian ditampilkan bersama kalimat aslinya, tanpa vonis dari situs.
 - 447 tema berbahasa Indonesia dan 2.260 hadits dari HadeethEnc.com. 1.998 di antaranya terhubung ke riwayat kita; uji silang atribusi: 98,8% cocok dengan atribusi HadeethEnc sendiri.
-- Uji: uji emas data (Python, termasuk HadeethEnc dan katalog palsu), 9 uji unit + paritas Python↔JavaScript, 15 uji emas lewat HTTP. Contohnya: hadits niat ditemukan di ketujuh tempatnya dalam Shahih al-Bukhari, dan tidak ada di al-Muwaththa' riwayat Yahya.
+- Uji: uji emas data (Python, termasuk HadeethEnc, katalog palsu, dan rijal), 10 uji unit + paritas Python↔JavaScript (termasuk pemisah sanad), 18 uji emas lewat HTTP. Contohnya: hadits niat ditemukan di ketujuh tempatnya dalam Shahih al-Bukhari, dan tidak ada di al-Muwaththa' riwayat Yahya.
 
 Angka terbaru selalu ada di [docs/01-audit-data.md](docs/01-audit-data.md).

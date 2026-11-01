@@ -35,6 +35,7 @@ DROP TABLE IF EXISTS tema; DROP TABLE IF EXISTS he_hadits; DROP TABLE IF EXISTS 
 DROP TABLE IF EXISTS riyadh_info; DROP TABLE IF EXISTS sumber; DROP TABLE IF EXISTS judul;
 DROP TABLE IF EXISTS katalog_kitab; DROP TABLE IF EXISTS katalog; DROP TABLE IF EXISTS katalog_cari;
 DROP TABLE IF EXISTS populer; DROP TABLE IF EXISTS populer_katalog; DROP TABLE IF EXISTS populer_riwayat; DROP TABLE IF EXISTS populer_sebut;
+DROP TABLE IF EXISTS perawi; DROP TABLE IF EXISTS sanad_perawi;
 CREATE TABLE info (kunci TEXT PRIMARY KEY, nilai TEXT);
 CREATE TABLE kitab (
   id TEXT PRIMARY KEY, urut INT, nama TEXT, nama_arab TEXT, penyusun TEXT, wafat_h INT, sistem_nomor TEXT,
@@ -85,6 +86,11 @@ CREATE TABLE populer (id TEXT PRIMARY KEY, urut INT, teks_id TEXT, varian TEXT, 
 CREATE TABLE populer_katalog (populer_id TEXT, katalog_id TEXT, skor REAL);
 CREATE TABLE populer_riwayat (populer_id TEXT, n INT, skor REAL);
 CREATE TABLE populer_sebut (populer_id TEXT, katalog_id TEXT, kutipan TEXT);
+-- Perawi (Taqrib at-Tahdzib + Tahdzib al-Kamal) dan identifikasi per segmen sanad (pipeline/perawi.py, hanya 'pasti')
+CREATE TABLE perawi (id TEXT PRIMARY KEY, taqrib INT, tk_no INT, nama TEXT, teks_taqrib TEXT, penilaian TEXT, tingkat INT,
+  tabaqah INT, wafat INT, wafat_ragu INT, rumuz TEXT, n_riwayat INT);
+CREATE TABLE sanad_perawi (n INT, pos INT, perawi_id TEXT, PRIMARY KEY (n, pos));
+CREATE INDEX sanad_perawi_p ON sanad_perawi (perawi_id, n);
 """
 
 # Stem Indonesia ringan untuk tabel frekuensi kata (dipakai fitur "cek teks"); harus sama dengan site/src/teks.js
@@ -412,10 +418,22 @@ def main():
         w.sisip("populer_sebut", ["populer_id", "katalog_id", "kutipan"], kt.execute("SELECT * FROM populer_sebut"))
         w.sisip("populer_riwayat", ["populer_id", "n", "skor"],
                 [(p, n_of[r], s_) for p, r, s_ in kt.execute("SELECT * FROM populer_riwayat") if r in n_of])
+    pr_path = os.path.join(BUILD, "perawi.sqlite")
+    n_pr = 0
+    if os.path.exists(pr_path):
+        pr = sqlite3.connect(pr_path)
+        w.sisip("perawi", ["id", "taqrib", "tk_no", "nama", "teks_taqrib", "penilaian", "tingkat", "tabaqah", "wafat", "wafat_ragu",
+                           "rumuz", "n_riwayat"],
+                pr.execute("SELECT id, taqrib, tk_no_cetak, nama, teks_taqrib, penilaian, tingkat, tabaqah, wafat, wafat_ragu, rumuz, n_riwayat FROM perawi"))
+        ids = {tk: pid for tk, pid in pr.execute("SELECT tk_id, id FROM perawi")}
+        sp = [(n_of[rid], pos, ids[tk]) for rid, pos, tk in pr.execute("SELECT riwayat_id, pos, tk_id FROM sebutan WHERE label='pasti'")
+              if rid in n_of and tk in ids]
+        n_pr = len(sp)
+        w.sisip("sanad_perawi", ["n", "pos", "perawi_id"], sp)
     w.tutup()
     berkas = sorted(f for f in os.listdir(OUT) if f.endswith(".sql"))
     ukuran = sum(os.path.getsize(os.path.join(OUT, f)) for f in berkas)
-    print(f"{len(data_riwayat)} riwayat (termasuk {len(data_ry_info)} Riyadhus Shalihin), {len(data_sumber)} tautan sumber Riyadh, {n_mirip} pasangan takhrij, {n_kt} entri katalog, {n_he} hadits HadeethEnc, {len(df)} kata -> "
+    print(f"{len(data_riwayat)} riwayat (termasuk {len(data_ry_info)} Riyadhus Shalihin), {len(data_sumber)} tautan sumber Riyadh, {n_mirip} pasangan takhrij, {n_kt} entri katalog, {n_pr} perawi teridentifikasi di sanad, {n_he} hadits HadeethEnc, {len(df)} kata -> "
           f"{len(berkas)} berkas, {ukuran / 1e6:.0f} MB di build/d1/", file=sys.stderr)
 
 

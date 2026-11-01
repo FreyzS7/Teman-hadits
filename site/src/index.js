@@ -4,6 +4,7 @@ import { cek } from "./cek.js";
 import { hukumTirmidzi, normId, pisahKomentar, pisahSanad, rantaiArab, rubrik } from "./teks.js";
 import * as T from "./tampilan.js";
 import { cocokKatalogArab, cocokPopuler, dataPopuler, daftarPopuler, entriKatalog } from "./katalog.js";
+import { dataPerawi, daftarPerawi, perawiSanad } from "./perawi.js";
 import { adaArab } from "./teks.js";
 
 const PER_HALAMAN = 50;
@@ -35,7 +36,7 @@ async function cariRiwayat(db, kid, slug) {
   return {};
 }
 
-function susunRantai(r, kitab, pisah) {
+function susunRantai(r, kitab, pisah, perawi = new Map()) {
   if (!pisah) return null;
   const segs = rantaiArab(pisah.sanad);
   if (segs.length < 2) return null;
@@ -49,6 +50,7 @@ function susunRantai(r, kitab, pisah) {
     ...s,
     namaId: s.nabi ? "Rasulullah ﷺ" : selaras ? nama[iNama++] : "",
     peran: s.nabi ? "Nabi" : adaNabi && i === segs.length - 2 ? "sahabat" : "",
+    perawi: s.nabi ? null : perawi.get(i) || null,   // posisi i = nomor segmen yang sama dengan pipeline/perawi.py
   }));
   const simpul = [{ namaId: kitab.penyusun, namaAr: "", peran: "penyusun kitab", penyusun: true }, ...naik].reverse();
   simpul.forEach((s, i) => { if (!s.peran) s.peran = `perawi ke-${i}`; });
@@ -84,10 +86,11 @@ async function halamanHadits(env, url, kid, slug) {
   if (kid === "riyadh") return halamanRiyadh(env, url, kitab, r);
   const pisah = pisahSanad(r.arab);
   if (pisah && kid === "tirmidzi") Object.assign(pisah, pisahKomentar(pisah.matan));
+  const perawi = pisah ? await perawiSanad(db, r.n) : new Map();
   const kanonik = `${url.origin}/${kid}/${r.slug}`;
   const isi = T.halamanHadits({
     r, kitab, bab: bab.results[0] || null, penilaian: pen.results, jalur, jalurPenilaian, pisah,
-    sanadHtml: pisah ? rubrik(pisah.sanad) : "", rantai: susunRantai(r, kitab, pisah),
+    sanadHtml: pisah ? rubrik(pisah.sanad) : "", rantai: susunRantai(r, kitab, pisah, perawi),
     tirmidzi: kid === "tirmidzi" ? hukumTirmidzi(r.arab) : null, tema: tema.results,
     sebelum: tetangga.results.find((x) => x.urut === r.urut - 1), sesudah: tetangga.results.find((x) => x.urut === r.urut + 1), kanonik,
     dikutip: dikutip.results, judul: judul.results[0] || null,
@@ -211,7 +214,11 @@ async function sitemap(env, url, kid) {
   const xml = (s) => new Response(s, { headers: { "Content-Type": "application/xml; charset=utf-8", "Cache-Control": "public, max-age=86400" } });
   if (!kid) {
     const kitab = await semuaKitab(db);
-    return xml(`<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${kitab.map((k) => `<sitemap><loc>${url.origin}/sitemap-${k.id}.xml</loc></sitemap>`).join("\n")}\n</sitemapindex>`);
+    return xml(`<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${kitab.map((k) => `<sitemap><loc>${url.origin}/sitemap-${k.id}.xml</loc></sitemap>`).join("\n")}\n<sitemap><loc>${url.origin}/sitemap-perawi.xml</loc></sitemap>\n</sitemapindex>`);
+  }
+  if (kid === "perawi") {
+    const ids = (await db.prepare("SELECT id FROM perawi ORDER BY n_riwayat DESC").all()).results;
+    return xml(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n<url><loc>${url.origin}/perawi</loc></url>\n${ids.map((r) => `<url><loc>${url.origin}/perawi/${r.id}</loc></url>`).join("\n")}\n</urlset>`);
   }
   const rows = (await db.prepare("SELECT slug FROM riwayat WHERE kitab_id = ?1 ORDER BY urut").bind(kid).all()).results;
   if (!rows.length) return null;
@@ -263,6 +270,12 @@ async function rute(req, env) {
   }
   let m;
   if ((m = p.match(/^\/sitemap-([a-z]+)\.xml$/))) return sitemap(env, url, m[1]);
+  if (p === "/perawi") return html(T.layout({ judul: "Perawi hadits · Teman Hadits", aktif: "perawi", kanonik: url.origin + "/perawi", deskripsi: "Biodata perawi hadits dari Taqrib at-Tahdzib (Ibnu Hajar): penilaian, tabaqah, tahun wafat, guru dan murid.", isi: T.halamanPerawiDaftar({ daftar: await daftarPerawi(db) }) }));
+  if ((m = p.match(/^\/perawi\/([tk]\d+)$/))) {
+    const pr = await dataPerawi(db, m[1]);
+    if (!pr) return html(T.layout({ judul: "Tidak ditemukan · Teman Hadits", noindex: true, isi: T.halamanGalat("Perawi tidak ditemukan", "Perawi ini belum teridentifikasi di sanad mana pun dalam data kami.") }), 404);
+    return html(T.layout({ judul: `${pr.nama} · Perawi hadits · Teman Hadits`, aktif: "perawi", kanonik: `${url.origin}/perawi/${pr.id}`, deskripsi: `Biodata ${pr.nama}${pr.penilaian ? `: ${pr.penilaian}` : ""} (Taqrib at-Tahdzib${pr.taqrib ? " no. " + pr.taqrib : ""}).`, isi: T.halamanPerawi({ p: pr }) }));
+  }
   if ((m = p.match(/^\/kitab\/([a-z]+)$/))) return halamanKitab(env, url, m[1], null);
   if ((m = p.match(/^\/kitab\/([a-z]+)\/bab\/(\d+)$/))) return halamanKitab(env, url, m[1], parseInt(m[2], 10));
   if ((m = p.match(/^\/tema\/(\d+)$/))) return halamanTema(env, url, m[1]);

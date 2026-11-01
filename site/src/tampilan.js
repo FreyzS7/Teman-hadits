@@ -1,5 +1,6 @@
 // Template HTML. Semua teks dari database melewati esc() kecuali yang sudah dibangun aman (rubrik, cuplik).
 import { cuplik, cuplikAr, esc, fmt, normAr, SIGHAH_MAP } from "./teks.js";
+import { RUMUZ, TABAQAH, TINGKAT } from "./perawi.js";
 
 const HR = { riyadh: "an-Nawawi, Riyadhus Shalihin", bukhari: "al-Bukhari", muslim: "Muslim", abudawud: "Abu Dawud", tirmidzi: "at-Tirmidzi", nasai: "an-Nasa'i", ibnumajah: "Ibnu Majah", malik: "Malik (al-Muwaththa')", ahmad: "Ahmad", darimi: "ad-Darimi", syafii: "asy-Syafi'i" };
 export const PENDEK = { riyadh: "Riyadhus Shalihin", bukhari: "Bukhari", muslim: "Muslim", abudawud: "Abu Dawud", tirmidzi: "Tirmidzi", nasai: "Nasa'i", ibnumajah: "Ibnu Majah", malik: "Malik", ahmad: "Ahmad", darimi: "Darimi", syafii: "Syafi'i" };
@@ -33,7 +34,7 @@ export function bukuBesar(pen, kitab, tambahan = []) {
 const SVG_BINTANG = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0l2.6 6.3L21 3l-3.3 6.4L24 12l-6.3 2.6L21 21l-6.4-3.3L12 24l-2.6-6.3L3 21l3.3-6.4L0 12l6.3-2.6L3 3l6.4 3.3z"/></svg>`;
 
 export function layout({ judul, deskripsi, isi, aktif = "", kanonik = "", noindex = false }) {
-  const nav = [["/", "Beranda", "beranda"], ["/cari", "Cari", "cari"], ["/cek", "Cek Hadits", "cek"], ["/kitab", "Kitab", "kitab"], ["/tema", "Tema", "tema"], ["/populer", "Populer", "populer"], ["/metode", "Metode", "metode"]];
+  const nav = [["/", "Beranda", "beranda"], ["/cari", "Cari", "cari"], ["/cek", "Cek Hadits", "cek"], ["/kitab", "Kitab", "kitab"], ["/tema", "Tema", "tema"], ["/populer", "Populer", "populer"], ["/perawi", "Perawi", "perawi"], ["/metode", "Metode", "metode"]];
   return `<!doctype html>
 <html lang="id">
 <head>
@@ -222,9 +223,11 @@ export function halamanHadits(d) {
       const g = SIGHAH_MAP[s.sighah];
       const mata = bawah && s.sighah ? `<div class="mata"><span>${esc(bawah.namaId || bawah.namaAr)} menerima dengan lafaz</span><span class="ar">${esc(s.lafaz)}</span><em>${g ? esc(`${g.latin}, “${g.arti}”`) : ""}</em></div>` : "";
       return `<li class="simpul${s.nabi ? " nabi" : ""}" style="animation-delay:${i * 60}ms"><span class="manik" aria-hidden="true">${s.nabi ? "ﷺ" : s.penyusun ? "✦" : i}</span>
-        <div class="orang"><span class="peran">${esc(s.peran)}</span><b>${esc(s.namaId || "")}</b><span class="ar">${esc(s.namaAr || "")}</span></div>${mata}</li>`;
+        <div class="orang"><span class="peran">${esc(s.peran)}</span><b>${esc(s.namaId || "")}</b><span class="ar">${esc(s.namaAr || "")}</span>${s.perawi ? ringkasPerawi(s.perawi) : ""}</div>${mata}</li>`;
     }).join("")}</ol>
-    <p class="kotak-info" style="max-width:640px;margin:18px auto 0">${rantai.selaras ? "Nama Latin diambil dari terjemah Lidwa dan dipasangkan dengan nama Arab karena jumlah dan urutannya sama." : "Rantai dibaca otomatis dari teks Arab; nama Latin tidak dipasangkan karena jumlahnya tidak sama dengan terjemah."} Perawi yang meriwayatkan bersamaan (“dan …”) belum ditampilkan terpisah. Biodata dan penilaian tiap perawi (jarh wa ta'dil) belum dimuat; bagian ini sengaja dikosongkan sampai datanya terverifikasi.</p>
+    <p class="kotak-info" style="max-width:640px;margin:18px auto 0">${rantai.selaras ? "Nama Latin diambil dari terjemah Lidwa dan dipasangkan dengan nama Arab karena jumlah dan urutannya sama." : "Rantai dibaca otomatis dari teks Arab; nama Latin tidak dipasangkan karena jumlahnya tidak sama dengan terjemah."} Perawi yang meriwayatkan bersamaan (“dan …”) belum ditampilkan terpisah. ${rantai.simpul.some((x) => x.perawi)
+      ? `Identitas perawi ditetapkan dari daftar guru-murid <i>Tahdzib al-Kamal</i> (al-Mizzi) untuk kitab ini, dan hanya ditampilkan bila <b>pasti</b>; ringkasan penilaian dari <i>Taqrib at-Tahdzib</i> (Ibnu Hajar). Perawi tanpa ringkasan belum dapat dipastikan. <a href="/metode#perawi">Caranya</a>.`
+      : "Identitas perawi di rantai ini belum dapat dipastikan, jadi biodatanya tidak ditampilkan."}</p>
   </section>` : "";
   return `
   <nav class="remah" aria-label="Lokasi"><a href="/kitab">Kitab</a> › <a href="/kitab/${esc(kitab.id)}">${esc(kitab.nama)}</a>${bab ? ` › <a href="/kitab/${esc(kitab.id)}/bab/${bab.no}">${esc(bab.nama || "Bab " + bab.no)}</a>` : ""} › <span>No. ${esc(r.no_tampil)}</span></nav>
@@ -399,6 +402,55 @@ export function halamanTema({ t, induk, sub, hadits, versi }) {
   </article>`).join("")}</div>`;
 }
 
+function chipTingkat(t) {
+  if (!t || !TINGKAT[t]) return "";
+  return `<span class="chip kk-${TINGKAT[t][1]}" title="tingkatan ke-${t} dari 12 dalam muqaddimah Taqrib">${esc(TINGKAT[t][0])}</span>`;
+}
+
+function wafatTeks(p) {
+  return p.wafat ? `w. ${p.wafat} H${p.wafat_ragu ? " (ada pendapat lain)" : ""}` : "";
+}
+
+function ringkasPerawi(p) {
+  const info = [p.tabaqah ? `tabaqah ${p.tabaqah}` : "", wafatTeks(p)].filter(Boolean).join(" · ");
+  return `<a class="perawi-ringkas" href="/perawi/${esc(p.id)}">${p.penilaian ? `<span class="ar">${esc(p.penilaian)}</span>` : ""}
+    <span class="perawi-meta">${chipTingkat(p.tingkat)}${info ? `<span>${esc(info)}</span>` : ""}<span class="lanjut">biodata →</span></span></a>`;
+}
+
+export function halamanPerawi({ p }) {
+  const rumuz = (p.rumuz || "").split(" ").filter(Boolean);
+  const daftarOrang = (xs, kosong) => xs.length
+    ? `<ul class="daftar-orang">${xs.map((x) => `<li><a href="/perawi/${esc(x.id)}"><span class="ar">${esc(x.nama)}</span></a> ${chipTingkat(x.tingkat)} <span class="kecil num">${fmt(x.n)} riwayat</span></li>`).join("")}</ul>`
+    : `<p class="kecil">${kosong}</p>`;
+  return `<nav class="remah"><a href="/perawi">Perawi</a> › <span class="ar" style="display:inline">${esc(p.nama)}</span></nav>
+  <h1 class="halaman-judul ar" style="margin-top:10px;font-size:calc(2rem * var(--ar))">${esc(p.nama)}</h1>
+  <div class="meta" style="margin-top:8px">${chipTingkat(p.tingkat)}${p.tabaqah ? `<span class="chip">tabaqah ${p.tabaqah}</span>` : ""}${p.wafat ? `<span class="chip num">${esc(wafatTeks(p))}</span>` : ""}<span class="chip num">${fmt(p.n_riwayat)} riwayat di data kami</span></div>
+  <section class="bagian" style="margin-top:22px"><header><h2>Ringkasan Ibnu Hajar</h2><p>${p.taqrib ? `<i>Taqrib at-Tahdzib</i> no. ${p.taqrib} (edisi Muhammad 'Awwamah, Dar ar-Rasyid)` : "Perawi ini tidak ditemukan di <i>Taqrib at-Tahdzib</i> dengan pasti; data dari <i>Tahdzib al-Kamal</i>."}</p></header>
+    ${p.teks_taqrib ? `<p class="ar kutipan-ulama">${esc(p.teks_taqrib)}${rumuz.length ? ` <span class="kode">${esc(rumuz.join(" "))}</span>` : ""}</p>` : ""}
+    <dl class="fakta">
+      ${p.penilaian ? `<dt>Penilaian</dt><dd><span class="ar" style="display:inline">${esc(p.penilaian)}</span> ${chipTingkat(p.tingkat)}<br><span class="kecil">Padanan Indonesia hanya alat bantu baca; Ibnu Hajar menyusun 12 tingkatan di muqaddimah Taqrib.</span></dd>` : ""}
+      ${p.tabaqah ? `<dt>Tabaqah</dt><dd>${p.tabaqah}: ${esc(TABAQAH[p.tabaqah] || "")}</dd>` : ""}
+      ${p.wafat ? `<dt>Wafat</dt><dd>${esc(wafatTeks(p))}. <span class="kecil">Dibaca dari teks di atas; bila Ibnu Hajar tidak menulis abadnya, abad dilengkapi dengan kaidah di muqaddimah Taqrib (tabaqah 1–2 sebelum 100 H, 3–8 sesudah 100 H, 9–12 sesudah 200 H).</span></dd>` : ""}
+      ${rumuz.length ? `<dt>Riwayatnya ada di</dt><dd>${rumuz.map((k) => esc(RUMUZ[k] || k)).join(", ")}</dd>` : ""}
+      ${p.tk_no ? `<dt>Tahdzib al-Kamal</dt><dd>biografi no. ${p.tk_no} (teks digital; berisi daftar guru dan murid yang dipakai untuk identifikasi)</dd>` : ""}
+    </dl>
+  </section>
+  <section class="bagian" style="margin-top:26px"><header><h2>Guru dan murid di sanad kami</h2><p>Dihitung dari rantai yang perawinya teridentifikasi pasti. Bukan daftar lengkap; daftar lengkap ada di <i>Tahdzib al-Kamal</i>.</p></header>
+    <div class="dua-kolom"><div><h3 class="kecil-judul">Meriwayatkan dari (guru)</h3>${daftarOrang(p.guru, "Belum ada guru yang teridentifikasi pasti.")}</div>
+    <div><h3 class="kecil-judul">Diriwayatkan oleh (murid)</h3>${daftarOrang(p.murid, "Belum ada murid yang teridentifikasi pasti.")}</div></div>
+  </section>
+  <section class="bagian" style="margin-top:26px"><header><h2>Riwayat</h2><p>${fmt(p.n_riwayat)} riwayat di enam kitab ${p.n_riwayat > p.riwayat.length ? `(ditampilkan ${p.riwayat.length} pertama)` : ""}.</p></header>
+    <div class="nomor" style="display:flex;flex-wrap:wrap;gap:6px">${p.riwayat.map((r) => `<a class="chip num" href="/${esc(r.kitab_id)}/${esc(r.slug)}">${esc(PENDEK[r.kitab_id])} ${esc(r.no_tampil)}</a>`).join("")}</div>
+  </section>`;
+}
+
+export function halamanPerawiDaftar({ daftar }) {
+  return `<h1 class="halaman-judul">Perawi hadits</h1>
+  <p class="sub">Perawi yang identitasnya ditetapkan dengan pasti di sanad enam kitab (al-Bukhari, Muslim, Abu Dawud, at-Tirmidzi, an-Nasa'i, Ibnu Majah), dengan ringkasan Ibnu Hajar dari <i>Taqrib at-Tahdzib</i>. Diurutkan menurut jumlah riwayat.</p>
+  <ol class="daftar-perawi">${daftar.map((p) => `<li><a href="/perawi/${esc(p.id)}"><span class="ar">${esc(p.nama)}</span></a>
+    <span class="baris-status">${chipTingkat(p.tingkat)}${p.tabaqah ? `<span class="kecil">tabaqah ${p.tabaqah}</span>` : ""}${p.wafat ? `<span class="kecil">w. ${p.wafat} H</span>` : ""}<span class="kecil num">${fmt(p.n_riwayat)} riwayat</span></span></li>`).join("")}</ol>`;
+}
+
 export function halamanMetode({ info }) {
   const sumber = JSON.parse(info.sumber || "[]");
   return `<div class="prosa">
@@ -419,13 +471,15 @@ export function halamanMetode({ info }) {
     </ul>
     <h2>Pencarian</h2>
     <p>Pencarian memahami kalimat bebas dengan aturan yang bisa diperiksa: ejaan diseragamkan (shalat/sholat/salat), kata pengisi diabaikan, dan istilah awam dipetakan ke istilah dalam hadits. Contohnya, “tarawih” dicari sebagai <span class="ar">قيام رمضان</span>, karena kata “tarawih” tidak ada di teks Arab hadits. Setiap hasil menunjukkan alasan kemunculannya.</p>
+    <h2 id="perawi">Identitas perawi</h2>
+    <p>Sebuah nama di sanad, misalnya “Sufyan”, bisa merujuk ke beberapa orang. Seperti cara para ahli hadits membedakannya, kami melihat <b>siapa murid dan gurunya</b> di rantai itu. <i>Tahdzib al-Kamal</i> (al-Mizzi) mencatat untuk setiap perawi enam kitab daftar guru dan muridnya, lengkap dengan kode kitab tempat hubungan itu ada. Sebuah nama baru kami tampilkan sebagai <b>pasti</b> bila satu orang unggul mutlak atas semua kemungkinan lain dan hubungannya dengan perawi di atas dan di bawahnya tercatat untuk kitab tersebut. Ringkasan penilaian, tabaqah, dan tahun wafat diambil dari <i>Taqrib at-Tahdzib</i> (Ibnu Hajar). Hasilnya diuji terhadap identifikasi kurator Ifta' Sunnah (Arab Saudi): 99,8% sama pada lebih dari 45 ribu posisi yang bisa dibandingkan.</p>
     <h2>Hadits populer &amp; palsu</h2>
     <p>Untuk ucapan yang sering beredar sebagai hadits, kami menampilkan pembahasan ulama dari empat kitab khusus: <i>al-Maudhu'at</i> (Ibnul Jauzi), <i>al-Maqashid al-Hasanah</i> (as-Sakhawi), <i>al-Asrar al-Marfu'ah</i> (Mulla 'Ali al-Qari), dan <i>Kasyf al-Khafa'</i> (al-'Ajluni). Kata kunci penilaian seperti <span class="ar" style="display:inline">باطل</span> (batil) dicari otomatis dan selalu ditampilkan bersama kalimat aslinya. Kami memilih aturan yang hati-hati: kata <i>shahih</i> atau <i>hasan</i> hanya ditandai bila jelas berupa penilaian (mis. <span class="ar" style="display:inline">إسناده صحيح</span>), bukan bagian dari judul kitab atau isi hadits. Bila sebuah ucapan hanya disebut di tengah pembahasan ucapan lain, penilaian entri itu tidak kami tempelkan padanya.</p>
     <h2>Sumber</h2>
     <ul>
       <li>Teks Arab bernomor standar dan penilaian ulama: fawazahmed0/hadith-api (domain publik).</li>
       <li>Teks Arab dan terjemah Indonesia: Ensiklopedi Hadits 9 Imam, Lidwa Pusaka (digunakan dengan izin), via carihadis.com dan irsyadulibad/hadits-database.</li>
-      <li>Judul kitab &amp; bab, edisi tahqiq (Ahmad, ad-Darimi, asy-Syafi'i), dan empat kitab hadits populer &amp; palsu: korpus OpenITI (Romanov &amp; Seydi, Zenodo).</li>
+      <li>Judul kitab &amp; bab, edisi tahqiq (Ahmad, ad-Darimi, asy-Syafi'i), empat kitab hadits populer &amp; palsu, <i>Taqrib at-Tahdzib</i> dan <i>Tahdzib al-Kamal</i>: korpus OpenITI (Romanov &amp; Seydi, Zenodo).</li>
       <li>Tema dan terjemah yang ditinjau: HadeethEnc.com, ditampilkan tanpa diubah.</li>
       <li>Versi data: ${sumber.map(([s, c]) => `<code>${esc(s)}@${esc(c)}</code>`).join(", ")}, dibangun ${esc(info.dibangun)}.</li>
     </ul>

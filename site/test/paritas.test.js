@@ -2,7 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { akarAr, normAr, normId } from "../src/teks.js";
+import { akarAr, normAr, normId, pisahSanad, rantaiArab } from "../src/teks.js";
 import { rencana } from "../src/cari.js";
 
 const F = JSON.parse(readFileSync(new URL("./fixtures/paritas.json", import.meta.url), "utf8"));
@@ -26,4 +26,14 @@ test("rencana pencarian identik dengan Python", () => {
       x.kueri,
     );
   }
+});
+
+test("pemisahan sanad & rantai perawi identik dengan Python (identifikasi perawi disimpan per segmen)", () => {
+  const beda = [];
+  for (const x of F.sanad) {
+    const p = pisahSanad(x.arab);
+    const js = p === null ? null : { sanad: p.sanad, matan: p.matan, rantai: rantaiArab(p.sanad) };
+    try { assert.deepEqual(js, x.hasil); } catch { beda.push(x.id); }
+  }
+  assert.deepEqual(beda, []);
 });
