@@ -8,7 +8,8 @@ Langkah:
      kategori -> daftar hadits per kategori -> detail tiap hadits (bahasa Indonesia).
   2. Simpan tema, hadits, dan relasi tema-hadits.
   3. Petakan matan Arab HadeethEnc ke teks Arab riwayat tingkat A/B (2-gram setelah normalisasi
-     dan pemotongan awalan). Skor = bagian 2-gram matan HadeethEnc yang ada di teks riwayat.
+     dan pemotongan awalan). Skor = bagian 2-gram matan HadeethEnc (berbobot IDF) yang ada di teks
+     riwayat; disimpan bila ≥ 0,6, maksimal 40 pasangan per hadits.
   4. Uji silang: atribusi HadeethEnc ("متفق عليه", "رواه مسلم", ...) dibandingkan dengan kitab
      pasangan hasil pemetaan kita. Atribusi itu dibuat penyusun HadeethEnc, jadi ia saksi independen.
 
@@ -24,6 +25,7 @@ Jalankan:
 import collections
 import datetime
 import json
+import math
 import os
 import random
 import re
@@ -161,11 +163,13 @@ def kitab_atribusi(attr_ar):
     s = (attr_ar or "").replace("ـ", "")
     s = re.sub(r"[ً-ْ]", "", s)
     out = set()
-    if "متفق عليه" in s:
+    if re.search("متفق علي(?:ه|ها)", s):  # "متفق عليه" / "متفق عليها" (riwayat ...)
         out |= {"bukhari", "muslim"}
+    # "حديث أنس بن مالك" adalah nama sahabat, bukan al-Muwaththa'; buang "بن/ابن + nama" dulu.
+    s = re.sub(r"(?:ابن|بن)\s+(?:مالك|أحمد|احمد)", " ", s)
     for nama, kid in PENYUSUN:
-        # "مسلم" juga bisa muncul dalam frasa lain; batasi ke kata utuh
-        if re.search(r"(?<![ء-ي])" + nama + r"(?![ء-ي])", s):
+        # kata utuh, boleh diawali kata sambung و ("والترمذي", "وأحمد")
+        if re.search("(?<![\u0621-\u064A])و?" + nama + "(?![\u0621-\u064A])", s):
             out.add(kid)
     return out
 
@@ -219,6 +223,7 @@ def bangun():
         n = norm_ar(ar)
         teks[rid] = n
         df.update(grams(n))
+    N = len(teks)
     LANGKA = 300
     post = collections.defaultdict(list)
     for rid, n in teks.items():
@@ -238,15 +243,20 @@ def bangun():
         for g in langka:
             for rid in post[g]:
                 cand[rid] += 1
+        # Skor berbobot IDF: 2-gram umum (رسول الله، صلى الله عليه وسلم، كان رسول) hampir tak berbobot,
+        # sehingga kecocokan ditentukan oleh bagian matan yang khas. Tanpa ini, matan pendek bisa
+        # "cocok" dengan hadits lain hanya karena frasa umum (kasus HE 10940 -> abudawud:1130).
+        bobot = {g: math.log(N / (1 + df[g])) if df[g] else math.log(N) for g in m}
+        total = sum(bobot.values())
         hasil = []
         for rid, _ in cand.most_common(200):
-            c = len(m & grams(teks[rid])) / len(m)
+            c = sum(bobot[g] for g in m & grams(teks[rid])) / total
             if c >= 0.6:
                 hasil.append((c, rid))
         hasil.sort(key=lambda x: (-x[0], x[1]))
         for c, rid in hasil[:40]:
             db.execute("INSERT INTO he_riwayat VALUES(?,?,?,?)",
-                       (h["id"], rid, round(c, 3), "2gram-matan>=0.6"))
+                       (h["id"], rid, round(c, 3), "2gram-idf-matan>=0.6"))
         statistik["terpetakan" if hasil else "tidak terpetakan"] += 1
     db.commit()
     print(f"pemetaan {time.time() - t0:.0f}s: {dict(statistik)}", file=sys.stderr)

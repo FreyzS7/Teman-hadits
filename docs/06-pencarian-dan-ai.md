@@ -21,7 +21,11 @@ Contoh terukur (build 1 Nov 2026):
 | "tolong carikan hadits tentang sholat tarawih" | 5 (hanya terjemah yang kebetulan memuat "tarawih") | **47**, termasuk Bukhari 2009 dan Muslim 759; kata "tarawih" (تراويح) tidak ada di teks Arab mana pun, hadits menyebutnya قيام رمضان |
 | "min ada hadist tentang keutamaan sedekah ga" | 4 | 1.083 kandidat, tetapi **urutan teratas belum relevan** (mis. kisah warisan Fathimah yang memuat kata "sedekah") |
 
-Contoh kedua adalah batas aturan: kata kuncinya cocok, tetapi maknanya tidak. Ada dua jalan memperbaikinya, dan keduanya masuk rencana:
+Contoh kedua adalah batas aturan: kata kuncinya cocok, tetapi maknanya tidak.
+
+**Pembaruan (tema HadeethEnc sudah dimuat):** pencarian kini menampilkan *Tema terkait* di atas hasil. Kata inti (mis. "sedekah", dengan semua varian ejaannya) wajib cocok dengan judul tema, sementara kata maksud ("keutamaan") hanya menambah skor. "keutamaan sedekah" → tema **Sedekah Sunah** (27 hadits kurasi ulama, terhubung ke Bukhari 1442, Muslim 1010, dst.); "keutamaan puasa" → **Keutamaan Puasa**. Ini tanpa AI.
+
+Jalan perbaikan yang lain:
 
 - **Kategori HadeethEnc** (tanpa AI): 447 tema berbahasa Indonesia yang disusun dan ditinjau ulama, misalnya "Sedekah Sunah" berisi 27 hadits. Pertanyaan bertema dicocokkan dulu ke kategori ini.
 - **Lapis 2** (AI terbatas), di bawah.

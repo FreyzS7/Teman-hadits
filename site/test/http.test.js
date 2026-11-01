@@ -58,3 +58,13 @@ test("hadits 'innamal a'malu bin niyyat' tidak ada di Muwaththa' (riwayat Yahya)
 test("nomor tak dikenal → 404, bukan halaman kosong", opsi, async () => {
   assert.equal((await ambil("/bukhari/999999")).status, 404);
 });
+
+test("tema HadeethEnc: daftar tema & saran tema di pencarian", opsi, async () => {
+  const daftar = await ambil("/tema");
+  for (const t of ["Akidah", "Keutamaan dan Adab", "Sejarah dan Tarikh"]) assert.ok(daftar.teks.includes(t), t);
+  const { teks } = await ambil("/cari?q=" + encodeURIComponent("min ada hadist tentang keutamaan sedekah ga"));
+  assert.match(teks, /href="\/tema\/511">Sedekah Sunah/);
+  const tema = await ambil("/tema/511");
+  assert.match(tema.teks, /HadeethEnc\.com/);
+  assert.match(tema.teks, /href="\/bukhari\/1442"/);
+});

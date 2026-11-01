@@ -21,6 +21,7 @@ Pustaka hadits berbahasa Indonesia. Pengguna bisa mencari dengan kata kunci atau
 | `docs/04-protokol-verifikasi.md` | Cara membuktikan data benar tanpa bergantung pada pembuat situs |
 | `docs/05-rencana-dan-hosting.md` | Tahapan kerja, arsitektur, hosting, anggaran |
 | `docs/06-pencarian-dan-ai.md` | Pencarian pintar tanpa AI, dan peran AI yang dibatasi |
+| `docs/07-hadeethenc.md` | Impor tema & hadits HadeethEnc, syarat pemakaian, uji silang atribusi |
 | `site/` | Situs sungguhan: Cloudflare Worker + database D1, jalan lokal dengan `wrangler dev` |
 | `design/` | Prototipe desain (`prototipe.html`), diisi data asli dari database |
 
@@ -28,7 +29,7 @@ Pustaka hadits berbahasa Indonesia. Pengguna bisa mencari dengan kata kunci atau
 
 Butuh Python 3 dan Node.js ≥ 20.
 
-**1. Bangun data** (sekali, ±4 menit):
+**1. Bangun data** (sekali; ±4 menit, ditambah ±25 menit untuk unduhan pertama HadeethEnc):
 
 ```bash
 bash pipeline/run_all.sh
@@ -76,6 +77,7 @@ python3 pipeline/cari.py "tolong carikan hadits tentang sholat tarawih"
 
 - 10 kitab dimuat, 67.512 riwayat terbit (32.578 tingkat A, 34.934 tingkat B), 408 dikarantina. Riyadhus Shalihin dikarantina sampai disegmentasi ulang.
 - 21.185 riwayat sudah punya penilaian derajat bernama: al-Albani, Syu'aib al-Arna'uth, Zubair 'Ali Za'i, Ahmad Syakir, Basyar 'Awwad, Abu Ghuddah, Salim al-Hilali, dan lainnya.
-- Uji: 15 uji emas data (Python), 9 uji unit + paritas Python↔JavaScript, 8 uji emas lewat HTTP. Contohnya: hadits niat ditemukan di ketujuh tempatnya dalam Shahih al-Bukhari, dan tidak ada di al-Muwaththa' riwayat Yahya.
+- 447 tema berbahasa Indonesia dan 2.260 hadits dari HadeethEnc.com. 1.998 di antaranya terhubung ke riwayat kita; uji silang atribusi: 98,8% cocok dengan atribusi HadeethEnc sendiri.
+- Uji: uji emas data (Python, termasuk HadeethEnc), 9 uji unit + paritas Python↔JavaScript, 9 uji emas lewat HTTP. Contohnya: hadits niat ditemukan di ketujuh tempatnya dalam Shahih al-Bukhari, dan tidak ada di al-Muwaththa' riwayat Yahya.
 
 Angka terbaru selalu ada di [docs/01-audit-data.md](docs/01-audit-data.md).

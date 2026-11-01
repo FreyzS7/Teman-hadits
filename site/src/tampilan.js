@@ -127,7 +127,7 @@ export function beranda({ kitab, info }) {
 // ------------------------------------------------------------------------------------------------
 // HASIL CARI
 // ------------------------------------------------------------------------------------------------
-export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan }) {
+export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan, tema = [] }) {
   const r = out.rencana;
   const urlDengan = (ubah) => {
     const p = new URLSearchParams({ q, ...filter, ...ubah });
@@ -176,6 +176,7 @@ export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan }) {
   <div class="dua-kolom">
     <div>
       ${rujuk}
+      ${tema.length ? `<div class="rujukan-langsung"><span>Tema terkait (kurasi HadeethEnc):</span>${tema.map((t) => `<a href="/tema/${esc(t.id)}">${esc(t.judul)} <span class="kecil">${fmt(t.jumlah)} hadits</span></a>`).join("")}</div>` : ""}
       ${catatan.length ? `<div class="catatan">${catatan.join("<br><br>")}</div>` : ""}
       ${out.hasil.length ? `<p class="kecil" style="margin-top:14px">${fmt(out.total)} riwayat ditemukan${filter.k || filter.t ? `, ${fmt(out.tampil)} sesuai saringan` : ""}. Diurutkan menurut kekuatan alasan, lalu tingkat data, lalu urutan kitab.</p>` : kosong}
       <ol class="daftar-hasil">${daftar}</ol>
@@ -361,22 +362,24 @@ export function halamanCek({ t, hasil, kitab, info }) {
 // ------------------------------------------------------------------------------------------------
 // TEMA, METODE, GALAT
 // ------------------------------------------------------------------------------------------------
-export function daftarTema({ akar, anak }) {
+export function daftarTema({ akar, anak, versi }) {
   if (!akar.length) return `<h1 class="halaman-judul">Tema</h1><div class="catatan" style="margin-top:18px">Daftar tema (dari HadeethEnc.com, disusun dan ditinjau ulama) sedang disiapkan. Sementara itu, gunakan <a href="/cari">pencarian</a>.</div>`;
-  return `<h1 class="halaman-judul">Tema</h1><p class="sub">Tema berbahasa Indonesia dari HadeethEnc.com. Setiap hadits di tema dihubungkan ke riwayat di kitab-kitab kami bila teks Arabnya cocok.</p>
+  return `<h1 class="halaman-judul">Tema</h1><p class="sub">Tema berbahasa Indonesia dari HadeethEnc.com, disusun dan ditinjau tim ulama mereka. Setiap hadits di tema dihubungkan ke riwayat di kitab-kitab kami bila teks Arabnya cocok. Versi data: ${esc(versi || "-")}.</p>
   ${akar.map((a) => `<section class="bagian" style="margin-top:30px"><header><h2><a href="/tema/${esc(a.id)}" style="text-decoration:none">${esc(a.judul)}</a></h2><p>${fmt(a.jumlah)} hadits</p></header>
     <div class="tema-daftar">${(anak[a.id] || []).map((t) => `<a href="/tema/${esc(t.id)}">${esc(t.judul)}<span>${fmt(t.jumlah)}</span></a>`).join("")}</div></section>`).join("")}`;
 }
 
-export function halamanTema({ t, induk, sub, hadits }) {
+export function halamanTema({ t, induk, sub, hadits, versi }) {
   return `<nav class="remah"><a href="/tema">Tema</a>${induk ? ` › <a href="/tema/${esc(induk.id)}">${esc(induk.judul)}</a>` : ""} › <span>${esc(t.judul)}</span></nav>
   <h1 class="halaman-judul" style="margin-top:10px">${esc(t.judul)}</h1>
   ${sub.length ? `<div class="tema-daftar" style="margin-top:18px">${sub.map((s) => `<a href="/tema/${esc(s.id)}">${esc(s.judul)}<span>${fmt(s.jumlah)}</span></a>`).join("")}</div>` : ""}
+  <p class="kecil" style="margin-top:14px">Teks terjemah, derajat, dan penjelasan di halaman ini dari <a href="https://hadeethenc.com" rel="noopener">HadeethEnc.com</a> (Ensiklopedia Terjemahan Hadis-hadis Nabi), ditampilkan tanpa diubah. Versi: ${esc(versi || "-")}.</p>
   <div style="display:grid;gap:14px;margin-top:22px">${hadits.map((h) => `<article class="he">
     <h2 style="font-size:1.15rem;color:var(--zamrud)">${esc(h.judul)}</h2>
     ${h.boleh_tampil && h.teks_id ? `<p>${esc(h.teks_id)}</p>` : ""}
     ${h.teks_ar ? `<p class="ar">${esc(h.teks_ar)}</p>` : ""}
-    <p class="kecil">${h.atribusi ? esc(h.atribusi) + " · " : ""}${h.derajat ? "Derajat menurut HadeethEnc: <b>" + esc(h.derajat) + "</b> · " : ""}<a href="${esc(h.url)}" rel="noopener">HadeethEnc</a></p>
+    <p class="kecil">${h.atribusi ? esc(h.atribusi) + " · " : ""}${h.derajat ? "Derajat menurut HadeethEnc: <b>" + esc(hukumTampil(h.derajat)) + "</b> · " : ""}<a href="${esc(h.url)}" rel="noopener">lihat di HadeethEnc.com</a></p>
+    ${h.penjelasan ? `<details><summary class="kecil" style="cursor:pointer">Penjelasan (HadeethEnc)</summary><p style="margin-top:8px">${esc(h.penjelasan)}</p></details>` : ""}
     ${h.riwayat.length ? `<p class="kecil">Di kitab kami: ${h.riwayat.map((r) => `<a href="/${esc(r.kitab_id)}/${esc(r.slug)}">${esc(PENDEK[r.kitab_id])} ${esc(r.no_tampil)}</a>`).join(" · ")}</p>` : `<p class="kecil">Belum terhubung ke riwayat di kitab kami.</p>`}
   </article>`).join("")}</div>`;
 }

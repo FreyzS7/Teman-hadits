@@ -225,6 +225,8 @@ def main():
         h = sqlite3.connect(he_path)
         try:
             w.sisip("tema", ["id", "judul", "induk", "jumlah"], h.execute("SELECT id, judul, induk, jumlah FROM tema"))
+            meta = dict(h.execute("SELECT kunci, nilai FROM hadeethenc_meta"))
+            w.sisip("info", ["kunci", "nilai"], [("hadeethenc_versi", meta.get("versi", "")), ("hadeethenc_sumber", meta.get("sumber", ""))])
             he = h.execute("SELECT id, judul, teks_id, teks_ar, atribusi, derajat, penjelasan, faedah_json, url, "
                            "boleh_tampil FROM he_hadits").fetchall()
             n_he = len(he)

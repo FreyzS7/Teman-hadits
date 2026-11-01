@@ -25,7 +25,7 @@ Prioritas ditentukan oleh nilai tambahnya bagi kebenaran data.
 | Sumber | Untuk apa | Status akses dari lingkungan build |
 |---|---|---|
 | Dorar.net, *al-Mausu'ah al-Haditsiyyah* | Takhrij + hukum hadits per ulama, termasuk hadits palsu populer | Jaringan sudah dibuka, tetapi **situs Dorar sendiri menolak akses otomatis** (403, proteksi bot). Kami tidak menembusnya. Jalan yang benar: minta akses API resmi ke pengelola Dorar, atau pakai sumber lain (mis. teks *al-Maudhu'at* Ibnul Jauzi di OpenITI) |
-| HadeethEnc.com (Ensiklopedia Hadits Terjemah) | 447 kategori tema berbahasa Indonesia, terjemah yang sudah ditinjau, derajat, penjelasan, faedah | **Bisa diakses** (API publik `hadeethenc.com/api/v1`). Syarat pemakaian perlu dibaca sebelum diimpor |
+| HadeethEnc.com (Ensiklopedia Hadits Terjemah) | 447 kategori tema berbahasa Indonesia, terjemah yang sudah ditinjau, derajat, penjelasan, faedah | **Sudah dimuat** (lihat `docs/07-hadeethenc.md`): boleh diterbitkan ulang tanpa diubah, dengan atribusi dan nomor versi |
 | sunnah.com API | Pembanding nomor dan teks (perlu API key) | **Diblokir** |
 | OpenITI (GitHub) | Teks Arab dengan identitas edisi cetak, untuk Darimi, Musnad Ahmad, Syafi'i, Riyadhus Shalihin, dan kitab rijal | Bisa diakses |
 | Kitab rijal: *Taqrib at-Tahdzib*, *Tahdzib al-Kamal*, *al-Kasyif* | Biodata dan penilaian perawi untuk rantai sanad | Lewat OpenITI / Syamilah |

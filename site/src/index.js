@@ -114,7 +114,16 @@ async function halamanCari(env, url) {
       rujukan = { ...x, catatan: x.jumlah_standar ? "penomoran standar" : "penomoran Lidwa" };
     }
   }
-  const isi = T.hasilCari({ q, out, kitab, sorot: kataSorot(out.rencana), akar: akarSorot(out.rencana), filter, rujukan });
+  // Tema HadeethEnc yang judulnya memuat kata kunci — kurasi ulama, ditampilkan di atas hasil.
+  // Kata inti (konsep & kata sisa, semua varian ejaan) wajib cocok; kata maksud ("keutamaan") hanya menambah skor.
+  const r0 = out.rencana;
+  const inti = kataSorot({ ...r0, maksud: [] }).map(normId).filter((w) => w.length >= 4);
+  const maksud = r0.maksud.map(normId);
+  const memuat = (j, w) => (" " + j + " ").includes(" " + w);
+  const tema = inti.length ? (await db.prepare("SELECT id, judul, jumlah FROM tema WHERE jumlah > 0").all()).results
+    .map((t) => { const j = normId(t.judul); return { ...t, skor: 2 * inti.filter((w) => memuat(j, w)).length + maksud.filter((w) => memuat(j, w)).length, kena: inti.some((w) => memuat(j, w)) }; })
+    .filter((t) => t.kena).sort((a, b) => b.skor - a.skor || b.jumlah - a.jumlah).slice(0, 6) : [];
+  const isi = T.hasilCari({ q, out, kitab, sorot: kataSorot(out.rencana), akar: akarSorot(out.rencana), filter, rujukan, tema });
   return html(T.layout({ judul: `${q} · Cari · Teman Hadits`, aktif: "cari", isi, noindex: true }));
 }
 
@@ -141,12 +150,13 @@ async function halamanKitab(env, url, kid, babNo) {
 
 async function halamanTema(env, url, id) {
   const db = env.DB;
+  const versi = (await db.prepare("SELECT nilai FROM info WHERE kunci = 'hadeethenc_versi'").first())?.nilai;
   const semua = (await db.prepare("SELECT id, judul, induk, jumlah FROM tema ORDER BY CAST(id AS INTEGER)").all()).results;
   const akarIdx = (t) => !t.induk || t.induk === "0";
   if (!id) {
     const anak = {};
     for (const t of semua) if (!akarIdx(t)) (anak[t.induk] ||= []).push(t);
-    return html(T.layout({ judul: "Tema · Teman Hadits", aktif: "tema", isi: T.daftarTema({ akar: semua.filter(akarIdx), anak }) }));
+    return html(T.layout({ judul: "Tema · Teman Hadits", aktif: "tema", isi: T.daftarTema({ akar: semua.filter(akarIdx), anak, versi }) }));
   }
   const t = semua.find((x) => x.id === id);
   if (!t) return null;
@@ -154,7 +164,7 @@ async function halamanTema(env, url, id) {
   const link = (await db.prepare("SELECT hr.he_id, r.kitab_id, r.slug, r.no_tampil FROM he_riwayat hr JOIN riwayat r ON r.n = hr.n JOIN kitab k ON k.id = r.kitab_id WHERE hr.he_id IN (SELECT value FROM json_each(?1)) ORDER BY hr.he_id, k.urut, r.urut").bind(JSON.stringify(hadits.map((h) => h.id))).all()).results;
   const per = {};
   for (const l of link) ((per[l.he_id] ||= []).length < 8) && per[l.he_id].push(l);
-  return html(T.layout({ judul: `${t.judul} · Tema · Teman Hadits`, aktif: "tema", isi: T.halamanTema({ t, induk: semua.find((x) => x.id === t.induk), sub: semua.filter((x) => x.induk === t.id), hadits: hadits.map((h) => ({ ...h, riwayat: per[h.id] || [] })) }) }));
+  return html(T.layout({ judul: `${t.judul} · Tema · Teman Hadits`, aktif: "tema", isi: T.halamanTema({ t, induk: semua.find((x) => x.id === t.induk), sub: semua.filter((x) => x.induk === t.id), hadits: hadits.map((h) => ({ ...h, riwayat: per[h.id] || [] })), versi }) }));
 }
 
 async function sitemap(env, url, kid) {
