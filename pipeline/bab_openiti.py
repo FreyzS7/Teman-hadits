@@ -83,12 +83,17 @@ def bersihkan_judul(t):
     t = _SAMPAH.sub(" ", t)
     t = re.sub(r"\(\s*\d+\s*\)", " ", t)            # penanda catatan kaki "(1)" di judul
     t = re.sub(r"[\"“”]+", "", t)
+    t = re.sub(r"</?[a-zA-Z][^>]*>", " ", t)          # sisa markup HTML di teks digital ("</span>")
+    t = re.sub(r"\s*«\s*$", "", t)                   # tanda kutip pembuka yang tertinggal di akhir judul
     return re.sub(r"\s+", " ", t).strip(" :.-–،")
 
 
 # Judul tingkat kitab. "أبواب" hanya tingkat kitab di Jami' at-Tirmidzi; di Abu Dawud ia sub-bagian
 # di dalam kitab (mis. "أبواب قيام الليل" di dalam كتاب الصلاة), jadi tidak boleh menimpa nama kitab.
 AWALAN_KITAB = {"tirmidzi": ("كتاب", "ابواب")}
+
+
+_AWAL_SANAD = re.compile(r"^(?:و)?(?:حدثنا|حدثني|اخبرنا|اخبرني|انبانا|سمعت|قال|وقال|ح|عن|حدثنيه|حدثناه|ثنا|نا)\b")
 
 
 def urai(path, kid=None):
@@ -99,6 +104,9 @@ def urai(path, kid=None):
     if kid == "darimi":
         kitab = "المقدمة"     # Sunan ad-Darimi dibuka dengan Muqaddimah panjang sebelum كتاب الطهارة (tanpa judul di berkas)
     tahqiq, mode_tahqiq = [], False
+    # "### | باب" lalu judulnya di baris "# ..." berikutnya (gaya teks digital Bukhari). Bab tanpa judul sungguhan
+    # langsung diikuti sanad ("حدثنا ..."), jadi baris pertama yang BUKAN awal sanad adalah judul bab itu.
+    tunggu_judul = False
 
     def tutup():
         if teks:
@@ -115,13 +123,14 @@ def urai(path, kid=None):
             isi = m.group(2)
             if re.search(r"\[ص\s*:", isi) and len(norm_ar(re.sub(r"\[ص\s*:[^\]]*\]", " ", _SAMPAH.sub(" ", isi)))) < 5:
                 continue                                  # penanda halaman cetak: bukan batas hadits/bab
-            if "تعليق المحقق" in isi:                    # Darimi (Asad): penilaian muhaqqiq untuk hadits sebelumnya
+            if "تعليق المحقق" in isi or re.search(r"\[\s*تعليق", isi):   # Darimi (Asad): penilaian muhaqqiq; Bukhari dll.: "[تعليق مصطفى البغا]" = komentar editor, BUKAN judul bab
                 mode_tahqiq = True
                 continue
             mode_tahqiq = False
             polos = norm_ar(_AWALAN_NOMOR.sub("", isi))
             mn = _NOMOR_SAJA.match(isi)
             if mn:                                         # "### | 12 - " = awal hadits bernomor
+                tunggu_judul = False
                 tutup()
                 teks, tahqiq, no = [], [], int(mn.group(1).translate(_ANGKA_TIMUR))
                 continue
@@ -148,6 +157,7 @@ def urai(path, kid=None):
                 tutup()
                 teks, tahqiq, no = [], [], None
                 bab = bersihkan_judul(_AWALAN_NOMOR.sub("", isi))
+                tunggu_judul = kid == "bukhari" and norm_ar(bab) == "باب"
                 continue
             teks.append(isi)
         elif baris.startswith("# ") or baris.startswith("~~"):
@@ -157,6 +167,21 @@ def urai(path, kid=None):
             if mode_tahqiq:
                 tahqiq.append(_SAMPAH.sub(" ", isi).strip())
                 continue
+            if (kid == "bukhari" and baris.startswith("# ") and kitab and "تفسير" in kitab
+                    and re.match(r"^سوره\s", norm_ar(_SAMPAH.sub(" ", isi))) and len(norm_ar(isi).split()) <= 14):
+                # Kitab at-Tafsir: judul surah ditulis sebagai baris biasa ("# سورة إذا جاء نصر الله") dan bab tanpa
+                # judul sesudahnya tidak ada di teks digital. Tanpa ini, hadits surah baru mewarisi bab surah sebelumnya.
+                tutup()
+                teks, tahqiq, no = [], [], None
+                bab = bersihkan_judul(_SAMPAH.sub(" ", isi))
+                tunggu_judul = False
+                continue
+            if tunggu_judul and baris.startswith("# "):
+                tunggu_judul = False
+                kalimat = norm_ar(_SAMPAH.sub(" ", isi))
+                if kalimat and not _AWAL_SANAD.match(kalimat) and len(kalimat.split()) <= 60:
+                    bab = bersihkan_judul("باب " + _SAMPAH.sub(" ", isi))
+                    continue
             mt = re.match(r"^#\s+(\d+)\s+-\s+(.*)$", baris) if kid == "ahmad" else None
             if mt:                                         # Musnad Ahmad: "# 12 - حدثنا ..." = awal hadits bernomor
                 tutup()

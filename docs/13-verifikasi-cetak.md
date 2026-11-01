@@ -113,10 +113,36 @@ Skrip: `pipeline/cek_fihris_bukhari.py` (mengunduh OCR fihris sendiri; hasil di 
 
 Keenam koreksi beserta buktinya ada di `pipeline/koreksi_bab.json` dan diuji di `test_bab.py`, termasuk bahwa hadits tetangganya tidak ikut berpindah.
 
+### Pemeriksaan manual 16 entri sisa: tiga kesalahan PARSER kita ditemukan
+
+Ke-16 entri dilihat langsung di gambar fihris (12 halaman: hlm. 177, 181, 184, 185, 201, 204, 205, 207, 208, 211, 213, 217). Hal pertama yang terlihat: **fihris bercetak dua kolom, dan OCR kadang menyambung baris lintas kolom.** Contohnya, «حدثنا الحسن بن مدرك» (Kitab al-Haidh) terpasang ke «فضل قل هو الله أحد» (Fadha'il al-Qur'an). Karena itu, setiap entri dipastikan dari gambar, bukan dari OCR.
+
+Selain bab yang hilang di teks digital, pemeriksaan ini menemukan **tiga kesalahan di parser kita sendiri**. Semuanya sudah diperbaiki dan diuji:
+
+| Kesalahan parser | Akibat di situs | Perbaikan |
+|---|---|---|
+| Teks digital sering menulis bab bertajuk sebagai «### \| باب» kosong, dengan judulnya **di baris berikutnya** | Bab bertajuk tampil sebagai "bab tanpa judul" (mis. «نسبة اليمن إلى إسماعيل», «قول الله تعالى: إنا خلقناكم…»). Blok berlabel «باب» telanjang: **345** | Baris pertama sesudah «باب» yang bukan awal sanad (حدثنا/أخبرنا/…) dibaca sebagai judulnya → tersisa **91** bab tanpa judul sungguhan |
+| Catatan editor «[تعليق مصطفى البغا]» dibaca sebagai judul bab | **67** hadits (enam kitab) berjudul bab «[تعليق مصطفى البغا]» | Catatan editor diperlakukan seperti «تعليق المحقق» ad-Darimi (bukan judul) |
+| Di Kitab at-Tafsir, judul surah ditulis sebagai baris biasa («# سورة إذا جاء نصر الله») | Hadits pembuka surah tampil di bawah bab **surah sebelumnya** (mis. an-Nashr di bawah «ومن يعمل مثقال ذرة شرا يره» dari az-Zalzalah). **38** hadits | Baris «سورة …» di Kitab at-Tafsir menjadi batas bagian; hadits pembuka surah kini berlabel nama surahnya |
+
+**Koreksi baru berdasarkan gambar fihris (15):**
+- 51 (bab tanpa judul «حدثنا إبراهيم بن حمزة»);
+- **52 «باب فضل من استبرأ لدينه»**: bab bertajuk yang hilang;
+- 333; 334–335 (judul bab 1 Kitab at-Tayammum yang kosong); 348;
+- 1885–1886; 1888–1890; 1945; 2624; 2669–2670;
+- **3464 «حديث أبرص وأعمى وأقرع في بني إسرائيل»**: tertimpa catatan editor;
+- 3466–3488; 3497–3499; 3540; 3639–3648.
+
+**Sudah benar setelah perbaikan parser** (dicek di gambar): 3938–3940, 3954, 3984–3991, 3996–4027, 4075–4076, 4293–4296, 4300–4313, 4421–4423, 4467, 4470, 4708, 4806–4807, 4855, 4967–4968, 4971, 4974.
+
+**Pasangan OCR yang ternyata keliru** (tidak ada bab tanpa judul di tempat itu): sebelum «الصائم إذا أكل أو شرب ناسيا», «ما لقي النبي ﷺ…», «إسلام عمر», «بعث أسامة», dan «فضل قل هو الله أحد».
+
+Total koreksi bertanda bukti di `pipeline/koreksi_bab.json`: **21 rentang**. Diuji di `test_bab.py`, termasuk hadits tetangga yang harus tetap di babnya.
+
 ## Batasan dan yang belum
 
 - **Nomor entri belum diverifikasi.** OCR mengacaukan angka Arab-Hindi di kolom nomor.
 - **Kasyf al-Khafa'** hanya 11 dari 40 entri yang ditemukan, karena OCR cetakan 1351 H sangat rusak.
 - **Teks hadits** (Bukhari, Muslim, dst.) belum dibandingkan dengan cetakan. Scan Bukhari di archive.org tidak punya OCR. Teks hadits saat ini diverifikasi dengan cara lain: dua sumber digital yang sepakat (tingkat A) dan uji silang atribusi.
 - **Teks dan nomor hadits Bukhari** belum dicek visual satu per satu. Halamannya harus dicari manual di scan (OCR-nya tidak bisa dipakai untuk mencari), atau dengan scan lain yang OCR-nya lebih baik.
-- **Bab tanpa judul** yang belum terjangkau pencocokan otomatis: 6 entri ragu dan 10 entri dengan judul berikutnya yang tak terbaca OCR. Ini perlu dilihat manual di gambar fihris. Daftarnya dibuat ulang oleh skrip pencocokan.
+- **Fihris belum dibaca utuh.** Baru 14 dari ±77 halaman fihris Bukhari yang dilihat langsung. Bab tanpa judul di halaman lain yang tidak tertangkap OCR mungkin masih ada.

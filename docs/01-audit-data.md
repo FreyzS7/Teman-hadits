@@ -54,7 +54,7 @@ Lihat `docs/09-judul-kitab-bab.md`. Tingkat di tabel "Per kitab" di atas adalah 
 
 | Kitab | Edisi | Terpetakan menurut isi | Cocok ≥ 90% | Urutan naik | Nomor sama | Penilaian muhaqqiq |
 |---|---|---:|---:|---:|---:|---:|
-| bukhari | — | 7375/7580 | 7143 | 7362/7374 | 7057/7318 | 0 |
+| bukhari | — | 7375/7580 | 7143 | 7362/7374 | 7057/7318 | 1 |
 | muslim | — | 7276/7360 | 7150 | 7264/7275 | 0/7085 | 0 |
 | abudawud | — | 5264/5272 | 5169 | 5262/5263 | 5246/5258 | 0 |
 | tirmidzi | — | 3695/3924 | 2624 | 3686/3694 | 3650/3665 | 0 |
@@ -62,7 +62,7 @@ Lihat `docs/09-judul-kitab-bab.md`. Tingkat di tabel "Per kitab" di atas adalah 
 | ibnumajah | — | 4334/4338 | 3971 | 4331/4333 | 4317/4327 | 0 |
 | malik | — | 1827/1829 | 1813 | 1826/1826 | — | 0 |
 | ahmad | ar-Risalah (tahqiq Syu'aib al-Arna'uth dkk.) | 25855/26363 | 23247 | 25781/25854 | — | 0 |
-| darimi | Dar al-Mughni (tahqiq Husain Salim Asad) | 3267/3367 | 2891 | 3265/3266 | — | 2810 |
+| darimi | Dar al-Mughni (tahqiq Husain Salim Asad) | 3267/3367 | 2891 | 3265/3266 | — | 2823 |
 | syafii | Ghiras (tahqiq Mahir Yasin al-Fahl) | 1729/1800 | 1164 | 1177/1728 | — | 0 |
 
 ## Katalog hadits populer & palsu

@@ -104,3 +104,28 @@ class KoreksiCetak(unittest.TestCase):
             self.assertEqual(judul(f"bukhari:{no}")[1], "باب", no)
         for no in (17, 19, 434, 438, 744, 746, 796, 800, 898, 901):
             self.assertNotEqual(judul(f"bukhari:{no}")[1], "باب", no)
+
+    def test_judul_di_baris_berikutnya(self):
+        # "### | باب" lalu judul di baris "# ..." berikutnya (fihris hlm. 217): bukan bab tanpa judul
+        self.assertTrue(judul("bukhari:3489")[1].startswith("باب قول الله تعالى: {يا أيها الناس إنا خلقناكم"))
+        self.assertEqual(judul("bukhari:3507")[1], "باب نسبة اليمن إلى إسماعيل")
+        self.assertEqual(judul("bukhari:3508")[1], "باب")          # bab 5 "حدثنا أبو معمر": memang tanpa judul
+
+    def test_catatan_editor_bukan_judul_bab(self):
+        n = q("SELECT count(*) FROM riwayat_bab WHERE bab_ar LIKE '%[تعليق%'")[0][0]
+        self.assertEqual(n, 0)
+        self.assertEqual(judul("bukhari:3464")[1], "باب حديث أبرص وأعمى وأقرع في بني إسرائيل")
+
+    def test_batas_surah_kitab_tafsir(self):
+        # hadits pembuka surah tidak lagi mewarisi bab surah sebelumnya (fihris hlm. 205, 207, 208, 211)
+        self.assertEqual(judul("bukhari:4967")[1], "سورة إذا جاء نصر الله")
+        self.assertEqual(judul("bukhari:4974")[1], "سورة قل هو الله أحد")
+        self.assertEqual(judul("bukhari:4708")[1], "سورة بني إسرائيل")
+        self.assertEqual(judul("bukhari:4855")[1], "سورة والنجم")
+
+    def test_koreksi_dari_gambar_fihris(self):
+        self.assertEqual(judul("bukhari:52")[1], "باب فضل من استبرأ لدينه")
+        for no in (51, 333, 348, 1885, 1888, 1945, 2624, 2669, 3466, 3497, 3540, 3639):
+            self.assertEqual(judul(f"bukhari:{no}")[1], "باب", no)
+        for no in (50, 332, 347, 1884, 1887, 1944, 2623, 2668, 3465, 3496, 3539, 3638):
+            self.assertNotEqual(judul(f"bukhari:{no}")[1], "باب", no)

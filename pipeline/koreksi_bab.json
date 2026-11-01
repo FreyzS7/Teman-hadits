@@ -11,6 +11,46 @@
     },
     {
       "kitab_id": "bukhari",
+      "dari": 51,
+      "sampai": 51,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini.",
+      "bukti": "Fihris rinci juz 1 hlm. 177 (leaf 4, dilihat langsung): bab 38 «بابٌ: حدثنا إبراهيم بن حمزة» antara bab 37 «سؤال جبريل…» dan bab 39 «فضل من استبرأ لدينه». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 52,
+      "sampai": 52,
+      "bab_ar": "باب فضل من استبرأ لدينه",
+      "alasan": "Teks digital OpenITI melewatkan judul bab ini; no. 52 tampil di bawah «سؤال جبريل…».",
+      "bukti": "Fihris rinci juz 1 hlm. 177 (leaf 4, dilihat langsung): bab 39 «باب فضل من استبرأ لدينه» sesudah bab tanpa judul «حدثنا إبراهيم بن حمزة». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 333,
+      "sampai": 333,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini (penutup Kitab al-Haidh).",
+      "bukti": "Fihris rinci hlm. 181 (leaf 8, dilihat langsung): bab 30 «بابٌ: حدثنا الحسن بن مدرك» sesudah bab 29 «الصلاة على النفساء وسنتها». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 334,
+      "sampai": 335,
+      "bab_ar": "باب التيمم، وقول الله تعالى: {فلم تجدوا ماء فتيمموا صعيدا طيبا فامسحوا بوجوهكم وأيديكم منه}",
+      "alasan": "Judul bab pertama Kitab at-Tayammum kosong di teks digital.",
+      "bukti": "Fihris rinci hlm. 181 (leaf 8, dilihat langsung): Kitab at-Tayammum bab 1. Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 348,
+      "sampai": 348,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini (penutup Kitab at-Tayammum).",
+      "bukti": "Fihris rinci hlm. 181 (leaf 8, dilihat langsung): bab 9 «بابٌ: حدثنا عبدان» sesudah bab 8 «التيمم ضربة». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
       "dari": 435,
       "sampai": 437,
       "bab_ar": "باب",
@@ -40,6 +80,86 @@
       "bab_ar": "باب",
       "alasan": "Teks digital OpenITI melewatkan bab tanpa judul, sehingga no. 899–900 tergabung ke bab «هل على من لم يشهد الجمعة غسل».",
       "bukti": "Shahih al-Bukhari, Dar Thauq an-Najah, fihris rinci: «باب: حدثنا عبد الله بن محمد» di antara bab «هل على من لم يشهد الجمعة غسل» dan bab «الرخصة إن لم يحضر الجمعة في المطر» (no. 901). Scan: archive.org alfirdwsiy2018_gmail_2698_201808, leaf 14 (dibaca dari OCR fihris). Rentang = hadits yang diawali perawi itu (satu-satunya di bab sebelumnya) sampai sebelum bab berikutnya."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 1885,
+      "sampai": 1886,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini.",
+      "bukti": "Fihris rinci hlm. 204 (leaf 25, dilihat langsung): «بابٌ: حدثنا عبد الله بن محمد» antara bab 10 «المدينة تنفي الخبث» dan bab 11 «كراهية النبي ﷺ أن تعرى المدينة». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 1888,
+      "sampai": 1890,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini (penutup Kitab Fadha'il al-Madinah).",
+      "bukti": "Fihris rinci hlm. 204 (leaf 25, dilihat langsung): bab 12 «بابٌ: حدثنا مسدد». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 1945,
+      "sampai": 1945,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini.",
+      "bukti": "Fihris rinci hlm. 204 (leaf 25, dilihat langsung): Kitab ash-Shaum bab 35 «بابٌ: حدثنا عبد الله بن يوسف» sesudah bab 34 «إذا صام أياما من رمضان ثم سافر». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 2624,
+      "sampai": 2624,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini.",
+      "bukti": "Fihris rinci hlm. 213 (leaf 34, dilihat langsung): Kitab al-Hibah bab 31 «بابٌ: حدثنا إبراهيم بن موسى» antara bab 30 «لا يحل لأحد أن يرجع في هبته» dan bab 32 «ما قيل في العمرى والرقبى». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 2669,
+      "sampai": 2670,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini.",
+      "bukti": "Fihris rinci hlm. 213 (leaf 34, dilihat langsung): «بابٌ: حدثنا عثمان بن أبي شيبة» antara bab 20 «اليمين على المدعى عليه…» dan bab 21 «إذا ادعى أو قذف…». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 3464,
+      "sampai": 3464,
+      "bab_ar": "باب حديث أبرص وأعمى وأقرع في بني إسرائيل",
+      "alasan": "Judul bab hilang di teks digital (tertimpa catatan «[تعليق مصطفى البغا]»).",
+      "bukti": "Fihris rinci hlm. 217 (leaf 42, dilihat langsung): Kitab Ahadits al-Anbiya' bab 51. Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 3466,
+      "sampai": 3488,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini (penutup Kitab Ahadits al-Anbiya').",
+      "bukti": "Fihris rinci hlm. 217 (leaf 42, dilihat langsung): bab 54 «بابٌ: حدثنا أبو اليمان» sesudah bab 53 «حديث الغار». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 3497,
+      "sampai": 3499,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini.",
+      "bukti": "Fihris rinci hlm. 217 (leaf 42, dilihat langsung): Kitab al-Manaqib «بابٌ: حدثنا مسدد» antara bab 1 «يا أيها الناس إنا خلقناكم…» dan bab 2 «مناقب قريش». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 3540,
+      "sampai": 3540,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini.",
+      "bukti": "Fihris rinci hlm. 217 (leaf 42, dilihat langsung): Kitab al-Manaqib bab 21 «بابٌ: حدثني إسحاق» antara bab 20 «كنية النبي ﷺ» dan bab 22 «خاتم النبوة». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
+    },
+    {
+      "kitab_id": "bukhari",
+      "dari": 3639,
+      "sampai": 3648,
+      "bab_ar": "باب",
+      "alasan": "Teks digital OpenITI melewatkan bab tanpa judul ini (penutup Kitab al-Manaqib).",
+      "bukti": "Fihris rinci hlm. 217 (leaf 42, dilihat langsung): bab 28 «بابٌ: حدثني محمد بن المثنى» sesudah bab 27 «سؤال المشركين… انشقاق القمر». Scan: archive.org alfirdwsiy2018_gmail_2698_201808."
     },
     {
       "kitab_id": "bukhari",
