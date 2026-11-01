@@ -3,6 +3,8 @@ import { cari, akarSorot, kataSorot, NAMA_KITAB } from "./cari.js";
 import { cek } from "./cek.js";
 import { hukumTirmidzi, normId, pisahKomentar, pisahSanad, rantaiArab, rubrik } from "./teks.js";
 import * as T from "./tampilan.js";
+import { cocokKatalogArab, cocokPopuler, dataPopuler, daftarPopuler, entriKatalog } from "./katalog.js";
+import { adaArab } from "./teks.js";
 
 const PER_HALAMAN = 50;
 const KEAMANAN = {
@@ -222,19 +224,32 @@ async function rute(req, env) {
   const db = env.DB;
   if (req.method !== "GET" && req.method !== "HEAD") return new Response("Metode tidak didukung", { status: 405 });
   if (p === "/") {
-    const [kitab, info] = await Promise.all([semuaKitab(db), infoDb(db)]);
-    return html(T.layout({ judul: "Teman Hadits · Pustaka hadits: cari, cek, dan lihat sumbernya", aktif: "beranda", kanonik: url.origin + "/", isi: T.beranda({ kitab, info }) }));
+    const [kitab, info, populer] = await Promise.all([semuaKitab(db), infoDb(db), daftarPopuler(db)]);
+    return html(T.layout({ judul: "Teman Hadits · Pustaka hadits: cari, cek, dan lihat sumbernya", aktif: "beranda", kanonik: url.origin + "/", isi: T.beranda({ kitab, info, populer }) }));
   }
   if (p === "/cari") return halamanCari(env, url);
   if (p === "/cek") {
     const t = (url.searchParams.get("t") || "").trim();
     const [kitab, info] = await Promise.all([semuaKitab(db), infoDb(db)]);
     const hasil = t ? await cek(db, t) : null;
-    return html(T.layout({ judul: "Cek hadits · Teman Hadits", aktif: "cek", noindex: Boolean(t), isi: T.halamanCek({ t, hasil, kitab, info }) }));
+    let katalog = "";
+    if (t) {
+      // ucapan populer (teks Indonesia) atau entri katalog (teks Arab) -> pembahasan ulama
+      const pop = adaArab(t) ? null : await cocokPopuler(db, t);
+      if (pop) {
+        const p = await dataPopuler(db, pop.id);
+        katalog = T.kotakKatalog({ populer: p, entri: p.entri, riwayat: p.riwayat });
+      } else if (adaArab(t)) {
+        const ids = await cocokKatalogArab(db, t);
+        if (ids.length) katalog = T.kotakKatalog({ entri: await entriKatalog(db, ids) });
+      }
+    }
+    return html(T.layout({ judul: "Cek hadits · Teman Hadits", aktif: "cek", noindex: Boolean(t), isi: T.halamanCek({ t, hasil, kitab, info, katalog }) }));
   }
   if (p === "/metode") return html(T.layout({ judul: "Metode · Teman Hadits", aktif: "metode", isi: T.halamanMetode({ info: await infoDb(db) }) }));
   if (p === "/kitab") return html(T.layout({ judul: "Kitab · Teman Hadits", aktif: "kitab", isi: T.daftarKitab({ kitab: await semuaKitab(db) }) }));
   if (p === "/tema") return halamanTema(env, url, null);
+  if (p === "/populer") return html(T.layout({ judul: "Sering beredar, benarkah hadits? · Teman Hadits", aktif: "populer", kanonik: url.origin + "/populer", deskripsi: "Ucapan yang sering disebut hadits di masyarakat, dengan pembahasan ulama dari kitab-kitab tentang hadits populer dan palsu.", isi: T.halamanPopulerDaftar({ daftar: await daftarPopuler(db) }) }));
   if (p === "/robots.txt") return new Response(`User-agent: *\nAllow: /\nDisallow: /cari\nDisallow: /cek?\nDisallow: /api/\nSitemap: ${url.origin}/sitemap.xml\n`, { headers: { "Content-Type": "text/plain" } });
   if (p === "/sitemap.xml") return sitemap(env, url, null);
   if (p === "/api/cari") {
@@ -251,6 +266,11 @@ async function rute(req, env) {
   if ((m = p.match(/^\/kitab\/([a-z]+)$/))) return halamanKitab(env, url, m[1], null);
   if ((m = p.match(/^\/kitab\/([a-z]+)\/bab\/(\d+)$/))) return halamanKitab(env, url, m[1], parseInt(m[2], 10));
   if ((m = p.match(/^\/tema\/(\d+)$/))) return halamanTema(env, url, m[1]);
+  if ((m = p.match(/^\/populer\/([a-z0-9-]+)$/))) {
+    const pp = await dataPopuler(db, m[1]);
+    if (!pp) return null;
+    return html(T.layout({ judul: `“${pp.teks_id}”: benarkah hadits? · Teman Hadits`, aktif: "populer", kanonik: `${url.origin}/populer/${pp.id}`, deskripsi: `Pembahasan ulama tentang ucapan “${pp.teks_id}” (${pp.arab}).`, isi: T.halamanPopuler({ p: pp }) }));
+  }
   if ((m = p.match(/^\/([a-z]+)\/([0-9a-z.\-]+)$/))) return halamanHadits(env, url, m[1], m[2]);
   return null;
 }

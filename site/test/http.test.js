@@ -98,3 +98,32 @@ test("Ahmad/Darimi/Syafi'i: nomor edisi tahqiq, penilaian Asad, nomor ambigu", o
   assert.match(r.teks, /Nomor ini ada di dua sistem penomoran/);
   assert.match((await ambil("/ahmad/163")).teks, /di edisi ar-Risalah/);
 });
+
+test("katalog populer: 'negeri Cina' → al-Maqashid no. 125 (batil), al-Maudhu'at, tanpa riwayat", opsi, async () => {
+  const { status, teks } = await ambil("/populer/ilmu-negeri-cina");
+  assert.equal(status, 200);
+  assert.match(teks, /al-Maqashid al-Hasanah <span class="num">no\. 125/);
+  assert.match(teks, /al-Maudhu&#39;at <span class="num">no\. 71/);
+  assert.match(teks, /class="chip kk-palsu">batil</);
+  assert.match(teks, /Tidak ditemukan<\/b> dengan lafaz ini di 11 kitab hadits kami/);
+  // cek dengan teks Indonesia ikut memunculkan kotak katalog
+  const cek = (await ambil("/cek?t=" + encodeURIComponent("Tuntutlah ilmu walau sampai ke negeri Cina"))).teks;
+  assert.match(cek, /cocok dengan ucapan yang sering beredar/);
+});
+
+test("katalog: 'حب الوطن من الإيمان' tidak diberi chip shahih/hasan", opsi, async () => {
+  const { teks } = await ambil("/cek?t=" + encodeURIComponent("حب الوطن من الإيمان"));
+  for (const k of ["al-Maqashid al-Hasanah <span class=\"num\">no. 386", "Kasyf al-Khafa&#39; <span class=\"num\">no. 1102", "al-Asrar al-Marfu&#39;ah <span class=\"num\">no. 164"]) assert.ok(teks.includes(k), k);
+  assert.doesNotMatch(teks, /kk-terima">(shahih|hasan)</);
+  assert.match(teks, /kk-lain">maknanya benar/);
+});
+
+test("katalog: kontrol shahih ditunjukkan ada di kitab hadits; 'disebut' dipisah", opsi, async () => {
+  const { teks } = await ambil("/populer/ulama-pewaris-nabi");
+  assert.match(teks, /href="\/tirmidzi\/2682"/);
+  assert.match(teks, /href="\/abudawud\/3641"/);
+  const tidur = (await ambil("/populer/tidur-puasa-ibadah")).teks;
+  assert.match(tidur, /Disebut dalam pembahasan entri lain/);
+  assert.match(tidur, /al-Asrar al-Marfu&#39;ah no\. 567/);
+  assert.equal((await ambil("/populer/tidak-ada")).status, 404);
+});

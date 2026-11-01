@@ -10,7 +10,8 @@ until python3 -I pipeline/hadeethenc.py unduh --maks-detik 500 | tee /dev/stderr
 python3 -I pipeline/hadeethenc.py bangun
 python3 -I pipeline/riyadh.py
 python3 -I pipeline/bab_openiti.py
-python3 -m unittest pipeline/test_golden.py pipeline/test_hadeethenc.py pipeline/test_riyadh.py pipeline/test_bab.py -v
+python3 -I pipeline/katalog_palsu.py
+python3 -m unittest pipeline/test_golden.py pipeline/test_hadeethenc.py pipeline/test_riyadh.py pipeline/test_bab.py pipeline/test_katalog.py -v
 python3 pipeline/audit.py
 python3 pipeline/export_d1.py
 python3 pipeline/fixtures_js.py

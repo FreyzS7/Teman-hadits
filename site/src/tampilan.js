@@ -1,5 +1,5 @@
 // Template HTML. Semua teks dari database melewati esc() kecuali yang sudah dibangun aman (rubrik, cuplik).
-import { cuplik, cuplikAr, esc, fmt, SIGHAH_MAP } from "./teks.js";
+import { cuplik, cuplikAr, esc, fmt, normAr, SIGHAH_MAP } from "./teks.js";
 
 const HR = { riyadh: "an-Nawawi, Riyadhus Shalihin", bukhari: "al-Bukhari", muslim: "Muslim", abudawud: "Abu Dawud", tirmidzi: "at-Tirmidzi", nasai: "an-Nasa'i", ibnumajah: "Ibnu Majah", malik: "Malik (al-Muwaththa')", ahmad: "Ahmad", darimi: "ad-Darimi", syafii: "asy-Syafi'i" };
 export const PENDEK = { riyadh: "Riyadhus Shalihin", bukhari: "Bukhari", muslim: "Muslim", abudawud: "Abu Dawud", tirmidzi: "Tirmidzi", nasai: "Nasa'i", ibnumajah: "Ibnu Majah", malik: "Malik", ahmad: "Ahmad", darimi: "Darimi", syafii: "Syafi'i" };
@@ -33,7 +33,7 @@ export function bukuBesar(pen, kitab, tambahan = []) {
 const SVG_BINTANG = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0l2.6 6.3L21 3l-3.3 6.4L24 12l-6.3 2.6L21 21l-6.4-3.3L12 24l-2.6-6.3L3 21l3.3-6.4L0 12l6.3-2.6L3 3l6.4 3.3z"/></svg>`;
 
 export function layout({ judul, deskripsi, isi, aktif = "", kanonik = "", noindex = false }) {
-  const nav = [["/", "Beranda", "beranda"], ["/cari", "Cari", "cari"], ["/cek", "Cek Hadits", "cek"], ["/kitab", "Kitab", "kitab"], ["/tema", "Tema", "tema"], ["/metode", "Metode", "metode"]];
+  const nav = [["/", "Beranda", "beranda"], ["/cari", "Cari", "cari"], ["/cek", "Cek Hadits", "cek"], ["/kitab", "Kitab", "kitab"], ["/tema", "Tema", "tema"], ["/populer", "Populer", "populer"], ["/metode", "Metode", "metode"]];
   return `<!doctype html>
 <html lang="id">
 <head>
@@ -64,7 +64,7 @@ ${kanonik ? `<link rel="canonical" href="${esc(kanonik)}">` : ""}${noindex ? '<m
 </header>
 <main class="wrap">${isi}</main>
 <footer class="kaki"><div class="wrap">
-  <p><b>Teman Hadits</b> adalah layanan umum tanpa iklan. Teks Arab: fawazahmed0/hadith-api dan Lidwa Pusaka. Terjemahan: Lidwa Pusaka (digunakan dengan izin), via carihadis.com. Penilaian derajat selalu disertai nama ulama penilainya.</p>
+  <p><b>Teman Hadits</b> adalah layanan umum tanpa iklan. Teks Arab: fawazahmed0/hadith-api dan Lidwa Pusaka; judul kitab &amp; bab serta kitab katalog hadits palsu: OpenITI. Terjemahan: Lidwa Pusaka (digunakan dengan izin), via carihadis.com. Penilaian derajat selalu disertai nama ulama penilainya.</p>
   <p>Teman Hadits menampilkan riwayat, bukan fatwa. Untuk hukum suatu perkara, tanyakan kepada ulama yang Anda percaya. <a href="/metode">Cara kami menjaga kebenaran data</a>.</p>
 </div></footer>
 </body>
@@ -74,7 +74,7 @@ ${kanonik ? `<link rel="canonical" href="${esc(kanonik)}">` : ""}${noindex ? '<m
 // ------------------------------------------------------------------------------------------------
 // BERANDA
 // ------------------------------------------------------------------------------------------------
-export function beranda({ kitab, info }) {
+export function beranda({ kitab, info, populer = [] }) {
   const terbit = Number(info.terbit);
   const maks = Math.max(...kitab.map((k) => k.terbit));
   const rak = kitab.map((k) => {
@@ -115,6 +115,7 @@ export function beranda({ kitab, info }) {
       <p class="cakupan">Mencari di <b>${kitab.length} kitab</b> · <b>${fmt(terbit)}</b> riwayat · teks Arab dan terjemah Indonesia.</p>
     </div>
   </div>
+  ${bagianPopulerBeranda(populer)}
   <section class="bagian" aria-labelledby="h-rak">
     <header><h2 id="h-rak">Rak kitab</h2><p>Lebar punggung = banyaknya riwayat. Pita emas = jumlah ulama penilai yang datanya sudah kami miliki untuk kitab itu. Ketuk untuk membuka.</p></header>
     <div class="rak">${rak}</div>
@@ -330,7 +331,7 @@ function navHalaman(dasar, halaman, halMaks) {
 // ------------------------------------------------------------------------------------------------
 // CEK
 // ------------------------------------------------------------------------------------------------
-export function halamanCek({ t, hasil, kitab, info }) {
+export function halamanCek({ t, hasil, kitab, info, katalog = "" }) {
   const nama = (id) => kitab.find((k) => k.id === id)?.nama || id;
   const contoh = [
     ["Hadits niat", "Sesungguhnya amalan itu tergantung niatnya dan seseorang akan mendapatkan sesuai dengan apa yang ia niatkan (HR. Bukhari dan Muslim)"],
@@ -350,14 +351,15 @@ export function halamanCek({ t, hasil, kitab, info }) {
         <p style="font:500 1rem/1.4 var(--f-ui);color:${hasil.klaimHasil.every((k) => k.ada) ? "var(--terima)" : "var(--palsu)"}">${hasil.klaimHasil.every((k) => k.ada) ? "Atribusi sesuai." : "Sebagian atribusi tidak ditemukan. Periksa kembali sumbernya."}</p></div>` : `<p class="kecil">Teks Anda tidak menyebut sumber (“HR. …”). Berikut kitab-kitab yang memuatnya.</p>`;
       vonis = `<section class="vonis"><header><span class="stempel ok">DITEMUKAN</span><p>Teks ini cocok dengan hadits yang tercatat di <b>${Object.keys(grup).length} kitab</b>, dalam <b>${hasil.keluarga.length} riwayat</b>. Kemiripan terbaik ${Math.round(hasil.skor * 100)}%.</p></header>
         <div class="isi">${klaim}${langkah}
+          ${katalog}
           <div><div class="label" style="margin-bottom:10px">semua riwayat yang ditemukan</div><div class="keluarga">${Object.entries(grup).map(([k, fs]) => `<article><h4>${esc(nama(k))}</h4><div class="nomor">${fs.map((f) => `<a href="/${esc(f.kitab_id)}/${esc(f.slug)}" title="${f.hubungan === "terbaik" ? "paling cocok dengan teks Anda" : f.hubungan === "sama" ? "matan sama" : "matan mirip"}"${f.hubungan === "terbaik" ? ' style="border-color:var(--zamrud);border-width:2px"' : f.hubungan === "mirip" ? ' style="border-style:dashed"' : ""}>${esc(f.no_tampil)}</a>`).join("")}</div>${bukuBesar(fs.find((f) => f.penilaian.length)?.penilaian, k)}</article>`).join("")}</div></div>
         </div></section>`;
     } else {
       vonis = `<section class="vonis"><header><span class="stempel tidak">TIDAK DITEMUKAN</span><p>Kalimat ini <b>tidak ditemukan</b> di ${kitab.length} kitab yang kami muat (${fmt(info.terbit)} riwayat).</p></header>
         <div class="isi">${langkah}
           ${hasil.absen?.length ? `<p>Kata <b>“${hasil.absen.map(esc).join("”, “")}”</b> tidak muncul dalam satu pun terjemahan riwayat kami. Periksa ejaannya. Bila ejaannya benar, kalimat ini bukan hadits dari kitab-kitab tersebut.</p>` : `<p>${esc(hasil.alasan || "")}.</p>`}
-          <p style="color:var(--tinta-2)">Ini belum membuktikan kalimat tersebut palsu. Para ulama mencatat hadits palsu dalam kitab khusus (mis. <i>al-Maudhu'at</i>). Penilaian mereka akan tampil di sini setelah datanya kami muat dan verifikasi.</p>
-          <div class="slot-kosong"><b>Catatan ulama hadits tentang kalimat ini</b><span>Belum tersedia di database.</span></div>
+          <p style="color:var(--tinta-2)">Tidak ditemukan di kitab-kitab hadits ini belum membuktikan kalimat tersebut palsu. Para ulama membahas ucapan-ucapan populer dalam kitab khusus; bila ada, pembahasan mereka tampil di bawah.</p>
+          ${katalog || `<div class="slot-kosong"><b>Catatan ulama hadits tentang kalimat ini</b><span>Kalimat ini juga tidak ditemukan di empat kitab tentang hadits populer & palsu yang kami muat (al-Maqashid al-Hasanah, Kasyf al-Khafa', al-Asrar al-Marfu'ah, al-Maudhu'at).</span></div>`}
         </div></section>`;
     }
   }
@@ -417,10 +419,14 @@ export function halamanMetode({ info }) {
     </ul>
     <h2>Pencarian</h2>
     <p>Pencarian memahami kalimat bebas dengan aturan yang bisa diperiksa: ejaan diseragamkan (shalat/sholat/salat), kata pengisi diabaikan, dan istilah awam dipetakan ke istilah dalam hadits. Contohnya, “tarawih” dicari sebagai <span class="ar">قيام رمضان</span>, karena kata “tarawih” tidak ada di teks Arab hadits. Setiap hasil menunjukkan alasan kemunculannya.</p>
+    <h2>Hadits populer &amp; palsu</h2>
+    <p>Untuk ucapan yang sering beredar sebagai hadits, kami menampilkan pembahasan ulama dari empat kitab khusus: <i>al-Maudhu'at</i> (Ibnul Jauzi), <i>al-Maqashid al-Hasanah</i> (as-Sakhawi), <i>al-Asrar al-Marfu'ah</i> (Mulla 'Ali al-Qari), dan <i>Kasyf al-Khafa'</i> (al-'Ajluni). Kata kunci penilaian seperti <span class="ar" style="display:inline">باطل</span> (batil) dicari otomatis dan selalu ditampilkan bersama kalimat aslinya. Kami memilih aturan yang hati-hati: kata <i>shahih</i> atau <i>hasan</i> hanya ditandai bila jelas berupa penilaian (mis. <span class="ar" style="display:inline">إسناده صحيح</span>), bukan bagian dari judul kitab atau isi hadits. Bila sebuah ucapan hanya disebut di tengah pembahasan ucapan lain, penilaian entri itu tidak kami tempelkan padanya.</p>
     <h2>Sumber</h2>
     <ul>
       <li>Teks Arab bernomor standar dan penilaian ulama: fawazahmed0/hadith-api (domain publik).</li>
       <li>Teks Arab dan terjemah Indonesia: Ensiklopedi Hadits 9 Imam, Lidwa Pusaka (digunakan dengan izin), via carihadis.com dan irsyadulibad/hadits-database.</li>
+      <li>Judul kitab &amp; bab, edisi tahqiq (Ahmad, ad-Darimi, asy-Syafi'i), dan empat kitab hadits populer &amp; palsu: korpus OpenITI (Romanov &amp; Seydi, Zenodo).</li>
+      <li>Tema dan terjemah yang ditinjau: HadeethEnc.com, ditampilkan tanpa diubah.</li>
       <li>Versi data: ${sumber.map(([s, c]) => `<code>${esc(s)}@${esc(c)}</code>`).join(", ")}, dibangun ${esc(info.dibangun)}.</li>
     </ul>
     <h2>Laporkan kesalahan</h2>
@@ -490,4 +496,74 @@ export function halamanRiyadh(d) {
     </aside>
   </article>
   <nav class="navigasi-hadits" aria-label="Hadits sebelum dan sesudah">${sebelum ? `<a href="/riyadh/${esc(sebelum.slug)}" rel="prev">← No. ${esc(sebelum.no_tampil)}</a>` : "<span></span>"}${sesudah ? `<a href="/riyadh/${esc(sesudah.slug)}" rel="next">No. ${esc(sesudah.no_tampil)} →</a>` : ""}</nav>`;
+}
+
+// ------------------------------------------------------------------------------------------------
+// KATALOG UCAPAN POPULER & HADITS PALSU
+// ------------------------------------------------------------------------------------------------
+// Kelas warna (palsu/lemah/terima/lain) ditentukan pipeline (katalog_palsu.py) bersama daftar kata kuncinya.
+const chipKunci = ([g, kelas]) => `<span class="chip kk-${esc(kelas || "lain")}">${esc(g)}</span>`;
+const NAMA_KITAB_KATALOG = { maqashid: "al-Maqashid al-Hasanah", kasyf: "Kasyf al-Khafa'", asrar: "al-Asrar al-Marfu'ah", maudhuat: "al-Maudhu'at" };
+
+function sorotKunci(konteks, kunci) {
+  const t = esc(konteks);
+  const k = esc(kunci);
+  const i = t.indexOf(k);
+  return i < 0 ? t : t.slice(0, i) + `<mark>${k}</mark>` + t.slice(i + k.length);
+}
+
+export function kartuEntri(e) {
+  return `<article class="he">
+    <h3 style="font-size:1.05rem;color:var(--zamrud);margin:0">${esc(e.kitab_nama)} <span class="num">no. ${e.no}</span> <span class="kecil">· ${esc(e.penulis)} (w. ${e.wafat} H)</span></h3>
+    <p class="ar" style="font-weight:700">${esc(e.judul_ar)}</p>
+    ${e.kata_kunci.length ? `<ul class="kunci-ulama">${e.kata_kunci.map(([k, g, ctx, kelas]) => `<li>${chipKunci([g, kelas])} <span class="ar">${sorotKunci(ctx, k)}</span></li>`).join("")}</ul>`
+      : `<p class="kecil">Tidak ada kata kunci penilaian yang dikenali otomatis. Baca teks lengkapnya.</p>`}
+    <details><summary class="kecil" style="cursor:pointer">Teks lengkap ${esc(e.penulis)}</summary><p class="ar" style="margin-top:8px">${esc(e.teks_ar)}</p></details>
+  </article>`;
+}
+
+export function kotakKatalog({ populer, entri, riwayat = [] }) {
+  if (!populer && !entri.length) return "";
+  return `<section class="katalog-kotak">
+    <h3>Dibahas ulama dalam kitab tentang hadits populer & palsu</h3>
+    ${populer ? `<p>Teks Anda cocok dengan ucapan yang sering beredar: <b>“${esc(populer.teks_id)}”</b> <span class="ar" style="display:inline">${esc(populer.arab)}</span>. <a href="/populer/${esc(populer.id)}">Lihat pembahasan lengkap →</a></p>` : ""}
+    ${riwayat.length ? `<p>Lafaz Arab ini juga ada di kitab hadits kami: ${riwayat.map((r) => `<a href="/${esc(r.kitab_id)}/${esc(r.slug)}">${esc(PENDEK[r.kitab_id])} ${esc(r.no_tampil)}</a>`).join(" · ")}</p>` : ""}
+    ${entri.length ? `<div style="display:grid;gap:12px">${entri.map(kartuEntri).join("")}</div>` : `<p class="tanpa-nilai">Lafaz ini tidak ditemukan sebagai judul entri di keempat kitab katalog kami.</p>`}
+    <p class="kecil">Kata kunci (mis. <span class="ar" style="display:inline">باطل</span> = batil) dicari otomatis di teks ulama dan ditampilkan bersama kalimat aslinya. Kata seperti <i>shahih</i> atau <i>hasan</i> sering merujuk riwayat lain yang dibahas di entri yang sama. Teman Hadits tidak membuat vonis sendiri; para ulama kadang berbeda pendapat, jadi bacalah kalimat lengkapnya.</p>
+  </section>`;
+}
+
+export function halamanPopulerDaftar({ daftar }) {
+  return `<h1 class="halaman-judul">Sering beredar, benarkah hadits?</h1>
+  <p class="sub">Ucapan yang sering disebut “hadits” di masyarakat, dihubungkan ke pembahasan ulama dalam kitab-kitab khusus tentang hadits populer dan palsu: <i>al-Maqashid al-Hasanah</i> (as-Sakhawi), <i>Kasyf al-Khafa'</i> (al-'Ajluni), <i>al-Asrar al-Marfu'ah</i> (Mulla 'Ali al-Qari), dan <i>al-Maudhu'at</i> (Ibnul Jauzi). Beberapa di antaranya justru hadits yang memang ada di kitab hadits; itu juga ditunjukkan.</p>
+  <p class="kecil" style="margin-top:8px">Daftar kalimat Indonesia dan lafaz Arabnya disusun Teman Hadits dan belum ditinjau ahli. Penilaian yang tampil selalu kutipan dari kitab ulama atau kitab hadits.</p>
+  <ol class="daftar-populer">${daftar.map((p) => `<li><a href="/populer/${esc(p.id)}"><b>“${esc(p.teks_id)}”</b></a>
+    <span class="ar">${esc(p.arab)}</span>
+    <span class="baris-status">${p.riwayat ? `<span class="chip kk-terima">ada di kitab hadits kami (${p.riwayat} riwayat)</span>` : `<span class="chip kk-lain">tidak ada di 11 kitab hadits kami</span>`}
+      ${p.kitab.length ? `<span class="kecil">dibahas di ${p.kitab.map((k) => esc(NAMA_KITAB_KATALOG[k])).join(", ")}</span>` : `<span class="kecil">tidak ditemukan di 4 kitab katalog</span>`}</span>
+    ${p.kunci.length ? `<span class="baris-status"><span class="kecil">kata kunci di teks ulama:</span> ${p.kunci.slice(0, 6).map(chipKunci).join(" ")}</span>` : ""}</li>`).join("")}</ol>`;
+}
+
+export function halamanPopuler({ p }) {
+  return `<nav class="remah"><a href="/populer">Sering beredar</a> › <span>${esc(p.teks_id)}</span></nav>
+  <h1 class="halaman-judul" style="margin-top:10px">“${esc(p.teks_id)}”</h1>
+  <p class="ar" style="font-size:calc(1.6rem * var(--ar));color:var(--zamrud);margin-top:6px">${esc(p.arab)}</p>
+  <div class="catatan" style="margin-top:16px">${p.riwayat.length
+    ? `<b>Ada di kitab hadits kami</b> dengan lafaz yang cocok: ${p.riwayat.map((r) => `<a href="/${esc(r.kitab_id)}/${esc(r.slug)}">${esc(r.kitab_nama)} no. ${esc(r.no_tampil)}</a>`).join(" · ")}. Bukalah untuk melihat sanad dan penilaian ulama.`
+    : `<b>Tidak ditemukan</b> dengan lafaz ini di 11 kitab hadits kami (${"Bukhari, Muslim, Abu Dawud, Tirmidzi, Nasa'i, Ibnu Majah, Malik, Ahmad, Darimi, Syafi'i, Riyadhus Shalihin"}). Ini sendiri belum membuktikan palsu; lihat pembahasan ulama di bawah.`}</div>
+  <section class="bagian" style="margin-top:26px"><header><h2>Pembahasan ulama</h2><p>Kutipan dari kitab-kitab tentang hadits populer dan palsu (teks OpenITI).</p></header>
+    ${p.entri.length ? `<div style="display:grid;gap:14px">${p.entri.map(kartuEntri).join("")}</div>` : `<p class="tanpa-nilai">Lafaz ini tidak ditemukan sebagai judul entri di keempat kitab katalog kami. Mungkin ia dikenal dengan lafaz lain, atau memang tidak dibahas di kitab-kitab ini.</p>`}
+  </section>
+  ${p.sebut?.length ? `<section class="bagian" style="margin-top:26px"><header><h2>Disebut dalam pembahasan entri lain</h2><p>Lafaz ini muncul persis di tengah pembahasan ucapan lain. Kata kunci penilaian entri-entri itu <b>tidak</b> ditampilkan karena belum tentu tentang lafaz ini; bacalah kalimatnya.</p></header>
+    <ul class="kunci-ulama">${p.sebut.map((x) => `<li><span class="kecil"><b>${esc(x.kitab_nama)} no. ${x.no}</b> (${esc(x.penulis)}), entri <span class="ar" style="display:inline">${esc(x.judul_ar.slice(0, 80))}</span></span><span class="ar">${sorotKunci(x.kutipan, normAr(p.arab))}</span></li>`).join("")}</ul>
+  </section>` : ""}
+  <p class="kecil" style="margin-top:18px">Kalimat Indonesia dan lafaz Arabnya disusun Teman Hadits (belum ditinjau). ${p.varian.length ? "Juga dikenal sebagai: " + p.varian.map((v) => `“${esc(v)}”`).join(", ") + "." : ""}</p>`;
+}
+
+export function bagianPopulerBeranda(daftar) {
+  if (!daftar.length) return "";
+  return `<section class="bagian" aria-labelledby="h-populer">
+    <header><h2 id="h-populer">Sering beredar, benarkah hadits?</h2><p>Ucapan populer yang sering disebut hadits, beserta pembahasan ulama tentangnya. <a href="/populer">Lihat semua →</a></p></header>
+    <div class="tema-daftar">${daftar.slice(0, 6).map((p) => `<a href="/populer/${esc(p.id)}" style="display:grid;gap:6px"><span>“${esc(p.teks_id)}”</span>${p.riwayat ? `<span class="chip kk-terima" style="justify-self:start">ada di kitab hadits</span>` : p.kunci.length ? `<span style="display:flex;gap:4px;flex-wrap:wrap">${p.kunci.slice(0, 3).map(chipKunci).join("")}</span>` : ""}</a>`).join("")}</div>
+  </section>`;
 }

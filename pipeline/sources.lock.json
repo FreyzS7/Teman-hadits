@@ -114,6 +114,21 @@
   "commit": "599f22fe249871f602efe2e0ddc801d3742960a3",
   "sha256": "1402840d20bf094e127d75450d0e77df82ca2f056c9c426300f6758a3ca1d3fb"
  },
+ "openiti-0225AH/0204Shafici.Musnad.Shamela0009615-ara1": {
+  "bytes": 954567,
+  "commit": "2cfdc8cf1b89abfd15463d1c429fbb822aa5d9a5",
+  "sha256": "a6c164b549d59663c2fb2a8041880b3403bb4b8b4fe61814228a04281d7e19f5"
+ },
+ "openiti-0250AH/0241IbnHanbal.Musnad.Shamela0025794-ara1.mARkdown": {
+  "bytes": 15695392,
+  "commit": "0cc00c0646c81988c75a3815fe6d9a5fa65ce592",
+  "sha256": "00ee0f74327d83af587153983d04ad45367fea42338566c82e871df30c2ceaa6"
+ },
+ "openiti-0275AH/0255CabdAllahDarimi.Sunan.Shamela0021795-ara3": {
+  "bytes": 2059441,
+  "commit": "44e1c36738a2bf5c14dafa232a6ae1891e6171cd",
+  "sha256": "d069cc7479eada66986d971ed6860787a7829a6a8bbe95f299c1ef8c129858b3"
+ },
  "openiti-0275AH/0256Bukhari.Sahih.Shamela0001681-ara1": {
   "bytes": 6039255,
   "commit": "44e1c36738a2bf5c14dafa232a6ae1891e6171cd",
@@ -143,5 +158,25 @@
   "bytes": 3460338,
   "commit": "089e665b4958e0f145a46941987fb81cf3dda1b8",
   "sha256": "be25ffbca47a4274c181e8955c1f91e5abaeabcebb826c0ef1997650ea27c50c"
+ },
+ "openiti-0600AH/0597IbnJawzi.Mawducat.Shamela0000882-ara1": {
+  "bytes": 2411907,
+  "commit": "ea4bdc6517a49d07106f223aa0869aa7c21b9589",
+  "sha256": "be16979ad3b2db7cee71ecc6444cafc66e9f018ae9ebdfce9678324fdcc7276d"
+ },
+ "openiti-0925AH/0902Sakhawi.MaqasidHasana.Shamela0023177-ara1": {
+  "bytes": 1503556,
+  "commit": "4f0f4562d1e13083c593e3a0ca6a19a3eb33805e",
+  "sha256": "76df9ad686565ef1e59ac279a81b2ae855b8dc1fc55b3a829c4f0d66128534a7"
+ },
+ "openiti-1025AH/1014MullaCaliQari.AsrarMarfuca.Shamela0006056-ara1": {
+  "bytes": 503884,
+  "commit": "f2aa39a71069f4a9a7b863332e0a8d9f6ea93dd2",
+  "sha256": "4cbef7e2d5dc3cda609df6f3504d69af47959a3618a2f0b77977289d5efe1a27"
+ },
+ "openiti-1175AH/1162IbnMuammadAbuFidaCajluni.KashfKhafa.Shamela0000856-ara1": {
+  "bytes": 2536775,
+  "commit": "2c367f78b779757652ee59df503fdc9312ec2f06",
+  "sha256": "641607994c634451ed008c933f62aeba6334e7a30c3560ae9fce39da99ebf5eb"
  }
 }

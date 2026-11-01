@@ -86,6 +86,23 @@ if os.path.exists(bab_path):
               f"{d['nomor_sama'] if d['nomor_sama'] != '0/0' else '—'} | {d.get('tahqiq') or '—'} |")
     w("")
 
+kt_path = os.path.join(BUILD, "katalog.sqlite")
+if os.path.exists(kt_path):
+    kt = sqlite3.connect(kt_path)
+    ki = dict(kt.execute("SELECT kunci, nilai FROM info"))
+    w("## Katalog hadits populer & palsu\n")
+    w("Lihat `docs/10-katalog-palsu.md`. Teks entri apa adanya dari OpenITI; kata kunci penilaian dikenali otomatis dan "
+      "selalu ditampilkan bersama kalimat aslinya.\n")
+    w("| Kitab | Penulis | Edisi digital | Entri | Entri dengan kata kunci |")
+    w("|---|---|---|---:|---:|")
+    for kid, nama, penulis, wafat, edisi, n, nk in kt.execute(
+            "SELECT b.id, b.nama, b.penulis, b.wafat, b.edisi, count(*), sum(k.kata_kunci != '[]') FROM katalog k "
+            "JOIN katalog_kitab b ON b.id = k.kitab_id GROUP BY b.id ORDER BY b.wafat"):
+        w(f"| {nama} | {penulis} (w. {wafat} H) | {edisi or '—'} | {n:,} | {nk:,} |")
+    w(f"\nUcapan populer berbahasa Indonesia: {ki['ucapan_populer']} (daftar **belum ditinjau**); tautan ke judul entri: "
+      f"{ki.get('tautan_katalog', 0)}; disebut di pembahasan entri lain: {ki.get('sebut_di_entri_lain', 0)}; "
+      f"ada di kitab hadits kita: {ki.get('ada_di_kitab_hadits', 0)}; tidak ada: {ki.get('tidak_ada_di_kitab_hadits', 0)}.\n")
+
 w("## Temuan kualitas data\n")
 ry_path = os.path.join(BUILD, "riyadh.sqlite")
 if os.path.exists(ry_path):

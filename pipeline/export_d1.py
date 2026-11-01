@@ -33,6 +33,8 @@ DROP TABLE IF EXISTS info; DROP TABLE IF EXISTS kitab; DROP TABLE IF EXISTS bab;
 DROP TABLE IF EXISTS penilaian; DROP TABLE IF EXISTS mirip; DROP TABLE IF EXISTS kata_df; DROP TABLE IF EXISTS cari;
 DROP TABLE IF EXISTS tema; DROP TABLE IF EXISTS he_hadits; DROP TABLE IF EXISTS he_tema; DROP TABLE IF EXISTS he_riwayat;
 DROP TABLE IF EXISTS riyadh_info; DROP TABLE IF EXISTS sumber; DROP TABLE IF EXISTS judul;
+DROP TABLE IF EXISTS katalog_kitab; DROP TABLE IF EXISTS katalog; DROP TABLE IF EXISTS katalog_cari;
+DROP TABLE IF EXISTS populer; DROP TABLE IF EXISTS populer_katalog; DROP TABLE IF EXISTS populer_riwayat; DROP TABLE IF EXISTS populer_sebut;
 CREATE TABLE info (kunci TEXT PRIMARY KEY, nilai TEXT);
 CREATE TABLE kitab (
   id TEXT PRIMARY KEY, urut INT, nama TEXT, nama_arab TEXT, penyusun TEXT, wafat_h INT, sistem_nomor TEXT,
@@ -75,6 +77,14 @@ CREATE TABLE riyadh_info (n INTEGER PRIMARY KEY, atribusi_ar TEXT, kitab_atribus
 CREATE TABLE sumber (a INT, b INT, skor REAL, kitab_disebut INT, sahabat_sama INT, peringkat INT);
 CREATE INDEX ix_sumber_a ON sumber (a);
 CREATE INDEX ix_sumber_b ON sumber (b);
+-- Katalog ucapan populer & palsu dari kitab klasik (pipeline/katalog_palsu.py)
+CREATE TABLE katalog_kitab (id TEXT PRIMARY KEY, nama TEXT, nama_ar TEXT, penulis TEXT, wafat INT, edisi TEXT);
+CREATE TABLE katalog (k INTEGER PRIMARY KEY, id TEXT UNIQUE, kitab_id TEXT, no INT, judul_ar TEXT, teks_ar TEXT, kata_kunci TEXT);
+CREATE VIRTUAL TABLE katalog_cari USING fts5 (judul, content = '', tokenize = 'unicode61 remove_diacritics 2');
+CREATE TABLE populer (id TEXT PRIMARY KEY, urut INT, teks_id TEXT, varian TEXT, arab TEXT, catatan TEXT);
+CREATE TABLE populer_katalog (populer_id TEXT, katalog_id TEXT, skor REAL);
+CREATE TABLE populer_riwayat (populer_id TEXT, n INT, skor REAL);
+CREATE TABLE populer_sebut (populer_id TEXT, katalog_id TEXT, kutipan TEXT);
 """
 
 # Stem Indonesia ringan untuk tabel frekuensi kata (dipakai fitur "cek teks"); harus sama dengan site/src/teks.js
@@ -123,6 +133,8 @@ class Penulis:
         buf, pjg = [], len(kepala)
         for b in baris:
             v = "(" + ",".join(sql_val(x) for x in b) + ")"
+            if len(v.encode("utf8")) + len(kepala) > MAKS_PERNYATAAN:
+                raise ValueError(f"satu baris {tabel} terlalu panjang untuk D1 ({len(v.encode('utf8'))} byte): potong teksnya")
             if buf and (pjg + len(v.encode("utf8")) + 2 > MAKS_PERNYATAAN or len(buf) >= MAKS_BARIS):
                 self.tulis(kepala + ",".join(buf) + ";\n")
                 buf, pjg = [], len(kepala)
@@ -381,10 +393,29 @@ def main():
                      if b in n_of])
         except sqlite3.Error as e:
             print("hadeethenc.sqlite belum lengkap, dilewati:", e, file=sys.stderr)
+    kt_path = os.path.join(BUILD, "katalog.sqlite")
+    n_kt = 0
+    if os.path.exists(kt_path):
+        kt = sqlite3.connect(kt_path)
+        w.sisip("katalog_kitab", ["id", "nama", "nama_ar", "penulis", "wafat", "edisi"], kt.execute("SELECT * FROM katalog_kitab"))
+        ent = kt.execute("SELECT id, kitab_id, no, judul_ar, teks_ar, kata_kunci FROM katalog").fetchall()
+        n_kt = len(ent)
+        # Beberapa bab al-Maudhu'at memuat puluhan jalur sanad; batas satu pernyataan D1 ±100 KB.
+        potong = lambda t: t if len(t) <= 12000 else t[:12000] + " … [teks dipotong; lihat kitab aslinya]"
+        w.sisip("katalog", ["k", "id", "kitab_id", "no", "judul_ar", "teks_ar", "kata_kunci"],
+                [(i, e[0], e[1], e[2], e[3], potong(e[4]), e[5]) for i, e in enumerate(ent, 1)])
+        w.sisip("katalog_cari", ["rowid", "judul"],
+                [(i, akar_ar(norm_ar(e[3] + " " + " ".join(re.sub(r"^حديث\s*:?\s*", "", e[4]).split()[:10])))) for i, e in enumerate(ent, 1)])
+        w.sisip("populer", ["id", "urut", "teks_id", "varian", "arab", "catatan"],
+                [(r[0], i) + tuple(r[1:]) for i, r in enumerate(kt.execute("SELECT id, teks_id, varian, arab, catatan FROM populer"), 1)])
+        w.sisip("populer_katalog", ["populer_id", "katalog_id", "skor"], kt.execute("SELECT * FROM populer_katalog"))
+        w.sisip("populer_sebut", ["populer_id", "katalog_id", "kutipan"], kt.execute("SELECT * FROM populer_sebut"))
+        w.sisip("populer_riwayat", ["populer_id", "n", "skor"],
+                [(p, n_of[r], s_) for p, r, s_ in kt.execute("SELECT * FROM populer_riwayat") if r in n_of])
     w.tutup()
     berkas = sorted(f for f in os.listdir(OUT) if f.endswith(".sql"))
     ukuran = sum(os.path.getsize(os.path.join(OUT, f)) for f in berkas)
-    print(f"{len(data_riwayat)} riwayat (termasuk {len(data_ry_info)} Riyadhus Shalihin), {len(data_sumber)} tautan sumber Riyadh, {n_mirip} pasangan takhrij, {n_he} hadits HadeethEnc, {len(df)} kata -> "
+    print(f"{len(data_riwayat)} riwayat (termasuk {len(data_ry_info)} Riyadhus Shalihin), {len(data_sumber)} tautan sumber Riyadh, {n_mirip} pasangan takhrij, {n_kt} entri katalog, {n_he} hadits HadeethEnc, {len(df)} kata -> "
           f"{len(berkas)} berkas, {ukuran / 1e6:.0f} MB di build/d1/", file=sys.stderr)
 
 

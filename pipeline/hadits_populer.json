@@ -1,0 +1,26 @@
+{
+  "_catatan": "Ucapan yang sering beredar di Indonesia sebagai 'hadits', dengan lafaz Arabnya. DISUSUN TEMAN HADITS, BELUM DITINJAU. File ini hanya menghubungkan kalimat Indonesia ke lafaz Arab; penilaian yang tampil di situs selalu kutipan dari kitab ulama atau dari kitab hadits, bukan dari file ini. Sebagian entri sengaja berupa hadits yang memang ada di kitab-kitab hadits (kontrol), agar sistem diuji tidak asal menandai 'bermasalah'.",
+  "ditinjau": false,
+  "ucapan": [
+    {"id": "ilmu-negeri-cina", "teks": "Tuntutlah ilmu walau sampai ke negeri Cina", "varian": ["carilah ilmu walau ke negeri cina", "tuntut ilmu sampai negeri china"], "arab": "اطلبوا العلم ولو بالصين"},
+    {"id": "cinta-tanah-air", "teks": "Cinta tanah air sebagian dari iman", "varian": ["hubbul wathon minal iman", "cinta tanah air adalah sebagian dari iman"], "arab": "حب الوطن من الإيمان"},
+    {"id": "kebersihan-iman", "teks": "Kebersihan sebagian dari iman", "varian": ["kebersihan adalah sebagian dari iman", "an nadhofatu minal iman"], "arab": "النظافة من الإيمان"},
+    {"id": "perbedaan-rahmat", "teks": "Perbedaan pendapat di antara umatku adalah rahmat", "varian": ["perbedaan umatku adalah rahmat", "ikhtilafu ummati rahmah"], "arab": "اختلاف أمتي رحمة"},
+    {"id": "tidur-puasa-ibadah", "teks": "Tidurnya orang yang berpuasa adalah ibadah", "varian": ["tidur orang puasa itu ibadah"], "arab": "نوم الصائم عبادة"},
+    {"id": "ilmu-buaian-lahat", "teks": "Tuntutlah ilmu dari buaian hingga liang lahat", "varian": ["carilah ilmu dari ayunan sampai liang kubur", "menuntut ilmu dari buaian sampai liang lahat"], "arab": "اطلبوا العلم من المهد إلى اللحد"},
+    {"id": "surga-telapak-kaki-ibu", "teks": "Surga di bawah telapak kaki ibu", "varian": ["surga ada di bawah telapak kaki ibu", "surga di telapak kaki ibu"], "arab": "الجنة تحت أقدام الأمهات"},
+    {"id": "mengenal-diri", "teks": "Barangsiapa mengenal dirinya, maka ia mengenal Tuhannya", "varian": ["siapa yang mengenal dirinya akan mengenal tuhannya", "man arofa nafsahu faqod arofa robbahu"], "arab": "من عرف نفسه فقد عرف ربه"},
+    {"id": "jihad-besar", "teks": "Kita kembali dari jihad kecil menuju jihad besar", "varian": ["jihad akbar adalah melawan hawa nafsu", "kembali dari jihad kecil ke jihad besar"], "arab": "رجعنا من الجهاد الأصغر إلى الجهاد الأكبر"},
+    {"id": "dunia-selamanya", "teks": "Bekerjalah untuk duniamu seakan-akan engkau hidup selamanya, dan beramallah untuk akhiratmu seakan-akan engkau mati besok", "varian": ["bekerjalah untuk duniamu seolah kamu hidup selamanya"], "arab": "اعمل لدنياك كأنك تعيش أبدا"},
+    {"id": "puasa-sehat", "teks": "Berpuasalah, niscaya kalian sehat", "varian": ["puasalah kamu niscaya kamu sehat", "shumu tashihhu"], "arab": "صوموا تصحوا"},
+    {"id": "ramadhan-tiga-bagian", "teks": "Awal Ramadhan adalah rahmat, pertengahannya ampunan, dan akhirnya pembebasan dari neraka", "varian": ["sepuluh hari pertama ramadhan rahmat sepuluh hari kedua ampunan sepuluh hari terakhir pembebasan dari neraka"], "arab": "أوله رحمة وأوسطه مغفرة وآخره عتق من النار"},
+    {"id": "kota-ilmu", "teks": "Aku adalah kota ilmu dan Ali adalah pintunya", "varian": ["saya kota ilmu dan ali pintunya"], "arab": "أنا مدينة العلم وعلي بابها"},
+    {"id": "pertengahan", "teks": "Sebaik-baik perkara adalah yang pertengahan", "varian": ["sebaik baik urusan adalah yang tengah tengah", "khoirul umuri awsathuha"], "arab": "خير الأمور أوسطها"},
+    {"id": "kadar-akal", "teks": "Berbicaralah kepada manusia sesuai kadar akal mereka", "varian": ["bicaralah dengan manusia sesuai kemampuan akalnya"], "arab": "خاطبوا الناس على قدر عقولهم"},
+    {"id": "fakir-kufur", "teks": "Kefakiran itu hampir menjadi kekufuran", "varian": ["kemiskinan mendekatkan kepada kekufuran", "kadal faqru an yakuna kufron"], "arab": "كاد الفقر أن يكون كفرا"},
+    {"id": "ulama-pewaris-nabi", "teks": "Ulama adalah pewaris para nabi", "varian": ["para ulama adalah pewaris nabi", "al ulama warotsatul anbiya"], "arab": "العلماء ورثة الأنبياء"},
+    {"id": "senyum-sedekah", "teks": "Senyummu di hadapan saudaramu adalah sedekah", "varian": ["senyum adalah sedekah", "senyum kepada saudaramu adalah sedekah"], "arab": "تبسمك في وجه أخيك لك صدقة"},
+    {"id": "bersuci-separuh-iman", "teks": "Bersuci adalah separuh dari iman", "varian": ["kesucian adalah sebagian dari iman", "ath thohuru syathrul iman"], "arab": "الطهور شطر الإيمان"},
+    {"id": "sayangi-yang-di-bumi", "teks": "Sayangilah yang ada di bumi, niscaya yang di langit akan menyayangimu", "varian": ["sayangilah penduduk bumi niscaya penduduk langit menyayangimu"], "arab": "ارحموا من في الأرض يرحمكم من في السماء"}
+  ]
+}

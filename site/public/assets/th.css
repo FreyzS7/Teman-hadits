@@ -338,3 +338,20 @@ a.punggung:hover { color: var(--sampul-teks); }
 .buku-besar li.arab { display: block; }
 .buku-besar li.arab .hukum { display: block; text-align: right; font: 700 calc(1.1rem * var(--ar))/1.8 var(--f-arab); margin-top: 2px; }
 .rujukan-langsung a + .kecil { margin-right: 10px; }
+.kk-palsu { border-color: var(--palsu); color: var(--palsu); }
+.kk-lemah { border-color: var(--lemah); color: var(--lemah); }
+.kk-terima { border-color: var(--terima); color: var(--terima); }
+.kk-lain { color: var(--tinta-2); }
+.kunci-ulama { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.kunci-ulama li { display: grid; gap: 4px; justify-items: start; }
+.kunci-ulama li > .ar { justify-self: stretch; }
+.kunci-ulama .ar { font-size: calc(1.1rem * var(--ar)); line-height: 1.9; color: var(--tinta-2); }
+.kunci-ulama mark { background: var(--tanda); color: var(--tinta); }
+.katalog-kotak { border-top: 1px solid var(--garis); padding-top: 16px; display: grid; gap: 12px; }
+.katalog-kotak h3 { color: var(--zamrud); font-size: 1.1rem; margin: 0; }
+.daftar-populer { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 0; }
+.daftar-populer li { display: grid; gap: 6px; padding: 16px 0; border-bottom: 1px solid var(--garis); }
+.daftar-populer li > a { font-size: 1.15rem; text-decoration: none; }
+.daftar-populer .ar { font-size: calc(1.3rem * var(--ar)); color: var(--zamrud); }
+.baris-status { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+@media (max-width: 720px) { .nav { flex-wrap: wrap; justify-content: flex-start; gap: 2px 4px; } }
