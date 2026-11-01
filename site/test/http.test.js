@@ -72,7 +72,9 @@ test("tema HadeethEnc: daftar tema & saran tema di pencarian", opsi, async () =>
 test("Riyadhus Shalihin: terjemah dipasangkan menurut isi, sumber diperiksa", opsi, async () => {
   const r727 = await ambil("/riyadh/727");
   assert.match(r727.teks, /nomor di terjemah: 725/);
-  assert.match(r727.teks, /Abu Salamah/);
+  // produksi: TERJEMAH_RIYADH="sembunyi" (izin penerjemah belum pasti) -> terjemah tidak tampil, diganti keterangan
+  if (/belum ditampilkan sampai izin penerjemahnya dipastikan/.test(r727.teks)) assert.doesNotMatch(r727.teks, /Abu Salamah/);
+  else assert.match(r727.teks, /Abu Salamah/);
   const r1 = await ambil("/riyadh/1");
   assert.match(r1.teks, /<b>al-Bukhari<\/b> <span class="num">no\. <a href="\/bukhari\/1">1<\/a>/);
   assert.match(r1.teks, /href="\/muslim\/1907a"/);
