@@ -24,6 +24,13 @@ export async function cocokPopuler(db, teks) {
   return terbaik;
 }
 
+/** Sama dengan s.split(/\s+/).slice(0, n).join(" "), tanpa memecah seluruh teks (entri katalog bisa ribuan huruf). */
+function awalKata(s, n) {
+  const re = /\s+/g;
+  for (let m, k = 0; (m = re.exec(s));) if (++k === n) return s.slice(0, m.index).split(/\s+/).join(" ");
+  return s.split(/\s+/).join(" ");
+}
+
 /** Cari entri katalog untuk teks Arab (judul entri harus memuat >= 75% 2-gram teks). */
 export async function cocokKatalogArab(db, teks) {
   const kata = akarAr(normAr(teks)).split(" ").filter((w) => w.length >= 2);
@@ -33,7 +40,7 @@ export async function cocokKatalogArab(db, teks) {
   const cand = (await db.prepare("SELECT k.k, k.id, k.kitab_id, k.no, k.judul_ar, k.teks_ar FROM katalog k WHERE k.k IN (SELECT rowid FROM katalog_cari WHERE katalog_cari MATCH ?1 ORDER BY rank LIMIT 60)").bind(match).all()).results;
   const out = [];
   for (const c of cand) {
-    const kepala = akarAr(normAr(c.judul_ar + " " + c.teks_ar.replace(/^حديث\s*:?\s*/, "").split(/\s+/).slice(0, 10).join(" "))).split(" ");
+    const kepala = akarAr(normAr(c.judul_ar + " " + awalKata(c.teks_ar.replace(/^حديث\s*:?\s*/, ""), 10))).split(" ");
     const gk = new Set(kepala.slice(0, -1).map((w, i) => w + " " + kepala[i + 1]));
     const skor = [...g].filter((x) => gk.has(x)).length / g.size;
     if (skor >= 0.75) out.push({ id: c.id, skor });

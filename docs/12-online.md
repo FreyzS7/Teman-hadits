@@ -29,9 +29,9 @@ Diukur di database lokal yang sama persis dengan yang akan diunggah.
 | Hal | Hasil | Alat |
 |---|---|---|
 | Ukuran database | 275 MB (dulu 285 MB) | `npm run estimasi` |
-| Ukuran Worker | 122 KiB (36 KiB gzip) | `wrangler deploy --dry-run` |
+| Ukuran Worker | 127 KiB (38 KiB gzip) | `wrangler deploy --dry-run` |
 | **Baris ditulis untuk impor penuh** | **±564 ribu** (dulu ±1,72 juta; baris tabel + entri indeks) | `npm run estimasi` |
-| CPU Worker per halaman | 0,2–2 ms. Pencarian & cek: median 1–6 ms; **pencarian kalimat panjang p90 ±17 ms** (lihat di bawah) | `npm run ukur:cpu` + profil |
+| CPU Worker per halaman | 0,3–2 ms (daftar perawi ±3 ms). Pencarian & cek: **p90 paling tinggi ±4,4 ms** (dulu ±10 ms; lihat di bawah) | `npm run ukur:cpu` + profil |
 | Baris dibaca per halaman hadits | **30–120** (dulu ±40–250) | header `X-D1-Baris` |
 | Baris dibaca per halaman perawi | 1 | header `X-D1-Baris` |
 | Baris dibaca per pencarian | ±250–3.000 (dulu 700–29.000) | header `X-D1-Baris` |
@@ -57,7 +57,28 @@ Isi semua halaman tidak berubah: 23 halaman (hadits, Riyadh, kitab, bab, pencari
 | Pencarian kata konsep yang menyebut bab (mis. «tarawih»): bab dicari dulu, lalu riwayat lewat indeks (kitab, bab). Versi lama memindai semua riwayat kitab itu | «tolong carikan hadits tentang sholat tarawih»: **28.938 → 445 baris** |
 | Daftar tema (447) disimpan sebagai satu baris `info` dengan judul yang sudah dinormalkan | Setiap pencarian −443 baris; halaman tema ±900 → 4–60 |
 
-**CPU.** Pengukuran A/B (versi sebelum dan sesudah peringanan, data sama) memberi angka yang sama: pencarian kalimat panjang median ±6 ms, **p90 ±17 ms**; cek teks Indonesia p90 7–11 ms. Jadi angka "0,2–3 ms" di versi dokumen sebelumnya sudah usang. Profil: ±91% waktu ada di SQLite tiruan (di produksi itu terjadi di D1 dan tidak dihitung), sisanya tersebar di banyak fungsi kecil. Pengukur memakai `process.cpuUsage`, yang ikut menghitung thread GC/JIT, jadi angkanya cenderung lebih tinggi daripada hitungan Cloudflare. Tetapi pencarian kalimat panjang **mungkin sesekali melewati 10 ms di paket gratis** (galat 1102). Pantau "CPU time" di dasbor Workers sesudah terbit. Bila sering terjadi, pilihannya: Workers Paid, atau mengoptimalkan pencarian.
+**CPU.** Pengukuran A/B (versi sebelum dan sesudah peringanan, data sama) memberi angka yang sama, jadi peringanan database tidak mengubah CPU. Angka lama di bagian ini (pencarian p90 ±17 ms) ternyata kebanyakan galat alat ukur: `process.cpuUsage` ikut menghitung thread GC/JIT di latar belakang. Alat ukur sekarang memakai jam dinding thread utama dikurangi waktu di SQLite, dan hasil kueri diurai ulang dari JSON seperti di produksi (lihat komentar di `site/scripts/ukur-cpu.mjs`).
+
+### Optimasi CPU pencarian & cek (November 2026)
+
+Dengan alat ukur yang benar, yang paling berat adalah **cek teks**: cek teks Indonesia p90 ±10,3 ms (melewati batas 10 ms paket gratis), cek teks Arab ±8,8 ms. Profil menunjukkan waktunya habis untuk menormalkan teks setiap kandidat (120 terjemah, 80 teks Arab) dengan 4–5 regex berantai, lalu memecahnya menjadi kata.
+
+| Perubahan | Akibat |
+|---|---|
+| `normAr` ditulis sebagai satu putaran per huruf (dulu 5 regex berantai); NFC hanya dijalankan bila ada hamzah/madd penggabung | ±3,5x lebih cepat |
+| Cek Indonesia: pencocokan awalan kata langsung di teks (`awalanId`), tanpa membuat string per kata | 120 kandidat: ±4,7 → ±1,3 ms |
+| Cek Arab: jumlah 2-gram yang sama dihitung tanpa membangun himpunan 2-gram kandidat | — |
+| Katalog: 10 kata pertama diambil tanpa memecah seluruh entri | — |
+| Pencarian: bitmap tingkat dibaca langsung dari string biner; pencocokan judul tema tidak lagi membuat string baru di setiap perbandingan; format angka memakai satu `Intl.NumberFormat` | pencarian kalimat panjang p90 6,1 → 4,2 ms |
+
+Hasil (p90, ms): cek Indonesia **10,3 → 4,4**; cek Arab **8,8 → 4,2**; pencarian kalimat panjang **6,1 → 4,2**; «niat» 6,4 → 3,5. Halaman lain tetap 0,3–3 ms.
+
+Isinya tidak berubah. Cara memastikannya:
+- **903 halaman** dibandingkan byte demi byte antara versi lama dan baru. Isinya: 634 cek teks (potongan acak terjemah & teks Arab, dengan dan tanpa klaim "HR.", semua ucapan populer dan variannya, judul entri katalog), 132 pencarian, 99 halaman hadits di 11 kitab, 20 halaman ucapan populer, 11 halaman perawi, serta beranda, tema, metode, dan kitab. Semuanya sama persis.
+- 1.400 hasil `cek()` (JSON lengkap, termasuk skor) juga sama.
+- Uji `test/cepat.test.js` membandingkan versi cepat dengan definisi regex aslinya: semua teks uji ditambah 100.000 string Arab acak dan 50.000 kalimat Indonesia acak. Saat pengembangan, `normAr` juga diuji pada **109.380 teks Arab** di database (riwayat, katalog, bab, perawi, HadeethEnc): semuanya sama.
+
+Catatan: angka ini dari Node di mesin pengembangan, bukan dari Cloudflare. Sesudah terbit, tetap pantau "CPU time" di dasbor Workers. Galat 1102 berarti batas CPU terlewati.
 
 ### Perlindungan lain yang ditambahkan
 
@@ -75,7 +96,7 @@ Isi semua halaman tidak berubah: 23 halaman (hadits, Riyadh, kitab, bab, pencari
 ### Perkiraan kapasitas di paket gratis
 
 - **Kunjungan yang tidak dari cache:** 5 juta baris ÷ ±100 = **±50.000 halaman hadits per hari**, atau sekitar 1.500–20.000 pencarian unik per hari. Halaman dan pencarian yang berulang dilayani dari cache tanpa memakai kuota D1.
-- **CPU:** di bawah 10 ms untuk semua halaman, kecuali pencarian kalimat panjang yang p90-nya bisa melewati 10 ms (lihat di atas).
+- **CPU:** semua halaman yang diukur di bawah 5 ms (p90), jadi ada jarak lebih dari 2x dari batas 10 ms (lihat di atas).
 - **Permintaan:** 100.000 per hari, termasuk yang dilayani dari cache.
 
 ## Rekomendasi jalur terbit

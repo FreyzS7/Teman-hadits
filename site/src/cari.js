@@ -57,13 +57,13 @@ const jsonIds = (xs) => JSON.stringify([...xs]);
 async function petaN(db) {
   const info = Object.fromEntries((await db.prepare("SELECT kunci, nilai FROM info WHERE kunci IN ('peta_n', 'bitmap_tingkat_b')").all()).results.map((x) => [x.kunci, x.nilai]));
   const rentang = JSON.parse(info.peta_n || "[]");
-  const bit = Uint8Array.from(atob(info.bitmap_tingkat_b || ""), (c) => c.charCodeAt(0));
+  const bit = atob(info.bitmap_tingkat_b || ""); // string biner: satu karakter = satu byte bitmap
   return (n) => {
     let lo = 0, hi = rentang.length - 1;
     while (lo <= hi) {
       const m = (lo + hi) >> 1, [kid, a, b] = rentang[m];
       if (n < a) hi = m - 1; else if (n > b) lo = m + 1;
-      else return { n, kitab_id: kid, tingkat: (bit[n >> 3] >> (n & 7)) & 1 ? "B" : "A", urut: n, ku: m };
+      else return { n, kitab_id: kid, tingkat: (bit.charCodeAt(n >> 3) >> (n & 7)) & 1 ? "B" : "A", urut: n, ku: m };
     }
     return null;
   };

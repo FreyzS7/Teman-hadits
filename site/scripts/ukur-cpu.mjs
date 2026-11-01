@@ -1,6 +1,10 @@
 // Ukur waktu CPU Worker per halaman (paket gratis Cloudflare: 10 ms CPU per permintaan; waktu menunggu D1 TIDAK dihitung).
 // Worker dijalankan di Node dengan tiruan D1 di atas berkas SQLite lokal (hasil `npm run impor`); waktu yang dihabiskan
 // di dalam SQLite dikurangkan, jadi angkanya = CPU kode Worker sendiri (sesudah pemanasan, seperti isolate yang sudah hangat).
+// Waktu diukur dengan jam dinding thread utama (tiruan D1 sinkron, tanpa I/O), dikurangi waktu di SQLite: termasuk jeda GC
+// di thread utama, tetapi BUKAN thread GC/JIT latar belakang (process.cpuUsage dulu ikut menghitungnya), seperti hitungan
+// CPU isolate di Cloudflare. (process.threadCpuUsage terlalu kasar di Linux: ±4 ms per tik.) Hasil kueri di-round-trip JSON di luar waktu DB, karena di produksi Worker
+// harus mengurai respons D1 (JSON) sendiri.
 // Jalankan:  node scripts/ukur-cpu.mjs
 import { DatabaseSync } from "node:sqlite";
 import { readdirSync } from "node:fs";
@@ -18,7 +22,7 @@ function stmt(q, args = []) {
     const s = sql.prepare(q);
     const rows = s.all(...args);
     waktuDb += performance.now() - t;
-    return rows;
+    return JSON.parse(JSON.stringify(rows));
   };
   return {
     q, args,
@@ -48,11 +52,10 @@ for (const r of RUTE) {
   const sampel = [];
   for (let i = 0; i < ULANG; i++) {
     waktuDb = 0;
-    const c0 = process.cpuUsage();
+    const c0 = performance.now();
     const res = await worker.fetch(req(), env);
     await res.text();
-    const c = process.cpuUsage(c0);
-    sampel.push((c.user + c.system) / 1000 - waktuDb);
+    sampel.push(performance.now() - c0 - waktuDb);
   }
   sampel.sort((a, b) => a - b);
   hasil.push({ rute: r.length > 60 ? r.slice(0, 57) + "..." : r, median_ms: +sampel[ULANG >> 1].toFixed(2), p90_ms: +sampel[Math.floor(ULANG * 0.9)].toFixed(2) });

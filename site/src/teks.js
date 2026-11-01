@@ -4,39 +4,102 @@
 const HARAKAT = /[ؐ-ًؚ-ٰٟۖ-ۭـ]/g;
 const HRK = "[\\u064B-\\u0652\\u0670\\u0640]*";
 const ALIF = { "أ": "ا", "إ": "ا", "آ": "ا", "ٱ": "ا", "ى": "ي", "ة": "ه", "ؤ": "و", "ئ": "ي", "ء": "" };
-const NON_AR = /[^ء-ي\s]/g;
 const WS = /\s+/g;
 
-export const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const ENTITAS = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+export const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ENTITAS[c]);
 
 export function stripHarakat(s) {
   return String(s ?? "").replace(HARAKAT, "");
 }
 
+// Definisi normAr (sama dengan norm_ar di Python):
+//   t.normalize("NFC").replace(HARAKAT, "").replace(/[أإآٱىةؤئء]/g, (c) => ALIF[c]).replace(NON_AR, " ").replace(WS, " ").trim()
+// Ditulis sebagai satu putaran per karakter karena inilah bagian terberat "cek teks" Arab (80 teks kandidat per
+// permintaan; diukur ±3,5x lebih cepat). Hasilnya identik: diuji pada semua teks Arab di database + uji acak
+// (test/teks.test.js). NFC hanya dijalankan bila ada hamzah/madd penggabung (U+0653–U+0655): hanya itulah yang dapat
+// bergabung dengan huruf ء-ي; selebihnya NFC cuma menata ulang/menggabung tanda & huruf non-Arab, yang tetap dibuang
+// (harakat) atau menjadi satu spasi.
+const PETA_AR = new Uint16Array(0x0672 - 0x0620);
+for (const [a, b] of Object.entries(ALIF)) if (b) PETA_AR[a.charCodeAt(0) - 0x0620] = b.charCodeAt(0);
+const harakat = (c) => (c >= 0x064b && c <= 0x065f) || (c >= 0x0610 && c <= 0x061a) || c === 0x0670 || c === 0x0640 || (c >= 0x06d6 && c <= 0x06ed);
 export function normAr(s) {
-  let t = String(s ?? "").normalize("NFC").replace(HARAKAT, "");
-  t = t.replace(/[أإآٱىةؤئء]/g, (c) => ALIF[c]);
-  return t.replace(NON_AR, " ").replace(WS, " ").trim();
+  let t = String(s ?? "");
+  if (/[ٓ-ٕ]/.test(t)) t = t.normalize("NFC");
+  const kode = [];
+  let spasi = false;
+  for (let i = 0; i < t.length; i++) {
+    let c = t.charCodeAt(i);
+    if (c === 0x0621 || harakat(c)) continue; // harakat & hamzah lepas dibuang tanpa spasi
+    if (c >= 0x0620 && c < 0x0672 && PETA_AR[c - 0x0620]) c = PETA_AR[c - 0x0620];
+    if (c >= 0x0621 && c <= 0x064a) {
+      if (spasi && kode.length) kode.push(32);
+      spasi = false;
+      kode.push(c);
+    } else spasi = true;
+  }
+  let out = "";
+  for (let i = 0; i < kode.length; i += 8192) out += String.fromCharCode.apply(null, kode.slice(i, i + 8192));
+  return out;
+}
+
+/** Langkah awal normId: huruf kecil, tanpa diakritik & tanda kutip (belum memisah kata). */
+export function dasarId(s) {
+  let t = String(s ?? "").normalize("NFKD").toLowerCase();
+  t = t.replace(/\p{M}/gu, "");
+  return t.replace(/[`'’‘]/g, "");
 }
 
 export function normId(s) {
-  let t = String(s ?? "").normalize("NFKD").toLowerCase();
-  t = t.replace(/\p{M}/gu, "");
-  t = t.replace(/[`'’‘]/g, "");
-  t = t.replace(/[^a-z0-9\s]/g, " ");
-  return t.replace(WS, " ").trim();
+  return dasarId(s).replace(/[^a-z0-9\s]/g, " ").replace(WS, " ").trim();
 }
 
+// semua awalan di BMP, jadi [...p].length === p.length; panjang kata dihitung per code point seperti len() Python
 const PROKLITIK = ["وبال", "وكال", "فبال", "وال", "فال", "بال", "كال", "لل", "ال", "و", "ف", "ب", "ك", "ل"];
+const panjangKode = (w) => {
+  let n = w.length;
+  for (let i = 0; i < w.length - 1; i++) {
+    const c = w.charCodeAt(i), d = w.charCodeAt(i + 1);
+    if (c >= 0xd800 && c <= 0xdbff && d >= 0xdc00 && d <= 0xdfff) { n--; i++; }
+  }
+  return n;
+};
 export function stemAr(w) {
-  for (const p of PROKLITIK) if (w.startsWith(p) && [...w].length - [...p].length >= 3) return w.slice(p.length);
+  for (const p of PROKLITIK) if (w.startsWith(p) && panjangKode(w) - p.length >= 3) return w.slice(p.length);
   return w;
 }
 export const akarAr = (normalized) => normalized.split(" ").filter(Boolean).map(stemAr).join(" ");
 
+const AKHIRAN_ID = ["nya", "kan", "lah", "an"];
 export function stemId(w) {
-  for (const s of ["nya", "kan", "lah", "an"]) if (w.endsWith(s) && w.length - s.length >= 4) return w.slice(0, -s.length);
+  for (const s of AKHIRAN_ID) if (w.endsWith(s) && w.length - s.length >= 4) return w.slice(0, -s.length);
   return w;
+}
+
+const alnum = (c) => (c >= 97 && c <= 122) || (c >= 48 && c <= 57);
+/**
+ * Kata kueri Q (sudah di-stem) yang menjadi awalan suatu kata ber-stem di teks. Sama dengan
+ *   Q.filter((w) => [...new Set(normId(teks).split(" ").map(stemId))].some((k) => k.startsWith(w)))
+ * tetapi tanpa membuat string per kata (dipakai "cek teks" untuk 120 terjemah kandidat). Kata = deretan [a-z0-9] di
+ * dasarId(teks); stemId(kata) selalu awalan kata itu, jadi cukup periksa kata.startsWith(w) lalu panjang stem-nya.
+ */
+export function awalanId(teks, Q) {
+  const t = dasarId(teks), ada = new Set();
+  const awal = new Uint8Array(128);
+  for (const w of Q) awal[w.charCodeAt(0) & 127] = 1;
+  for (let i = 0; i < t.length && ada.size < Q.length;) {
+    if (!alnum(t.charCodeAt(i))) { i++; continue; }
+    let e = i + 1;
+    while (e < t.length && alnum(t.charCodeAt(e))) e++;
+    if (awal[t.charCodeAt(i)]) {
+      const L = e - i;
+      let st = L;
+      for (const s of AKHIRAN_ID) if (L - s.length >= 4 && t.startsWith(s, e - s.length)) { st = L - s.length; break; }
+      for (const w of Q) if (st >= w.length && !ada.has(w) && t.startsWith(w, i)) ada.add(w);
+    }
+    i = e;
+  }
+  return ada;
 }
 
 export const adaArab = (s) => (String(s).match(/[ء-ي]/g) || []).length >= 8;
@@ -191,4 +254,6 @@ export function cuplikAr(arab, akar, jendela = 8) {
   return w.slice(0, 16).map(esc).join(" ") + (w.length > 16 ? " …" : "");
 }
 
-export const fmt = (n) => Number(n ?? 0).toLocaleString("id-ID");
+// sama dengan Number(n).toLocaleString("id-ID"), tetapi formatter dibuat sekali (toLocaleString membuatnya tiap panggilan)
+const ANGKA_ID = new Intl.NumberFormat("id-ID");
+export const fmt = (n) => ANGKA_ID.format(Number(n ?? 0));

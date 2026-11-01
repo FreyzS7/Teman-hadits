@@ -160,9 +160,14 @@ async function halamanCari(env, url) {
   const r0 = out.rencana;
   const inti = kataSorot({ ...r0, maksud: [] }).map(normId).filter((w) => w.length >= 4);
   const maksud = r0.maksud.map(normId);
-  const memuat = (j, w) => (" " + j + " ").includes(" " + w);
+  // judul memuat kata w di awal kata: (" " + judul + " ").includes(" " + w); string berspasi dibuat sekali saja
+  const intiS = inti.map((w) => " " + w), maksudS = maksud.map((w) => " " + w);
   const tema = inti.length ? (await semuaTema(db)).daftar.filter((t) => t.jumlah > 0)
-    .map(({ judul_norm: j, induk, ...t }) => { return { ...t, skor: 2 * inti.filter((w) => memuat(j, w)).length + maksud.filter((w) => memuat(j, w)).length, kena: inti.some((w) => memuat(j, w)) }; })
+    .map(({ judul_norm, induk, ...t }) => {
+      const j = " " + judul_norm + " ";
+      const nInti = intiS.filter((w) => j.includes(w)).length;
+      return { ...t, skor: 2 * nInti + maksudS.filter((w) => j.includes(w)).length, kena: nInti > 0 };
+    })
     .filter((t) => t.kena).sort((a, b) => b.skor - a.skor || b.jumlah - a.jumlah).slice(0, 6) : [];
   const isi = T.hasilCari({ q, out, kitab, sorot: kataSorot(out.rencana), akar: akarSorot(out.rencana), filter, rujukan, tema, sembunyiRiyadh: env.TERJEMAH_RIYADH === "sembunyi" });
   return html(T.layout({ judul: `${q} · Cari · Teman Hadits`, aktif: "cari", isi, noindex: true }));

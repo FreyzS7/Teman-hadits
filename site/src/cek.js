@@ -1,7 +1,7 @@
 // Cek teks yang beredar: apakah teks ini ada di kitab-kitab kita, dan apakah klaim "HR. …" di belakangnya benar.
 // Prinsip: kata kunci khas harus ADA. Bila satu saja tidak muncul di terjemahan mana pun, jawabannya
 // "tidak ditemukan" dan kata itu disebutkan. Tidak ada tebakan.
-import { akarAr, adaArab, normAr, normId, stemAr, stemId } from "./teks.js";
+import { akarAr, adaArab, awalanId, normAr, normId, stemAr, stemId } from "./teks.js";
 import { NAMA_KITAB, nilai } from "./cari.js";
 
 const STOP = new Set(("yang dan itu ini dengan akan ia dia ke di dari pada untuk apa sesuai seseorang sesungguhnya kepada kami " +
@@ -28,6 +28,25 @@ function duaGram(teksNorm) {
   return s;
 }
 
+/** |G ∩ duaGram(teksNorm)| tanpa membangun himpunan 2-gram teks (kandidat bisa ratusan kata). */
+function samaDuaGram(G, teksNorm) {
+  const kanan = new Map();
+  for (const g of G) {
+    const [a, b] = g.split(" ");
+    if (!kanan.has(a)) kanan.set(a, new Set());
+    kanan.get(a).add(b);
+  }
+  const sudah = new Set();
+  let sebelum = null;
+  for (const w of teksNorm.split(" ")) {
+    if (!w) continue;
+    const k = stemAr(w);
+    if (sebelum !== null && kanan.get(sebelum)?.has(k)) sudah.add(sebelum + " " + k);
+    sebelum = k;
+  }
+  return sudah.size;
+}
+
 export async function cek(db, teks) {
   const masukan = String(teks ?? "").slice(0, 2000);
   const klaim = bacaKlaim(masukan);
@@ -49,8 +68,8 @@ export async function cek(db, teks) {
     const match = "terjemah_polos:(" + Q.map((w) => (w.length >= 4 ? `"${w}"*` : `"${w}"`)).join(" OR ") + ")";
     const cand = (await db.prepare("SELECT r.n, r.terjemah FROM riwayat r WHERE r.n IN (SELECT rowid FROM cari WHERE cari MATCH ?1 ORDER BY rank LIMIT 120)").bind(match).all()).results;
     for (const c of cand) {
-      const kata = new Set(normId(c.terjemah).split(" ").map(stemId));
-      const s = Q.reduce((a, w) => a + ([...kata].some((k) => k === w || k.startsWith(w)) ? idf.get(w) : 0), 0) / tot;
+      const ada = awalanId(c.terjemah, Q); // kata kueri yang menjadi awalan kata (ber-stem) di terjemah ini
+      const s = Q.reduce((a, w) => a + (ada.has(w) ? idf.get(w) : 0), 0) / tot;
       if (s > skorTerbaik) { skorTerbaik = s; terbaik = c.n; }
     }
     hasil.skor = Math.round(skorTerbaik * 100) / 100;
@@ -63,10 +82,7 @@ export async function cek(db, teks) {
     const match = "arab_akar:(" + kata.map((w) => `"${w}"`).join(" OR ") + ")";
     const cand = (await db.prepare("SELECT r.n, r.arab FROM riwayat r WHERE r.n IN (SELECT rowid FROM cari WHERE cari MATCH ?1 ORDER BY rank LIMIT 80)").bind(match).all()).results;
     for (const c of cand) {
-      const D = duaGram(normAr(c.arab));
-      let sama = 0;
-      for (const g of G) if (D.has(g)) sama++;
-      const s = sama / G.size;
+      const s = samaDuaGram(G, normAr(c.arab)) / G.size;
       if (s > skorTerbaik) { skorTerbaik = s; terbaik = c.n; }
     }
     hasil.skor = Math.round(skorTerbaik * 100) / 100;
