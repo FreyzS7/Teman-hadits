@@ -11,8 +11,10 @@ Langkah:
 Jalankan:  python3 pipeline/build_db.py
 """
 import collections
+import glob
 import json
 import os
+import re
 import sqlite3
 import sys
 import time
@@ -139,6 +141,99 @@ def fmt_no(n):
     return str(n)
 
 
+# --- Huruf terpotong di sumber fawazahmed0 ---------------------------------------------------------------------
+# 76 riwayat di 7 berkas ara-*.json memuat U+FFFD: satu huruf/harakat (2 byte UTF-8) atau tanda arah teks
+# (3 byte) yang terpotong, tampil sebagai «��». Dipulihkan dari teks pembanding (Lidwa berharakat, lalu kerangka huruf
+# teks OpenITI kitab yang sama) bila konteks kiri-kanannya menunjuk SATU kemungkinan; selain itu diganti «…» (tidak
+# menebak). Lihat docs/13 (Muslim 1023 tampil «عن أبي موسى�� عن النبي»).
+_HARAKAT = re.compile(r"[\u064B-\u065F\u0670\u0640\u200e\u200f]")
+
+
+def _kerangka(t):
+    return _HARAKAT.sub("", t)
+
+
+# Sisa yang tak terpecahkan oleh pembanding tetapi hanya punya SATU bacaan (kata itu sendiri menentukannya), atau
+# dilihat di cetakan. Kunci: (riwayat, konteks persis dengan «��»).
+PULIH_MANUAL = {
+    ("ibnumajah:407", "شَيْ\ufffd\ufffdَةَ"): "شَيْبَةَ",          # Abu Bakr bin Abi Syaibah
+    ("ibnumajah:1980", "حُ\ufffd\ufffdَ"): "حُيَ",          # Shafiyyah binti Huyay
+    ("muslim:2363", "مُوسَى\ufffd\ufffd عَنِ"): "مُوسَى، عَنِ",    # cetakan Fu'ad hlm. 710: «عن أبي موسى، عن النبي»
+    ("muslim:2626", "وَأَ\ufffd\ufffdْطِرْ"): "وَأَفْطِرْ",        # «صم إن شئت وأفطر إن شئت»
+    ("muslim:6270", "\ufffd\ufffdَدِيثًا"): "حَدِيثًا",
+    ("nasai:2882", "قَا\ufffd\ufffdَ أَنْبَ"): "قَالَ أَنْبَ",
+    ("tirmidzi:3450", "\ufffd\ufffdُتَيْبَة"): "قُتَيْبَة",
+}
+
+
+# --- Koma salah tempat di tengah nama perawi (fawazahmed0) ------------------------------------------------------
+# Mis. «سُفْيَانُ، بْنُ عُيَيْنَةَ», «وَابْنُ، حُجْرٍ», «عُبَيْدِ، اللَّهِ» (cetakan Fu'ad: «سفيان بن عيينة», «وابن حجر»,
+# «عبيد الله»; docs/13). Hanya tiga bentuk yang PASTI salah: koma tepat sebelum «بن», sesudah «ابن», dan di antara
+# «عبد/عبيد» dan nama Allah. Koma dihapus, tidak dipindah. «أبي، كثير» dibiarkan (bisa «أبي» = ayahku).
+_KOMA_NAMA = [
+    re.compile(r"(\S)، (?=بْن[ُِ َ] |بْنُ |بْنِ |بْنَ )"),
+    re.compile(r"(\s(?:وَ)?ابْن[ُِ َ])، "),
+    re.compile(r"((?:عَبْد|عُبَيْد)[ُِ َ])، (?=ال)"),        # «عبدِ، الله», «عبدُ، العزيز»: nama tak terpisah
+]
+
+
+def rapikan_koma_nama(teks):
+    """Kembalikan (teks, jumlah koma yang dihapus)."""
+    n = 0
+    for p in _KOMA_NAMA:
+        teks, k = p.subn(r"\1 ", teks)
+        n += k
+    return teks, n
+
+
+def pulihkan_rusak(teks, pembanding, kerangka_lain=(), rid=None):
+    """Kembalikan (teks, pulih, gagal)."""
+    pulih = gagal = 0
+    for (r, lama), baru in PULIH_MANUAL.items():
+        if r == rid and lama in teks:
+            teks, pulih = teks.replace(lama, baru, 1), pulih + 1
+    while "\ufffd" in teks:
+        m = re.search("\ufffd+", teks)
+        a, b = m.start(), m.end()
+        isi = None
+        if b - a >= 3:                                   # karakter 3 byte: tanda arah teks (U+200F dsb.), tak terlihat
+            isi = ""
+        harus_huruf = b < len(teks) and bool(_HARAKAT.match(teks[b]))   # harakat sesudahnya butuh huruf di depannya
+        for k in (10, 8, 6, 5, 4):
+            if isi is not None or not pembanding:
+                break
+            kiri, kanan = teks[max(0, a - k):a], teks[b:b + k]
+            if "\ufffd" in kiri + kanan:
+                continue
+            h = set(re.findall(re.escape(kiri) + "(.{1,2}?)" + re.escape(kanan), pembanding))
+            if len(h) == 1:
+                isi = h.pop()
+            elif len(h) > 1:
+                break
+        for sk in ([_kerangka(pembanding)] if pembanding else []) + list(kerangka_lain):
+            if isi is not None:
+                break
+            for k in (8, 6, 5):
+                kiri, kanan = _kerangka(teks[max(0, a - 3 * k):a])[-k:], _kerangka(teks[b:b + 3 * k])[:k]
+                if "\ufffd" in kiri + kanan or len(kiri) < k or len(kanan) < k:
+                    continue
+                h = set(re.findall(re.escape(kiri) + "([\u0621-\u064A]?)" + re.escape(kanan), sk))
+                if harus_huruf:
+                    h.discard("")
+                if len(h) == 1:
+                    isi = h.pop()
+                    break
+                if len(h) > 1:
+                    break
+        if isi is None:
+            gagal += 1
+            teks = teks[:a] + "\u2026" + teks[b:]
+        else:
+            pulih += 1
+            teks = teks[:a] + isi + teks[b:]
+    return teks, pulih, gagal
+
+
 def main():
     t0 = time.time()
     os.makedirs(BUILD, exist_ok=True)
@@ -192,6 +287,7 @@ def main():
         rep["standar"] = len(F)
 
         cw = crosswalk(lidwa, F)
+        oi = None                                       # kerangka teks OpenITI kitab ini (dimuat bila perlu)
         hist = collections.Counter()
         dipakai = collections.Counter()  # berapa nomor standar memakai baris Lidwa yg sama
         cocok = {}
@@ -233,6 +329,16 @@ def main():
                 alasan = ((alasan + "; ") if alasan else "") + f"teks identik dengan no. {seen[f['norm']]} (pengulangan dalam kitab)"
             seen.setdefault(f["norm"], f["no"])
             terj = l["terj"] if (l and tingkat == "A") else None
+            f["arab"], k = rapikan_koma_nama(f["arab"])
+            rep["koma_nama_dihapus"] = rep.get("koma_nama_dihapus", 0) + k
+            if "\ufffd" in f["arab"]:
+                if oi is None:
+                    import bab_openiti
+                    jalur = glob.glob(os.path.join(SRC, bab_openiti.BERKAS[kid]) + "*") if kid in bab_openiti.BERKAS else []
+                    oi = [_kerangka(open(jalur[0], encoding="utf8").read())] if jalur else []
+                f["arab"], p, g = pulihkan_rusak(f["arab"], l["arab"] if l else None, oi, f"{kid}:{f['no']}")
+                rep["huruf_rusak_pulih"] = rep.get("huruf_rusak_pulih", 0) + p
+                rep["huruf_rusak_gagal"] = rep.get("huruf_rusak_gagal", 0) + g
             db.execute(
                 "INSERT INTO riwayat(id,kitab_id,no_standar,no_arab,no_lidwa,bab_no,bab_nama,arab,arab_lidwa,terjemah,"
                 "rantai_json,kecocokan,tingkat,alasan) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",

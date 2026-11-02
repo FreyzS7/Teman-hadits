@@ -333,6 +333,15 @@ Jadi teks kita sama dengan cetakan Sulthaniyyah, kecuali kadang mengikuti varian
 
 Batasan: baru 14 hadits dari 7.563 dicek nomor dan sanadnya, dan 10 dicek teks lengkapnya. OCR scan ini tidak bisa dipakai (teks Sulthaniyyah berharakat penuh dan rapat), jadi setiap halaman harus dibaca dari gambar.
 
+### Shahih Muslim: teks lengkap 10 hadits (sampel acak)
+
+Scan cetakan al-Halabi, tahqiq Fu'ad 'Abd al-Baqi (`alfirdwsiy2018_gmail_2778`): pagination bersambung antar jilid, **leaf = halaman − 1**. Penanda «PageVxxPyyy» teks OpenITI Muslim menandai *awal* halaman berikutnya. Sampel acak 10 hadits pokok bertingkat A, 25–80 kata (seed 20261102): nomor Fu'ad 300, 365, 636, 825, 1023, 2015, 2157, 2198, 2582, 2790. Teks yang tampil di situs (fawazahmed0) dibandingkan kata per kata dengan gambar halaman.
+
+- **Kata-katanya 10/10 sama** dengan cetakan (perbedaan hanya penulisan «ما لي»/«مالي»).
+- **Dua cacat teks digital ditemukan dan diperbaiki** (`pipeline/build_db.py`):
+  1. **Huruf terpotong.** 1023 tampil «عن أبي موسى�� عن النبي» (cetakan hlm. 710: «عن أبي موسى، عن النبي»). Di seluruh fawazahmed0 ada **76 riwayat** seperti ini (7 kitab), yaitu satu huruf/harakat (2 byte UTF-8) atau tanda arah teks (3 byte) yang terpotong. Kini dipulihkan dari teks Lidwa berharakat, lalu kerangka huruf teks OpenITI kitab yang sama, bila konteksnya menunjuk **satu** kemungkinan; bila harakat sesudahnya menuntut huruf, celah kosong tidak diterima. Tujuh sisanya ditentukan oleh kata itu sendiri atau dilihat di cetakan (tabel `PULIH_MANUAL`). Hasil: **75 dari 76 dipulihkan**. Satu yang tetap tak pasti (Abu Dawud 1840, «��َقال»: «فقال» atau «وقال») ditandai «…».
+  2. **Koma memotong nama perawi.** 4 dari 10 sampel: «عن عبيدِ، اللهِ بن أبي بكر», «سفيانُ، بنُ عيينة», «وابنُ، حُجر», «بن أبي، كثير». Cetakan tanpa koma di situ. Tiga bentuk yang pasti salah (koma tepat sebelum «بن», sesudah «ابن», dan di antara «عبد/عبيد» dan nama Allah) kini dihapus: **1.501 koma**, terbanyak di Muslim. «أبي، كثير» dibiarkan karena «أبي، عن» (= ayahku) sah.
+
 ## Batasan dan yang belum
 
 - **Nomor entri belum diverifikasi.** OCR mengacaukan angka Arab-Hindi di kolom nomor.

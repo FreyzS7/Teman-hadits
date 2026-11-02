@@ -151,3 +151,32 @@ class Integritas(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+def _polos(t):
+    import re
+    return re.sub(r"[\u064B-\u065F\u0670\u0640]", "", t)
+
+
+class TeksBersihDariCetakan(unittest.TestCase):
+    """Dibandingkan dengan cetakan Fu'ad 'Abd al-Baqi (Muslim) dan Dar Thauq an-Najah (Bukhari); lihat docs/13."""
+    # dibandingkan tanpa harakat: urutan syaddah/harakat di sumber tidak seragam
+    arab = staticmethod(lambda rid: _polos(q("SELECT arab FROM riwayat WHERE id=?", rid)[0][0]))
+
+    def assertIn(self, a, b, msg=None):
+        super().assertIn(_polos(a), b, msg)
+
+    def test_tanpa_huruf_rusak(self):
+        # fawazahmed0 memuat 76 huruf terpotong («��»); semuanya dipulihkan atau ditandai «…»
+        self.assertEqual(q("SELECT count(*) FROM riwayat WHERE arab LIKE '%'||char(65533)||'%'")[0][0], 0)
+        self.assertIn("مُوسَى، عَنِ النَّبِيِّ", self.arab("muslim:2363"))       # cetakan hlm. 710
+        self.assertIn("كَثِيرًا وَلاَ يَغْفِرُ", self.arab("bukhari:834"))
+        self.assertIn("بِنْتِ حُيَىٍّ", self.arab("ibnumajah:1980"))
+
+    def test_koma_tidak_memotong_nama(self):
+        # cetakan: «عن عبيد الله بن أبي بكر» (hlm. 1699), «سفيان بن عيينة» (hlm. 1596), «وابن حجر» (hlm. 1997)
+        self.assertIn("عُبَيْدِ اللَّهِ بْنِ أَبِي بَكْرٍ", self.arab("muslim:5641"))
+        self.assertIn("سُفْيَانُ بْنُ عُيَيْنَةَ", self.arab("muslim:5257"))
+        self.assertIn("وَابْنُ حُجْرٍ", self.arab("muslim:6580"))
+        # «حدثني أبي، عن …» (ayahku) tetap berkoma
+        self.assertIn("أَبِي، عَنْ", self.arab("bukhari:43"))

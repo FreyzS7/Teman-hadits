@@ -1,6 +1,6 @@
 # Audit Data Teman Hadits
 
-_Dibuat otomatis oleh `pipeline/audit.py` pada 2026-11-01. Jangan disunting manual — jalankan ulang pipeline._
+_Dibuat otomatis oleh `pipeline/audit.py` pada 2026-11-02. Jangan disunting manual — jalankan ulang pipeline._
 
 ## Ringkasan
 
@@ -54,16 +54,16 @@ Lihat `docs/09-judul-kitab-bab.md`. Tingkat di tabel "Per kitab" di atas adalah 
 
 | Kitab | Edisi | Terpetakan menurut isi | Cocok ≥ 90% | Urutan naik | Nomor sama | Penilaian muhaqqiq |
 |---|---|---:|---:|---:|---:|---:|
-| bukhari | — | 7375/7580 | 7143 | 7362/7374 | 7057/7318 | 1 |
-| muslim | — | 7298/7360 | 7231 | 7286/7297 | 0/7086 | 0 |
-| abudawud | — | 5264/5272 | 5169 | 5262/5263 | 5246/5258 | 0 |
-| tirmidzi | — | 3872/3924 | 2875 | 3864/3871 | 3812/3827 | 0 |
-| nasai | — | 5672/5679 | 5572 | 5664/5671 | 5637/5654 | 0 |
-| ibnumajah | — | 4334/4338 | 3970 | 4331/4333 | 4317/4326 | 0 |
+| bukhari | — | 7371/7580 | 7140 | 7359/7370 | 7076/7320 | 1 |
+| muslim | — | 7298/7360 | 7232 | 7286/7297 | 0/7093 | 0 |
+| abudawud | — | 5264/5272 | 5172 | 5262/5263 | 5261/5264 | 0 |
+| tirmidzi | — | 3872/3924 | 2874 | 3868/3871 | 3829/3836 | 0 |
+| nasai | — | 5672/5679 | 5574 | 5669/5671 | 5663/5665 | 0 |
+| ibnumajah | — | 4334/4338 | 3970 | 4333/4333 | 4332/4332 | 0 |
 | malik | — | 1827/1829 | 1813 | 1826/1826 | — | 0 |
-| ahmad | ar-Risalah (tahqiq Syu'aib al-Arna'uth dkk.) | 25855/26363 | 23247 | 25781/25854 | — | 0 |
-| darimi | Dar al-Mughni (tahqiq Husain Salim Asad) | 3267/3367 | 2891 | 3265/3266 | — | 2823 |
-| syafii | Ghiras (tahqiq Mahir Yasin al-Fahl) | 1729/1800 | 1164 | 1177/1728 | — | 0 |
+| ahmad | ar-Risalah (tahqiq Syu'aib al-Arna'uth dkk.) | 25807/26363 | 23116 | 25734/25806 | — | 0 |
+| darimi | Dar al-Mughni (tahqiq Husain Salim Asad) | 3266/3367 | 2891 | 3264/3265 | — | 2892 |
+| syafii | Ghiras (tahqiq Mahir Yasin al-Fahl) | 1728/1800 | 1162 | 1176/1727 | — | 0 |
 
 ## Katalog hadits populer & palsu
 
@@ -84,12 +84,12 @@ Lihat `docs/11-perawi.md`. Hanya label **pasti** yang tampil di situs.
 
 | Label | Sebutan nama | % |
 |---|---:|---:|
-| pasti | 96,281 | 57.9% |
-| kuat | 39,162 | 23.5% |
-| ragu | 18,437 | 11.1% |
-| tanpa_kandidat | 12,461 | 7.5% |
+| pasti | 96,753 | 58.2% |
+| kuat | 39,080 | 23.5% |
+| ragu | 18,236 | 11.0% |
+| tanpa_kandidat | 12,276 | 7.4% |
 
-Perawi teridentifikasi: 4,315 (4,173 tertaut ke Taqrib). Hubungan guru-murid Tahdzib al-Kamal yang terselesaikan: 100,861 dari 155,709.
+Perawi teridentifikasi: 4,316 (4,174 tertaut ke Taqrib). Hubungan guru-murid Tahdzib al-Kamal yang terselesaikan: 100,861 dari 155,709.
 
 ## Temuan kualitas data
 
