@@ -306,3 +306,57 @@ class DarimiSyafiiCetak(unittest.TestCase):
         self.assertEqual(self.judul_edisi("syafii", 1510), "باب: في الضب")
         # «عنها» sudah benar di teks digital (halaman isi & fihris sama)
         self.assertEqual(self.judul_edisi("syafii", 1103), "باب زواج النبي صلى الله عليه وسلم عائشة رضي الله عنها")
+
+
+class AhmadNomorEdisi(unittest.TestCase):
+    """Musnad Ahmad (ar-Risalah): nomor edisi bertanda «•», «*», «°», salah ketik, dan nomor yang tak tertulis.
+    Semua contoh di bawah dilihat di halaman cetak (docs/13)."""
+
+    @classmethod
+    def setUpClass(cls):
+        import bab_openiti as B
+        from common import SRC
+        cls.blok = B.urai(os.path.join(SRC, B.BERKAS["ahmad"]), "ahmad")
+        cls.no = {}
+        for x in cls.blok:
+            if x["no"] is not None:
+                cls.no.setdefault(x["no"], x)
+
+    def awal(self, n):
+        return norm_ar(self.no[n]["teks"])[:60]
+
+    def test_nomor_naik_dan_lengkap(self):
+        nos = [x["no"] for x in self.blok if x["no"] is not None]
+        self.assertTrue(all(a <= b for a, b in zip(nos, nos[1:])))
+        self.assertGreaterEqual(len(set(nos)), 27630)
+
+    def test_hadits_bertanda_terpisah(self):
+        # jilid 2 hlm. 446: «• ١٣٣١ - حدثنا عبد الله، حدثني أبو معمر»; jilid 9 hlm. 93: «○ ٥٠٦٩ - قال: وجدت في كتاب أبي»
+        self.assertIn("ابو معمر", self.awal(1331))
+        self.assertIn("عكرمه بن خالد", norm_ar(self.no[5069]["teks"])[:120])
+        self.assertIn("ابو داود المباركي", self.awal(1170))
+
+    def test_salah_ketik_dipulihkan(self):
+        # «1431» dua kali (jilid 3 hlm. 44), «13349» (jilid 21 hlm. 178), «16663» dua kali (jilid 27 hlm. 222),
+        # «22293» (jilid 37 hlm. 454)
+        self.assertIn("ابو عامر", self.awal(1431))
+        self.assertIn("ابراهيم بن خالد", self.awal(1432))
+        self.assertIn("سهيل اخو حزم", self.awal(13549))
+        self.assertIn("القواريري", self.awal(16662))
+        self.assertIn("محمد بن ابي بكر", self.awal(16663))
+        self.assertIn("يعمر بن بشر", self.awal(22793))
+
+    def test_nomor_tak_tertulis(self):
+        # 5632 tak bernomor di teks digital («# حدثنا يحيى بن آدم…»): dipotong dari blok 5631
+        self.assertIn("المعرس", norm_ar(self.no[5632]["teks"]))
+        self.assertNotIn("المعرس", norm_ar(self.no[5631]["teks"]))
+
+    def test_yang_ragu_dikosongkan(self):
+        # «22669» dua kali (yang kedua mestinya 22670: beda dua digit) dan 9125+9126 tergabung: tanpa nomor
+        for n in (9125, 9126, 22669, 22670):
+            self.assertNotIn(n, self.no)
+
+    def test_riwayat_lidwa_bernomor_benar(self):
+        # dulu: 4041, 5054, 5054, 2331 (tergabung ke blok sebelumnya)
+        for rid, n in (("ahmad:L3837", 4042), ("ahmad:L4815", 5059), ("ahmad:L4825", 5069), ("ahmad:L2216", 2332)):
+            self.assertEqual(q("SELECT no_openiti FROM riwayat_bab WHERE riwayat_id=?", rid)[0][0], n, rid)

@@ -114,6 +114,97 @@ _MUKARRAR = re.compile(r"^\s*\(\s*م\s*[0-9٠-٩]*\s*\)\s*[-–]?\s*")          
 _BAB_FIHRIS = re.compile(r"^باب\s+(?:حدثنا|حدثني|اخبرنا|اخبرني)\b")
 
 
+# Musnad Ahmad (ar-Risalah): «# 12 - …», juga bertanda «# • 423 - …» (zawa'id Abdullah), «# * 14 - …», «# ° 519 - …»,
+# «# (•) 4344 - …», «# ° • 1539 - …», «# 9936، 9937 - …» (satu hadits dua nomor), «# 16100/1 - …», «# 544 ms0141 - …»,
+# «# • 7110 -[قال …». Dulu hanya bentuk pertama yang dikenali: ±700 hadits bertanda tergabung ke blok hadits
+# sebelumnya, sehingga riwayatnya tampil dengan nomor edisi (dan penilaian muhaqqiq) hadits sebelumnya.
+# Varian lain: «# 1981 حدثنا» (tanpa «-»), «# • 6885 (1) - …», «# 11073/ أ - …», «# "16152- …», «# (1) 17461 - …»,
+# «# 24009 /1 - …». Grup 2 = sub-nomor (/1, /أ): nomor sama berturut-turut hanya sah bila bersub-nomor.
+_NO_AHMAD = re.compile(r'^#\s+"?(?:\(\d+\)\s*)?(?:\(?[•*°]\)?\s*)*(\d+)(\s*/\s*\S{1,2}(?=\s|-)|\s*[،,]\s*\d+)?\s*'
+                       r'(?:\(\d+\)\s*)?(?:ms\d+\s*)?(?:-\s*|(?=حدثنا|حدثني))(.*)$')
+# Tiga hadits mulai di tengah baris: «… قصدا " (1) 21036 - حدثنا …». Hanya dipisah bila nomornya = nomor sebelumnya + 1.
+_NO_AHMAD_TENGAH = re.compile(r'(?:^|\s)(?:\(\d+\)\s*)?(\d{2,5})\s*-\s*(?=(?:ms\d+\s*)?(?:حدثنا|حدثني|قال|أخبرنا|$))')
+
+
+def _satu_digit(a, b):
+    """a dan b sama, beda satu digit, atau dua digit bersebelahan tertukar (salah ketik, bukan nomor lain)."""
+    a, b = str(a), str(b)
+    if len(a) != len(b):
+        return False
+    beda = [i for i in range(len(a)) if a[i] != b[i]]
+    return len(beda) <= 1 or (len(beda) == 2 and beda[1] == beda[0] + 1 and a[beda[0]] == b[beda[1]] and a[beda[1]] == b[beda[0]])
+
+
+def nomor_naik(blok):
+    """Nomor edisi di luar urutan naik terpanjang (salah ketik teks digital, mis. «2300» di tengah 233xx) dikosongkan:
+    blok tetap terpisah, tetapi tanpa nomor, daripada menampilkan nomor yang salah. Nomor sama berturut-turut
+    («16100/1», «16100/2») tetap sah."""
+    import bisect
+    pos = [i for i, b in enumerate(blok) if b["no"] is not None]
+    ekor, ekor_i, induk = [], [], {}
+    for i in pos:
+        n = blok[i]["no"]
+        k = bisect.bisect_right(ekor, n)
+        induk[i] = ekor_i[k - 1] if k else None
+        if k == len(ekor):
+            ekor.append(n); ekor_i.append(i)
+        else:
+            ekor[k], ekor_i[k] = n, i
+    sah, i = set(), (ekor_i[-1] if ekor_i else None)
+    while i is not None:
+        sah.add(i); i = induk[i]
+    for i in pos:
+        if i not in sah:
+            blok[i]["no_asli"], blok[i]["no"] = blok[i]["no"], None
+    # nomor sama berturut-turut tanpa sub-nomor (mis. «1431» dua kali; yang kedua mestinya 1432): tak bisa dipastikan
+    # mana yang salah ketik, jadi semuanya dikosongkan
+    pos = [i for i in pos if blok[i]["no"] is not None]
+    for a, b in zip(pos, pos[1:]):
+        if blok[a]["no"] == blok[b]["no"] and not blok[b].get("sub"):
+            blok[a]["ragu"] = blok[b]["ragu"] = True
+    for i in pos:
+        if blok[i].pop("ragu", False):
+            blok[i]["no_asli"], blok[i]["no"] = blok[i]["no"], None
+    # Pulihkan salah ketik bila pasti: deretan blok yang nomornya dikosongkan di antara n dan m mengisi PERSIS celah
+    # n+1..m-1, dan tiap nomor asli hanya beda satu digit dari nomor sasarannya («13349» di antara 13548 & 13550 ->
+    # 13549; «1431» dua kali di antara 1430 & 1433 -> 1431, 1432). Semua kasus dicek di halaman cetak (docs/13).
+    pos = [i for i, b in enumerate(blok) if b["no"] is not None or "no_asli" in b]
+    k = 0
+    while k < len(pos):
+        if blok[pos[k]]["no"] is not None:
+            k += 1
+            continue
+        j = k
+        while j < len(pos) and blok[pos[j]]["no"] is None:
+            j += 1
+        if 0 < k and j < len(pos):
+            n, m = blok[pos[k - 1]]["no"], blok[pos[j]]["no"]
+            run = pos[k:j]
+            if m - n - 1 == len(run) and all(_satu_digit(blok[i]["no_asli"], n + 1 + t) for t, i in enumerate(run)):
+                for t, i in enumerate(run):
+                    blok[i]["no"], blok[i]["akhir"] = n + 1 + t, None
+        k = j
+    # celah: blok n lalu langsung n+2 (tanpa hadits tak bernomor di antaranya) = blok n memuat hadits n+1 yang tak
+    # bernomor di teks digital (mis. 5632: «# حدثنا يحيى بن آدم…»). Tepat satu calon awal hadits -> dipotong di situ;
+    # selain itu nomornya dikosongkan (blok memuat dua hadits, nomor & penilaian muhaqqiq-nya tak bisa dipisahkan).
+    hasil = []
+    for k, b in enumerate(blok):
+        hasil.append(b)
+        if b["no"] is None:
+            continue
+        akhir = max(b.get("akhir") or 0, b["no"])
+        nxt = next((x for x in blok[k + 1:] if x["no"] is not None or re.search(r"حدثنا|حدثني|أخبرنا", x["teks"])), None)
+        if nxt is None or nxt["no"] is None or nxt["no"] <= akhir + 1:
+            continue
+        if nxt["no"] == akhir + 2 and len(b.get("calon") or []) == 1:
+            c = b["calon"][0]
+            hasil[-1] = dict(b, teks=b["teks"][:c].strip(), tahqiq=None, akhir=None)
+            hasil.append(dict(b, teks=b["teks"][c:].strip(), tahqiq=None, no=akhir + 1, akhir=None, sub=False))
+        else:
+            b["no"] = None
+    blok[:] = hasil
+
+
 def urai(path, kid=None):
     """Kembalikan daftar blok: {kitab, bab, no, teks, tahqiq}."""
     awalan = AWALAN_KITAB.get(kid, ("كتاب",))
@@ -135,10 +226,14 @@ def urai(path, kid=None):
     # كنيتان: أبو تراب، وأبو الحسن»), dan teks digital memotong judul di akhir baris («باب ما جاء في قول النبي ﷺ:» /
     # «# أمرت بقتالهم…»). judul_tir = baris pendek sesudah judul bab, sebelum hadits pertama, ikut judul.
     judul_tir, judul_tir_mentah = False, ""
+    sub = False                                   # Ahmad: nomor bersub-nomor («16100/1»)
+    akhir_no = None                               # Ahmad: «9936، 9937» = satu hadits dua nomor (akhir 9937)
+    calon = []                                    # Ahmad: posisi «# حدثنا» sesudah catatan «(1)» = awal hadits tanpa nomor?
 
     def tutup():
         if teks:
-            blok.append({"kitab": kitab, "bab": bab, "no": no, "teks": " ".join(teks), "tahqiq": " ".join(tahqiq) or None})
+            blok.append({"kitab": kitab, "bab": bab, "no": no, "teks": " ".join(teks), "tahqiq": " ".join(tahqiq) or None,
+                         "sub": sub, "akhir": akhir_no, "calon": calon})
 
     semua = open(path, encoding="utf8").read().split("\n")
     for idx, baris in enumerate(semua):
@@ -299,13 +394,27 @@ def urai(path, kid=None):
                     kitab_terbuka = False
                     continue
                 kitab_terbuka = False
-            mt = re.match(r"^#\s+(\d+)\s+-\s+(.*)$", baris) if kid == "ahmad" else None
+            mt = _NO_AHMAD.match(baris) if kid == "ahmad" else None
             if mt:                                         # Musnad Ahmad: "# 12 - حدثنا ..." = awal hadits bernomor
                 tutup()
-                teks, tahqiq, no = [mt.group(2)], [], int(mt.group(1))
+                teks, tahqiq, no, sub = [mt.group(3)], [], int(mt.group(1)), "/" in (mt.group(2) or "")
+                ganda = re.search(r"\d+", mt.group(2) or "") if "/" not in (mt.group(2) or "") else None
+                akhir_no, calon = (int(ganda.group()) if ganda else no), []
+                continue
+            if (kid == "ahmad" and no is not None and re.match(r"^# (?:حدثنا|حدثني)", baris)
+                    and re.search(r"\(\d+\)\s*$", semua[idx - 1])):
+                calon.append(len(" ".join(teks)))
+            mt = _NO_AHMAD_TENGAH.search(isi) if kid == "ahmad" and no is not None else None
+            if mt and int(mt.group(1)) == no + 1:
+                teks.append(isi[:mt.start()])
+                tutup()
+                teks, tahqiq, no, sub = [isi[mt.end():]], [], int(mt.group(1)), False
+                akhir_no, calon = no, []
                 continue
             teks.append(isi)
     tutup()
+    if kid == "ahmad":
+        nomor_naik(blok)
     return blok
 
 

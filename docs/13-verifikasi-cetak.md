@@ -268,6 +268,23 @@ Teks digital kita: tartib Sanjar, tahqiq Mahir Yasin al-Fahl (Ghiras, 2004). Sca
 
 Batasan: hanya judul yang berbeda dari fihris yang dicek di halaman isi. Judul yang sama di fihris dan data tidak dibuka halaman isinya.
 
+### Musnad Ahmad: nomor edisi dan judul musnad (cetakan ar-Risalah)
+
+Teks digital kita: ar-Risalah (tahqiq Syu'aib al-Arna'uth dkk., 1416–1421 H). Scan 50 jilidnya (PDF gambar) ada di archive.org (`hadith-ahmad-pdf`). Nomor halaman PDF jilid teks = nomor halaman cetak, dan penanda «PageVxxPyyy» di teks digital menunjuk jilid/halamannya. Cetakan ini tidak punya daftar isi berurutan (jilid 50 = indeks nama sahabat alfabetis; akhir jilid 1 = indeks perawi), dan judul musnad dicetak sebagai kaligrafi yang tidak terbaca OCR. Karena itu judul dicek dengan sampel dari gambar.
+
+**Temuan utama: nomor edisi.** Edisi ar-Risalah menandai hadits zawa'id Abdullah bin Ahmad («•»), riwayat Abdullah dari ayahnya dan orang lain («*»), dan wijadah («°»). Teks digitalnya menulis «# • 423 - …», «# * 14 - …», «# ° 519 - …», juga «# (•) 4344», «# 9936، 9937 - …» (satu hadits dua nomor), «# 16100/1 - …», «# 544 ms0141 - …», «# 1981 حدثنا …» (tanpa «-»), dan tiga hadits yang mulai di tengah baris. Parser kita dulu hanya mengenali «# 12 - …». Akibatnya ±700 hadits bertanda tergabung ke blok hadits sebelumnya, dan riwayatnya tampil dengan **nomor edisi hadits sebelumnya** (mis. ±15 hadits wijadah yang semuanya bernomor 5054). Penilaian muhaqqiq yang ditampilkan pun diambil dari blok gabungan itu. Kini:
+
+- semua varian dikenali; 27.640 nomor terbaca, selalu naik;
+- nomor di luar urutan naik terpanjang (salah ketik teks digital: «2300», «13349», «22293», «24003», «25194» di tengah nomor lain) dikosongkan, kecuali bila hanya beda satu digit dari celah yang pas. Empat yang dipulihkan, semuanya dilihat di halaman cetak: 1431–1432 («1431» dua kali; jilid 3 hlm. 44), 13549 (jilid 21 hlm. 178), 16662–16663 («16663» dua kali; jilid 27 hlm. 222), 22793 (jilid 37 hlm. 454);
+- hadits yang nomornya tidak tertulis sama sekali dipotong bila awalnya jelas (5632: «# حدثنا يحيى بن آدم…» sesudah catatan «(1)»); bila tidak jelas (9125–9126), blok itu tanpa nomor;
+- 717 riwayat Lidwa kini bernomor lain (yang benar), 92 riwayat baru bernomor, dan 128 riwayat tidak lagi diberi nomor (dan turun ke tingkat B). Teks Lidwa ke-128 riwayat ini mencakup dua hadits edisi (mis. hadits ayahnya + zawa'id Abdullah sesudahnya), jadi satu nomor edisi tidak tepat untuknya.
+
+**Sampel acak 12 riwayat yang nomornya berubah**, dilihat di halaman cetak: semuanya benar (2332, 11781/1, 20890, 4042, 5059, 14166, 1331, 20943, 1170, 9453, 5069, 15971).
+
+**Judul musnad: sampel acak 24 judul** dibaca dari kaligrafinya. 23 sama persis dengan data (mis. «زيادة في حديث أبي لبابة بن عبد المنذر البدري», «بقية حديث كعب بن مالك الأنصاري», «حديث أبي مويهبة مولى رسول الله ﷺ»). Satu tidak bisa dicek: halaman 348 PDF jilid 34 tertukar dengan halaman lain (memuat hadits 20878), sehingga judul «حديث رجل رضي الله تعالى عنه» (20744) tidak terlihat.
+
+Batasan: judul musnad baru dicek dengan sampel (24 dari ±1.300). Teks hadits tidak dibandingkan per halaman.
+
 ## Batasan dan yang belum
 
 - **Nomor entri belum diverifikasi.** OCR mengacaukan angka Arab-Hindi di kolom nomor.
@@ -276,4 +293,4 @@ Batasan: hanya judul yang berbeda dari fihris yang dicek di halaman isi. Judul y
 - **Teks dan nomor hadits Bukhari** belum dicek visual satu per satu. Halamannya harus dicari manual di scan (OCR-nya tidak bisa dipakai untuk mencari), atau dengan scan lain yang OCR-nya lebih baik.
 - Muslim: halaman fihris Muqaddimah dan Kitab al-Iman bab 1–18 belum dicek (tidak ada di scan).
 - **Fihris Bukhari sudah dibaca utuh**, tetapi hanya untuk bab tanpa judul. Judul bab bertajuk belum dibandingkan satu per satu dengan fihris; baru 14 judul Kitab 62 yang dicek persis.
-- **Sudah dicek dengan fihris cetak:** Bukhari, Muslim, Ibnu Majah, Abu Dawud, Nasa'i, Tirmidzi, Malik, ad-Darimi (untuk Abu Dawud, Nasa'i, dan Tirmidzi: struktur dan judul lewat OCR, kandidat dilihat di gambar; Tirmidzi juga di halaman isi). Al-Muwaththa' dan ad-Darimi juga sudah dicek (OCR al-Muwaththa' lebih lemah); asy-Syafi'i (al-Fahl) seluruh daftar isinya. **Belum:** Musnad Ahmad.
+- **Sudah dicek dengan fihris cetak:** Bukhari, Muslim, Ibnu Majah, Abu Dawud, Nasa'i, Tirmidzi, Malik, ad-Darimi (untuk Abu Dawud, Nasa'i, dan Tirmidzi: struktur dan judul lewat OCR, kandidat dilihat di gambar; Tirmidzi juga di halaman isi). Al-Muwaththa' dan ad-Darimi juga sudah dicek (OCR al-Muwaththa' lebih lemah); asy-Syafi'i (al-Fahl) seluruh daftar isinya. Musnad Ahmad: nomor edisi diperbaiki dan dicek dengan sampel; judul musnad baru sampel 24 judul.
