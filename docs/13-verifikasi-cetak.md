@@ -317,12 +317,22 @@ Lidwa kadang menyatukan dua hadits yang di edisi tahqiq bernomor terpisah, biasa
 
 Hasil: Ahmad 636 riwayat, ad-Darimi 74, asy-Syafi'i 14. Penilaian muhaqqiq tidak dipasang pada riwayat ini, karena dua hadits bisa berbeda penilaiannya. Pencarian «HR Ahmad 48» menemukan riwayat «47–48» lewat tabel `edisi_alias`.
 
+### Shahih al-Bukhari: nomor dan teks hadits (sampel acak)
+
+Scan Dar Thauq an-Najah (`alfirdwsiy2018_gmail_2698_201808`) adalah faksimili cetakan Sulthaniyyah, dengan nomor hadits di margin. Satu leaf = satu halaman, dan leaf = halaman + selisih per juz (juz 1: 142, 2: 321, 3: 513, 4: 717, 5: 935, 6: 1119, 7: 1326, 8: 1501, 9: 1682; dibaca dari kepala halaman). Penanda «PageVxxPyyy» di teks OpenITI Bukhari menunjuk halaman cetak ini, tetapi kadang satu halaman sesudahnya. Karena itu halaman p−1 dan p selalu dilihat.
+
+**Sampel acak 14 hadits** (seed 20261102; juz 1–9): 367, 544, 997, 1306, 1663, 3090, 3397, 4641, 5163 (riwayat mu'allaq «وقال إبراهيم…», yang di cetakan juga bernomor), 5251, 5323, 6245, 6308, 6873. Untuk tiap hadits, nomor di margin cetakan dan awal sanadnya dibandingkan dengan yang tampil di situs (teks fawazahmed0). **Hasilnya 14/14 cocok**, termasuk ejaan seperti «حدثنا ليث» (367; bukan «الليث»). Catatan: cetakan menulis 5323 dan 5324 sebagai satu blok bernomor ganda («٥٣٢٣ و٥٣٢٤»).
+
+**Teks lengkap satu hadits** (6873, juz 9 hlm. 4) dibandingkan kata per kata: **sama**. Cetakan mencantumkan varian riwayat di margin (mis. «ولا نقضي», «فالجنة»); teks kita mengikuti teks pokoknya.
+
+Batasan: baru 14 hadits dari 7.563, dan teks lengkap baru satu hadits. OCR scan ini tidak bisa dipakai (teks Sulthaniyyah berharakat penuh dan rapat), jadi setiap halaman harus dibaca dari gambar.
+
 ## Batasan dan yang belum
 
 - **Nomor entri belum diverifikasi.** OCR mengacaukan angka Arab-Hindi di kolom nomor.
 - **Kasyf al-Khafa'** hanya 11 dari 40 entri yang ditemukan, karena OCR cetakan 1351 H sangat rusak.
 - **Teks hadits** (Bukhari, Muslim, dst.) belum dibandingkan dengan cetakan. Scan Bukhari di archive.org tidak punya OCR. Teks hadits saat ini diverifikasi dengan cara lain: dua sumber digital yang sepakat (tingkat A) dan uji silang atribusi.
-- **Teks dan nomor hadits Bukhari** belum dicek visual satu per satu. Halamannya harus dicari manual di scan (OCR-nya tidak bisa dipakai untuk mencari), atau dengan scan lain yang OCR-nya lebih baik.
+- **Teks dan nomor hadits Bukhari:** sampel acak 14 hadits cocok nomor dan awal sanadnya, dan satu hadits cocok teks lengkapnya (lihat bagian Bukhari di atas). Sisanya belum dicek satu per satu.
 - Muslim: halaman fihris Muqaddimah dan Kitab al-Iman bab 1–18 belum dicek (tidak ada di scan).
 - **Fihris Bukhari sudah dibaca utuh**, tetapi hanya untuk bab tanpa judul. Judul bab bertajuk belum dibandingkan satu per satu dengan fihris; baru 14 judul Kitab 62 yang dicek persis.
 - **Sudah dicek dengan fihris cetak:** Bukhari, Muslim, Ibnu Majah, Abu Dawud, Nasa'i, Tirmidzi, Malik, ad-Darimi (untuk Abu Dawud, Nasa'i, dan Tirmidzi: struktur dan judul lewat OCR, kandidat dilihat di gambar; Tirmidzi juga di halaman isi). Al-Muwaththa' dan ad-Darimi juga sudah dicek (OCR al-Muwaththa' lebih lemah); asy-Syafi'i (al-Fahl) seluruh daftar isinya. Musnad Ahmad: nomor edisi diperbaiki dan dicek dengan sampel; judul musnad baru sampel 24 judul.
