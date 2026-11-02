@@ -277,7 +277,7 @@ Teks digital kita: ar-Risalah (tahqiq Syu'aib al-Arna'uth dkk., 1416–1421 H). 
 - semua varian dikenali; 27.640 nomor terbaca, selalu naik;
 - nomor di luar urutan naik terpanjang (salah ketik teks digital: «2300», «13349», «22293», «24003», «25194» di tengah nomor lain) dikosongkan, kecuali bila hanya beda satu digit dari celah yang pas. Empat yang dipulihkan, semuanya dilihat di halaman cetak: 1431–1432 («1431» dua kali; jilid 3 hlm. 44), 13549 (jilid 21 hlm. 178), 16662–16663 («16663» dua kali; jilid 27 hlm. 222), 22793 (jilid 37 hlm. 454);
 - hadits yang nomornya tidak tertulis sama sekali dipotong bila awalnya jelas (5632: «# حدثنا يحيى بن آدم…» sesudah catatan «(1)»); bila tidak jelas (9125–9126), blok itu tanpa nomor;
-- 717 riwayat Lidwa kini bernomor lain (yang benar), 92 riwayat baru bernomor, dan 128 riwayat tidak lagi diberi nomor (dan turun ke tingkat B). Teks Lidwa ke-128 riwayat ini mencakup dua hadits edisi (mis. hadits ayahnya + zawa'id Abdullah sesudahnya), jadi satu nomor edisi tidak tepat untuknya.
+- 717 riwayat Lidwa kini bernomor lain (yang benar), 92 riwayat baru bernomor, dan 128 riwayat tidak lagi diberi satu nomor. Teks Lidwa-nya mencakup dua hadits edisi (mis. hadits ayahnya + zawa'id Abdullah sesudahnya); sebagian besar kini diberi rentang nomor (bagian «Riwayat Lidwa yang memuat dua hadits edisi» di bawah).
 
 **Sampel acak 12 riwayat yang nomornya berubah**, dilihat di halaman cetak: semuanya benar (2332, 11781/1, 20890, 4042, 5059, 14166, 1331, 20943, 1170, 9453, 5069, 15971).
 
@@ -294,6 +294,17 @@ Pembersihan nomor Musnad Ahmad (`nomor_naik` di `pipeline/bab_openiti.py`) kini 
 - **Blok yang mungkin memuat dua hadits** (nomor berikutnya melompat dua, tanpa titik potong yang jelas) kini tidak langsung dikosongkan. Nomornya dikosongkan bila lebih dari satu riwayat Lidwa jatuh ke blok itu; bila hanya satu, hadits yang hilang memang tidak ada di teks digital (mis. ad-Darimi 589) dan nomor blok itu sah.
 
 Batasan: pemulihan salah ketik asy-Syafi'i belum dilihat satu per satu di cetakan (aturannya sama dengan Ahmad, yang 4/4 benar di cetakan). Penanda halaman teks digital asy-Syafi'i tidak sama dengan halaman cetak al-Fahl, jadi pencariannya lebih mahal.
+
+### Riwayat Lidwa yang memuat dua hadits edisi
+
+Lidwa kadang menyatukan dua hadits yang di edisi tahqiq bernomor terpisah, biasanya hadits Imam Ahmad lalu riwayat lain yang hanya menyebut sanadnya («فذكر نحوه», «إلا أنه قال»), mis. Ahmad L46 = hadits 47 + 48, L257 = 266 + zawa'id 267. Skornya di satu blok edisi di bawah 90%, jadi riwayat seperti ini dulu tingkat B tanpa nomor edisi (atau, sebelum perbaikan nomor di atas, tampil dengan nomor satu hadits saja). Kini `dua_blok` di `pipeline/bab_openiti.py` memberinya **rentang nomor** («47–48») bila semua syarat ini terpenuhi:
+
+- gabungan blok itu dengan tetangganya mencakup >= 90% teks Lidwa;
+- nomor kedua blok berurutan, dan kitab/babnya sama;
+- tiap blok menyumbang >= 10% teks yang tidak ada di blok lainnya;
+- awal sanad kedua blok (4 kata berurutan dari 12 kata pertama) ada di teks Lidwa. Syarat ini membuang 15 kandidat yang hanya mirip matannya.
+
+Hasil: Ahmad 636 riwayat, ad-Darimi 74, asy-Syafi'i 14. Penilaian muhaqqiq tidak dipasang pada riwayat ini, karena dua hadits bisa berbeda penilaiannya. Pencarian «HR Ahmad 48» menemukan riwayat «47–48» lewat tabel `edisi_alias`.
 
 ## Batasan dan yang belum
 

@@ -386,3 +386,17 @@ class DarimiSyafiiNomorEdisi(unittest.TestCase):
     def test_syafii_dua_hadits_satu_blok(self):
         # «### | 78 -» memuat dua hadits; yang kedua dipotong = 79 (al-Fahl jilid 1 hlm. 188: «٧٩ - … بن رقيش»)
         self.assertEqual(self.no("syafii:L1093"), 79)
+
+
+class DuaHaditsEdisi(unittest.TestCase):
+    """Riwayat Lidwa yang memuat dua hadits edisi berurutan diberi rentang nomor (bab_openiti.dua_blok)."""
+    r = staticmethod(lambda rid: q("SELECT no_openiti, no_akhir, tahqiq FROM riwayat_bab WHERE riwayat_id=?", rid)[0])
+
+    def test_rentang(self):
+        # L46 = hadits 47 (Ibnu Mahdi) + 48 (Muhammad bin Ja'far … «إلا أنه قال»); L257 = 266 + zawa'id 267 («فذكر نحو»)
+        self.assertEqual(self.r("ahmad:L46")[:2], (47, 48))
+        self.assertEqual(self.r("ahmad:L257")[:2], (266, 267))
+
+    def test_tanpa_penilaian_muhaqqiq(self):
+        # dua hadits bisa berbeda penilaiannya: penilaian satu blok tidak dipasang
+        self.assertIsNone(self.r("ahmad:L46")[2])

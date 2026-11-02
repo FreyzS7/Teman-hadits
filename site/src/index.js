@@ -139,9 +139,14 @@ async function halamanCari(env, url) {
     let calon = [];
     if (k?.edisi) {
       // Ahmad/Darimi/Syafi'i: nomor bisa berarti penomoran Lidwa ATAU penomoran edisi tahqiq yang lazim dikutip
-      calon = (await db.prepare("SELECT slug, no_tampil, no_edisi FROM riwayat WHERE kitab_id = ?1 AND (slug = ?2 OR no_edisi = ?2)").bind(kid, no).all()).results
-        .map((x) => ({ kitab_id: kid, slug: x.slug, kitab_nama: k.nama, no_tampil: x.no_edisi === no ? no : x.no_tampil,
-          catatan: x.no_edisi === no ? `menurut edisi ${k.edisi}${x.slug !== no ? ` (= no. ${x.no_tampil} Lidwa)` : ""}` : `menurut penomoran Lidwa${x.no_edisi ? ` (= no. ${x.no_edisi} edisi tahqiq)` : ""}` }));
+      // nomor edisi bisa berupa rentang («47–48»: satu riwayat Lidwa = dua hadits edisi), dicari lewat edisi_alias
+      calon = (await db.prepare("SELECT slug, no_tampil, no_edisi FROM riwayat WHERE kitab_id = ?1 AND (slug = ?2 OR no_edisi = ?2 "
+        + "OR n IN (SELECT n FROM edisi_alias WHERE kitab_id = ?1 AND no = ?2))").bind(kid, no).all()).results
+        .map((x) => {
+          const edisi = x.no_edisi === no || (x.no_edisi || "").split("–").includes(no);
+          return { kitab_id: kid, slug: x.slug, kitab_nama: k.nama, no_tampil: edisi ? x.no_edisi : x.no_tampil,
+            catatan: edisi ? `menurut edisi ${k.edisi}${x.slug !== no ? ` (= no. ${x.no_tampil} Lidwa)` : ""}` : `menurut penomoran Lidwa${x.no_edisi ? ` (= no. ${x.no_edisi} edisi tahqiq)` : ""}` };
+        });
       calon = [...new Map(calon.map((c) => [c.slug, c])).values()];
     } else {
       const { r, alih } = await cariRiwayat(db, kid, no);

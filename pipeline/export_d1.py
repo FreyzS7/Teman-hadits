@@ -32,7 +32,7 @@ SKEMA = """
 DROP TABLE IF EXISTS info; DROP TABLE IF EXISTS kitab; DROP TABLE IF EXISTS bab; DROP TABLE IF EXISTS riwayat;
 DROP TABLE IF EXISTS penilaian; DROP TABLE IF EXISTS mirip; DROP TABLE IF EXISTS kata_df; DROP TABLE IF EXISTS cari;
 DROP TABLE IF EXISTS tema; DROP TABLE IF EXISTS he_hadits; DROP TABLE IF EXISTS he_tema; DROP TABLE IF EXISTS he_riwayat;
-DROP TABLE IF EXISTS riyadh_info; DROP TABLE IF EXISTS sumber; DROP TABLE IF EXISTS judul; DROP TABLE IF EXISTS judul_bab;
+DROP TABLE IF EXISTS riyadh_info; DROP TABLE IF EXISTS sumber; DROP TABLE IF EXISTS judul; DROP TABLE IF EXISTS judul_bab; DROP TABLE IF EXISTS edisi_alias;
 DROP TABLE IF EXISTS katalog_kitab; DROP TABLE IF EXISTS katalog; DROP TABLE IF EXISTS katalog_cari;
 DROP TABLE IF EXISTS populer; DROP TABLE IF EXISTS populer_katalog; DROP TABLE IF EXISTS populer_riwayat; DROP TABLE IF EXISTS populer_sebut;
 DROP TABLE IF EXISTS perawi; DROP TABLE IF EXISTS sanad_perawi;
@@ -48,6 +48,8 @@ CREATE TABLE bab (kitab_id TEXT, no INT, nama TEXT, jumlah INT, n_awal INT, nama
 -- ('teks' = dicocokkan isi, 'urutan' = dari tetangga, 'nomor' = nomor sama, 'koreksi-cetak' = koreksi dari kitab cetak,
 -- 'catatan-cetak' = judul tetap, dengan catatan dari cetakan di judul_bab.catatan)
 CREATE TABLE judul_bab (id INTEGER PRIMARY KEY, kitab_ar TEXT, kitab_nama_id TEXT, bab_ar TEXT, catatan TEXT);
+-- riwayat bernomor edisi rentang («47–48»): kedua nomornya, agar pencarian «HR Ahmad 48» tetap memakai indeks
+CREATE TABLE edisi_alias (kitab_id TEXT, no TEXT, n INT, PRIMARY KEY (kitab_id, no, n)) WITHOUT ROWID;
 CREATE TABLE riwayat (
   n INTEGER PRIMARY KEY, id TEXT, kitab_id TEXT, slug TEXT, urut INT, no_tampil TEXT,
   no_standar TEXT, no_arab TEXT, no_lidwa INT, bab_no INT, arab TEXT, terjemah TEXT, rantai_json TEXT,
@@ -237,7 +239,7 @@ def main():
             bagian_lidwa[(kid, k)] = i
     pen_edisi = []
     n_of = {}
-    data_riwayat, data_cari = [], []
+    data_riwayat, data_cari, alias_edisi = [], [], []
     urut_dalam = collections.Counter()
     slug_dipakai = set()
     bab = {}
@@ -267,11 +269,18 @@ def main():
             if cocok:
                 tk, kc, no_edisi = "A", j["skor"], (str(j["no_openiti"]) if j["no_openiti"] is not None else None)
                 al = f"teks Arab Lidwa tercakup {round(j['skor'] * 100)}% di edisi {LIDWA_SAJA[kid]} (OpenITI); terjemah dari baris Lidwa yang sama"
+                if no_edisi and j.get("no_akhir"):
+                    # riwayat Lidwa = dua hadits edisi berurutan (bab_openiti.dua_blok)
+                    no_edisi = f"{j['no_openiti']}–{j['no_akhir']}"
+                    al = (f"teks Arab Lidwa tercakup {round(j['skor'] * 100)}% di dua hadits berurutan edisi {LIDWA_SAJA[kid]} "
+                          "(OpenITI); terjemah dari baris Lidwa yang sama")
                 if kid in PENILAI_EDISI and j["tahqiq"]:
                     pen_edisi.append((n, PENILAI_EDISI[kid], j["tahqiq"][:400], kategori_ar(j["tahqiq"])))
             else:
                 al = (al + "; " if al else "") + f"belum cocok >= 90% dengan edisi {LIDWA_SAJA[kid]}"
         data_riwayat.append((n, rid, kid, slug, urut_dalam[kid], tampil, nos, noa, nol, babno, arab, terj, rantai, kc, tk, al, no_edisi))
+        if no_edisi and "–" in no_edisi:
+            alias_edisi.extend((kid, x, n) for x in no_edisi.split("–"))
         na = norm_ar(arab)
         nama = " ".join(json.loads(rantai)) if rantai else ""
         if j:
@@ -401,6 +410,7 @@ def main():
                          judul_id[judul_n[r[0]][:4]] if r[0] in judul_n else None,
                          judul_n[r[0]][4] if r[0] in judul_n else None) for r in data_riwayat]
     w.sisip("judul_bab", ["id", "kitab_ar", "kitab_nama_id", "bab_ar", "catatan"], [(i,) + k for k, i in judul_id.items()])
+    w.sisip("edisi_alias", ["kitab_id", "no", "n"], alias_edisi)
     # Peta n -> kitab & tingkat untuk pencarian (site/src/cari.js): n sudah urut (urutan kitab, urutan riwayat) dan
     # setiap kitab menempati rentang n yang bersambung, jadi pencarian tidak perlu membaca baris riwayat setiap hasil.
     rentang = []

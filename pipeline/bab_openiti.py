@@ -484,6 +484,56 @@ def petakan(kid, blok, riwayat):
     return hasil
 
 
+def dua_blok(kid, blok, riwayat, akhir, cara):
+    """Riwayat Lidwa yang teksnya mencakup DUA hadits edisi berurutan (mis. Ahmad L46 = hadits 47 + 48: hadits ayahnya
+    lalu riwayat lain dengan «فذكر نحوه»). Skor di satu blok < 0.9, tetapi gabungan blok itu dengan tetangganya
+    (nomor berurutan, kitab & bab sama) >= 0.9, tiap blok menyumbang >= 10% teks yang tidak ada di blok lainnya, dan
+    awal sanad kedua blok ada di teks Lidwa.
+    Kembalikan dict rid -> (i_blok_awal, skor_gabungan, nomor_akhir)."""
+    if kid not in LIDWA_SAJA:
+        return {}
+    teks = {rid: ar for rid, ar, _, _ in riwayat}
+    gr = {rid: grams(norm_ar(ar)) for rid, ar in teks.items()}
+    df = collections.Counter()
+    for g in gr.values():
+        df.update(g)
+    N = max(1, len(gr))
+    lid = {rid: norm_ar(ar) for rid, ar in teks.items()}
+    def pembuka(t, l):
+        # 4 kata berurutan dari 12 kata pertama blok (awal sanad) ada di teks Lidwa: blok itu sungguh termuat,
+        # bukan sekadar matn yang mirip
+        w = norm_ar(_SAMPAH.sub(" ", t)).split()
+        return any(" ".join(w[k:k + 4]) in l for k in range(0, max(1, min(12, len(w) - 3))))
+    gb = {}
+    def G(i):
+        if i not in gb:
+            gb[i] = grams(norm_ar(_SAMPAH.sub(" ", blok[i]["teks"])))
+        return gb[i]
+    hasil = {}
+    for rid, (i, s) in akhir.items():
+        if cara.get(rid) != "teks" or s >= 0.9 or blok[i]["no"] is None:
+            continue
+        g = gr[rid]
+        w = {x: math.log(N / (1 + df[x])) + 0.1 for x in g}
+        T = sum(w.values()) or 1
+        sk = lambda S: sum(w[x] for x in g & S) / T
+        terbaik = None
+        for j in (i - 1, i + 1):
+            if not 0 <= j < len(blok) or blok[j]["no"] is None:
+                continue
+            a, b = sorted((i, j))
+            ba, bb = blok[a], blok[b]
+            if bb["no"] - max(ba["no"], ba.get("akhir") or 0) not in (0, 1) or (ba["kitab"], ba["bab"]) != (bb["kitab"], bb["bab"]):
+                continue
+            u = sk(G(a) | G(b))
+            if u >= 0.9 and min(sk(G(a) - G(b)), sk(G(b) - G(a))) >= 0.1 and (terbaik is None or u > terbaik[1]) \
+                    and all(pembuka(blok[x]["teks"], lid[rid]) for x in (a, b)):
+                terbaik = (a, round(u, 3), bb["no"] if bb["no"] != ba["no"] else None)
+        if terbaik:
+            hasil[rid] = terbaik
+    return hasil
+
+
 MIN_ISI_NOMOR = 0.8
 
 
@@ -570,7 +620,7 @@ def main():
     db = sqlite3.connect(OUT)
     db.executescript("""
     CREATE TABLE riwayat_bab (riwayat_id TEXT PRIMARY KEY, kitab_ar TEXT, bab_ar TEXT, skor REAL, cara TEXT, no_openiti INT,
-      kitab_nama_id TEXT, tahqiq TEXT, urut_openiti INT, catatan TEXT, cara_cocok TEXT);
+      kitab_nama_id TEXT, tahqiq TEXT, urut_openiti INT, catatan TEXT, cara_cocok TEXT, no_akhir INT);
     CREATE TABLE kitab_nama (kitab_id TEXT, bab_no INT, nama_ar TEXT, setuju INT, total INT, nama_id TEXT, PRIMARY KEY (kitab_id, bab_no));
     CREATE TABLE info (kitab_id TEXT, kunci TEXT, nilai TEXT);
     """)
@@ -593,21 +643,25 @@ def main():
                 akhir[rid], cara[rid] = (a[0], 0.0), "urutan"
         isi_dari_nomor(kid, blok, riwayat, akhir, cara)
         betulkan_letak(kid, blok, riwayat, akhir, cara)
+        dua = dua_blok(kid, blok, riwayat, akhir, cara)
+        for rid, (i, s, _) in dua.items():
+            akhir[rid] = (i, s)
         isi_blok = collections.Counter(i for i, _ in akhir.values())
         for rid, (i, s) in akhir.items():
             b = blok[i]
             no_b = None if (b.get("celah") and isi_blok[i] > 1) else b["no"]
             # Penilaian muhaqqiq hanya dipasang bila teks riwayat jelas ada di blok edisi itu (>= 0.9)
-            tq = b.get("tahqiq") if (cara[rid] == "teks" and s >= 0.9) else None
+            tq = b.get("tahqiq") if (cara[rid] == "teks" and s >= 0.9 and rid not in dua) else None
             bab_ar, cr, catatan = b["bab"], cara[rid], None
             k = koreksi_cetak(rid, no_b)
             if k:
                 # cara "catatan-cetak": judul tetap, tetapi cetakan memberi catatan penting (mis. bab tambahan edisi lain)
                 bab_ar, cr, catatan = k["bab_ar"], k.get("cara", "koreksi-cetak"), k.get("catatan_id")
             # cara_cocok = cara pencocokan asli (cara bisa ditimpa koreksi cetak; tingkat A kitab Lidwa-saja butuh "teks")
-            db.execute("INSERT INTO riwayat_bab VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            db.execute("INSERT INTO riwayat_bab VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
                        (rid, b["kitab"], bab_ar, s, cr, no_b, nama_indonesia(b["kitab"]),
-                        tq if no_b is not None or not b.get("celah") else None, i, catatan, cara[rid]))
+                        tq if no_b is not None or not b.get("celah") else None, i, catatan, cara[rid],
+                        dua[rid][2] if rid in dua and no_b is not None else None))
 
         # uji: urutan & nomor
         idx = [peta[rid][0] for rid in urut if rid in peta]
