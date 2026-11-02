@@ -382,6 +382,8 @@ class DarimiSyafiiNomorEdisi(unittest.TestCase):
         self.assertEqual(self.no("syafii:L450"), 692)
         self.assertEqual(self.no("syafii:L1669"), 1702)
         self.assertEqual(self.no("syafii:L662"), 1392)
+        # «673» di antara 762 & 764 -> 763 (al-Fahl jilid 2 hlm. 175: «أخبرنا الثقة، عن معمر، عن ابن طاوس»)
+        self.assertEqual(self.no("syafii:L531"), 763)
 
     def test_syafii_dua_hadits_satu_blok(self):
         # «### | 78 -» memuat dua hadits; yang kedua dipotong = 79 (al-Fahl jilid 1 hlm. 188: «٧٩ - … بن رقيش»)

@@ -293,7 +293,18 @@ Pembersihan nomor Musnad Ahmad (`nomor_naik` di `pipeline/bab_openiti.py`) kini 
 - **asy-Syafi'i (al-Fahl):** salah ketik teks digital («392» di antara 691 & 693, «673» di antara 762 & 764, «1720» di antara 1701 & 1703, «586», «1393» dua kali, «1969») dipulihkan bila beda satu digit atau dua digit bertukar dan celahnya pas, atau dikosongkan. Hadits tanpa nomor dipotong bila awalnya jelas: «### | 78 -» memuat dua hadits, dan yang kedua kini 79 (dilihat di cetakan: jilid 1 hlm. 188, leaf 210, «٧٩ - أخبرنا مالك، عن سعيد بن عبد الرحمن بن رقيش»).
 - **Blok yang mungkin memuat dua hadits** (nomor berikutnya melompat dua, tanpa titik potong yang jelas) kini tidak langsung dikosongkan. Nomornya dikosongkan bila lebih dari satu riwayat Lidwa jatuh ke blok itu; bila hanya satu, hadits yang hilang memang tidak ada di teks digital (mis. ad-Darimi 589) dan nomor blok itu sah.
 
-Batasan: pemulihan salah ketik asy-Syafi'i belum dilihat satu per satu di cetakan (aturannya sama dengan Ahmad, yang 4/4 benar di cetakan). Penanda halaman teks digital asy-Syafi'i tidak sama dengan halaman cetak al-Fahl, jadi pencariannya lebih mahal.
+Semua pemulihan salah ketik asy-Syafi'i dilihat di cetakan al-Fahl dan benar (penanda halaman teks digitalnya tidak sama dengan halaman cetak, jadi halamannya dicari lewat leaf scan):
+
+| Nomor | Teks digital | Halaman cetak (leaf) | Awal hadits di cetakan |
+|---|---|---|---|
+| 583 | «586» | jilid 2 hlm. 89 (459) | «أخبرنا إبراهيم بن محمد، عن محمد بن عمرو بن علقمة» |
+| 692 | «392» | jilid 2 hlm. 141 (511) | «أخبرنا مالك، عن ابن شهاب، عن السائب بن يزيد: أن عثمان…» |
+| 763 | «673» | jilid 2 hlm. 175 (545) | «أخبرنا الثقة، عن معمر، عن ابن طاوس، عن أبيه» |
+| 1392 | «1393» | jilid 3 hlm. 173 (846) | «أخبرنا ابن عيينة، عن ابن شهاب، عن مالك بن أوس» |
+| 1393 | «1393» | jilid 3 hlm. 173 (846) | «أخبرنا ابن عيينة، عن الزهري، عن مالك بن أوس بن الحدثان» |
+| 1702 | «1720» | jilid 4 hlm. 15 (1011) | «أخبرنا مالك، عن يحيى بن سعيد، عن سعيد بن المسيب» |
+
+Bersama 79 (jilid 1 hlm. 188) dan empat kasus Ahmad, aturan pemulihan nomor 11/11 benar di cetakan.
 
 ### Riwayat Lidwa yang memuat dua hadits edisi
 
