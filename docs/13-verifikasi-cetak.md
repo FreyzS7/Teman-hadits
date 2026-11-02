@@ -285,6 +285,16 @@ Teks digital kita: ar-Risalah (tahqiq Syu'aib al-Arna'uth dkk., 1416–1421 H). 
 
 Batasan: judul musnad baru dicek dengan sampel (24 dari ±1.300). Teks hadits tidak dibandingkan per halaman.
 
+### Nomor edisi ad-Darimi dan asy-Syafi'i: pembersihan yang sama
+
+Pembersihan nomor Musnad Ahmad (`nomor_naik` di `pipeline/bab_openiti.py`) kini juga dipakai untuk dua kitab lain yang menampilkan nomor edisi tahqiq:
+
+- **ad-Darimi (Asad):** baris nomor yang disela penanda manuskrip («### | 177 ms052 -») dulu tidak terbaca, sehingga hadits itu tergabung ke hadits sebelumnya dan riwayatnya tampil dengan nomor sebelumnya (9 riwayat, mis. 177 tampil sebagai 176, 416 sebagai 415). Nomor kembar tanpa penanda (967, 1212, 1748, 2368, 2445) dikosongkan; «402» kedua bertanda «مكرر» di teks digital, jadi keduanya tetap 402.
+- **asy-Syafi'i (al-Fahl):** salah ketik teks digital («392» di antara 691 & 693, «673» di antara 762 & 764, «1720» di antara 1701 & 1703, «586», «1393» dua kali, «1969») dipulihkan bila beda satu digit atau dua digit bertukar dan celahnya pas, atau dikosongkan. Hadits tanpa nomor dipotong bila awalnya jelas: «### | 78 -» memuat dua hadits, dan yang kedua kini 79 (dilihat di cetakan: jilid 1 hlm. 188, leaf 210, «٧٩ - أخبرنا مالك، عن سعيد بن عبد الرحمن بن رقيش»).
+- **Blok yang mungkin memuat dua hadits** (nomor berikutnya melompat dua, tanpa titik potong yang jelas) kini tidak langsung dikosongkan. Nomornya dikosongkan bila lebih dari satu riwayat Lidwa jatuh ke blok itu; bila hanya satu, hadits yang hilang memang tidak ada di teks digital (mis. ad-Darimi 589) dan nomor blok itu sah.
+
+Batasan: pemulihan salah ketik asy-Syafi'i belum dilihat satu per satu di cetakan (aturannya sama dengan Ahmad, yang 4/4 benar di cetakan). Penanda halaman teks digital asy-Syafi'i tidak sama dengan halaman cetak al-Fahl, jadi pencariannya lebih mahal.
+
 ## Batasan dan yang belum
 
 - **Nomor entri belum diverifikasi.** OCR mengacaukan angka Arab-Hindi di kolom nomor.

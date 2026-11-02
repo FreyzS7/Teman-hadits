@@ -353,10 +353,36 @@ class AhmadNomorEdisi(unittest.TestCase):
 
     def test_yang_ragu_dikosongkan(self):
         # «22669» dua kali (yang kedua mestinya 22670: beda dua digit) dan 9125+9126 tergabung: tanpa nomor
-        for n in (9125, 9126, 22669, 22670):
+        for n in (9126, 22669, 22670):
             self.assertNotIn(n, self.no)
+        self.assertTrue(self.no[9125].get("celah"))                  # memuat dua hadits -> diputuskan di main()
+        self.assertEqual(q("SELECT count(*) FROM riwayat_bab WHERE riwayat_id LIKE 'ahmad:%' AND no_openiti=9125")[0][0], 0)
 
     def test_riwayat_lidwa_bernomor_benar(self):
         # dulu: 4041, 5054, 5054, 2331 (tergabung ke blok sebelumnya)
         for rid, n in (("ahmad:L3837", 4042), ("ahmad:L4815", 5059), ("ahmad:L4825", 5069), ("ahmad:L2216", 2332)):
             self.assertEqual(q("SELECT no_openiti FROM riwayat_bab WHERE riwayat_id=?", rid)[0][0], n, rid)
+
+
+class DarimiSyafiiNomorEdisi(unittest.TestCase):
+    """Pembersihan nomor yang sama dengan Musnad Ahmad (nomor_naik)."""
+    no = staticmethod(lambda rid: q("SELECT no_openiti FROM riwayat_bab WHERE riwayat_id=?", rid)[0][0])
+
+    def test_darimi_nomor_ms(self):
+        # «### | 177 ms052 -»: dulu tak terbaca, riwayatnya tampil sebagai 176
+        self.assertEqual(self.no("darimi:L173"), 177)
+        self.assertEqual(self.no("darimi:L404"), 416)
+
+    def test_darimi_kembar_dikosongkan(self):
+        for rid in ("darimi:L1151", "darimi:L1152", "darimi:L2293", "darimi:L2294"):
+            self.assertIsNone(self.no(rid), rid)
+
+    def test_syafii_salah_ketik(self):
+        # «392» di antara 691 & 693, «1720» di antara 1701 & 1703, «1393» dua kali
+        self.assertEqual(self.no("syafii:L450"), 692)
+        self.assertEqual(self.no("syafii:L1669"), 1702)
+        self.assertEqual(self.no("syafii:L662"), 1392)
+
+    def test_syafii_dua_hadits_satu_blok(self):
+        # «### | 78 -» memuat dua hadits; yang kedua dipotong = 79 (al-Fahl jilid 1 hlm. 188: «٧٩ - … بن رقيش»)
+        self.assertEqual(self.no("syafii:L1093"), 79)

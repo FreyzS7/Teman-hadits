@@ -80,7 +80,7 @@ def nama_indonesia(kitab_ar):
     v = _GLOS.get(inti)
     return (awal + v) if v else None
 _ANGKA_TIMUR = str.maketrans("٠١٢٣٤٥٦٧٨٩", "0123456789")
-_NOMOR_SAJA = re.compile(r"^\s*\(?\s*([0-9٠-٩]+)\s*\)?\s*[-–]?\s*$")
+_NOMOR_SAJA = re.compile(r"^\s*\(?\s*([0-9٠-٩]+)\s*\)?\s*(?:ms\d+\s*)?[-–]?\s*$")   # ad-Darimi: «### | 177 ms052 -»
 _AWALAN_NOMOR = re.compile(r"^\s*(?:\(?\s*[0-9٠-٩]+\s*\)?\s*[-–]?\s*)+")
 _SAMPAH = re.compile(r"ms\d+|PageV\d+P\d+|\[ص:\s*\d+\]")
 
@@ -186,7 +186,9 @@ def nomor_naik(blok):
         k = j
     # celah: blok n lalu langsung n+2 (tanpa hadits tak bernomor di antaranya) = blok n memuat hadits n+1 yang tak
     # bernomor di teks digital (mis. 5632: «# حدثنا يحيى بن آدم…»). Tepat satu calon awal hadits -> dipotong di situ;
-    # selain itu nomornya dikosongkan (blok memuat dua hadits, nomor & penilaian muhaqqiq-nya tak bisa dipisahkan).
+    # selain itu blok ditandai «celah»: bila lebih dari satu riwayat jatuh ke blok itu, ia memuat dua hadits dan
+    # nomornya dikosongkan di main(); bila hanya satu, hadits yang hilang memang tidak ada di teks digital (ad-Darimi
+    # 589) dan nomor blok itu sah.
     hasil = []
     for k, b in enumerate(blok):
         hasil.append(b)
@@ -201,7 +203,7 @@ def nomor_naik(blok):
             hasil[-1] = dict(b, teks=b["teks"][:c].strip(), tahqiq=None, akhir=None)
             hasil.append(dict(b, teks=b["teks"][c:].strip(), tahqiq=None, no=akhir + 1, akhir=None, sub=False))
         else:
-            b["no"] = None
+            b["celah"] = True       # mungkin memuat hadits tak bernomor: diputuskan di main() dari jumlah riwayat
     blok[:] = hasil
 
 
@@ -260,12 +262,14 @@ def urai(path, kid=None):
                 tutup()
                 bab = bersihkan_judul(mnb.group(2))
                 teks, tahqiq, no = [], [], int(mnb.group(1).translate(_ANGKA_TIMUR))
+                akhir_no, calon, sub = no, [], False
                 continue
             mn = _NOMOR_SAJA.match(isi)
             if mn:                                         # "### | 12 - " = awal hadits bernomor
                 tunggu_judul = judul_tir = False
                 tutup()
                 teks, tahqiq, no = [], [], int(mn.group(1).translate(_ANGKA_TIMUR))
+                akhir_no, calon, sub = no, [], False
                 continue
             if tingkat_kitab and m.group(1) != "$":       # judul bertingkat (Musnad Ahmad)
                 tutup()
@@ -404,16 +408,23 @@ def urai(path, kid=None):
             if (kid == "ahmad" and no is not None and re.match(r"^# (?:حدثنا|حدثني)", baris)
                     and re.search(r"\(\d+\)\s*$", semua[idx - 1])):
                 calon.append(len(" ".join(teks)))
+            # ad-Darimi & asy-Syafi'i: «# أخبرنا مالك…» sesudah kalimat yang selesai = awal hadits tanpa nomor? (al-Fahl
+            # 79: dua hadits di bawah «### | 78 -»). Hanya dipakai bila celah nomornya pas (nomor_naik).
+            if kid == "darimi" and no is not None and not teks and isi.startswith("مكرر"):
+                sub, isi = True, isi[len("مكرر"):].strip()     # «### | 402 -» lalu «# مكرر أخبرنا …» = 402 مكرر (sah)
+            if (kid in ("darimi", "syafii") and no is not None and teks and re.match(r"^# (?:حدثنا|حدثني|أخبرنا|أخبرني)", baris)
+                    and re.search(r'(?:\(\d+\)|[.»"])\s*(?:PageV\d+P\d+\s*)?(?:ms\d+\s*)?$', semua[idx - 1])):
+                calon.append(len(" ".join(teks)))
             mt = _NO_AHMAD_TENGAH.search(isi) if kid == "ahmad" and no is not None else None
             if mt and int(mt.group(1)) == no + 1:
                 teks.append(isi[:mt.start()])
                 tutup()
                 teks, tahqiq, no, sub = [isi[mt.end():]], [], int(mt.group(1)), False
-                akhir_no, calon = no, []
+                akhir_no, calon, sub = no, [], False
                 continue
             teks.append(isi)
     tutup()
-    if kid == "ahmad":
+    if kid in ("ahmad", "darimi", "syafii"):     # kitab yang menampilkan nomor edisi tahqiq (LIDWA_SAJA)
         nomor_naik(blok)
     return blok
 
@@ -582,18 +593,21 @@ def main():
                 akhir[rid], cara[rid] = (a[0], 0.0), "urutan"
         isi_dari_nomor(kid, blok, riwayat, akhir, cara)
         betulkan_letak(kid, blok, riwayat, akhir, cara)
+        isi_blok = collections.Counter(i for i, _ in akhir.values())
         for rid, (i, s) in akhir.items():
             b = blok[i]
+            no_b = None if (b.get("celah") and isi_blok[i] > 1) else b["no"]
             # Penilaian muhaqqiq hanya dipasang bila teks riwayat jelas ada di blok edisi itu (>= 0.9)
             tq = b.get("tahqiq") if (cara[rid] == "teks" and s >= 0.9) else None
             bab_ar, cr, catatan = b["bab"], cara[rid], None
-            k = koreksi_cetak(rid, b["no"])
+            k = koreksi_cetak(rid, no_b)
             if k:
                 # cara "catatan-cetak": judul tetap, tetapi cetakan memberi catatan penting (mis. bab tambahan edisi lain)
                 bab_ar, cr, catatan = k["bab_ar"], k.get("cara", "koreksi-cetak"), k.get("catatan_id")
             # cara_cocok = cara pencocokan asli (cara bisa ditimpa koreksi cetak; tingkat A kitab Lidwa-saja butuh "teks")
             db.execute("INSERT INTO riwayat_bab VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                       (rid, b["kitab"], bab_ar, s, cr, b["no"], nama_indonesia(b["kitab"]), tq, i, catatan, cara[rid]))
+                       (rid, b["kitab"], bab_ar, s, cr, no_b, nama_indonesia(b["kitab"]),
+                        tq if no_b is not None or not b.get("celah") else None, i, catatan, cara[rid]))
 
         # uji: urutan & nomor
         idx = [peta[rid][0] for rid in urut if rid in peta]
