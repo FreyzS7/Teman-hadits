@@ -164,7 +164,7 @@ Token itu bisa mengubah Worker dan database di akun Anda. Cabut token itu di das
 
 | # | Hal | Status | Yang perlu dilakukan |
 |---|---|---|---|
-| 1 | Lisensi **OpenITI** (judul bab, edisi tahqiq, katalog palsu, Taqrib, Tahdzib al-Kamal) | **Belum terverifikasi** | Buka rilis Zenodo OpenITI (doi:10.5281/zenodo.3082463) dari jaringan biasa, catat lisensinya, dan cantumkan di halaman Metode. Bila tidak mengizinkan penerbitan ulang teks, sembunyikan kutipan katalog palsu dan teks Taqrib, sisakan rujukan nomornya |
+| 1 | Lisensi **OpenITI** (judul bab, edisi tahqiq, katalog palsu, Taqrib, Tahdzib al-Kamal) | **CC BY-NC-SA 4.0** (Zenodo 2025.1.9, dicek 2 Nov 2026) | Atribusi & lisensi sudah dicantumkan. Situs harus tetap **nonkomersial** (tanpa iklan/berbayar) selama memuat teks OpenITI |
 | 2 | Terjemah **Riyadhus Shalihin** | Penerjemah belum dipastikan | Produksi sudah diatur `TERJEMAH_RIYADH="sembunyi"`. Ubah ke `"tampil"` hanya bila izinnya ada |
 | 3 | **HadeethEnc** | Boleh diterbitkan ulang tanpa diubah, dengan atribusi | Minta nomor versi data lewat email ke pengelola, lalu isi di halaman tema |
 | 4 | Izin **Lidwa Pusaka** | Sudah didapat | Simpan bukti tertulisnya di arsip pribadi (bukan di repo) |

@@ -110,6 +110,6 @@ Keempat kontrol tidak mendapat chip *palsu* dan ditemukan di kitab hadits kita d
 ## Yang belum
 
 - Daftar ucapan populer dan lafaz Arabnya perlu ditinjau ahli hadits.
-- Lisensi OpenITI belum terverifikasi (lihat `docs/02-sumber-dan-lisensi.md`).
+- Lisensi OpenITI: CC BY-NC-SA 4.0 (lihat `docs/02-sumber-dan-lisensi.md`).
 - Nomor entri belum dicocokkan dengan scan kitab cetak.
 - Kata kunci belum menangkap penilaian berbentuk kata kerja (صححه, حسنه, ضعفه) dan penyebutan *al-Maudhu'at* ("ذكره ابن الجوزي في الموضوعات").

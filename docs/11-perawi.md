@@ -122,4 +122,4 @@ Dari pemeriksaan manual atas sampel 68 ketidaksepakatan "pasti":
 - Perawi yang meriwayatkan bersamaan ("حدثنا قتيبة وابن رمح"), jalur tahwil (ح), "جده", dan "رجل/فلان" belum ditangani.
 - Label "kuat" (98,97%) belum ditampilkan; bisa ditinjau satu per satu.
 - Penilaian ulama lain (jarh wa ta'dil lengkap dari Tahdzib at-Tahdzib) belum dimuat; yang tampil hanya ringkasan Ibnu Hajar.
-- Lisensi OpenITI belum terverifikasi.
+- Lisensi OpenITI: CC BY-NC-SA 4.0 (lihat `docs/02-sumber-dan-lisensi.md`).
