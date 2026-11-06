@@ -342,6 +342,13 @@ Scan cetakan al-Halabi, tahqiq Fu'ad 'Abd al-Baqi (`alfirdwsiy2018_gmail_2778`):
   1. **Huruf terpotong.** 1023 tampil «عن أبي موسى�� عن النبي» (cetakan hlm. 710: «عن أبي موسى، عن النبي»). Di seluruh fawazahmed0 ada **76 riwayat** seperti ini (7 kitab), yaitu satu huruf/harakat (2 byte UTF-8) atau tanda arah teks (3 byte) yang terpotong. Kini dipulihkan dari teks Lidwa berharakat, lalu kerangka huruf teks OpenITI kitab yang sama, bila konteksnya menunjuk **satu** kemungkinan; bila harakat sesudahnya menuntut huruf, celah kosong tidak diterima. Tujuh sisanya ditentukan oleh kata itu sendiri atau dilihat di cetakan (tabel `PULIH_MANUAL`). Hasil: **75 dari 76 dipulihkan**. Satu yang tetap tak pasti (Abu Dawud 1840, «��َقال»: «فقال» atau «وقال») ditandai «…».
   2. **Koma memotong nama perawi.** 4 dari 10 sampel: «عن عبيدِ، اللهِ بن أبي بكر», «سفيانُ، بنُ عيينة», «وابنُ، حُجر», «بن أبي، كثير». Cetakan tanpa koma di situ. Tiga bentuk yang pasti salah (koma tepat sebelum «بن», sesudah «ابن», dan di antara «عبد/عبيد» dan nama Allah) kini dihapus: **1.501 koma**, terbanyak di Muslim. «أبي، كثير» dibiarkan karena «أبي، عن» (= ayahku) sah.
 
+### Sunan Ibnu Majah dan Jami' at-Tirmidzi: teks lengkap 10 hadits per kitab (sampel acak)
+
+Sampel acak hadits bertingkat A, 25–90 kata (seed 20261106). Nomor dan teks yang tampil di situs (fawazahmed0) dibandingkan kata per kata dengan gambar halaman.
+
+- **Ibnu Majah**, cetakan al-Halabi, tahqiq Fu'ad 'Abd al-Baqi (`SunanIbnMajaHalabi`; jilid 1: leaf = halaman − 1, jilid 2: leaf = halaman − 721): 49, 304, 501, 733, 1264, 1505, 1743, 2181, 3316, 3471. **10/10 sama**, termasuk keterangan Ibnu Majah sesudah 304 («قال أبو عبد الله بن ماجه …»). Cetakan menulis «ثنا/أنبأنا» sebagai singkatan «حدثنا/أخبرنا»; teks kita menuliskannya penuh. Itu konvensi cetak, bukan beda riwayat.
+- **Tirmidzi**, cetakan Basyar 'Awwad Ma'ruf (`gkt6_20251231`, berkas `gkt1`–`gkt6`; leaf = halaman − 1): 45, 276, 467, 668, 1086, 1534, 1836, 2604, 2722, 3746. **Nomor 10/10 dan matan-sanad 10/10 sama.** Satu perbedaan sistematis pada komentar at-Tirmidzi: teks kita menulis «قال أبو عيسى: هذا حديث حسن صحيح» (gaya edisi Ahmad Syakir), sedangkan Basyar cukup «هذا حديث حسن صحيح»; kadang urutan «وفي الباب …» dan penilaian juga bertukar. Kata-kata penilaiannya sendiri sama di 10 sampel.
+
 ## Batasan dan yang belum
 
 - **Nomor entri belum diverifikasi.** OCR mengacaukan angka Arab-Hindi di kolom nomor.
