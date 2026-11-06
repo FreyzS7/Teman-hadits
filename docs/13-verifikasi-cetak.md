@@ -349,6 +349,15 @@ Sampel acak hadits bertingkat A, 25–90 kata (seed 20261106). Nomor dan teks ya
 - **Ibnu Majah**, cetakan al-Halabi, tahqiq Fu'ad 'Abd al-Baqi (`SunanIbnMajaHalabi`; jilid 1: leaf = halaman − 1, jilid 2: leaf = halaman − 721): 49, 304, 501, 733, 1264, 1505, 1743, 2181, 3316, 3471. **10/10 sama**, termasuk keterangan Ibnu Majah sesudah 304 («قال أبو عبد الله بن ماجه …»). Cetakan menulis «ثنا/أنبأنا» sebagai singkatan «حدثنا/أخبرنا»; teks kita menuliskannya penuh. Itu konvensi cetak, bukan beda riwayat.
 - **Tirmidzi**, cetakan Basyar 'Awwad Ma'ruf (`gkt6_20251231`, berkas `gkt1`–`gkt6`; leaf = halaman − 1): 45, 276, 467, 668, 1086, 1534, 1836, 2604, 2722, 3746. **Nomor 10/10 dan matan-sanad 10/10 sama.** Satu perbedaan sistematis pada komentar at-Tirmidzi: teks kita menulis «قال أبو عيسى: هذا حديث حسن صحيح» (gaya edisi Ahmad Syakir), sedangkan Basyar cukup «هذا حديث حسن صحيح»; kadang urutan «وفي الباب …» dan penilaian juga bertukar. Kata-kata penilaiannya sendiri sama di 10 sampel.
 
+### Sunan an-Nasa'i dan Sunan Abu Dawud: teks lengkap 10 hadits per kitab (sampel acak)
+
+Metode sama (seed 20261106; hadits tingkat A, 25–80 kata).
+
+- **an-Nasa'i**, cetakan Abu Ghuddah (al-Mujtaba dengan syarah as-Suyuthi & hasyiyah as-Sindi; `SunanNissa3AbuGuda`, berkas `01_106636`–`08_106639`; leaf = halaman − 1; nomor hadits di margin): 70, 120, 251, 496, 920, 1414, 2500, 2963, 3492, 4463. **10/10 sama** kata per kata, termasuk komentar an-Nasa'i sesudah 3492 («قال أبو عبد الرحمن: هذا صواب…»).
+- **Abu Dawud**, cetakan Muhyiddin 'Abd al-Hamid (al-Maktabah al-'Ashriyyah; `04-8461-2`, berkas `01_8460-1`–`04_8461-2`; leaf = halaman − 1): 34, 282, 555, 812, 1421, 1957, 2441, 3728, 3897, 5183. **10/10 sama**. Kata yang di cetakan diberi kurung siku sebagai tambahan pentahqiq (mis. 812 «[والأخرى الأنعام]», 1957 «[ونحن]», «[مناسكهم]») ada di teks kita tanpa kurung. Catatan: penanda halaman teks OpenITI Abu Dawud kadang meleset satu halaman (3897 ada di jilid 4 hlm. 13, bukan 14), jadi halaman sebelumnya selalu ikut dilihat.
+
+Dengan ini ketujuh kitab bernomor standar (Bukhari, Muslim, Abu Dawud, Tirmidzi, Nasa'i, Ibnu Majah) plus sampel nomor edisi Ahmad, ad-Darimi, dan asy-Syafi'i sudah dicocokkan dengan cetakannya. Teks Arab sampel sama kata per kata, kecuali perbedaan varian naskah atau gaya yang dicatat di atas; dua cacat teks digital yang ditemukan (huruf terpotong, koma di tengah nama) sudah diperbaiki di seluruh data.
+
 ## Batasan dan yang belum
 
 - **Nomor entri belum diverifikasi.** OCR mengacaukan angka Arab-Hindi di kolom nomor.
