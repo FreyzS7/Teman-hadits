@@ -61,20 +61,21 @@ export async function cek(db, teks) {
     // teks yang beredar sering memakai ejaan lain dari terjemah Lidwa. Kata dianggap ada bila salah satu ejaannya ada.
     const mentah = [...new Set(normId(isi).split(" ").filter((w) => w.length >= 3 && !STOP.has(w)))];
     const grupKata = new Map(); // kunci grup (ejaan pertama, di-stem) -> ejaan-ejaannya (di-stem)
+    const labelGrup = new Map(); // kunci grup -> teks untuk ditampilkan: varian ejaan saja, tanpa bentuk berawalan
     for (const w of mentah) {
       const g0 = [...new Set(varianDari(w).concat(varianDari(stemId(w)).length > 1 ? varianDari(stemId(w)) : []).map(stemId))];
       // kata dasar juga dicocokkan dengan bentuk berawalannya ("baca" -> membaca/dibaca, "puasa" -> berpuasa)
       // (hanya untuk kata yang diketik, bukan semua varian ejaannya: bentuknya jadi terlalu banyak dan melemahkan bobot)
       const v = [...new Set([...(g0.length > 1 ? g0 : [stemId(w)]), ...awalanDari(stemId(w))])];
-      if (!grupKata.has(v[0])) grupKata.set(v[0], v);
+      if (!grupKata.has(v[0])) { grupKata.set(v[0], v); labelGrup.set(v[0], g0.length > 1 ? g0.join("/") : stemId(w)); }
     }
     const kunciDari = new Map([...grupKata].flatMap(([k, vs]) => vs.map((v) => [v, k])));
     const Q = [...kunciDari.keys()];
     if (!Q.length) return { ...hasil, status: "kosong" };
     const dfV = new Map((await db.prepare("SELECT kata, n FROM kata_df WHERE kata IN (SELECT value FROM json_each(?1))").bind(JSON.stringify(Q)).all()).results.map((x) => [x.kata, x.n]));
     const df = new Map([...grupKata].map(([k, vs]) => [k, vs.reduce((a, v) => a + (dfV.get(v) || 0), 0)]));
-    hasil.langkah = [...grupKata].map(([k, vs]) => ({ kata: vs.length > 1 ? vs.join("/") : k, muncul: df.get(k) }));
-    hasil.absen = [...grupKata.keys()].filter((k) => !df.get(k)).map((k) => (grupKata.get(k).length > 1 ? grupKata.get(k).join("/") : k));
+    hasil.langkah = [...grupKata.keys()].map((k) => ({ kata: labelGrup.get(k), muncul: df.get(k) }));
+    hasil.absen = [...grupKata.keys()].filter((k) => !df.get(k)).map((k) => labelGrup.get(k));
     if (hasil.absen.length) return { ...hasil, status: "tidak-ditemukan" };
     const N = hasil.total || 60000;
     const idf = new Map([...df].map(([k, n]) => [k, Math.log(N / (1 + n))]));
