@@ -183,6 +183,19 @@ Putaran kesebelas (45 kueri akhlak, ibadah, jenazah):
 
 Tidak diberi entri: "ujub" (العجب juga berarti "heran"), "shalat hajat" ("hajat" sudah dipakai untuk buang hajat), "shalat tasbih" ("tasbih" juga dzikir), "adzan di telinga bayi" (hanya 4 riwayat dan tidak ada kata pemicu tunggal).
 
+Putaran kedua belas (45 kueri adab sosial, muamalah, kepemimpinan, akhir zaman):
+
+| Kueri | Sebelum | Sesudah | Padanan / catatan |
+|---|---:|---:|---|
+| "ghirah" | 0 | 132 | يغار, أتعجبون من غيرة (bukan الغيرة sendirian: bercampur غير "selain") |
+| "ghuraba" | 0 | 21, dibuka Muslim 372 | طوبى للغرباء, بدأ الإسلام غريبا |
+| "73 golongan" | 570 (sebagian kata) | 11, dibuka Abu Dawud 4596 | ثلاث وسبعين فرقة, ثنتين وسبعين |
+| "urbun"/"panjar" | 0 | 6 | بيع العربان |
+| "calo" | 12 | 85 | لا يبع حاضر لباد |
+| "tengkulak" | 1 | 16 | لا تلقوا الركبان (catatan: riwayat terdekat) |
+| "riba fadhl" | 3 | 100, dibuka Muslim 4064 | مثلا بمثل, يدا بيد |
+| "tathfif" | 0 | 8 | ويل للمطففين, المكيال والميزان |
+
 **Kueri berupa kalimat (putaran kesepuluh):** 20 potongan hadits populer diuji, termasuk 4 yang dikenal lemah/palsu. Pencarian kata kunci kurang tepat untuk kalimat: "senyummu kepada saudaramu adalah sedekah" jatuh ke mode "sebagian kata" (63.721 hasil), dan "tuntutlah ilmu sampai ke negeri cina" dibuka kisah Nabi Musa. Cek Hadits menangani kalimat ini jauh lebih baik, dan daftar Populer mengenali keempat ucapan lemah/palsu.
 
 Bila kueri minimal 4 kata dan menyisakan minimal 3 kata kunci (setelah kata pengisi dan istilah kamus), halaman Cari kini:

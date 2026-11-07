@@ -1990,6 +1990,158 @@
       "bab": [],
       "catatan": "Teks Arabnya: إذا مات الإنسان انقطع عمله إلا من ثلاث: صدقة جارية، أو علم ينتفع به، أو ولد صالح يدعو له.",
       "bukti": "arab_akar:\"انقطع عمله إلا من ثلاث\" = 1; \"صدقة جارية\" = 5; terjemah 'sedekah jariyah' = 6 (build 2026-11-07)"
+    },
+    {
+      "id": "ghirah",
+      "label": "Ghirah (rasa cemburu)",
+      "pemicu": [
+        "ghirah",
+        "ghiroh",
+        "girah"
+      ],
+      "arab": [
+        "يغار",
+        "أتعجبون من غيرة"
+      ],
+      "terjemah": [
+        "cemburu"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: إن الله يغار (Allah cemburu) dan أتعجبون من غيرة سعد. Kata الغيرة sendirian tidak dipakai, karena setelah dinormalkan bercampur dengan غير (selain).",
+      "bukti": "arab_akar:يغار = 19; \"أتعجبون من غيرة\" = 4; الغيرة = 763 (bercampur 'selain', tidak dipakai); terjemah 'cemburu' = 121 (build 2026-11-07)"
+    },
+    {
+      "id": "ghuraba",
+      "label": "Ghuraba (orang-orang asing)",
+      "pemicu": [
+        "ghuraba",
+        "ghurabaa",
+        "ghurabah"
+      ],
+      "arab": [
+        "طوبى للغرباء",
+        "بدأ الإسلام غريبا"
+      ],
+      "terjemah": [
+        "orang-orang asing"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: بدأ الإسلام غريبا وسيعود كما بدأ غريبا فطوبى للغرباء.",
+      "bukti": "arab_akar:\"طوبى للغرباء\" = 12; \"بدأ الإسلام غريبا\" = 3; terjemah 'orang-orang asing' = 12 (build 2026-11-07)"
+    },
+    {
+      "id": "iftiraq",
+      "label": "Perpecahan umat (73 golongan)",
+      "pemicu": [
+        "firqah",
+        "firqoh",
+        "iftiraq",
+        "73"
+      ],
+      "arab": [
+        "ثلاث وسبعين فرقة",
+        "ثلاث وسبعين ملة",
+        "ثنتين وسبعين"
+      ],
+      "terjemah": [
+        "tujuh puluh tiga golongan"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: ستفترق أمتي على ثلاث وسبعين فرقة (umatku akan terpecah menjadi 73 golongan). Derajat tiap riwayat berbeda; lihat penilaian ulama di setiap hasil.",
+      "bukti": "arab_akar:\"ثلاث وسبعين فرقة\" = 5; \"ثلاث وسبعين ملة\" = 2; \"ثنتين وسبعين\" = 8; terjemah 'tujuh puluh tiga golongan' = 9 (build 2026-11-07)"
+    },
+    {
+      "id": "urbun",
+      "label": "Jual beli dengan uang muka ('urbun)",
+      "pemicu": [
+        "urbun",
+        "arbun",
+        "panjar",
+        "persekot"
+      ],
+      "arab": [
+        "بيع العربان",
+        "العربان"
+      ],
+      "terjemah": [],
+      "bab": [],
+      "catatan": "Teks Arabnya: نهى رسول الله صلى الله عليه وسلم عن بيع العربان. Teman Hadits hanya menampilkan riwayat; hukumnya tanyakan kepada ulama.",
+      "bukti": "arab_akar:\"بيع العربان\" = 5; العربان = 6; terjemah 'uang muka'/'panjar' = 0 (build 2026-11-07)"
+    },
+    {
+      "id": "calo",
+      "label": "Calo (orang kota menjualkan untuk orang desa)",
+      "pemicu": [
+        "calo",
+        "makelar",
+        "simsar",
+        "samsarah"
+      ],
+      "arab": [
+        "حاضر لباد"
+      ],
+      "terjemah": [
+        "calo",
+        "makelar"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: لا يبع حاضر لباد (janganlah orang kota menjualkan barang orang desa); Ibnu 'Abbas menjelaskannya: لا يكون له سمسارا (jangan menjadi calonya).",
+      "bukti": "arab_akar:\"حاضر لباد\" = 69; \"لا يبع حاضر لباد\" = 8; terjemah 'calo' = 12, 'makelar' = 7 (build 2026-11-07)"
+    },
+    {
+      "id": "talaqqi_rukban",
+      "label": "Menghadang kafilah dagang (talaqqi ar-rukban)",
+      "pemicu": [
+        "talaqqi",
+        "tengkulak"
+      ],
+      "arab": [
+        "لا تلقوا الركبان",
+        "تلقي الركبان"
+      ],
+      "terjemah": [
+        "menghadang kafilah",
+        "menyongsong kafilah"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: لا تلقوا الركبان (jangan menyongsong kafilah dagang sebelum mereka sampai di pasar). Kata \"tengkulak\" diarahkan ke sini sebagai riwayat yang paling dekat; hukumnya tanyakan kepada ulama.",
+      "bukti": "arab_akar:\"لا تلقوا الركبان\" = 9; \"تلقي الركبان\" = 1; terjemah 'menghadang kafilah' = 5, 'menyongsong kafilah' = 1 (build 2026-11-07)"
+    },
+    {
+      "id": "riba_fadhl",
+      "label": "Riba fadhl (tukar-menukar barang ribawi)",
+      "pemicu": [
+        "fadhl",
+        "fadl"
+      ],
+      "arab": [
+        "مثلا بمثل",
+        "يدا بيد"
+      ],
+      "terjemah": [],
+      "bab": [],
+      "catatan": "Teks Arabnya: الذهب بالذهب ... مثلا بمثل يدا بيد (emas dengan emas ... sama takarannya, tunai).",
+      "bukti": "arab_akar:\"مثلا بمثل\" = 60; \"يدا بيد\" = 55 (build 2026-11-07)"
+    },
+    {
+      "id": "tathfif",
+      "label": "Mengurangi takaran dan timbangan (tathfif)",
+      "pemicu": [
+        "tathfif",
+        "tatfif",
+        "muthaffifin",
+        "mutaffifin"
+      ],
+      "arab": [
+        "ويل للمطففين",
+        "المكيال والميزان"
+      ],
+      "terjemah": [
+        "mengurangi takaran"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: ويل للمطففين dan ولم ينقصوا المكيال والميزان إلا أخذوا بالسنين.",
+      "bukti": "arab_akar:\"ويل للمطففين\" = 3; \"المكيال والميزان\" = 4; terjemah 'mengurangi takaran' = 3 (build 2026-11-07)"
     }
   ]
 }
