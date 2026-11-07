@@ -192,6 +192,15 @@ Diuji dengan 22 kalimat:
 
 Biaya CPU tetap sekitar 2 ms untuk 120 kandidat.
 
+**Uji lebih luas (`npm run uji:cek`, di folder `site`):** 100 riwayat tingkat A diambil acak dengan biji tetap. Dari kutipan sabda di terjemahnya, dipotong 8–15 kata, lalu potongan itu diperiksa lewat Cek Hadits terhadap D1 lokal.
+
+| | Riwayat asal | Kelompok/keluarga | Riwayat lain | Tidak ditemukan |
+|---|---:|---:|---:|---:|
+| Sebelum (seluruh teks) | 67 | 9 | 24 | 0 |
+| Sesudah (jendela) | 78 | 8 | 14 | 0 |
+
+Dari 14 "riwayat lain", 6 memuat potongan yang sama persis (riwayat saudara, mis. Muslim 2089/2090) dan 2 adalah kisah yang sama dari jalur lain (Bukhari 3686/3699: Uhud bergetar; Ahmad 3426/Bukhari 3150: "Allah merahmati Musa"). Sisanya potongan yang terlalu umum, seperti "seorang laki-laki datang kepada Nabi seraya berkata", atau potongan sanad yang ikut terambil. Secara praktis sekitar 94 dari 100 menemukan hadits yang benar. Butuh Node ≥ 22.5 (`node:sqlite`).
+
 Belum terpecahkan: "kebersihan sebagian dari iman" tetap ke Ahmad 9498. Terjemah Lidwa untuk Muslim 223 (الطهور شطر الإيمان) memakai kata "bersuci", bukan "kebersihan", jadi Cek Hadits yang mencocokkan kata tidak bisa menemukannya. Kotak populer tetap menampilkan pembahasan ulamanya.
 
 **Awalan kata (7 Nov 2026):** orang mengetik kata dasar ("baca", "puasa", "minum"), terjemah memakai kata berimbuhan ("membaca", "berpuasa", "meminum"). Kini kata 3+ huruf juga dicari dengan awalan me-/di-/ber-/ter-, dengan peluluhan meN- yang lazim (pukul→memukul, tulis→menulis, sapu→menyapu, kirim→mengirim). Bentuk yang tidak ada dalam bahasa Indonesia (mis. "meriba") tidak berbahaya karena tidak pernah muncul di terjemah. "wanita haid baca quran": 8.238 (hanya sebagian kata) → 642, dibuka Ibnu Majah 596. "wudhu" 951 → 2.052 ("berwudhu"), "doa" 877 → 2.325 ("berdoa"). Kode: `bentukKata()` di `site/src/cari.js`.

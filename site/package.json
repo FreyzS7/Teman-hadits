@@ -10,7 +10,8 @@
     "ukur:cpu": "node scripts/ukur-cpu.mjs",
     "estimasi": "node scripts/estimasi-d1.mjs",
     "impor:online": "bash scripts/impor-online.sh",
-    "deploy": "bash scripts/deploy.sh"
+    "deploy": "bash scripts/deploy.sh",
+    "uji:cek": "node scripts/uji-cek.mjs"
   },
   "devDependencies": {
     "wrangler": "4.151.1"
