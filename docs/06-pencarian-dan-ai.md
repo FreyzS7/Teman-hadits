@@ -128,6 +128,25 @@ Putaran ketujuh (44 kueri nabi, malaikat, jin, surat, dzikir):
 
 Tidak diberi entri: "kesurupan" (hampir tidak ada di data), "surat al ikhlas" ("ikhlas" juga tema keikhlasan, jadi tidak dijadikan pemicu), dan "malaikat maut" (sudah 16 hasil yang tepat lewat ملك الموت di terjemah).
 
+Putaran kedelapan (50 kueri pergaulan, keluarga, isu modern, harta):
+
+| Kueri | Sebelum | Sesudah | Padanan / catatan |
+|---|---:|---:|---|
+| "khalwat" | 1 | 15 | لا يخلون رجل بامرأة |
+| "safar wanita tanpa mahram" | 6.713 (hanya sebagian kata) | 122, dibuka Tirmidzi 1169 | ذو محرم, لا تسافر المرأة |
+| "nikah mut'ah" | 462 | 81 | نكاح المتعة, متعة النساء (bukan المتعة sendirian: haji tamattu') |
+| "melamar"/"khitbah" | 91/1 | 162 | خطبة أخيه (bukan خطبة sendirian: sama tulisannya dengan khutbah) |
+| "homoseksual" | 2 | 16 | عمل قوم لوط |
+| "banci" | 15 | 33 | المخنثين, المترجلات |
+| "kb" | 0 | 97 | العزل (catatan: riwayat terdekat; hukum KB modern tanyakan ulama) |
+| "gambar makhluk hidup" | 46 | 295, dibuka Bukhari 5950 | المصورون, التصاوير, التماثيل |
+| "pengemis" | 6 | 182 | يسأل الناس (bukan المسألة sendirian: "pertanyaan") |
+| "dzalim" | 15 | 240 | grup ejaan zhalim/zalim/dzalim |
+
+Tidak diberi entri karena tidak ada lafaz hadits yang khusus dan pemetaannya sudah berupa ijtihad: pacaran, ikhtilat, ta'aruf, nikah siri, aborsi, onani, LGBT (selain liwath), valentine, tahun baru, ulang tahun, foto, televisi, rokok, narkoba, olahraga. "wali" tidak dijadikan pemicu karena juga berarti wali Allah.
+
+**Awalan kata (7 Nov 2026):** orang mengetik kata dasar ("baca", "puasa", "minum"), terjemah memakai kata berimbuhan ("membaca", "berpuasa", "meminum"). Kini kata 3+ huruf juga dicari dengan awalan me-/di-/ber-/ter-, dengan peluluhan meN- yang lazim (pukul→memukul, tulis→menulis, sapu→menyapu, kirim→mengirim). Bentuk yang tidak ada dalam bahasa Indonesia (mis. "meriba") tidak berbahaya karena tidak pernah muncul di terjemah. "wanita haid baca quran": 8.238 (hanya sebagian kata) → 642, dibuka Ibnu Majah 596. "wudhu" 951 → 2.052 ("berwudhu"), "doa" 877 → 2.325 ("berdoa"). Kode: `bentukKata()` di `site/src/cari.js`.
+
 Bukti hitungan tiap entri ada di kolom `bukti` di `kamus_konsep.json`.
 
 **Urutan hasil (7 Nov 2026)**, di `site/src/cari.js`. Setiap aturan tampil sebagai alasan di hasil:

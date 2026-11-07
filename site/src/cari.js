@@ -54,7 +54,29 @@ const varianDari = (w) => VARIAN.get(w) || [w];
 // yang ikut mencocokkan kata lain: "riba" → "ribath" (Muslim 587).
 const AKHIRAN = ["", "nya", "ku", "mu", "lah", "kah", "pun", "kan", "kannya", "kanku", "kanmu", "kanlah",
   "an", "annya", "i", "inya", "iku", "imu", "ilah"];
-const fraseId = (v) => (v.length >= 4 ? "(" + AKHIRAN.map((a) => `"${v}${a}"`).join(" OR ") + ")" : `"${v}"`);
+// Awalan: orang mengetik kata dasar ("baca", "puasa", "minum"), terjemah memakai kata berimbuhan ("membaca",
+// "berpuasa", "meminum"). meN- mengikuti peluluhan yang lazim (pukul→memukul, tulis→menulis, sapu→menyapu, kirim→mengirim).
+function bentukMe(v) {
+  if (/^(sy|sh)/.test(v)) return "men" + v;
+  const h = v[0], sisa = v.slice(1);
+  if ("aiueo".includes(h)) return "meng" + v;
+  if ("gh".includes(h)) return "meng" + v;
+  if (h === "k") return "meng" + sisa;
+  if ("bfv".includes(h)) return "mem" + v;
+  if (h === "p") return "mem" + sisa;
+  if ("dcjz".includes(h)) return "men" + v;
+  if (h === "t") return "men" + sisa;
+  if (h === "s") return "meny" + sisa;
+  return "me" + v; // l, m, n, r, w, y
+}
+const AKHIRAN_AWALAN = ["", "nya", "kan", "i"];
+export function bentukKata(v) {
+  const dasar = v.length >= 4 ? AKHIRAN.map((a) => v + a) : [v];
+  if (v.length < 3 || /^(me|di|ber|ter|ke|pe)/.test(v)) return dasar;
+  const awal = [bentukMe(v), "di" + v, (v[0] === "r" ? "be" : "ber") + v, "ter" + v];
+  return [...new Set([...dasar, ...awal.flatMap((w) => AKHIRAN_AWALAN.map((a) => w + a))])];
+}
+const fraseId = (v) => { const b = bentukKata(v); return b.length > 1 ? "(" + b.map((x) => `"${x}"`).join(" OR ") + ")" : `"${v}"`; };
 const awalanId = (v) => (v.length >= 4 ? `"${v}"*` : `"${v}"`);
 // Kata kunci dicari di terjemah (tanpa isi kurung siku = nama di sanad) dan di kolom nama perawi: "abu hurairah puasa"
 // tetap ketemu, tetapi "ayah" tidak lagi cocok dengan ribuan sanad "dari [ayahnya]" (pipeline/export_d1.py).

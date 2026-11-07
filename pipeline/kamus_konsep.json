@@ -128,6 +128,20 @@
       "sirath",
       "shirat",
       "sirat"
+    ],
+    [
+      "zhalim",
+      "zalim",
+      "dzalim",
+      "dhalim",
+      "dholim",
+      "zholim",
+      "zolim"
+    ],
+    [
+      "kezhaliman",
+      "kezaliman",
+      "kedzaliman"
     ]
   ],
   "_catatan_varian": "Kata pertama = bentuk baku untuk tampilan. Saat mencari, SEMUA varian dicari bersamaan (terjemahan Lidwa memakai ejaan campuran: sedekah 821, shadaqah 248, shodaqoh 16).",
@@ -1490,6 +1504,220 @@
       "bab": [],
       "catatan": "Teks Arabnya: آية الكرسي.",
       "bukti": "arab_akar:\"آية الكرسي\" = 19; terjemah 'ayat kursi' = 20 (build 2026-11-07)"
+    },
+    {
+      "id": "khalwat",
+      "label": "Khalwat (berduaan dengan bukan mahram)",
+      "pemicu": [
+        "khalwat",
+        "berkhalwat",
+        "berduaan"
+      ],
+      "arab": [
+        "لا يخلون رجل بامرأة"
+      ],
+      "terjemah": [
+        "berduaan",
+        "berkhalwat"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: لا يخلون رجل بامرأة إلا مع ذي محرم (janganlah seorang laki-laki berduaan dengan perempuan kecuali bersama mahramnya). Teman Hadits hanya menampilkan riwayat; hukumnya tanyakan kepada ulama.",
+      "bukti": "arab_akar:\"لا يخلون رجل بامرأة\" = 9; terjemah 'berduaan' = 12, 'berkhalwat' = 1 (build 2026-11-07)"
+    },
+    {
+      "id": "mahram",
+      "label": "Mahram",
+      "pemicu": [
+        "mahram",
+        "mahrom",
+        "muhrim"
+      ],
+      "arab": [
+        "ذي محرم",
+        "ذو محرم",
+        "لا تسافر المرأة"
+      ],
+      "terjemah": [
+        "mahram",
+        "mahramnya"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai ذو محرم (mahram), termasuk لا تسافر المرأة إلا مع ذي محرم (perempuan tidak bepergian kecuali bersama mahram).",
+      "bukti": "arab_akar:\"ذي محرم\" = 29; \"ذو محرم\" = 30; \"لا تسافر المرأة\" = 17; terjemah 'mahram' = 52, 'mahramnya' = 67 (build 2026-11-07)"
+    },
+    {
+      "id": "nikah_mutah",
+      "label": "Nikah mut'ah",
+      "pemicu": [
+        "mutah",
+        "muthah"
+      ],
+      "arab": [
+        "نكاح المتعة",
+        "متعة النساء"
+      ],
+      "terjemah": [
+        "nikah mutah"
+      ],
+      "bab": [],
+      "catatan": "Kata المتعة sendirian tidak dipakai, karena juga berarti haji tamattu' (متعة الحج). Yang dipakai: نكاح المتعة dan متعة النساء. Teman Hadits hanya menampilkan riwayat; hukumnya tanyakan kepada ulama.",
+      "bukti": "arab_akar:المتعة = 118 (bercampur haji tamattu', tidak dipakai); \"نكاح المتعة\" = 11; \"متعة النساء\" = 35; terjemah 'nikah mutah' = 69 (build 2026-11-07)"
+    },
+    {
+      "id": "khitbah",
+      "label": "Khitbah (meminang)",
+      "pemicu": [
+        "khitbah",
+        "meminang",
+        "pinangan",
+        "melamar",
+        "lamaran"
+      ],
+      "arab": [
+        "خطبة أخيه",
+        "خطب أحدكم المرأة"
+      ],
+      "terjemah": [
+        "meminang",
+        "pinangan",
+        "melamar"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: لا يخطب الرجل على خطبة أخيه (jangan meminang pinangan saudaranya) dan إذا خطب أحدكم المرأة. Kata خطبة sendirian tidak dipakai, karena tulisannya sama dengan khutbah.",
+      "bukti": "arab_akar:\"خطبة أخيه\" = 49; \"خطب أحدكم المرأة\" = 3; terjemah 'meminang' = 105, 'pinangan' = 44, 'melamar' = 53 (build 2026-11-07)"
+    },
+    {
+      "id": "liwath",
+      "label": "Liwath (perbuatan kaum Luth)",
+      "pemicu": [
+        "liwath",
+        "liwat",
+        "homoseksual",
+        "sodomi"
+      ],
+      "arab": [
+        "عمل قوم لوط"
+      ],
+      "terjemah": [
+        "liwath"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: من وجدتموه يعمل عمل قوم لوط. Terjemah \"kaum Luth\" sendirian tidak dipakai, karena banyak tentang kisah kaumnya. Teman Hadits hanya menampilkan riwayat; hukumnya tanyakan kepada ulama.",
+      "bukti": "arab_akar:\"عمل قوم لوط\" = 15; terjemah 'liwath' = 2; 'kaum luth' = 10 (sebagian kisah, tidak dipakai) (build 2026-11-07)"
+    },
+    {
+      "id": "tasyabbuh",
+      "label": "Tasyabbuh (menyerupai suatu kaum)",
+      "pemicu": [
+        "tasyabbuh",
+        "tasyabuh"
+      ],
+      "arab": [
+        "من تشبه بقوم",
+        "المتشبهين"
+      ],
+      "terjemah": [],
+      "bab": [],
+      "catatan": "Teks Arabnya: من تشبه بقوم فهو منهم, dan لعن المتشبهين من الرجال بالنساء.",
+      "bukti": "arab_akar:\"من تشبه بقوم\" = 1; المتشبهين = 9 (build 2026-11-07)"
+    },
+    {
+      "id": "mukhannats",
+      "label": "Mukhannats (laki-laki yang menyerupai perempuan)",
+      "pemicu": [
+        "banci",
+        "waria",
+        "bencong",
+        "mukhannats",
+        "mukhannas"
+      ],
+      "arab": [
+        "المخنثين",
+        "المخنث",
+        "المترجلات"
+      ],
+      "terjemah": [
+        "banci",
+        "waria",
+        "mukhannats"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai المخنثين (laki-laki yang menyerupai perempuan) dan المترجلات (perempuan yang menyerupai laki-laki). Teman Hadits hanya menampilkan riwayat; hukumnya tanyakan kepada ulama.",
+      "bukti": "arab_akar:المخنثين = 11; المخنث = 14; المترجلات = 14; terjemah 'banci' = 15, 'waria' = 3, 'mukhannats' = 2 (build 2026-11-07)"
+    },
+    {
+      "id": "azl",
+      "label": "'Azl (mencegah kehamilan)",
+      "pemicu": [
+        "azl",
+        "kb"
+      ],
+      "arab": [
+        "العزل"
+      ],
+      "terjemah": [
+        "azl"
+      ],
+      "bab": [],
+      "catatan": "'Azl adalah cara mencegah kehamilan di masa Nabi (كنا نعزل والقرآن ينزل). Kata \"KB\" diarahkan ke sini karena inilah riwayat yang paling dekat; hukum alat kontrasepsi modern tanyakan kepada ulama.",
+      "bukti": "arab_akar:العزل = 69; terjemah 'azl' = 75 (build 2026-11-07)"
+    },
+    {
+      "id": "gambar_patung",
+      "label": "Gambar dan patung makhluk bernyawa",
+      "pemicu": [
+        "gambar",
+        "lukisan",
+        "patung",
+        "tashwir"
+      ],
+      "arab": [
+        "المصورين",
+        "المصورون",
+        "التصاوير",
+        "التماثيل"
+      ],
+      "terjemah": [
+        "gambar",
+        "patung"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai المصورون (para pembuat gambar), التصاوير, dan التماثيل (patung). Kata الصورة sendirian tidak dipakai, karena juga berarti \"bentuk\". Teman Hadits hanya menampilkan riwayat; hukumnya tanyakan kepada ulama.",
+      "bukti": "arab_akar:المصورين = 5; المصورون = 10; التصاوير = 46; التماثيل = 32; terjemah 'gambar' = 175, 'patung' = 103 (build 2026-11-07)"
+    },
+    {
+      "id": "catur",
+      "label": "Catur (asy-syathranj)",
+      "pemicu": [
+        "catur"
+      ],
+      "arab": [
+        "الشطرنج"
+      ],
+      "terjemah": [
+        "catur"
+      ],
+      "bab": [],
+      "catatan": "Riwayatnya sedikit: الشطرنج hanya muncul satu kali. Sebagian terjemah memakai \"catur\" untuk النرد (permainan dadu); periksa teks Arabnya.",
+      "bukti": "arab_akar:الشطرنج = 1; terjemah 'catur' = 8 (build 2026-11-07)"
+    },
+    {
+      "id": "meminta_minta",
+      "label": "Meminta-minta (mengemis)",
+      "pemicu": [
+        "mengemis",
+        "pengemis",
+        "ngemis"
+      ],
+      "arab": [
+        "يسأل الناس"
+      ],
+      "terjemah": [
+        "meminta minta"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: ما يزال الرجل يسأل الناس حتى يأتي يوم القيامة... Kata المسألة sendirian tidak dipakai, karena juga berarti \"pertanyaan/masalah\".",
+      "bukti": "arab_akar:\"يسأل الناس\" = 33; المسألة = 149 (bercampur 'pertanyaan', tidak dipakai); terjemah 'meminta-minta' = 172 (build 2026-11-07)"
     }
   ]
 }

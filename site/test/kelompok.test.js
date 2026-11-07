@@ -30,3 +30,17 @@ test("tautan takhrij 'sama' melipat walau lafaz berbeda; 'mirip' tidak", () => {
 test("matan terlalu pendek tidak dibandingkan", () => {
   assert.equal(miripMatan(new Set(["ا", "ب", "ج"]), new Set(["ا", "ب", "ج"])), 0);
 });
+
+import { bentukKata } from "../src/cari.js";
+test("kata dasar juga dicari dengan awalan me-/di-/ber-/ter- (peluluhan lazim)", () => {
+  const b = (w) => bentukKata(w);
+  assert.ok(b("baca").includes("membaca") && b("baca").includes("dibaca"));
+  assert.ok(b("puasa").includes("berpuasa"));
+  assert.ok(b("pukul").includes("memukul"));
+  assert.ok(b("tulis").includes("menulis"));
+  assert.ok(b("sapu").includes("menyapu"));
+  assert.ok(b("kirim").includes("mengirim"));
+  assert.ok(b("doa").includes("berdoa"));
+  assert.deepEqual(b("membaca").filter((x) => x.startsWith("mem") && x !== "membaca" && !x.startsWith("membaca")), []);
+  assert.ok(!b("riba").includes("ribath"));
+});
