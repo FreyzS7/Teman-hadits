@@ -102,6 +102,17 @@ Putaran kelima (55 kueri fiqih ibadah dan muamalah). Banyak istilah fiqih tidak 
 
 Tidak diberi entri: "syirkah" (الشركة bercampur dengan doa "شر الشيطان وشركه") dan "mustahik zakat" (hanya 1 riwayat memuat ayatnya). Kata "sutra" tidak dijadikan pemicu karena berarti kain sutra.
 
+Putaran keenam (50 kueri adab makan-minum, kesehatan, hewan, penampilan). Sebagian besar sudah baik tanpa entri baru (mis. "cicak" → Ibnu Majah 3228, "meniup minuman" → Ibnu Majah 3288, "menguap" → Bukhari 6226). Yang ditambah:
+
+| Kueri | Sebelum | Sesudah | Padanan / catatan |
+|---|---:|---:|---|
+| "habbatussauda" | 2 | 28 | الحبة السوداء, terjemah "jintan hitam" |
+| "minum tiga tegukan" | hasil ke-2 tentang khamr | 16, dibuka Bukhari 5631 | يتنفس في الإناء ثلاثا |
+| "sutra laki laki" | hasil teratas tidak relevan | Ahmad 18694, Ibnu Majah 3597 | الحرير, على ذكور أمتي |
+| "ruqyah"/"jampi" | jatuh ke "sebagian kata" | 151 | بالمعوذات, لا رقية إلا (bukan رقية sendirian: nama Ruqayyah) |
+
+Konsep sutrah tadi tidak memakai pemicu "sutra"; kini "sutra" memicu konsep kain sutra (الحرير). "rukyah" sengaja bukan pemicu ruqyah, karena berarti rukyatul hilal.
+
 Bukti hitungan tiap entri ada di kolom `bukti` di `kamus_konsep.json`.
 
 **Urutan hasil (7 Nov 2026)**, di `site/src/cari.js`. Setiap aturan tampil sebagai alasan di hasil:

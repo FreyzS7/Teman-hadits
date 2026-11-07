@@ -1254,6 +1254,90 @@
       "bab": [],
       "catatan": "Istilah \"bughat\" tidak ada di terjemah. Riwayat yang ada: تقتل عمارا الفئة الباغية ('Ammar akan dibunuh oleh kelompok yang membangkang).",
       "bukti": "arab_akar:\"الفئة الباغية\" = 22; \"تقتله الفئة الباغية\" = 9 (build 2026-11-07)"
+    },
+    {
+      "id": "habbatussauda",
+      "label": "Habbatussauda (jintan hitam)",
+      "pemicu": [
+        "habbatussauda",
+        "habbatus",
+        "syuniz"
+      ],
+      "arab": [
+        "الحبة السوداء"
+      ],
+      "terjemah": [
+        "habbatus sauda",
+        "habbatussauda",
+        "jintan hitam"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: إن هذه الحبة السوداء شفاء من كل داء إلا السام. Terjemah Lidwa menulis \"habbatus sauda'\" atau \"jintan hitam\".",
+      "bukti": "arab_akar:\"الحبة السوداء\" = 28; terjemah 'habbatus sauda' = 12, 'jintan hitam' = 9, 'habbatussauda' = 2 (build 2026-11-07)"
+    },
+    {
+      "id": "sutra",
+      "label": "Sutra (al-harir)",
+      "pemicu": [
+        "sutra",
+        "sutera"
+      ],
+      "arab": [
+        "الحرير",
+        "على ذكور أمتي"
+      ],
+      "terjemah": [
+        "sutra",
+        "sutera"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai الحرير (sutra), termasuk hadits حرم لباس الحرير والذهب على ذكور أمتي (diharamkan bagi laki-laki umatku). Teman Hadits hanya menampilkan riwayat; hukumnya tanyakan kepada ulama.",
+      "bukti": "arab_akar:الحرير = 245; \"على ذكور أمتي\" = 11 (build 2026-11-07)"
+    },
+    {
+      "id": "bernafas_tiga",
+      "label": "Minum dengan tiga kali tarikan nafas",
+      "pemicu": [
+        "tegukan",
+        "teguk"
+      ],
+      "arab": [
+        "يتنفس في الإناء ثلاثا",
+        "يتنفس ثلاثا",
+        "تنفس ثلاثا"
+      ],
+      "terjemah": [
+        "bernafas tiga kali",
+        "tiga kali tegukan",
+        "tiga kali nafas"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: كان يتنفس في الإناء ثلاثا (beliau bernafas tiga kali ketika minum, di luar bejana).",
+      "bukti": "arab_akar:\"يتنفس في الإناء ثلاثا\" = 6; \"يتنفس ثلاثا\" = 3; \"تنفس ثلاثا\" = 2; terjemah 'bernafas tiga kali' = 9 (build 2026-11-07)"
+    },
+    {
+      "id": "ruqyah",
+      "label": "Ruqyah (jampi syar'i)",
+      "pemicu": [
+        "ruqyah",
+        "meruqyah",
+        "ruqiyah",
+        "jampi"
+      ],
+      "arab": [
+        "بالمعوذات",
+        "لا رقية إلا",
+        "أنها رقية"
+      ],
+      "terjemah": [
+        "ruqyah",
+        "meruqyah",
+        "jampi",
+        "menjampi"
+      ],
+      "bab": [],
+      "catatan": "Kata رقية sendirian tidak dipakai, karena sama dengan nama Ruqayyah (رقية) setelah dinormalkan, dan الرقى bisa tertukar dengan \"naik\". Yang dipakai: بالمعوذات, لا رقية إلا من عين أو حمة, وما يدريك أنها رقية, dan terjemah \"ruqyah\"/\"jampi\".",
+      "bukti": "arab_akar:رقية = 83 (bercampur nama Ruqayyah, tidak dipakai); بالمعوذات = 26; \"لا رقية إلا\" = 12; \"أنها رقية\" = 16; terjemah 'ruqyah' = 67, 'meruqyah' = 51, 'jampi' = 28, 'menjampi' = 8 (build 2026-11-07); 'rukyah' sengaja bukan pemicu (rukyatul hilal)"
     }
   ]
 }
