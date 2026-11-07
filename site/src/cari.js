@@ -1,7 +1,7 @@
 // Pencarian lapis 1 (tanpa AI). Port dari pipeline/cari.py; rencana() harus memberi hasil yang sama
 // (diuji oleh test/paritas.test.js). Semua hasil berasal dari database dan membawa alasan kemunculannya.
 import KAMUS from "../../pipeline/kamus_konsep.json" with { type: "json" };
-import { akarAr, normAr, normId } from "./teks.js";
+import { akarAr, normAr, normId, pisahKomentar, pisahSanad } from "./teks.js";
 
 /** Kolom riwayat.nilai_json -> [{penilai, hukum, kategori}] (urut penilai; lihat pipeline/export_d1.py). */
 export const nilai = (j) => (j ? JSON.parse(j) : []).map(([penilai, hukum, kategori]) => ({ penilai, hukum, kategori }));
@@ -193,11 +193,38 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
 
   let hasil = [];
   if (halamanIni.length) {
-    const rs = await db.prepare("SELECT n, id, kitab_id, slug, no_tampil, no_lidwa, tingkat, arab, terjemah, alasan AS catatan, nilai_json FROM riwayat WHERE n IN (SELECT value FROM json_each(?1))").bind(jsonIds(halamanIni)).all();
+    const rs = await db.prepare("SELECT n, id, kitab_id, slug, no_tampil, no_lidwa, tingkat, arab, terjemah, alasan AS catatan, nilai_json, jalur_json FROM riwayat WHERE n IN (SELECT value FROM json_each(?1))").bind(jsonIds(halamanIni)).all();
     const byN = new Map(rs.results.map(({ nilai_json, ...x }) => [x.n, { ...x, penilaian: nilai(nilai_json) }]));
-    hasil = halamanIni.map((n) => ({ ...byN.get(n), skor: skor.get(n), alasan: alasan.get(n) }));
+    hasil = kelompokkan(halamanIni.map((n) => ({ ...byN.get(n), skor: skor.get(n), alasan: alasan.get(n) })));
   }
   return { rencana: r, total: Math.max(urut.length, totalKata), tampil: tersaring.length, hasil, perKitab, halaman, perHalaman };
+}
+
+// Riwayat serupa di satu halaman hasil dilipat di bawah riwayat pertamanya (tidak dihapus: tetap tampil sebagai tautan).
+// Serupa = takhrij menandai "sama", atau kata akar matan Arabnya (tanpa sanad dan komentar penyusun) beririsan >= 80%.
+export const AMBANG_SERUPA = 0.8;
+const kataMatan = (arab) => {
+  const p = pisahSanad(arab);
+  return new Set(akarAr(normAr(p ? pisahKomentar(p.matan).matan : arab || "")).split(" ").filter(Boolean));
+};
+export function miripMatan(a, b) {
+  if (a.size < 4 || b.size < 4) return 0;
+  let irisan = 0;
+  for (const x of a) if (b.has(x)) irisan++;
+  return irisan / (a.size + b.size - irisan);
+}
+export function kelompokkan(hasil) {
+  const pemimpin = [];
+  for (const h of hasil) {
+    if (!h.id) continue;
+    const kata = kataMatan(h.arab);
+    const sama = new Set((h.jalur_json ? JSON.parse(h.jalur_json) : []).filter((j) => j[2] === "sama").map((j) => j[0]));
+    const induk = pemimpin.find((p) => sama.has(p.n) || p.sama.has(h.n) || miripMatan(p.kata, kata) >= AMBANG_SERUPA);
+    const { jalur_json, ...bersih } = h;
+    if (induk) induk.h.serupa.push({ kitab_id: h.kitab_id, slug: h.slug, no_tampil: h.no_tampil });
+    else pemimpin.push({ n: h.n, kata, sama, h: { ...bersih, serupa: [] } });
+  }
+  return pemimpin.map((p) => p.h);
 }
 
 /** Kata-kata untuk disorot di cuplikan hasil. */

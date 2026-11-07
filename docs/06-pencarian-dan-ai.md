@@ -92,6 +92,13 @@ Bukti hitungan tiap entri ada di kolom `bukti` di `kamus_konsep.json`.
 - **Prioritas kitab bila relevansinya setara:** Bukhari/Muslim +0,12; Abu Dawud, Tirmidzi, Nasa'i, Ibnu Majah, al-Muwaththa' +0,06. Bobot ini lebih kecil dari bonus kedekatan, jadi hanya memecah hasil yang hampir seri. Sebelumnya urutan seperti itu ditentukan oleh selisih bm25 yang sangat kecil, sehingga Musnad Ahmad (riwayatnya paling banyak) memenuhi bagian atas.
 - **Akhiran, bukan awalan:** kata 4 huruf atau lebih dicari bersama akhiran Indonesia (-nya, -ku, -mu, -lah, -kah, -pun, -kan, -kannya, -kanlah, -an, -i, -inya, -ilah, dst.). Dulu dicocokkan sebagai awalan, sehingga "riba" ikut mencocokkan "ribath" (47 kali, mis. Muslim 587) dan "jual" mencocokkan "ju'alah". Ejaan Lidwa untuk haid (haidl 330, haidh 164) dimasukkan ke grup varian. Akibatnya jumlah hasil berubah: riba 245→208, jual beli 784→756, haid 1042→1022 (yang hilang nama seperti "Haidah"); sedekah, menikah, dan wudhu tidak berubah.
 
+**Riwayat serupa dilipat (7 Nov 2026):** satu hadits sering diriwayatkan lewat banyak jalur, sehingga satu halaman hasil bisa berisi belasan kartu dengan matan yang sama. Kini, dalam satu halaman, riwayat kedua dan seterusnya yang serupa dilipat di bawah riwayat pertama sebagai tautan "Riwayat serupa di halaman ini". Tidak ada yang dihapus. Dua riwayat dianggap serupa bila:
+
+- takhrij menandai keduanya "sama" (`riwayat.jalur_json`), atau
+- kata akar matan Arabnya (tanpa sanad dan komentar penyusun) beririsan minimal 80% (Jaccard), dengan matan minimal 4 kata.
+
+Ambang 0,8 dipilih setelah melihat pasangan nyata. Pada 1,00, Muslim 831, Bukhari 6322, dan Tirmidzi 6 sama-sama doa masuk WC. Pada 0,5–0,7, mulai tercampur hadits yang berbeda (mis. Tirmidzi 5 dan 6). Data takhrij tidak cukup sebagai satu-satunya dasar: 27.115 dari 69.408 riwayat tidak punya jalur, termasuk banyak riwayat Ahmad. Contoh: halaman pertama "niat" kini 7 kartu, dengan 10 jalur hadits "innamal a'mal" sebagai tautan. Pengelompokan hanya dalam satu halaman, jadi penomoran halaman tidak berubah. Kode: `kelompokkan()` di `site/src/cari.js`, uji: `site/test/kelompok.test.js`.
+
 Jalan perbaikan yang lain:
 
 - **Kategori HadeethEnc** (tanpa AI): 447 tema berbahasa Indonesia yang disusun dan ditinjau ulama, misalnya "Sedekah Sunah" berisi 27 hadits. Pertanyaan bertema dicocokkan dulu ke kategori ini.

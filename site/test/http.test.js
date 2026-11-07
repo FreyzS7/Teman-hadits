@@ -27,6 +27,13 @@ test("istilah awam dipetakan ke lafaz Arabnya (kamus konsep)", opsi, async () =>
   assert.match(utang, /utang→hutang/);
 });
 
+test("riwayat yang lafaz matannya sama dilipat, tetap tertaut", opsi, async () => {
+  const { teks } = await ambil("/cari?q=niat&z=" + Date.now());
+  assert.match(teks, /Riwayat serupa di halaman ini/);
+  assert.match(teks, /href="\/bukhari\/1"/);
+  assert.match(teks, /href="\/muslim\/1907a"/);
+});
+
 test("rujukan 'muslim 1907' langsung dibuka", opsi, async () => {
   const r = await ambil("/cari?q=muslim%201907");
   assert.equal(r.status, 302);

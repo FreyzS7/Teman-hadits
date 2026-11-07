@@ -166,6 +166,7 @@ export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan, tema = 
       ${h.terjemah && !(sembunyiRiyadh && h.kitab_id === "riyadh") ? `<p class="id">${cuplik(h.terjemah.replace(/\[|\]/g, ""), sorot)}</p>` : `<p class="tanpa-nilai">Terjemahan belum ditampilkan untuk nomor ini.</p>`}
       <p class="ar">${cuplikAr(h.arab, akar)}</p>
       <p class="alasan">Muncul karena: ${h.alasan.map((a) => `<b>${esc(a)}</b>`).join(" · ")}</p>
+      ${h.serupa?.length ? `<p class="alasan serupa">Riwayat serupa di halaman ini (lafaz matan hampir sama): ${h.serupa.map((x) => `<a href="/${esc(x.kitab_id)}/${esc(x.slug)}">${esc(PENDEK[x.kitab_id] || x.kitab_id)} ${esc(x.no_tampil)}</a>`).join(", ")}</p>` : ""}
       <footer>${bukuBesar(h.penilaian, h.kitab_id)}</footer>
     </li>`).join("");
   const halMaks = Math.ceil(out.tampil / out.perHalaman);
@@ -184,7 +185,7 @@ export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan, tema = 
       ${rujuk}
       ${tema.length ? `<div class="rujukan-langsung"><span>Tema terkait (kurasi HadeethEnc):</span>${tema.map((t) => `<a href="/tema/${esc(t.id)}">${esc(t.judul)} <span class="kecil">${fmt(t.jumlah)} hadits</span></a>`).join("")}</div>` : ""}
       ${catatan.length ? `<div class="catatan">${catatan.join("<br><br>")}</div>` : ""}
-      ${out.hasil.length ? `<p class="kecil" style="margin-top:14px">${fmt(out.total)} riwayat ditemukan${filter.k || filter.t ? `, ${fmt(out.tampil)} sesuai saringan` : ""}. Diurutkan menurut kekuatan alasan, lalu tingkat data, lalu urutan kitab.</p>` : kosong}
+      ${out.hasil.length ? `<p class="kecil" style="margin-top:14px">${fmt(out.total)} riwayat ditemukan${filter.k || filter.t ? `, ${fmt(out.tampil)} sesuai saringan` : ""}. Diurutkan menurut kekuatan alasan, lalu tingkat data, lalu urutan kitab. Riwayat yang lafaz matannya hampir sama dilipat di bawah riwayat pertamanya.</p>` : kosong}
       <ol class="daftar-hasil">${daftar}</ol>
       ${nav}
     </div>
