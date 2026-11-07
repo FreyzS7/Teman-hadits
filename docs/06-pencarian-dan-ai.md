@@ -49,12 +49,29 @@ Contoh kedua adalah batas aturan: kata kuncinya cocok, tetapi maknanya tidak.
 
 Putaran kedua menguji 60 kueri lagi. Kueri lain sudah cukup baik tanpa entri baru (mis. zakat fitrah, lailatul qadar, aqiqah, dajjal, siwak).
 
+Putaran ketiga (60 kueri doa, muamalah, fiqih):
+
+| Kueri | Sebelum | Sesudah | Padanan / catatan |
+|---|---:|---:|---|
+| "shalat id" | 12.266 (kata "id" terbuang, jadi hanya "shalat" yang dicari) | 552 | العيدين, يوم العيد, يوم الفطر, يوم الأضحى |
+| "doa masuk wc" | hasil teratas tidak relevan | Muslim 831, Bukhari 142 | دخل الخلاء, أتى الخلاء |
+| "doa naik kendaraan" | hasil teratas tidak relevan | Muslim 3275, Ahmad | سخر لنا هذا |
+| "korupsi" | 4 | 74 | الغلول (istilah hadits terdekat; catatannya tampil di hasil) |
+| "monopoli"/"menimbun" | 2/45 | 29 | يحتكر, احتكر |
+| "wakaf" | 27 | 14 | حبست أصلها (lebih sedikit, semuanya hadits wakaf 'Umar) |
+| "ijma" | 2 | 4 | لن تجتمع, لا يجمع أمتي (riwayatnya memang sedikit) |
+| "jimat", "judi", "ihsan", "suap" | 15, 30, 25, 98 | 15, 80, 25, 55 | التمائم; الخمر والميسر, النرد; ما الإحسان; الراشي والمرتشي |
+
+Tidak dipakai karena bermakna ganda: تميمة/"tamimah" (nama perawi Abu Tamimah), الميسر sendirian (كل ميسر = "dimudahkan"), على ضلالة sendirian.
+
+"doa", "berdoa", dan "bacaan" kini menjadi kata maksud: tidak diwajibkan, tetapi menambah +1,5 bila letaknya dekat kata kunci. Banyak hadits doa tidak memuat kata "doa" ("apabila naik kendaraan, beliau mengucapkan ..."). Bila kueri hanya berisi kata maksud ("doa", "keutamaan"), kata itu dicari sebagai kata biasa.
+
 Bukti hitungan tiap entri ada di kolom `bukti` di `kamus_konsep.json`.
 
 **Urutan hasil (7 Nov 2026)**, di `site/src/cari.js`. Setiap aturan tampil sebagai alasan di hasil:
 
 - **Kata berdekatan (+0,5):** bila semua kata kueri muncul berdekatan (FTS5 `NEAR`, jarak 8 kata). "larangan minum berdiri" kini dibuka oleh Muslim 5274 ("melarang minum sambil berdiri").
-- **Kata maksud harus dekat kata inti:** "keutamaan", "larangan", dan sejenisnya hanya menambah skor bila letaknya dekat kata kunci. Sebelumnya "keutamaan sedekah" dibuka oleh Bukhari 3711 ("keutamaan anda wahai Abu Bakr").
+- **Kata maksud harus dekat kata inti (+1,5):** "keutamaan", "larangan", "doa", dan sejenisnya hanya menambah skor bila letaknya dekat kata kunci. Sebelumnya "keutamaan sedekah" dibuka oleh Bukhari 3711 ("keutamaan anda wahai Abu Bakr").
 - **Prioritas kitab bila relevansinya setara:** Bukhari/Muslim +0,12; Abu Dawud, Tirmidzi, Nasa'i, Ibnu Majah, al-Muwaththa' +0,06. Bobot ini lebih kecil dari bonus kedekatan, jadi hanya memecah hasil yang hampir seri. Sebelumnya urutan seperti itu ditentukan oleh selisih bm25 yang sangat kecil, sehingga Musnad Ahmad (riwayatnya paling banyak) memenuhi bagian atas.
 - **Akhiran, bukan awalan:** kata 4 huruf atau lebih dicari bersama akhiran Indonesia (-nya, -ku, -mu, -lah, -kah, -pun, -kan, -kannya, -kanlah, -an, -i, -inya, -ilah, dst.). Dulu dicocokkan sebagai awalan, sehingga "riba" ikut mencocokkan "ribath" (47 kali, mis. Muslim 587) dan "jual" mencocokkan "ju'alah". Ejaan Lidwa untuk haid (haidl 330, haidh 164) dimasukkan ke grup varian. Akibatnya jumlah hasil berubah: riba 245→208, jual beli 784→756, haid 1042→1022 (yang hilang nama seperti "Haidah"); sedekah, menikah, dan wudhu tidak berubah.
 

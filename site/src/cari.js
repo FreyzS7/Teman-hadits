@@ -35,6 +35,7 @@ export function rencana(kueri) {
     else if (MAKSUD.has(w)) maksud.push(w);
     else sisa.push(w);
   }
+  if (!sisa.length && !konsep.length && maksud.length) sisa.push(...maksud.splice(0)); // kueri hanya "doa" / "keutamaan"
   let rujukan = null;
   for (const [re, id] of NAMA_KITAB) {
     const m = polos.match(new RegExp(re.source + String.raw`\s*(?:no(?:mor)?\s*)?(\d+[a-z]?)\b`));
@@ -163,7 +164,7 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
       const dekatInti = !r.konsep.length && r.maksud.includes(w) && r.kata.length ? dekat([w, ...r.kata], JARAK_DEKAT) : null;
       const match = dekatInti || "terjemah_polos:(" + varianDari(w).map(fraseId).join(" OR ") + ")";
       const rs = await db.prepare("SELECT rowid AS n FROM cari WHERE cari MATCH ?1 AND rowid IN (SELECT value FROM json_each(?2))").bind(match, jsonIds(skor.keys())).all();
-      for (const x of rs.results) tambahId(x.n, 1, dekatInti ? `"${w}" berdekatan dengan kata kunci` : `terjemah memuat "${w}"`);
+      for (const x of rs.results) tambahId(x.n, dekatInti ? 1.5 : 1, dekatInti ? `"${w}" berdekatan dengan kata kunci` : `terjemah memuat "${w}"`);
     }
   }
 

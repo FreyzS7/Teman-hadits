@@ -49,6 +49,8 @@ def rencana(kueri):
             maksud.append(w)
         else:
             sisa.append(w)
+    if not sisa and not konsep and maksud:  # kueri hanya "doa" / "keutamaan": cari kata itu sendiri
+        sisa, maksud = maksud, []
     return {"kueri": kueri, "ejaan": [f"{a}→{b}" for a, b in zip(kata, dirapikan) if a != b],
             "dibuang": dibuang, "konsep": konsep, "kata": sisa, "maksud": maksud,
             "pertanyaan_hukum": bool(PERTANYAAN_HUKUM.search(norm_id(kueri)))}

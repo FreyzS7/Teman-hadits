@@ -173,7 +173,10 @@
     "manfaat",
     "adab",
     "tata",
-    "cara"
+    "cara",
+    "doa",
+    "berdoa",
+    "bacaan"
   ],
   "_catatan_kata_maksud": "Kata yang menunjukkan maksud pertanyaan tetapi jarang tertulis di hadits. Tidak diwajibkan ada; hanya menaikkan peringkat bila muncul.",
   "konsep": [
@@ -577,6 +580,237 @@
       "bab": [],
       "catatan": "Riwayatnya sedikit: من عزى مصابا (siapa yang menghibur orang yang tertimpa musibah) dan kata التعزية.",
       "bukti": "arab_akar:\"عزى مصابا\" = 2; التعزية = 2; terjemah 'taziyah' = 2, 'takziyah' = 1, 'bertakziah' = 3, 'melayat' = 8 (build 2026-11-07)"
+    },
+    {
+      "id": "shalat_id",
+      "label": "Shalat 'Id (hari raya)",
+      "pemicu": [
+        "id",
+        "ied",
+        "idul",
+        "iedul",
+        "idulfitri",
+        "iduladha",
+        "lebaran"
+      ],
+      "arab": [
+        "العيدين",
+        "يوم العيد",
+        "صلاة العيد",
+        "يوم الفطر",
+        "يوم الأضحى"
+      ],
+      "terjemah": [
+        "shalat ied",
+        "shalat id",
+        "idul fitri",
+        "idul adha",
+        "hari raya"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai العيدين (dua hari raya), يوم العيد, يوم الفطر (Idul Fitri) dan يوم الأضحى (Idul Adha). Kata \"id\" sendirian dulu terbuang karena terlalu pendek.",
+      "bukti": "arab_akar:العيدين = 77; \"يوم العيد\" = 96; \"صلاة العيد\" = 3; \"يوم الفطر\" = 125; \"يوم الأضحى\" = 69; terjemah 'shalat ied' = 82, 'shalat id' = 15, 'idul fitri' = 48, 'idul adha' = 25, 'hari raya' = 341 (build 2026-11-07)"
+    },
+    {
+      "id": "buang_hajat",
+      "label": "Buang hajat / masuk WC",
+      "pemicu": [
+        "wc",
+        "toilet",
+        "jamban",
+        "kakus"
+      ],
+      "arab": [
+        "دخل الخلاء",
+        "أتى الخلاء"
+      ],
+      "terjemah": [
+        "masuk wc",
+        "masuk ke wc",
+        "kamar kecil",
+        "buang hajat",
+        "jamban"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai دخل الخلاء / أتى الخلاء (masuk ke tempat buang hajat). Terjemah Lidwa menulis \"masuk WC\", \"kamar kecil\" atau \"buang hajat\".",
+      "bukti": "arab_akar:\"دخل الخلاء\" = 22; \"أتى الخلاء\" = 12; terjemah 'masuk wc' = 14, 'masuk ke wc' = 3, 'kamar kecil' = 10, 'buang hajat' = 165, 'jamban' = 1 (build 2026-11-07)"
+    },
+    {
+      "id": "naik_kendaraan",
+      "label": "Menaiki kendaraan (tunggangan)",
+      "pemicu": [
+        "kendaraan",
+        "tunggangan"
+      ],
+      "arab": [
+        "سخر لنا هذا",
+        "استوى على بعيره"
+      ],
+      "terjemah": [
+        "naik kendaraan",
+        "menaiki kendaraan"
+      ],
+      "bab": [],
+      "catatan": "Doa naik kendaraan di teks Arab memuat سبحان الذي سخر لنا هذا (Mahasuci Dzat yang menundukkan ini untuk kami), sering setelah استوى على بعيره (duduk di atas untanya).",
+      "bukti": "arab_akar:\"سخر لنا هذا\" = 11; \"استوى على بعيره\" = 3; terjemah 'naik kendaraan' = 62, 'menaiki kendaraan' = 35 (build 2026-11-07)"
+    },
+    {
+      "id": "menimbun",
+      "label": "Menimbun barang (ihtikar)",
+      "pemicu": [
+        "menimbun",
+        "monopoli",
+        "ihtikar",
+        "penimbunan"
+      ],
+      "arab": [
+        "يحتكر",
+        "احتكر",
+        "المحتكر"
+      ],
+      "terjemah": [
+        "menimbun"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai الاحتكار (menimbun barang kebutuhan agar harganya naik): لا يحتكر إلا خاطئ.",
+      "bukti": "arab_akar:يحتكر = 13; احتكر = 5; المحتكر = 3; terjemah 'menimbun' = 24 (build 2026-11-07)"
+    },
+    {
+      "id": "suap",
+      "label": "Suap (risywah)",
+      "pemicu": [
+        "suap",
+        "sogok",
+        "risywah",
+        "menyuap",
+        "suapan"
+      ],
+      "arab": [
+        "الراشي والمرتشي",
+        "الرشوة"
+      ],
+      "terjemah": [
+        "suap",
+        "penyuap",
+        "menyuap",
+        "disuap"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai الراشي والمرتشي (pemberi dan penerima suap) dan الرشوة.",
+      "bukti": "arab_akar:\"الراشي والمرتشي\" = 12; الرشوة = 3; terjemah 'suap' = 50, 'penyuap' = 3, 'menyuap' = 3, 'disuap' = 4 (build 2026-11-07)"
+    },
+    {
+      "id": "ghulul",
+      "label": "Ghulul (mengambil harta bersama secara khianat)",
+      "pemicu": [
+        "ghulul",
+        "korupsi"
+      ],
+      "arab": [
+        "الغلول"
+      ],
+      "terjemah": [
+        "ghulul"
+      ],
+      "bab": [],
+      "catatan": "\"Korupsi\" adalah istilah modern dan tidak ada di teks hadits. Istilah hadits yang paling dekat adalah الغلول (ghulul): mengambil harta rampasan perang atau harta bersama secara diam-diam/khianat, termasuk hadiah untuk petugas. Untuk suap, cari \"suap\".",
+      "bukti": "arab_akar:الغلول = 64; terjemah 'ghulul' = 30, 'korupsi' = 4 (build 2026-11-07)"
+    },
+    {
+      "id": "ijma",
+      "label": "Ijma (umat tidak bersepakat dalam kesesatan)",
+      "pemicu": [
+        "ijma",
+        "ijmak"
+      ],
+      "arab": [
+        "لن تجتمع",
+        "تجتمعوا على ضلالة",
+        "لا يجمع أمتي",
+        "أمتي على ضلالة"
+      ],
+      "terjemah": [],
+      "bab": [],
+      "catatan": "Riwayatnya sedikit: إن أمتي لن تجتمع على ضلالة (Ibnu Majah 3950), أن لا تجتمعوا على ضلالة (Abu Dawud 4253), dan لا يجمع أمتي ... على ضلالة (Tirmidzi 2167, Ahmad). Frasa على ضلالة sendirian tidak dipakai karena lebih umum.",
+      "bukti": "arab_akar:\"لن تجتمع\" = 1; \"تجتمعوا على ضلالة\" = 1; \"لا يجمع أمتي\" = 2; \"أمتي على ضلالة\" = 1; \"على ضلالة\" = 9 (umum, tidak dipakai) (build 2026-11-07)"
+    },
+    {
+      "id": "wakaf",
+      "label": "Wakaf",
+      "pemicu": [
+        "wakaf",
+        "waqaf",
+        "mewakafkan"
+      ],
+      "arab": [
+        "حبست أصلها",
+        "حبس أصلها"
+      ],
+      "terjemah": [
+        "wakaf",
+        "mewakafkan",
+        "menahan pokoknya"
+      ],
+      "bab": [],
+      "catatan": "Kata \"wakaf\" hampir tidak muncul di terjemah. Hadits wakaf (tanah 'Umar di Khaibar) memakai حبست أصلها (engkau tahan pokoknya) dan تصدقت بها.",
+      "bukti": "arab_akar:\"حبست أصلها\" = 11; \"حبس أصلها\" = 1; terjemah 'wakaf' = 1, 'mewakafkan' = 3, 'menahan pokoknya' = 3 (build 2026-11-07)"
+    },
+    {
+      "id": "ihsan",
+      "label": "Ihsan",
+      "pemicu": [
+        "ihsan"
+      ],
+      "arab": [
+        "ما الإحسان"
+      ],
+      "terjemah": [
+        "ihsan"
+      ],
+      "bab": [],
+      "catatan": "Hadits Jibril: ما الإحسان (apa itu ihsan), \"engkau beribadah kepada Allah seakan-akan melihat-Nya\".",
+      "bukti": "arab_akar:\"ما الإحسان\" = 12; الإحسان = 58; terjemah 'ihsan' = 25 (build 2026-11-07)"
+    },
+    {
+      "id": "jimat",
+      "label": "Jimat (tamimah)",
+      "pemicu": [
+        "jimat",
+        "azimat"
+      ],
+      "arab": [
+        "التمائم",
+        "علق تميمة"
+      ],
+      "terjemah": [
+        "jimat"
+      ],
+      "bab": [],
+      "catatan": "Kata تميمة sendirian dan terjemah \"tamimah\" tidak dipakai, karena kebanyakan berasal dari nama perawi (Abu Tamimah). Yang dipakai: التمائم dan من علق تميمة.",
+      "bukti": "arab_akar:التمائم = 8; \"علق تميمة\" = 1; تميمة = 64 (sebagian besar nama Abu Tamimah, tidak dipakai); terjemah 'jimat' = 15 (build 2026-11-07)"
+    },
+    {
+      "id": "judi",
+      "label": "Judi (maisir)",
+      "pemicu": [
+        "judi",
+        "berjudi",
+        "perjudian",
+        "maisir"
+      ],
+      "arab": [
+        "الخمر والميسر",
+        "القمار",
+        "النرد"
+      ],
+      "terjemah": [
+        "judi",
+        "berjudi",
+        "dadu"
+      ],
+      "bab": [],
+      "catatan": "Kata الميسر sendirian tidak dipakai, karena setelah dinormalkan sama dengan ميسر (dimudahkan) di hadits takdir (كل ميسر لما خلق له). Yang dipakai: الخمر والميسر, القمار, dan النرد (permainan dadu).",
+      "bukti": "arab_akar:الميسر = 63 (bercampur 'dimudahkan', tidak dipakai); \"الخمر والميسر\" = 18; القمار = 4; النرد = 32; terjemah 'judi' = 29, 'berjudi' = 14, 'dadu' = 17 (build 2026-11-07)"
     }
   ]
 }
