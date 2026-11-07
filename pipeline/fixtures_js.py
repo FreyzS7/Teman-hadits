@@ -38,7 +38,8 @@ KUERI = ["tolong carikan hadits tentang sholat tarawih", "apakah makan babi itu 
          "hukum khalwat", "safar wanita tanpa mahram", "nikah mut'ah", "melamar wanita", "homoseksual", "tasyabbuh", "banci", "hukum kb", "gambar makhluk hidup", "main catur", "pengemis", "orang dzalim",
          "azan dan iqamah", "masa idah", "iktikaf", "qisas", "zihar", "istihadah", "mengusap khuf", "keutamaan ahlulbait", "ahlul kitab",
          "sifat takabur", "hukum israf", "jangan ghadhab", "tahnik bayi", "husnul khatimah", "talqin mayit", "menembok kuburan", "pahala ifthar", "takjil", "amal jariyah",
-         "ghirah suami", "ghuraba", "73 golongan", "jual beli urbun", "hukum calo", "tengkulak", "riba fadhl", "mengurangi timbangan tathfif", ""]
+         "ghirah suami", "ghuraba", "73 golongan", "jual beli urbun", "hukum calo", "tengkulak", "riba fadhl", "mengurangi timbangan tathfif",
+         "hukum rahn", "hiwalah", "kafalah", "orang muflis", "gratifikasi", "nazar maksiat", "infaq", "kaffarat sumpah", ""]
 def _sanad(arab):
     p = pisah_sanad(arab)
     return None if p is None else {"sanad": p[0], "matan": p[1], "rantai": [{"lafaz": x["lafaz"], "sighah": x["sighah"], "namaAr": x["nama_ar"], "nabi": x["nabi"]} for x in rantai_arab(p[0])]}

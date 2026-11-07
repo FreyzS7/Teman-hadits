@@ -179,6 +179,23 @@
       "istihadhah",
       "istihadlah",
       "istihadah"
+    ],
+    [
+      "nadzar",
+      "nazar",
+      "nadar",
+      "nadzr"
+    ],
+    [
+      "infak",
+      "infaq"
+    ],
+    [
+      "kafarat",
+      "kaffarat",
+      "kaffarah",
+      "kafarah",
+      "kafaroh"
     ]
   ],
   "_catatan_varian": "Kata pertama = bentuk baku untuk tampilan. Saat mencari, SEMUA varian dicari bersamaan (terjemahan Lidwa memakai ejaan campuran: sedekah 821, shadaqah 248, shodaqoh 16).",
@@ -2142,6 +2159,98 @@
       "bab": [],
       "catatan": "Teks Arabnya: ويل للمطففين dan ولم ينقصوا المكيال والميزان إلا أخذوا بالسنين.",
       "bukti": "arab_akar:\"ويل للمطففين\" = 3; \"المكيال والميزان\" = 4; terjemah 'mengurangi takaran' = 3 (build 2026-11-07)"
+    },
+    {
+      "id": "rahn",
+      "label": "Gadai (rahn)",
+      "pemicu": [
+        "rahn",
+        "gadai",
+        "menggadaikan",
+        "gadaian"
+      ],
+      "arab": [
+        "رهن درعه",
+        "مرهونة"
+      ],
+      "terjemah": [
+        "menggadaikan",
+        "gadai"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: ورهنه درعا من حديد (beliau menggadaikan baju besinya) dan درعه مرهونة. Kata الرهن sendirian tidak dipakai, karena setelah dinormalkan bisa bercampur dengan الرهان (taruhan).",
+      "bukti": "arab_akar:\"رهن درعه\" = 2; مرهونة = 14; الرهن = 31 (tidak dipakai); terjemah 'menggadaikan' = 34, 'gadai' = 10 (build 2026-11-07)"
+    },
+    {
+      "id": "hiwalah",
+      "label": "Hiwalah (pengalihan utang)",
+      "pemicu": [
+        "hiwalah",
+        "hawalah"
+      ],
+      "arab": [
+        "على ملي فليتبع",
+        "مطل الغني ظلم"
+      ],
+      "terjemah": [
+        "hiwalah"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: مطل الغني ظلم، وإذا أتبع أحدكم على ملي فليتبع (menunda bayar utang bagi orang mampu adalah kezhaliman; bila utangmu dialihkan kepada orang mampu, terimalah).",
+      "bukti": "arab_akar:\"على ملي فليتبع\" = 18; \"مطل الغني ظلم\" = 16; terjemah 'hiwalah' = 2 (build 2026-11-07)"
+    },
+    {
+      "id": "kafalah",
+      "label": "Kafalah / dhaman (penjaminan)",
+      "pemicu": [
+        "kafalah",
+        "dhaman",
+        "dhamin",
+        "penjamin"
+      ],
+      "arab": [
+        "الزعيم غارم",
+        "الخراج بالضمان"
+      ],
+      "terjemah": [],
+      "bab": [],
+      "catatan": "Teks Arabnya: الزعيم غارم (penjamin menanggung) dan الخراج بالضمان (hasil sebanding dengan tanggungan).",
+      "bukti": "arab_akar:\"الزعيم غارم\" = 6; \"الخراج بالضمان\" = 12 (build 2026-11-07)"
+    },
+    {
+      "id": "muflis",
+      "label": "Muflis (bangkrut)",
+      "pemicu": [
+        "muflis",
+        "pailit",
+        "bangkrut"
+      ],
+      "arab": [
+        "أدرك ماله بعينه",
+        "أتدرون ما المفلس"
+      ],
+      "terjemah": [
+        "bangkrut",
+        "pailit"
+      ],
+      "bab": [],
+      "catatan": "Dua makna di hadits: orang yang hartanya tidak cukup membayar utang (من أدرك ماله بعينه عند رجل قد أفلس), dan \"orang bangkrut\" di akhirat (أتدرون ما المفلس).",
+      "bukti": "arab_akar:\"أدرك ماله بعينه\" = 4; \"أتدرون ما المفلس\" = 2; terjemah 'bangkrut' = 26, 'pailit' = 3 (build 2026-11-07)"
+    },
+    {
+      "id": "hadiah_pegawai",
+      "label": "Hadiah untuk pegawai/pejabat",
+      "pemicu": [
+        "gratifikasi"
+      ],
+      "arab": [
+        "ابن اللتبية",
+        "هدايا العمال"
+      ],
+      "terjemah": [],
+      "bab": [],
+      "catatan": "Kisah Ibnul Lutbiyyah, petugas zakat yang menerima hadiah: أفلا جلس في بيت أبيه وأمه فينظر أيهدى له أم لا. \"Gratifikasi\" adalah istilah modern; ini riwayat yang paling dekat. Teman Hadits hanya menampilkan riwayat; hukumnya tanyakan kepada ulama.",
+      "bukti": "arab_akar:\"ابن اللتبية\" = 8; \"هدايا العمال\" = 1 (build 2026-11-07)"
     }
   ]
 }

@@ -196,6 +196,16 @@ Putaran kedua belas (45 kueri adab sosial, muamalah, kepemimpinan, akhir zaman):
 | "riba fadhl" | 3 | 100, dibuka Muslim 4064 | مثلا بمثل, يدا بيد |
 | "tathfif" | 0 | 8 | ويل للمطففين, المكيال والميزان |
 
+Putaran ketiga belas (45 kueri akad muamalah, waris, utang, sumpah/nadzar). Grup ejaan baru: nadzar/nazar, infak/infaq, kafarat/kaffarat/kafarah. Konsep baru:
+
+| Kueri | Sebelum | Sesudah | Padanan / catatan |
+|---|---:|---:|---|
+| "rahn"/"gadai" | 0/93 | 53, dibuka Bukhari 2916 | رهن درعه, مرهونة (bukan الرهن sendirian: bisa bercampur dengan الرهان, taruhan) |
+| "hiwalah" | 2 | 24 | على ملي فليتبع, مطل الغني ظلم |
+| "kafalah"/"dhaman" | 9/0 | 18 | الزعيم غارم, الخراج بالضمان |
+| "muflis" | 0 | 32 | أدرك ماله بعينه, أتدرون ما المفلس |
+| "gratifikasi" | 0 | 10, dibuka Bukhari 1500 | ابن اللتبية, هدايا العمال (catatan: istilah modern, riwayat terdekat) |
+
 **Kueri berupa kalimat (putaran kesepuluh):** 20 potongan hadits populer diuji, termasuk 4 yang dikenal lemah/palsu. Pencarian kata kunci kurang tepat untuk kalimat: "senyummu kepada saudaramu adalah sedekah" jatuh ke mode "sebagian kata" (63.721 hasil), dan "tuntutlah ilmu sampai ke negeri cina" dibuka kisah Nabi Musa. Cek Hadits menangani kalimat ini jauh lebih baik, dan daftar Populer mengenali keempat ucapan lemah/palsu.
 
 Bila kueri minimal 4 kata dan menyisakan minimal 3 kata kunci (setelah kata pengisi dan istilah kamus), halaman Cari kini:
