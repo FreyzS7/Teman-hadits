@@ -37,6 +37,17 @@ Contoh kedua adalah batas aturan: kata kuncinya cocok, tetapi maknanya tidak.
 | "musik" | 7 | 13 | المعازف, مزمار الشيطان (hanya riwayat; tanpa kesimpulan hukum) |
 | "utang" | 57 | 540 | ejaan Lidwa "hutang" |
 | "ghibah" | 20 | 24 | ما الغيبة, ejaan gibah |
+| "sholawat nabi" | 1 | 105 | من صلى علي صلاة, اللهم صل على محمد (bukan صلى علي, yang juga berarti menshalati jenazah) |
+| "takziah" | 2 | 16 | من عزى مصابا, التعزية |
+| "tawakal" | 4 | 93 | حق توكله, يتوكلون (bukan توكل sendirian: "Allah menjamin") |
+| "menjaga lisan" | 7 | 39 | فليقل خيرا أو ليصمت, ما بين لحييه |
+| "istinja" | 10 | 95 | الاستنجاء, ejaan beristinja' |
+| "cadar" | 14 | 18 | تنتقب (bukan النقاب sendirian: "jalan masuk Madinah") |
+| "hak tetangga" | 22 | 332 | الجار, جاره |
+| "jilbab" | 32 | 20 | جلباب; lebih sedikit tetapi semuanya tentang jilbab |
+| "khitan" | 35 | 55 | اختتن, خمس من الفطرة الختان (bukan الختان sendirian: hadits mandi junub) |
+
+Putaran kedua menguji 60 kueri lagi. Kueri lain sudah cukup baik tanpa entri baru (mis. zakat fitrah, lailatul qadar, aqiqah, dajjal, siwak).
 
 Bukti hitungan tiap entri ada di kolom `bukti` di `kamus_konsep.json`.
 

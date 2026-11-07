@@ -81,6 +81,26 @@
     [
       "ghibah",
       "gibah"
+    ],
+    [
+      "shalawat",
+      "sholawat",
+      "salawat",
+      "solawat",
+      "selawat"
+    ],
+    [
+      "tawakal",
+      "tawakkal"
+    ],
+    [
+      "takziah",
+      "takziyah",
+      "taziyah"
+    ],
+    [
+      "istinja",
+      "istinjak"
     ]
   ],
   "_catatan_varian": "Kata pertama = bentuk baku untuk tampilan. Saat mencari, SEMUA varian dicari bersamaan (terjemahan Lidwa memakai ejaan campuran: sedekah 821, shadaqah 248, shodaqoh 16).",
@@ -362,6 +382,196 @@
       "bab": [],
       "catatan": "Teks Arabnya memakai المعازف (alat-alat musik) dan ungkapan مزمار الشيطان (seruling setan). Kata مزامير tidak dipakai, karena di hadits Abu Musa berarti suara merdu membaca al-Qur'an. Teman Hadits hanya menampilkan riwayatnya; hukumnya tanyakan kepada ulama.",
       "bukti": "arab_akar:المعازف = 8; \"مزمار الشيطان\" = 4; مزامير = 26 (sebagian besar suara merdu, tidak dipakai); terjemah 'alat musik' = 6, 'musik' = 7 (build 2026-11-07)"
+    },
+    {
+      "id": "shalawat",
+      "label": "Shalawat kepada Nabi ﷺ",
+      "pemicu": [
+        "shalawat",
+        "bershalawat"
+      ],
+      "arab": [
+        "من صلى علي صلاة",
+        "صلى الله عليه بها عشرا",
+        "اللهم صل على محمد",
+        "صلاتكم معروضة علي",
+        "فإن صلاتكم تبلغني",
+        "أكثروا الصلاة علي"
+      ],
+      "terjemah": [
+        "bershalawat kepadaku",
+        "shalawat kepadaku",
+        "bershalawatlah",
+        "shalawat kepada nabi"
+      ],
+      "bab": [],
+      "catatan": "Hanya kalimat Arab yang khusus tentang shalawat yang dipakai (mis. من صلى علي صلاة, اللهم صل على محمد). Bentuk pendek صلى علي tidak dipakai, karena di teks Arab yang dinormalkan juga berarti \"menshalati (jenazah/kubur)\".",
+      "bukti": "arab_akar:\"صلى علي\" = 142 (sebagian besar shalat jenazah, tidak dipakai); \"من صلى علي صلاة\" = 13; \"صلى الله عليه بها عشرا\" = 6; \"اللهم صل على محمد\" = 48; \"صلاتكم معروضة علي\" = 7; \"فإن صلاتكم تبلغني\" = 2; \"أكثروا الصلاة علي\" = 3; terjemah 'bershalawat kepadaku' = 20, 'shalawat kepadaku' = 11, 'bershalawatlah' = 11 (build 2026-11-07)"
+    },
+    {
+      "id": "tawakal",
+      "label": "Tawakal kepada Allah",
+      "pemicu": [
+        "tawakal",
+        "bertawakal",
+        "bertawakkal"
+      ],
+      "arab": [
+        "حق توكله",
+        "يتوكلون",
+        "برئ من التوكل",
+        "توكل على الله"
+      ],
+      "terjemah": [
+        "bertawakkal",
+        "bertawakal",
+        "tawakkal"
+      ],
+      "bab": [],
+      "catatan": "Kata توكل sendirian tidak dipakai, karena juga bermakna \"Allah menjamin\" (توكل الله للمجاهد). Yang dipakai: حق توكله (sebenar-benar tawakal), يتوكلون, dan terjemah \"bertawakkal\".",
+      "bukti": "arab_akar:توكل = 30 (sebagian bermakna 'Allah menjamin', tidak dipakai); \"حق توكله\" = 5; يتوكلون = 16; \"برئ من التوكل\" = 4; \"توكل على الله\" = 1; terjemah 'bertawakkal' = 56, 'bertawakal' = 24, 'tawakkal' = 10 (build 2026-11-07)"
+    },
+    {
+      "id": "menjaga_lisan",
+      "label": "Menjaga lisan",
+      "pemicu": [
+        "lisan"
+      ],
+      "arab": [
+        "ما بين لحييه",
+        "فليقل خيرا أو ليصمت",
+        "أمسك عليك لسانك"
+      ],
+      "terjemah": [
+        "berkata baik atau diam",
+        "berkata yang baik atau diam",
+        "menjaga lisannya"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai فليقل خيرا أو ليصمت (berkatalah yang baik atau diam), ما بين لحييه (apa yang ada di antara dua rahangnya) dan أمسك عليك لسانك (tahanlah lisanmu).",
+      "bukti": "arab_akar:\"فليقل خيرا أو ليصمت\" = 18; \"ما بين لحييه\" = 6; \"أمسك عليك لسانك\" = 1; terjemah 'berkata baik atau diam' = 14, 'berkata yang baik atau diam' = 2, 'menjaga lisannya' = 1 (build 2026-11-07)"
+    },
+    {
+      "id": "istinja",
+      "label": "Istinja (bersuci setelah buang hajat)",
+      "pemicu": [
+        "istinja",
+        "beristinja",
+        "cebok"
+      ],
+      "arab": [
+        "الاستنجاء",
+        "استنجى"
+      ],
+      "terjemah": [
+        "beristinja",
+        "istinja",
+        "cebok"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai الاستنجاء / استنجى. Terjemah Lidwa menulis \"beristinja'\".",
+      "bukti": "arab_akar:الاستنجاء = 15; استنجى = 19; terjemah 'beristinja' = 74, 'istinja' = 9, 'cebok' = 7 (build 2026-11-07)"
+    },
+    {
+      "id": "cadar",
+      "label": "Cadar (niqab)",
+      "pemicu": [
+        "cadar",
+        "niqab",
+        "bercadar"
+      ],
+      "arab": [
+        "تنتقب",
+        "القفازين والنقاب",
+        "القفاز والنقاب"
+      ],
+      "terjemah": [
+        "cadar",
+        "niqab"
+      ],
+      "bab": [],
+      "catatan": "Kata النقاب sendirian tidak dipakai, karena juga berarti \"jalan-jalan masuk\" (نقاب المدينة). Riwayat yang ada sebagian besar tentang larangan memakai cadar saat ihram. Teman Hadits hanya menampilkan riwayat; hukumnya tanyakan kepada ulama.",
+      "bukti": "arab_akar:النقاب = 10 (sebagian 'jalan masuk Madinah', tidak dipakai); تنتقب = 8; \"القفازين والنقاب\" = 1; \"القفاز والنقاب\" = 2; terjemah 'cadar' = 13, 'niqab' = 5 (build 2026-11-07)"
+    },
+    {
+      "id": "tetangga",
+      "label": "Tetangga",
+      "pemicu": [
+        "tetangga",
+        "bertetangga"
+      ],
+      "arab": [
+        "الجار",
+        "جاره"
+      ],
+      "terjemah": [
+        "tetangga",
+        "tetangganya"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai الجار / جاره (tetangga), termasuk hadits hak syuf'ah tetangga (الجار أحق بسقبه).",
+      "bukti": "arab_akar:الجار = 128; جاره = 102; terjemah 'tetangga' = 167, 'tetangganya' = 137 (build 2026-11-07)"
+    },
+    {
+      "id": "jilbab",
+      "label": "Jilbab",
+      "pemicu": [
+        "jilbab"
+      ],
+      "arab": [
+        "جلباب",
+        "جلابيبهن"
+      ],
+      "terjemah": [
+        "jilbab"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai جلباب (pakaian luar yang menutup badan), mis. hadits Ummu 'Athiyyah tentang perempuan yang tidak punya jilbab untuk keluar ke shalat 'Id.",
+      "bukti": "arab_akar:جلباب = 11; جلابيبهن = 1; terjemah 'jilbab' = 19 (build 2026-11-07)"
+    },
+    {
+      "id": "khitan",
+      "label": "Khitan",
+      "pemicu": [
+        "khitan",
+        "khitanan",
+        "sunatan",
+        "berkhitan"
+      ],
+      "arab": [
+        "اختتن",
+        "يختتن",
+        "الفطرة الختان"
+      ],
+      "terjemah": [
+        "berkhitan",
+        "dikhitan"
+      ],
+      "bab": [],
+      "catatan": "Kata الختان sendirian tidak dipakai, karena banyak muncul di hadits mandi junub (إذا جاوز الختان الختان). Yang dipakai: اختتن (berkhitan) dan خمس من الفطرة الختان.",
+      "bukti": "arab_akar:الختان = 41 (sebagian besar hadits mandi junub, tidak dipakai); اختتن = 9; يختتن = 1; \"الفطرة الختان\" = 9; terjemah 'berkhitan' = 29, 'dikhitan' = 16 (build 2026-11-07)"
+    },
+    {
+      "id": "takziah",
+      "label": "Takziah (menghibur keluarga yang berduka)",
+      "pemicu": [
+        "takziah",
+        "melayat",
+        "bertakziah"
+      ],
+      "arab": [
+        "عزى مصابا",
+        "التعزية"
+      ],
+      "terjemah": [
+        "taziyah",
+        "takziyah",
+        "bertakziah",
+        "melayat"
+      ],
+      "bab": [],
+      "catatan": "Riwayatnya sedikit: من عزى مصابا (siapa yang menghibur orang yang tertimpa musibah) dan kata التعزية.",
+      "bukti": "arab_akar:\"عزى مصابا\" = 2; التعزية = 2; terjemah 'taziyah' = 2, 'takziyah' = 1, 'bertakziah' = 3, 'melayat' = 8 (build 2026-11-07)"
     }
   ]
 }
