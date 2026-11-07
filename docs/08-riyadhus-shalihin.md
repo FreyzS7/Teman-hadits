@@ -64,7 +64,7 @@ Label di halaman: "terjemahan riwayat sumbernya · Lidwa Pusaka", ditambah tauta
 
 Pemeriksaan terjemah ganda (teks terjemah sama untuk dua nomor) hanya menemukan 1187/1189. Tiga kelompok lain wajar, karena teks Arabnya juga sama (an-Nawawi mengulang hadits di bab lain). Uji `PergeseranPasangan` kini gagal bila muncul dugaan pergeseran yang belum ditinjau. Pasangan "pasti" 1.726 → 1.721.
 
-**Keterbatasan:** 646 pasangan "pasti" tanpa sumber kuat tidak bisa dicek dengan cara ini. Sebelum terjemah aslinya ditampilkan (`TERJEMAH_RIYADH="tampil"`), pasangan-pasangan itu perlu sampel pemeriksaan manual.
+**Sampel pasangan tanpa sumber pembanding:** ada 583 pasangan "pasti" yang sumbernya kurang dari skor 0,8, sehingga tidak bisa dicek dengan cara di atas. Dari jumlah itu diambil 40 acak (biji 20261107) dan dibaca manual: **40 dari 40 cocok** (teks Arab dan terjemahnya hadits yang sama; no. 789 hanya bisa dicek dari bagian akhir teks Arabnya). Perkiraan kasar: tingkat salah pasang di kelompok ini kemungkinan di bawah 7% (batas atas 95% untuk 0 dari 40). Sebelum terjemah aslinya ditampilkan, sampel ini sebaiknya diperbesar.
 
 ## Yang belum
 
