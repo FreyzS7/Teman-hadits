@@ -310,6 +310,16 @@ Kode: `tanpa_kurung()` dan `nama_saja()` di `pipeline/export_d1.py` (uji: `pipel
 - tips bila hadits belum ketemu
 - daftar semua istilah yang dikenali
 
+**Catatan kueri kosong (7 Nov 2026):** supaya perbaikan kamus berikutnya diambil dari kebutuhan nyata, situs mencatat kueri halaman 1 (tanpa saringan dan bukan rujukan nomor) yang hasilnya 0 atau hanya "sebagian kata". Rinciannya:
+
+- **Yang disimpan:** hanya teks kueri yang sudah dinormalkan (maksimal 80 huruf), jumlah, jenis (`kosong`/`sebagian`), dan tanggal pertama/terakhir. Tidak ada IP, akun, atau data lain. Kueri yang berisi 6+ angka berurutan atau "@" tidak dicatat, karena mungkin nomor telepon atau email.
+- **Batas tulis:** maksimal 2.000 kueri per hari (tabel `catatan_batas`). Jadi paling banyak sekitar 4.000 tulisan D1 per hari, 4% dari kuota gratis, dan bot tidak bisa menghabiskan kuota situs.
+- **Tidak memperlambat halaman:** ditulis di latar belakang (`ctx.waitUntil`). Kueri yang dilayani dari cache tidak dicatat ulang.
+- **Tabel terpisah:** `scripts/catatan.sql`, tidak dihapus oleh impor ulang data. Kedua skrip impor membuatnya bila belum ada (`IF NOT EXISTS`). Bila tabel belum ada, pencarian berjalan seperti biasa.
+- **Diumumkan** di halaman Metode (`/metode#catatan-kueri`).
+
+Perintah (di folder `site`): `npm run catatan:siapkan` (sekali, membuat tabel di D1 online) dan `npm run catatan:lihat` (100 kueri teratas). Analytics Engine sempat dipertimbangkan, tetapi ketentuan paket gratisnya belum bisa dipastikan dari dokumentasi resmi.
+
 Jalan perbaikan yang lain:
 
 - **Kategori HadeethEnc** (tanpa AI): 447 tema berbahasa Indonesia yang disusun dan ditinjau ulama, misalnya "Sedekah Sunah" berisi 27 hadits. Pertanyaan bertema dicocokkan dulu ke kategori ini.

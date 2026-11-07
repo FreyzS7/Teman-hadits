@@ -132,6 +132,22 @@ async function halamanRiyadh(env, url, kitab, r) {
   return html(T.layout({ judul: `Riyadhus Shalihin no. ${r.no_tampil} · Teman Hadits`, deskripsi: desk, isi, kanonik }));
 }
 
+// Catat kueri yang tidak menemukan hasil (scripts/catatan.sql): teks yang dinormalkan saja, maksimal 2.000 per hari,
+// di latar belakang (tidak memperlambat halaman). Kueri yang tampak berisi nomor telepon/email tidak dicatat.
+// Bila tabelnya belum dibuat (npm run catatan:siapkan), diam saja.
+const BATAS_CATATAN_HARIAN = 2000;
+function catatKueriKosong(env, q, jenis) {
+  const kueri = normId(q).slice(0, 80).trim();
+  if (kueri.length < 2 || /\d{6,}|@/.test(q)) return;
+  const hari = new Date().toISOString().slice(0, 10);
+  const tugas = (async () => {
+    const boleh = await env.DB.prepare("INSERT INTO catatan_batas (hari, n) VALUES (?1, 1) ON CONFLICT(hari) DO UPDATE SET n = n + 1 WHERE n < ?2 RETURNING n").bind(hari, BATAS_CATATAN_HARIAN).first();
+    if (!boleh) return;
+    await env.DB.prepare("INSERT INTO kueri_kosong (kueri, n, jenis, pertama, terakhir) VALUES (?1, 1, ?2, ?3, ?3) ON CONFLICT(kueri) DO UPDATE SET n = n + 1, jenis = ?2, terakhir = ?3").bind(kueri, jenis, hari).run();
+  })().catch(() => {});
+  if (env.ctx && env.ctx.waitUntil) env.ctx.waitUntil(tugas);
+}
+
 async function halamanCari(env, url) {
   const db = env.DB;
   const q = (url.searchParams.get("q") || "").trim().slice(0, 200);
@@ -197,6 +213,8 @@ async function halamanCari(env, url) {
     const p = pop ? await db.prepare("SELECT id, teks_id FROM populer WHERE id = ?1").bind(pop.id).first() : null;
     kalimat = { populer: p, sebagian: out.modeKata === "sebagian kata" };
   }
+  if (halaman === 1 && !filter.k && !filter.t && !rujukan && (out.total === 0 || out.modeKata === "sebagian kata"))
+    catatKueriKosong(env, q, out.total === 0 ? "kosong" : "sebagian");
   const isi = T.hasilCari({ q, out, kitab, sorot: kataSorot(out.rencana), akar: akarSorot(out.rencana), filter, rujukan, tema, kalimat, sembunyiRiyadh: env.TERJEMAH_RIYADH === "sembunyi" });
   return html(T.layout({ judul: `${q} · Cari · Teman Hadits`, aktif: "cari", isi, noindex: true }));
 }
@@ -372,7 +390,7 @@ export default {
       if (ada) { const r = new Response(ada.body, ada); r.headers.set("X-Cache", "HIT"); r.headers.set("X-D1-Baris", "0; cache"); return r; }
     }
     const { db, hit } = hitungD1(env.DB);
-    env = { ...env, DB: db };
+    env = { ...env, DB: db, ctx };
     const beri = (res) => {
       const r = new Response(res.body, res);
       r.headers.set("X-D1-Baris", `${hit.baris}; kueri=${hit.kueri}`);

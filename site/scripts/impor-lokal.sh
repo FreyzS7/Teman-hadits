@@ -14,4 +14,5 @@ for f in ../build/d1/*.sql; do
     exit 1
   fi
 done
+npx wrangler d1 execute teman-hadits --local --yes --file scripts/catatan.sql >/dev/null   # tabel catatan kueri kosong (IF NOT EXISTS)
 npx wrangler d1 execute teman-hadits --local --command "SELECT kunci, nilai FROM info"

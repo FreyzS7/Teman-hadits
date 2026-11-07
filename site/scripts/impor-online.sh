@@ -21,5 +21,6 @@ for f in ../build/d1/*.sql; do
     exit 1
   fi
 done
+npx wrangler d1 execute teman-hadits --env production --remote --yes --file scripts/catatan.sql   # tabel catatan kueri kosong (IF NOT EXISTS, isinya tidak dihapus)
 npx wrangler d1 execute teman-hadits --env production --remote --command "SELECT kunci, nilai FROM info"
 echo "Selesai. Lanjutkan dengan: npm run deploy"
