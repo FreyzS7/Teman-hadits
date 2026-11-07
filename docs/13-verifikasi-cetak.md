@@ -363,6 +363,10 @@ Metode sama (seed 20261106; hadits tingkat A, 25–80 kata).
 
 Dengan ini keenam kitab bernomor standar (Bukhari, Muslim, Abu Dawud, Tirmidzi, Nasa'i, Ibnu Majah), al-Muwaththa', ad-Darimi, dan sampel nomor edisi Ahmad dan asy-Syafi'i sudah dicocokkan dengan cetakannya. Teks Arab sampel sama kata per kata, kecuali perbedaan varian naskah atau gaya yang dicatat di atas; dua cacat teks digital yang ditemukan (huruf terpotong, koma di tengah nama) sudah diperbaiki di seluruh data.
 
+### Catatan cetakan di halaman hadits
+
+Perbedaan yang sah (letak atau varian naskah yang dicatat pentahqiq) tidak diubah di data, tetapi ditampilkan sebagai «Catatan cetakan» di halaman hadits itu, lengkap dengan halaman cetak tempat dilihat: Bukhari 544 dan 5323, ad-Darimi 251 (`site/src/catatan_cetak.js`; diuji di `site/test/http.test.js`). Catatan hanya ada untuk riwayat yang sudah dicek. Tidak adanya catatan tidak berarti tidak ada perbedaan.
+
 ## Batasan dan yang belum
 
 - **Nomor entri belum diverifikasi.** OCR mengacaukan angka Arab-Hindi di kolom nomor.

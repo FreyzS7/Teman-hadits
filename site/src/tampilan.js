@@ -1,4 +1,5 @@
 // Template HTML. Semua teks dari database melewati esc() kecuali yang sudah dibangun aman (rubrik, cuplik).
+import { CATATAN_CETAK } from "./catatan_cetak.js";
 import { cuplik, cuplikAr, esc, fmt, normAr, SIGHAH_MAP } from "./teks.js";
 import { RUMUZ, TABAQAH, TINGKAT } from "./perawi.js";
 
@@ -247,6 +248,7 @@ export function halamanHadits(d) {
       ${pisah.komentar ? `<div class="label">komentar ${esc(kitab.id === "tirmidzi" ? "at-Tirmidzi" : "penyusun")} · bukan bagian matan</div><p class="ar sanad">${esc(pisah.komentar)}</p>` : ""}` : `
       <div class="label">teks lengkap · sanad dan matan belum dipisahkan otomatis</div>
       <p class="ar teks-utuh" id="teks-matan">${esc(r.arab)}</p>`}
+      ${CATATAN_CETAK[r.id] ? `<p class="kecil catatan-bab" style="margin-top:10px"><b>Catatan cetakan:</b> ${esc(CATATAN_CETAK[r.id].teks)} <span style="color:var(--tinta-2)">(dilihat di cetakan: ${esc(CATATAN_CETAK[r.id].bukti)}; <a href="/metode#cetak">metode</a>)</span></p>` : ""}
       <div class="pemisah" aria-hidden="true">${SVG_BINTANG}</div>
       <div class="label">terjemahan · Lidwa Pusaka${gabungan ? " · mencakup beberapa riwayat yang digabung" : ""}</div>
       ${terjemahHtml ? `<p class="terjemah">${terjemahHtml}</p>` : `<p class="tanpa-nilai">Terjemahan belum terpasang untuk nomor ini, karena pasangannya di sumber Lidwa belum ditemukan dengan pasti. Kami tidak menampilkan terjemahan yang belum pasti.</p>`}

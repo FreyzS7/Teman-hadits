@@ -156,3 +156,12 @@ test("perawi: wafat dengan pendapat lain & daftar perawi", opsi, async () => {
   const d = (await ambil("/perawi")).teks;
   assert.match(d, /href="\/perawi\/t8426"/);
 });
+
+test("catatan cetakan tampil hanya di riwayat yang sudah dicek", opsi, async () => {
+  const a = await ambil("/bukhari/5323");
+  assert.match(a.teks, /Catatan cetakan:<\/b>[^<]*في قولها/);
+  const b = await ambil("/darimi/247");
+  assert.match(b.teks, /Catatan cetakan:<\/b>[^<]*فتعلّموا/);
+  const c = await ambil("/bukhari/1");
+  assert.doesNotMatch(c.teks, /Catatan cetakan:/);
+});
