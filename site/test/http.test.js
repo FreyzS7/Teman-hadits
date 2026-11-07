@@ -34,6 +34,15 @@ test("riwayat yang lafaz matannya sama dilipat, tetap tertaut", opsi, async () =
   assert.match(teks, /href="\/muslim\/1907a"/);
 });
 
+test("kata kerabat tidak cocok dengan nama di sanad; nama perawi tetap bisa dicari", opsi, async () => {
+  const ayah = (await ambil("/cari?q=ayah&z=" + Date.now())).teks;
+  assert.match(ayah, /href="\/bukhari\/6768"/);
+  const m = ayah.match(/([\d.]+) riwayat ditemukan/);
+  assert.ok(m && Number(m[1].replace(/\./g, "")) < 5000, "kata 'ayah' masih tercampur sanad: " + (m && m[1]));
+  const ah = (await ambil("/cari?q=" + encodeURIComponent("abu hurairah puasa") + "&z=" + Date.now())).teks;
+  assert.match(ah, /href="\/bukhari\/1933"/);
+});
+
 test("rujukan 'muslim 1907' langsung dibuka", opsi, async () => {
   const r = await ambil("/cari?q=muslim%201907");
   assert.equal(r.status, 302);

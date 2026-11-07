@@ -56,7 +56,9 @@ const AKHIRAN = ["", "nya", "ku", "mu", "lah", "kah", "pun", "kan", "kannya", "k
   "an", "annya", "i", "inya", "iku", "imu", "ilah"];
 const fraseId = (v) => (v.length >= 4 ? "(" + AKHIRAN.map((a) => `"${v}${a}"`).join(" OR ") + ")" : `"${v}"`);
 const awalanId = (v) => (v.length >= 4 ? `"${v}"*` : `"${v}"`);
-const grupFts = (w) => "(" + varianDari(w).map((v) => `terjemah_polos:${fraseId(v)}`).join(" OR ") + ")";
+// Kata kunci dicari di terjemah (tanpa isi kurung siku = nama di sanad) dan di kolom nama perawi: "abu hurairah puasa"
+// tetap ketemu, tetapi "ayah" tidak lagi cocok dengan ribuan sanad "dari [ayahnya]" (pipeline/export_d1.py).
+const grupFts = (w) => "(" + varianDari(w).map((v) => `{terjemah_polos perawi}:${fraseId(v)}`).join(" OR ") + ")";
 const jsonIds = (xs) => JSON.stringify([...xs]);
 const JARAK_DEKAT = 8;
 const PRIORITAS_KITAB = { bukhari: 0.12, muslim: 0.12, abudawud: 0.06, tirmidzi: 0.06, nasai: 0.06, ibnumajah: 0.06, malik: 0.06 };

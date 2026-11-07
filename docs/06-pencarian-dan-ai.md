@@ -99,6 +99,23 @@ Bukti hitungan tiap entri ada di kolom `bukti` di `kamus_konsep.json`.
 
 Ambang 0,8 dipilih setelah melihat pasangan nyata. Pada 1,00, Muslim 831, Bukhari 6322, dan Tirmidzi 6 sama-sama doa masuk WC. Pada 0,5–0,7, mulai tercampur hadits yang berbeda (mis. Tirmidzi 5 dan 6). Data takhrij tidak cukup sebagai satu-satunya dasar: 27.115 dari 69.408 riwayat tidak punya jalur, termasuk banyak riwayat Ahmad. Contoh: halaman pertama "niat" kini 7 kartu, dengan 10 jalur hadits "innamal a'mal" sebagai tautan. Pengelompokan hanya dalam satu halaman, jadi penomoran halaman tidak berubah. Kode: `kelompokkan()` di `site/src/cari.js`, uji: `site/test/kelompok.test.js`.
 
+**Nama di sanad tidak lagi ikut dicari sebagai kata biasa (7 Nov 2026):** terjemah Lidwa menulis perawi dalam kurung siku ("dari [Hisyam] dari [ayahnya] dari ['Aisyah]"). Dulu seluruh terjemah diindeks, sehingga "ayah" cocok dengan 6.767 riwayat, kebanyakan karena "dari [ayahnya]" di sanad. Kini:
+
+- kolom `terjemah_polos` di D1 diisi terjemah **tanpa** isi kurung siku;
+- kolom `perawi` hanya memuat kata nama (huruf kapital, al-/az-/…, bin/binti). Kata kerabat seperti "bapaknya" (2.664), "ayahnya" (2.662), dan "seorang laki-laki" (234) tidak dimasukkan;
+- kata kunci dicari di kedua kolom (`{terjemah_polos perawi}`), jadi kueri nama tetap jalan.
+
+| Kueri | Sebelum | Sesudah |
+|---|---:|---:|
+| ayah | 6.767 | 3.727 |
+| bapak | 7.800 | 4.455 |
+| kakek | 1.362 | 672 |
+| paman | 1.179 | 875 |
+| abu hurairah puasa | 648 | 648 |
+| aisyah | 6.844 | 6.844 |
+
+Kode: `tanpa_kurung()` dan `nama_saja()` di `pipeline/export_d1.py` (uji: `pipeline/test_export.py`). Perubahan ini ada di database, jadi butuh ekspor dan impor ulang D1. Pencarian Python (`pipeline/cari.py`) memakai indeks `build/teman-hadits.sqlite` yang lama dan tidak ikut berubah; situs memakai `site/src/cari.js`.
+
 Jalan perbaikan yang lain:
 
 - **Kategori HadeethEnc** (tanpa AI): 447 tema berbahasa Indonesia yang disusun dan ditinjau ulama, misalnya "Sedekah Sunah" berisi 27 hadits. Pertanyaan bertema dicocokkan dulu ke kategori ini.

@@ -101,6 +101,21 @@ CREATE INDEX ix_perawi_n ON perawi (n_riwayat);
 """
 
 # Stem Indonesia ringan untuk tabel frekuensi kata (dipakai fitur "cek teks"); harus sama dengan site/src/teks.js
+
+# Pencarian terjemah: nama perawi di terjemah Lidwa ditulis dalam kurung siku ("dari [bapaknya] dari [Abu Hurairah]").
+# Kolom terjemah_polos tanpa isi kurung, supaya "ayah" tidak cocok dengan ribuan sanad "dari [ayahnya]"; nama tetap
+# dicari lewat kolom perawi, yang hanya memuat kata nama (huruf kapital, al-/az-/..., bin/binti), bukan kata kerabat.
+_KURUNG = re.compile(r"\[[^\]]*\]")
+_KATA_NAMA = re.compile(r"^([A-Z'`‘’]|(al|a[sztdnr]|asy|adz|ash|adh|ats|adl)-|bin$|binti$)")
+
+
+def tanpa_kurung(teks):
+    return _KURUNG.sub(" ", teks or "")
+
+
+def nama_saja(nama):
+    return " ".join(w for w in (nama or "").replace(",", " ").split() if _KATA_NAMA.match(w))
+
 def stem_id(w):
     for s in ("nya", "kan", "lah", "an"):
         if w.endswith(s) and len(w) - len(s) >= 4:
@@ -286,7 +301,7 @@ def main():
         if j:
             judul_n[n] = (j["kitab_ar"], j["kitab_nama_id"], j["bab_ar"], j.get("catatan"), j["cara"])
         teks_judul = " ".join(x for x in [norm_id(j["kitab_nama_id"] or ""), akar_ar(norm_ar((j["kitab_ar"] or "") + " " + (j["bab_ar"] or "")))] if x) if j else ""
-        data_cari.append((n, na, akar_ar(na), norm_id(terj), norm_id(nama), teks_judul))
+        data_cari.append((n, na, akar_ar(na), norm_id(tanpa_kurung(terj)), norm_id(nama_saja(nama)), teks_judul))
         if babno is not None and kid not in LIDWA_SAJA:
             b = bab.setdefault((kid, babno), [babnama, 0, n, None, babnama, None])
             b[1] += 1

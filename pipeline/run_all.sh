@@ -33,7 +33,7 @@ pyu -I pipeline/rijal.py
 pyu -I pipeline/perawi.py
 # opsional (unduh data pembanding Ifta'): pyu -I pipeline/uji_perawi_ifta.py
 # opsional (unduh OCR kitab cetak dari archive.org): pyu -I pipeline/verifikasi_cetak.py
-pyu -m unittest pipeline/test_golden.py pipeline/test_hadeethenc.py pipeline/test_riyadh.py pipeline/test_bab.py pipeline/test_katalog.py pipeline/test_rijal.py -v
+pyu -m unittest pipeline/test_golden.py pipeline/test_hadeethenc.py pipeline/test_riyadh.py pipeline/test_bab.py pipeline/test_katalog.py pipeline/test_rijal.py pipeline/test_export.py -v
 pyu pipeline/audit.py
 pyu pipeline/export_d1.py
 pyu pipeline/fixtures_js.py
