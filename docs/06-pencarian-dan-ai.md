@@ -180,6 +180,15 @@ Ambang 0,8 dipilih setelah melihat pasangan nyata. Pada 1,00, Muslim 831, Bukhar
 
 Kode: `tanpa_kurung()` dan `nama_saja()` di `pipeline/export_d1.py` (uji: `pipeline/test_export.py`). Perubahan ini ada di database, jadi butuh ekspor dan impor ulang D1. Pencarian Python (`pipeline/cari.py`) memakai indeks `build/teman-hadits.sqlite` yang lama dan tidak ikut berubah; situs memakai `site/src/cari.js`.
 
+**Halaman "Cara mencari" (`/cara-cari`):** penjelasan untuk pengguna awam tentang hal-hal berikut. Daftar istilahnya dibuat langsung dari `kamus_konsep.json` (`daftarKonsep()` di `site/src/cari.js`), jadi selalu sesuai dengan kamus yang dipakai. Halaman ini ditautkan dari halaman hasil pencarian, halaman Metode, dan kaki halaman.
+
+- cara membaca "Kami membaca"
+- istilah awam yang dipetakan ke lafaz hadits, beserta alasan istilah modern tidak dipetakan
+- alasan dan urutan hasil, serta riwayat serupa
+- tingkat data dibandingkan derajat hadits
+- tips bila hadits belum ketemu
+- daftar semua istilah yang dikenali
+
 Jalan perbaikan yang lain:
 
 - **Kategori HadeethEnc** (tanpa AI): 447 tema berbahasa Indonesia yang disusun dan ditinjau ulama, misalnya "Sedekah Sunah" berisi 27 hadits. Pertanyaan bertema dicocokkan dulu ke kategori ini.

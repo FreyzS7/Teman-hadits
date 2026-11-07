@@ -1,5 +1,5 @@
 // Teman Hadits — Cloudflare Worker. Semua halaman dirender di server dari database D1.
-import { cari, akarSorot, kataSorot, NAMA_KITAB, nilai } from "./cari.js";
+import { cari, akarSorot, kataSorot, NAMA_KITAB, nilai, daftarKonsep } from "./cari.js";
 import { cek } from "./cek.js";
 import { hukumTirmidzi, normId, pisahKomentar, pisahSanad, rantaiArab, rubrik } from "./teks.js";
 import * as T from "./tampilan.js";
@@ -274,6 +274,7 @@ async function rute(req, env) {
     }
     return html(T.layout({ judul: "Cek hadits · Teman Hadits", aktif: "cek", noindex: Boolean(t), isi: T.halamanCek({ t, hasil, kitab, info, katalog }) }));
   }
+  if (p === "/cara-cari") return html(T.layout({ judul: "Cara mencari hadits · Teman Hadits", aktif: "cari", kanonik: url.origin + "/cara-cari", deskripsi: "Cara kerja pencarian Teman Hadits: istilah awam dipetakan ke lafaz hadits, alasan setiap hasil, urutan, dan tips bila belum ketemu.", isi: T.halamanCaraCari({ konsep: daftarKonsep() }) }));
   if (p === "/metode") return html(T.layout({ judul: "Metode · Teman Hadits", aktif: "metode", isi: T.halamanMetode({ info: await infoDb(db) }) }));
   if (p === "/kitab") return html(T.layout({ judul: "Kitab · Teman Hadits", aktif: "kitab", isi: T.daftarKitab({ kitab: await semuaKitab(db) }) }));
   if (p === "/tema") return halamanTema(env, url, null);

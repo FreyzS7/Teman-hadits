@@ -307,6 +307,9 @@ footer.kaki b { color: var(--tinta); }
 .daftar-bab { list-style: none; margin: 0; padding: 0; columns: 2 320px; column-gap: 32px; }
 .daftar-bab li { break-inside: avoid; display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px dotted var(--garis); font: 400 .98rem/1.35 var(--f-ui); }
 .daftar-bab .nb { color: var(--tinta-2); font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
+.daftar-istilah { list-style: none; margin: 0; padding: 0; columns: 2 300px; column-gap: 32px; }
+.daftar-istilah li { break-inside: avoid; padding: 8px 0; border-bottom: 1px dotted var(--garis); font: 400 .98rem/1.4 var(--f-ui); }
+.daftar-istilah .kecil { display: block; color: var(--tinta-2); }
 .ringkas-kitab { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 1px; background: var(--garis); border: 1px solid var(--garis); margin-top: 18px; }
 .ringkas-kitab > div { background: var(--kertas); padding: 14px 16px; display: grid; gap: 4px; }
 .ringkas-kitab b { font: 800 1.5rem/1 var(--f-tampil); font-variant-numeric: lining-nums tabular-nums; }

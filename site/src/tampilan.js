@@ -67,7 +67,7 @@ ${kanonik ? `<link rel="canonical" href="${esc(kanonik)}">` : ""}${noindex ? '<m
 <main class="wrap">${isi}</main>
 <footer class="kaki"><div class="wrap">
   <p><b>Teman Hadits</b> adalah layanan umum tanpa iklan. Teks Arab: fawazahmed0/hadith-api dan Lidwa Pusaka; judul kitab &amp; bab serta kitab katalog hadits palsu: OpenITI (<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.id" rel="license noopener">CC BY-NC-SA 4.0</a>). Terjemahan: Lidwa Pusaka (digunakan dengan izin), via carihadis.com. Penilaian derajat selalu disertai nama ulama penilainya.</p>
-  <p>Teman Hadits menampilkan riwayat, bukan fatwa. Untuk hukum suatu perkara, tanyakan kepada ulama yang Anda percaya. <a href="/metode">Cara kami menjaga kebenaran data</a> · <a href="/metode#sumber">Sumber dan lisensi</a>.</p>
+  <p>Teman Hadits menampilkan riwayat, bukan fatwa. Untuk hukum suatu perkara, tanyakan kepada ulama yang Anda percaya. <a href="/cara-cari">Cara mencari</a> · <a href="/metode">Cara kami menjaga kebenaran data</a> · <a href="/metode#sumber">Sumber dan lisensi</a>.</p>
 </div></footer>
 </body>
 </html>`;
@@ -185,7 +185,7 @@ export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan, tema = 
       ${rujuk}
       ${tema.length ? `<div class="rujukan-langsung"><span>Tema terkait (kurasi HadeethEnc):</span>${tema.map((t) => `<a href="/tema/${esc(t.id)}">${esc(t.judul)} <span class="kecil">${fmt(t.jumlah)} hadits</span></a>`).join("")}</div>` : ""}
       ${catatan.length ? `<div class="catatan">${catatan.join("<br><br>")}</div>` : ""}
-      ${out.hasil.length ? `<p class="kecil" style="margin-top:14px">${fmt(out.total)} riwayat ditemukan${filter.k || filter.t ? `, ${fmt(out.tampil)} sesuai saringan` : ""}. Diurutkan menurut kekuatan alasan, lalu tingkat data, lalu urutan kitab. Riwayat yang lafaz matannya hampir sama dilipat di bawah riwayat pertamanya.</p>` : kosong}
+      ${out.hasil.length ? `<p class="kecil" style="margin-top:14px">${fmt(out.total)} riwayat ditemukan${filter.k || filter.t ? `, ${fmt(out.tampil)} sesuai saringan` : ""}. Diurutkan menurut kekuatan alasan, lalu tingkat data, lalu urutan kitab. Riwayat yang lafaz matannya hampir sama dilipat di bawah riwayat pertamanya. <a href="/cara-cari">Cara kerja pencarian</a>.</p>` : kosong}
       <ol class="daftar-hasil">${daftar}</ol>
       ${nav}
     </div>
@@ -455,6 +455,57 @@ export function halamanPerawiDaftar({ daftar }) {
     <span class="baris-status">${chipTingkat(p.tingkat)}${p.tabaqah ? `<span class="kecil">tabaqah ${p.tabaqah}</span>` : ""}${p.wafat ? `<span class="kecil">w. ${p.wafat} H</span>` : ""}<span class="kecil num">${fmt(p.n_riwayat)} riwayat</span></span></li>`).join("")}</ol>`;
 }
 
+export function halamanCaraCari({ konsep }) {
+  const cari = (q) => `<a href="/cari?q=${encodeURIComponent(q)}">${esc(q)}</a>`;
+  return `<div class="prosa">
+    <h1 class="halaman-judul">Cara mencari hadits</h1>
+    <p>Ketik seperti Anda bertanya kepada teman, misalnya ${cari("hadits tentang keutamaan sedekah")} atau ${cari("doa masuk wc")}. Tidak perlu ejaan yang tepat dan tidak perlu bahasa Arab. Pencarian ini tidak memakai AI: semua aturannya tertulis dan bisa diperiksa, dan setiap hasil diambil dari kitab yang kami muat.</p>
+
+    <h2>1. Lihat “Kami membaca”</h2>
+    <p>Di atas hasil, kami menunjukkan cara kami memahami pertanyaan Anda:</p>
+    <ul>
+      <li><b>Kata kunci</b>: kata yang wajib ada di terjemah hadits.</li>
+      <li><b>Kata bertanda tanya</b>, misalnya <i>keutamaan?</i>, <i>larangan?</i>, <i>doa?</i>: tidak diwajibkan, tetapi menaikkan peringkat bila letaknya dekat kata kunci.</li>
+      <li><b>Istilah yang dikenali</b>, misalnya <i>Shalat tarawih (qiyam Ramadhan)</i>: dicari lewat lafaz Arab yang benar-benar dipakai di hadits (lihat bagian 2).</li>
+      <li><b>Ejaan diseragamkan</b>: sholat, salat, dan shalat dicari bersamaan, begitu juga sedekah, shodaqoh, dan shadaqah.</li>
+      <li><b>Diabaikan</b>: kata pengisi seperti “tolong”, “carikan”, “hadits”, dan “tentang”.</li>
+    </ul>
+    <p>Kami juga mencari bentuk berimbuhan: ${cari("baca")} ikut menemukan “membaca”, ${cari("puasa")} ikut menemukan “berpuasa”, dan “sedekah” ikut menemukan “sedekahnya”.</p>
+
+    <h2>2. Istilah awam dipetakan ke lafaz hadits</h2>
+    <p>Banyak istilah yang kita pakai sehari-hari tidak ada di teks hadits. Kata “tarawih”, misalnya, tidak muncul di teks Arab hadits mana pun; hadits menyebutnya <span class="ar" style="display:inline">قيام رمضان</span> (qiyam Ramadhan). Karena itu ${cari("sholat tarawih")} dicari lewat lafaz tersebut. Contoh lain: ${cari("birrul walidain")} → <span class="ar" style="display:inline">بر الوالدين</span>, ${cari("masbuq")} → <span class="ar" style="display:inline">وما فاتكم فأتموا</span>.</p>
+    <p>Setiap padanan sudah kami hitung kemunculannya di database. Padanan yang maknanya ganda tidak kami pakai. Contohnya <span class="ar" style="display:inline">الغيبة</span>: selain berarti ghibah, kata ini juga berarti “bepergian lama”. Untuk istilah modern yang tidak punya lafaz khusus di hadits (misalnya rokok, pacaran, atau valentine), kami sengaja tidak membuat padanan, karena menghubungkannya ke hadits tertentu sudah termasuk ijtihad ulama.</p>
+
+    <h2>3. Kenapa sebuah hadits muncul, dan urutannya</h2>
+    <p>Setiap hasil memuat baris <b>“Muncul karena”</b>, misalnya “teks Arab memuat قيام رمضان” atau “kata minum, berdiri berdekatan”. Urutannya:</p>
+    <ul>
+      <li>Hadits yang cocok dengan lebih banyak alasan ada di atas. Kata-kata yang letaknya berdekatan bernilai lebih.</li>
+      <li>Bila relevansinya setara, Shahih al-Bukhari dan Muslim didahulukan, lalu kitab Sunan dan al-Muwaththa'.</li>
+      <li>Satu hadits sering diriwayatkan lewat banyak jalur. Riwayat dengan matan yang hampir sama dilipat di bawah riwayat pertamanya sebagai <b>“Riwayat serupa”</b>. Tidak ada yang dihapus.</li>
+    </ul>
+    <p>Nama perawi di sanad tidak dihitung sebagai kata biasa. Mencari “ayah” tidak akan menampilkan ribuan sanad “dari ayahnya”, tetapi mencari nama perawi, seperti ${cari("abu hurairah puasa")}, tetap bisa.</p>
+
+    <h2>4. Baca hasilnya dengan teliti</h2>
+    <ul>
+      <li><b>Tingkat data</b> ${lencana("A")} ${lencana("B")} menunjukkan seberapa yakin kami pada teks dan terjemahnya, <i>bukan</i> derajat hadits.</li>
+      <li><b>Derajat hadits</b> (shahih, hasan, dha'if, …) selalu ditampilkan atas nama ulama penilainya. Bila ulama berbeda pendapat, semuanya ditampilkan.</li>
+      <li>Teman Hadits menampilkan riwayat, bukan fatwa. Untuk hukum suatu perkara, tanyakan kepada ulama yang Anda percaya.</li>
+    </ul>
+
+    <h2>5. Kalau belum ketemu</h2>
+    <ul>
+      <li>Coba ejaan atau kata lain yang lebih umum, misalnya “hutang” untuk “utang”, atau “berduaan” untuk “khalwat”.</li>
+      <li>Kalau Anda tahu nomornya, ketik langsung, misalnya ${cari("muslim 1907")} atau ${cari("hr bukhari no 1")}.</li>
+      <li>Kalau Anda punya teks lengkap yang beredar, gunakan <a href="/cek">Cek Hadits</a> untuk memeriksa apakah teks itu ada di kitab-kitab kami.</li>
+      <li>Tidak ditemukan di sini <i>tidak</i> berarti hadits itu tidak ada. Kami hanya memuat kitab yang tercantum di halaman <a href="/kitab">Kitab</a>.</li>
+    </ul>
+
+    <h2 id="istilah">Istilah yang dikenali (${fmt(konsep.length)})</h2>
+    <p>Daftar ini diambil langsung dari kamus yang dipakai pencarian. Bukti hitungan setiap padanan ada di berkas <code>pipeline/kamus_konsep.json</code> di repositori proyek.</p>
+    <ul class="daftar-istilah">${konsep.map((k) => `<li><a href="/cari?q=${encodeURIComponent(k.pemicu[0])}"><b>${esc(k.label)}</b></a> <span class="kecil">kata: ${k.pemicu.map(esc).join(", ")}</span>${k.arab.length ? `<span class="ar" style="display:block;text-align:left;font-size:1.05rem">${k.arab.slice(0, 3).map(esc).join(" · ")}</span>` : ""}</li>`).join("")}</ul>
+  </div>`;
+}
+
 export function halamanMetode({ info }) {
   const sumber = JSON.parse(info.sumber || "[]");
   return `<div class="prosa">
@@ -474,7 +525,7 @@ export function halamanMetode({ info }) {
       <li>Menyatakan sebuah hadits “tidak ada” hanya karena tidak ada di koleksi kami. Kami selalu menyebut cakupan pencarian.</li>
     </ul>
     <h2>Pencarian</h2>
-    <p>Pencarian memahami kalimat bebas dengan aturan yang bisa diperiksa: ejaan diseragamkan (shalat/sholat/salat), kata pengisi diabaikan, dan istilah awam dipetakan ke istilah dalam hadits. Contohnya, “tarawih” dicari sebagai <span class="ar">قيام رمضان</span>, karena kata “tarawih” tidak ada di teks Arab hadits. Setiap hasil menunjukkan alasan kemunculannya.</p>
+    <p>Pencarian memahami kalimat bebas dengan aturan yang bisa diperiksa: ejaan diseragamkan (shalat/sholat/salat), kata pengisi diabaikan, dan istilah awam dipetakan ke istilah dalam hadits. Contohnya, “tarawih” dicari sebagai <span class="ar">قيام رمضان</span>, karena kata “tarawih” tidak ada di teks Arab hadits. Setiap hasil menunjukkan alasan kemunculannya. Penjelasan lengkap untuk pengguna ada di <a href="/cara-cari">Cara mencari</a>.</p>
     <h2 id="perawi">Identitas perawi</h2>
     <p>Sebuah nama di sanad, misalnya “Sufyan”, bisa merujuk ke beberapa orang. Seperti cara para ahli hadits membedakannya, kami melihat <b>siapa murid dan gurunya</b> di rantai itu. <i>Tahdzib al-Kamal</i> (al-Mizzi) mencatat untuk setiap perawi enam kitab daftar guru dan muridnya, lengkap dengan kode kitab tempat hubungan itu ada. Sebuah nama baru kami tampilkan sebagai <b>pasti</b> bila satu orang unggul mutlak atas semua kemungkinan lain dan hubungannya dengan perawi di atas dan di bawahnya tercatat untuk kitab tersebut. Ringkasan penilaian, tabaqah, dan tahun wafat diambil dari <i>Taqrib at-Tahdzib</i> (Ibnu Hajar). Hasilnya diuji terhadap identifikasi kurator Ifta' Sunnah (Arab Saudi): 99,8% sama pada lebih dari 45 ribu posisi yang bisa dibandingkan.</p>
     <h2 id="cetak">Dicocokkan dengan kitab cetak</h2>

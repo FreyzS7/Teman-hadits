@@ -43,6 +43,15 @@ test("kata kerabat tidak cocok dengan nama di sanad; nama perawi tetap bisa dica
   assert.match(ah, /href="\/bukhari\/1933"/);
 });
 
+test("halaman Cara mencari: penjelasan dan daftar istilah dari kamus", opsi, async () => {
+  const { status, teks } = await ambil("/cara-cari");
+  assert.equal(status, 200);
+  assert.match(teks, /Cara mencari hadits/);
+  assert.match(teks, /Istilah yang dikenali \(\d+\)/);
+  assert.match(teks, /href="\/cari\?q=tarawih"/);
+  assert.match((await ambil("/cari?q=niat&z=" + Date.now())).teks, /href="\/cara-cari"/);
+});
+
 test("rujukan 'muslim 1907' langsung dibuka", opsi, async () => {
   const r = await ambil("/cari?q=muslim%201907");
   assert.equal(r.status, 302);

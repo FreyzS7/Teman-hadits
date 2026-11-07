@@ -251,6 +251,10 @@ export function kelompokkan(hasil) {
   return pemimpin.map((p) => p.h);
 }
 
+/** Daftar istilah yang dikenali kamus (untuk halaman /cara-cari), urut label. */
+export const daftarKonsep = () =>
+  KAMUS.konsep.map((k) => ({ id: k.id, label: k.label, pemicu: k.pemicu, arab: k.arab })).sort((a, b) => a.label.localeCompare(b.label, "id"));
+
 /** Kata-kata untuk disorot di cuplikan hasil. */
 export function kataSorot(r) {
   const out = [];
