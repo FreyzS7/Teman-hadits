@@ -193,6 +193,8 @@ def main():
     CREATE TABLE populer_katalog (populer_id TEXT, katalog_id TEXT, skor REAL);
     CREATE TABLE populer_riwayat (populer_id TEXT, riwayat_id TEXT, skor REAL);
     CREATE TABLE populer_sebut (populer_id TEXT, katalog_id TEXT, kutipan TEXT);
+    -- lafaz MIRIP yang dibahas ulama (dipilih manual di hadits_populer.json 'mirip'; jenis = katalog | riwayat)
+    CREATE TABLE populer_mirip (populer_id TEXT, jenis TEXT, ref TEXT);
     CREATE TABLE info (kunci TEXT PRIMARY KEY, nilai TEXT);
     """)
     semua = []
@@ -225,8 +227,15 @@ def main():
     riwayat = [(rid, grams(ar)) for rid, ar in src.execute("SELECT id, arab FROM riwayat WHERE tingkat IN ('A','B')")]
     stat = collections.Counter()
     for p in pop["ucapan"]:
+        mirip = p.get("mirip") or {}
         db.execute("INSERT INTO populer VALUES (?,?,?,?,?)", (p["id"], p["teks"], json.dumps(p.get("varian", []), ensure_ascii=False),
-                                                              p["arab"], p.get("catatan")))
+                                                              p["arab"], mirip.get("catatan") or p.get("catatan")))
+        for jenis in ("katalog", "riwayat"):
+            for ref in mirip.get(jenis, []):
+                ada = (db if jenis == "katalog" else src).execute(
+                    f"SELECT 1 FROM {'katalog' if jenis == 'katalog' else 'riwayat'} WHERE id = ?", (ref,)).fetchone()
+                assert ada, f"hadits_populer.json {p['id']}: {jenis} {ref} tidak ada"
+                db.execute("INSERT INTO populer_mirip VALUES (?,?,?)", (p["id"], jenis, ref))
         g = grams(p["arab"])
         # entri kitab: lafaz harus ada di JUDUL entri. Ucapan yang hanya DISEBUT dalam pembahasan entri lain
         # tidak ditautkan, karena kata kunci penilaian entri itu berlaku untuk ucapan lain.

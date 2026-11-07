@@ -36,7 +36,7 @@ DROP TABLE IF EXISTS penilaian; DROP TABLE IF EXISTS mirip; DROP TABLE IF EXISTS
 DROP TABLE IF EXISTS tema; DROP TABLE IF EXISTS he_hadits; DROP TABLE IF EXISTS he_tema; DROP TABLE IF EXISTS he_riwayat;
 DROP TABLE IF EXISTS riyadh_info; DROP TABLE IF EXISTS sumber; DROP TABLE IF EXISTS judul; DROP TABLE IF EXISTS judul_bab; DROP TABLE IF EXISTS edisi_alias;
 DROP TABLE IF EXISTS katalog_kitab; DROP TABLE IF EXISTS katalog; DROP TABLE IF EXISTS katalog_cari;
-DROP TABLE IF EXISTS populer; DROP TABLE IF EXISTS populer_katalog; DROP TABLE IF EXISTS populer_riwayat; DROP TABLE IF EXISTS populer_sebut;
+DROP TABLE IF EXISTS populer; DROP TABLE IF EXISTS populer_katalog; DROP TABLE IF EXISTS populer_riwayat; DROP TABLE IF EXISTS populer_sebut; DROP TABLE IF EXISTS populer_mirip;
 DROP TABLE IF EXISTS perawi; DROP TABLE IF EXISTS sanad_perawi;
 CREATE TABLE info (kunci TEXT PRIMARY KEY, nilai TEXT);
 CREATE TABLE kitab (
@@ -97,6 +97,7 @@ CREATE TABLE populer (id TEXT PRIMARY KEY, urut INT, teks_id TEXT, varian TEXT, 
 CREATE TABLE populer_katalog (populer_id TEXT, katalog_id TEXT, skor REAL);
 CREATE TABLE populer_riwayat (populer_id TEXT, n INT, skor REAL);
 CREATE TABLE populer_sebut (populer_id TEXT, katalog_id TEXT, kutipan TEXT);
+CREATE TABLE populer_mirip (populer_id TEXT, jenis TEXT, ref TEXT);   -- ref: id katalog, atau n riwayat
 -- Perawi (Taqrib at-Tahdzib + Tahdzib al-Kamal) dan identifikasi per segmen sanad (pipeline/perawi.py, hanya 'pasti')
 -- guru_json/murid_json/riwayat_json dihitung di sini supaya halaman perawi hanya membaca 1 baris (batas baca D1 gratis)
 CREATE TABLE perawi (id TEXT PRIMARY KEY, taqrib INT, tk_no INT, nama TEXT, teks_taqrib TEXT, penilaian TEXT, tingkat INT,
@@ -518,6 +519,10 @@ def main():
                 [(r[0], i) + tuple(r[1:]) for i, r in enumerate(kt.execute("SELECT id, teks_id, varian, arab, catatan FROM populer"), 1)])
         w.sisip("populer_katalog", ["populer_id", "katalog_id", "skor"], kt.execute("SELECT * FROM populer_katalog"))
         w.sisip("populer_sebut", ["populer_id", "katalog_id", "kutipan"], kt.execute("SELECT * FROM populer_sebut"))
+        if kt.execute("SELECT 1 FROM sqlite_master WHERE name='populer_mirip'").fetchone():
+            w.sisip("populer_mirip", ["populer_id", "jenis", "ref"],
+                    [(p, j, str(n_of[r]) if j == "riwayat" else r) for p, j, r in kt.execute("SELECT * FROM populer_mirip")
+                     if j == "katalog" or r in n_of])
         w.sisip("populer_riwayat", ["populer_id", "n", "skor"],
                 [(p, n_of[r], s_) for p, r, s_ in kt.execute("SELECT * FROM populer_riwayat") if r in n_of])
     if os.path.exists(pr_path):

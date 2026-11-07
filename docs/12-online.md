@@ -187,7 +187,7 @@ Token itu bisa mengubah Worker dan database di akun Anda. Cabut token itu di das
 | 3 | **HadeethEnc** | Boleh diterbitkan ulang tanpa diubah, dengan atribusi | Minta nomor versi data lewat email ke pengelola, lalu isi di halaman tema |
 | 4 | Izin **Lidwa Pusaka** | Sudah didapat | Simpan bukti tertulisnya di arsip pribadi (bukan di repo) |
 | 5 | Data **Ifta' Sunnah** | Hanya untuk uji, tidak diterbitkan | Tidak perlu tindakan |
-| 6 | **Glosarium** nama kitab & **daftar ucapan populer** | Ditandai "belum ditinjau" di situs | Sebaiknya ditinjau orang yang paham hadits sebelum diumumkan luas |
+| 6 | **Glosarium** nama kitab & **daftar ucapan populer** | Diperiksa ulang 7 Nov 2026 (lafaz, semua tautan, 235 nama kitab; lihat docs/10). Label situs: "diperiksa ulang, belum ditinjau ahli hadits" | Tetap sebaiknya ditinjau orang yang paham hadits sebelum diumumkan luas |
 | 7 | **Domain** | Belum | Untuk `.my.id`, registrar PANDI biasanya meminta identitas WNI. Alternatif: `.com` atau `.id` |
 | 8 | **Privasi** | Sudah dijelaskan di halaman Metode (#privasi) | Tidak ada cookie, iklan, atau analitik pihak ketiga. Teks Cek Hadits dan kata pencarian ada di alamat halaman dan bisa tersimpan di cache Cloudflare ±1 jam; pengguna diminta tidak menempel data pribadi |
 

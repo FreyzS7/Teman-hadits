@@ -67,7 +67,13 @@ export async function dataPopuler(db, id) {
   // lafaz yang hanya DISEBUT di pembahasan entri lain: tanpa kata kunci (penilaian entri itu tentang ucapan lain)
   const sebut = (await db.prepare(`SELECT s.katalog_id AS id, s.kutipan, k.no, k.judul_ar, k.kitab_id, b.nama AS kitab_nama, b.penulis FROM populer_sebut s
     JOIN katalog k ON k.id = s.katalog_id JOIN katalog_kitab b ON b.id = k.kitab_id WHERE s.populer_id = ?1 ORDER BY b.wafat, k.no`).bind(id).all()).results;
-  return { ...p, varian: JSON.parse(p.varian || "[]"), entri: await entriKatalog(db, ids), riwayat, sebut };
+  // lafaz MIRIP yang dibahas ulama (dipilih manual, dengan catatan di kolom catatan)
+  const mirip = (await db.prepare("SELECT jenis, ref FROM populer_mirip WHERE populer_id = ?1").bind(id).all().catch(() => ({ results: [] }))).results;
+  const nMirip = mirip.filter((m) => m.jenis === "riwayat").map((m) => Number(m.ref));
+  const miripRiwayat = nMirip.length ? (await db.prepare(`SELECT r.kitab_id, r.slug, r.no_tampil, k.nama AS kitab_nama FROM riwayat r JOIN kitab k ON k.id = r.kitab_id
+    WHERE r.n IN (SELECT value FROM json_each(?1)) ORDER BY k.urut, r.urut`).bind(JSON.stringify(nMirip)).all()).results : [];
+  const miripEntri = await entriKatalog(db, mirip.filter((m) => m.jenis === "katalog").map((m) => m.ref));
+  return { ...p, varian: JSON.parse(p.varian || "[]"), entri: await entriKatalog(db, ids), riwayat, sebut, miripEntri, miripRiwayat };
 }
 
 export async function daftarPopuler(db) {

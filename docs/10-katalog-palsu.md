@@ -93,6 +93,14 @@ Keempat kontrol tidak mendapat chip *palsu* dan ditemukan di kitab hadits kita d
 
 "Kebersihan sebagian dari iman" tidak ditemukan di mana pun dengan lafaz *النظافة من الإيمان*. Kitab-kitab katalog membahas lafaz berbeda, *بني الدين على النظافة* (Maqashid 302, Kasyf 922, Asrar 127). Ini contoh keterbatasan: pencocokan memakai lafaz, bukan makna, jadi lafaz Arab dalam daftar populer perlu ditinjau ahli.
 
+**Pemeriksaan ulang (7 Nov 2026).** Semua 20 lafaz Arab dicocokkan dengan bentuk yang beredar, dan semua 35 tautan judul, 11 tautan "disebut", serta 8 tautan riwayat dibaca satu per satu. Tidak ada tautan yang salah sasaran. Glosarium nama kitab (235 nama, `pipeline/glosarium_kitab.json`) juga dibaca ulang terhadap judul Arabnya, dan tidak ada yang perlu diubah. Label di situs kini berbunyi "diperiksa ulang, belum ditinjau ahli hadits": pemeriksaan ini tidak menggantikan tinjauan ahli. Untuk lima ucapan yang lafaznya tidak dibahas di keempat kitab, seluruh teks katalog dicari dengan potongan lafaz. Hasilnya:
+
+- **Kebersihan sebagian dari iman:** ditemukan lafaz mirip (lihat di bawah); kini ditampilkan sebagai bagian terpisah.
+- **Tidurnya orang berpuasa:** sudah tampil lewat "disebut" (Asrar 567; al-Qari: diriwayatkan al-Baihaqi dengan sanad lemah).
+- **Buaian–liang lahat, dunia seakan hidup selamanya, Ramadhan tiga bagian:** tidak ada satu pun potongan lafaznya di keempat kitab. Situs tetap menulis "tidak ditemukan sebagai judul entri", tanpa penilaian.
+
+**Lafaz mirip (`mirip` di `hadits_populer.json`).** Bila lafaz yang beredar tidak dibahas, tetapi ulama membahas lafaz yang mirip, entri itu bisa ditautkan **secara manual** dengan catatan. Isinya: daftar entri katalog dan riwayat yang disebut dalam kutipan itu. Halaman `/populer/<id>` menampilkannya di bagian "Lafaz mirip yang dibahas ulama", dengan keterangan bahwa kata kunci penilaiannya berlaku untuk lafaz mirip itu, bukan lafaz yang beredar. Bagian "Pembahasan ulama" untuk lafaz aslinya tetap menyatakan tidak ditemukan. Baru dipakai untuk "kebersihan sebagian dari iman": Maqashid 302, Kasyf 922, Asrar 127 (بني الدين على النظافة; al-'Iraqi: لم أجده; النظافة تدعو إلى الإيمان: sanadnya sangat lemah) dan Tirmidzi 2799 (إن الله ... نظيف يحب النظافة, yang disebut as-Suyuthi sebagai yang lebih dekat; at-Tirmidzi: gharib). Setiap id diperiksa ada saat `katalog_palsu.py` dijalankan.
+
 "Tidak ditemukan di 11 kitab hadits kami" **tidak** sama dengan "palsu". Situs mengatakannya secara eksplisit.
 
 ## Di situs
@@ -109,7 +117,7 @@ Keempat kontrol tidak mendapat chip *palsu* dan ditemukan di kitab hadits kita d
 
 ## Yang belum
 
-- Daftar ucapan populer dan lafaz Arabnya perlu ditinjau ahli hadits.
+- Daftar ucapan populer dan lafaz Arabnya sudah diperiksa ulang (7 Nov 2026), tetapi tetap perlu ditinjau ahli hadits.
 - Lisensi OpenITI: CC BY-NC-SA 4.0 (lihat `docs/02-sumber-dan-lisensi.md`).
 - Nomor entri belum dicocokkan dengan scan kitab cetak.
 - Kata kunci belum menangkap penilaian berbentuk kata kerja (صححه, حسنه, ضعفه) dan penyebutan *al-Maudhu'at* ("ذكره ابن الجوزي في الموضوعات").
