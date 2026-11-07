@@ -4,12 +4,14 @@
 // lain (bisa sah: potongan umum atau riwayat saudara dengan teks sama, lihat docs/06). Butuh Node >= 22.5 (node:sqlite).
 //   node scripts/uji-cek.mjs          (teks Indonesia)
 //   node scripts/uji-cek.mjs arab     (potongan 6-12 kata matan Arab, berharakat, tanpa sanad)
-//   tambahkan "rinci" untuk mencetak setiap kasus "lain"; "ejaan" untuk potongan yang ejaannya diganti varian lain
+//   tambahkan "rinci" untuk mencetak setiap kasus "lain"; "ejaan" untuk potongan yang ejaannya diganti varian lain; "dasar" untuk kata berawalan diganti kata dasarnya
 import { DatabaseSync } from "node:sqlite";
 import fs from "node:fs";
 import { cek } from "../src/cek.js";
 import { pisahSanad } from "../src/teks.js";
-const ARAB = process.argv.includes("arab"), RINCI = process.argv.includes("rinci"), EJAAN = process.argv.includes("ejaan");
+const ARAB = process.argv.includes("arab"), RINCI = process.argv.includes("rinci"), EJAAN = process.argv.includes("ejaan"), DASAR = process.argv.includes("dasar");
+// mode dasar: kata berawalan di potongan diganti kata dasarnya, seperti ketikan orang ("membaca" -> "baca")
+const keDasar = (w) => { const m = w.toLowerCase().match(/^(ber|di|ter)([a-z]{4,})$/) || w.toLowerCase().match(/^(mem)([bf][a-z]{3,})$/) || w.toLowerCase().match(/^(men)([dcj][a-z]{3,})$/) || w.toLowerCase().match(/^(meng)([aiueogh][a-z]{3,})$/); return m ? m[2] : null; };
 // mode ejaan: hanya potongan yang memuat kata dari grup ejaan kamus, lalu kata itu diganti varian lain (sholat, shodaqoh, ...)
 const KAMUS = JSON.parse(fs.readFileSync(new URL("../../pipeline/kamus_konsep.json", import.meta.url)));
 const GANTI = new Map(KAMUS.varian.flatMap((g) => g.map((v, i) => [v, g[(i + 1) % g.length]])));
@@ -45,6 +47,10 @@ while (sampel.length < 100) {
   if (kata.length < 10) continue;
   const mulai = Math.floor(acak() * Math.max(1, kata.length - 12));
   let potong = kata.slice(mulai, mulai + 8 + Math.floor(acak() * 8));
+  if (DASAR) {
+    if (!potong.some((w) => keDasar(w))) continue;
+    potong = potong.map((w) => keDasar(w) || w);
+  }
   if (EJAAN) {
     const bersih = (w) => w.toLowerCase().replace(/[^a-z']/g, "").replace(/'/g, "");
     if (!potong.some((w) => GANTI.has(bersih(w)))) continue;

@@ -70,6 +70,12 @@ function bentukMe(v) {
   return "me" + v; // l, m, n, r, w, y
 }
 const AKHIRAN_AWALAN = ["", "nya", "kan", "i"];
+/** Bentuk berawalan saja (me-/di-/ber-/ter-) dari kata dasar 3+ huruf; [] bila kata sudah berawalan. */
+export function awalanDari(v) {
+  if (v.length < 3 || /^(me|di|ber|ter|ke|pe)/.test(v)) return [];
+  return [bentukMe(v), "di" + v, (v[0] === "r" ? "be" : "ber") + v, "ter" + v];
+}
+
 export function bentukKata(v) {
   const dasar = v.length >= 4 ? AKHIRAN.map((a) => v + a) : [v];
   if (v.length < 3 || /^(me|di|ber|ter|ke|pe)/.test(v)) return dasar;

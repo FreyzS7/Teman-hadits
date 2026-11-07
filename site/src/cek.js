@@ -2,7 +2,7 @@
 // Prinsip: kata kunci khas harus ADA. Bila satu saja tidak muncul di terjemahan mana pun, jawabannya
 // "tidak ditemukan" dan kata itu disebutkan. Tidak ada tebakan.
 import { akarAr, adaArab, liputanJendela, normAr, normId, stemAr, stemId } from "./teks.js";
-import { NAMA_KITAB, nilai, varianDari } from "./cari.js";
+import { NAMA_KITAB, awalanDari, nilai, varianDari } from "./cari.js";
 
 const STOP = new Set(("yang dan itu ini dengan akan ia dia ke di dari pada untuk apa sesuai seseorang sesungguhnya kepada kami " +
   "telah adalah bahwa atau juga tidak orang dalam saya beliau bersabda berkata hr bukhari muslim sampai shallallahu alaihi " +
@@ -62,8 +62,10 @@ export async function cek(db, teks) {
     const mentah = [...new Set(normId(isi).split(" ").filter((w) => w.length >= 3 && !STOP.has(w)))];
     const grupKata = new Map(); // kunci grup (ejaan pertama, di-stem) -> ejaan-ejaannya (di-stem)
     for (const w of mentah) {
-      const g = [...new Set(varianDari(w).concat(varianDari(stemId(w)).length > 1 ? varianDari(stemId(w)) : []).map(stemId))];
-      const v = g.length > 1 ? g : [stemId(w)];
+      const g0 = [...new Set(varianDari(w).concat(varianDari(stemId(w)).length > 1 ? varianDari(stemId(w)) : []).map(stemId))];
+      // kata dasar juga dicocokkan dengan bentuk berawalannya ("baca" -> membaca/dibaca, "puasa" -> berpuasa)
+      // (hanya untuk kata yang diketik, bukan semua varian ejaannya: bentuknya jadi terlalu banyak dan melemahkan bobot)
+      const v = [...new Set([...(g0.length > 1 ? g0 : [stemId(w)]), ...awalanDari(stemId(w))])];
       if (!grupKata.has(v[0])) grupKata.set(v[0], v);
     }
     const kunciDari = new Map([...grupKata].flatMap(([k, vs]) => vs.map((v) => [v, k])));
