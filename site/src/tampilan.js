@@ -214,7 +214,7 @@ export function halamanHadits(d) {
   const kelompok = {};
   for (const j of jalur) (kelompok[j.kitab_id] ||= { nama: j.kitab_nama, xs: [] }).xs.push(j);
   const adaSama = jalur.some((j) => j.tingkat_mirip === "sama");
-  const penJalur = jalur.filter((j) => j.tingkat_mirip === "sama" && jalurPenilaian.has(j.n)).slice(0, 6);
+  const penJalur = jalur.filter((j) => (j.tingkat_mirip === "sama" || j.tingkat_mirip === "serupa") && jalurPenilaian.has(j.n)).slice(0, 6);
   const terjemahHtml = r.terjemah ? esc(r.terjemah).replace(/\[([^\]]+)\]/g, '<span class="perawi">$1</span>') : null;
   const gabungan = (r.alasan || "").startsWith("teks ini tercakup utuh");
   const rujukanTeks = `HR. ${HR[kitab.id] || kitab.nama} no. ${r.no_edisi ? `${r.no_edisi} (edisi ${kitab.edisi}; no. ${r.no_tampil} penomoran Lidwa)` : r.no_tampil + (kitab.jumlah_standar ? "" : " (penomoran Lidwa)")}. Sumber: Teman Hadits, ${kanonik}`;
@@ -263,11 +263,11 @@ export function halamanHadits(d) {
     </div>
     <aside class="hamisy" aria-label="Catatan pinggir">
       <section><h2>Derajat</h2>${bukuBesar(penilaian, kitab.id, tambahan)}
-        ${penJalur.length ? `<p style="margin:12px 0 6px;font:500 .9rem/1.4 var(--f-ui)">Penilaian ulama atas jalur lain yang matannya sama:</p>${penJalur.map((j) => `<div style="margin-top:10px"><div class="label" style="margin-bottom:4px"><a href="/${esc(j.kitab_id)}/${esc(j.slug)}">${esc(PENDEK[j.kitab_id])} no. ${esc(j.no_tampil)}</a></div>${bukuBesar(jalurPenilaian.get(j.n), j.kitab_id)}</div>`).join("")}` : ""}
+        ${penJalur.length ? `<p style="margin:12px 0 6px;font:500 .9rem/1.4 var(--f-ui)">Penilaian ulama atas jalur lain yang matannya sama atau hampir sama:</p>${penJalur.map((j) => `<div style="margin-top:10px"><div class="label" style="margin-bottom:4px"><a href="/${esc(j.kitab_id)}/${esc(j.slug)}">${esc(PENDEK[j.kitab_id])} no. ${esc(j.no_tampil)}</a></div>${bukuBesar(jalurPenilaian.get(j.n), j.kitab_id)}</div>`).join("")}` : ""}
       </section>
       <section><h2>Diriwayatkan juga oleh</h2>
-        ${jalur.length ? `<div class="jalur">${Object.entries(kelompok).map(([k, g]) => `<div><span class="kitab">${esc(g.nama)}</span><div class="nomor">${g.xs.map((j) => `<a class="${j.tingkat_mirip === "mirip" ? "mirip" : ""}" href="/${esc(j.kitab_id)}/${esc(j.slug)}" title="${j.tingkat_mirip === "sama" ? "matan sama" : "matan mirip, periksa sendiri"} (${Math.round(j.skor * 100)}%)">${esc(j.no_tampil)}</a>`).join("")}</div></div>`).join("")}</div>
-        <p class="kecil" style="margin-top:8px">Kotak utuh = matan sama. Kotak putus-putus = mirip, periksa sendiri. Dicocokkan otomatis lewat kemiripan matan Arab.</p>`
+        ${jalur.length ? `<div class="jalur">${Object.entries(kelompok).map(([k, g]) => `<div><span class="kitab">${esc(g.nama)}</span><div class="nomor">${g.xs.map((j) => `<a class="${j.tingkat_mirip === "mirip" ? "mirip" : ""}" href="/${esc(j.kitab_id)}/${esc(j.slug)}" title="${j.tingkat_mirip === "sama" ? "matan sama" : j.tingkat_mirip === "serupa" ? "lafaz matan hampir sama (≥80% kata Arabnya sama)" : "matan mirip, periksa sendiri"}${j.skor != null ? ` (${Math.round(j.skor * 100)}%)` : ""}">${esc(j.no_tampil)}</a>`).join("")}</div></div>`).join("")}</div>
+        <p class="kecil" style="margin-top:8px">Kotak utuh = matan sama atau hampir sama (≥80% kata Arabnya sama). Kotak putus-putus = mirip, periksa sendiri. Dicocokkan otomatis lewat kemiripan matan Arab.</p>`
         : `<p class="tanpa-nilai">${pisah ? "Belum ditemukan riwayat lain dengan matan yang sama di kitab-kitab kami." : "Belum dihitung, karena matannya belum bisa dipisahkan otomatis dari sanad."}</p>`}
       </section>
       ${dikutip.length ? `<section><h2>Dikutip dalam</h2><p class="kecil" style="margin-bottom:6px">Riyadhus Shalihin (an-Nawawi)</p><div class="jalur"><div class="nomor">${dikutip.map((x) => `<a href="/riyadh/${esc(x.slug)}">no. ${esc(x.no_tampil)}</a>`).join("")}</div></div></section>` : ""}

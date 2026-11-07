@@ -221,7 +221,9 @@ Bukti hitungan tiap entri ada di kolom `bukti` di `kamus_konsep.json`.
 - **Saat pencarian**, hanya kolom `grup` dari 200 kandidat teratas (10 halaman) yang dibaca. Tidak ada pemrosesan teks, karena versi sebelumnya (menghitung kemiripan saat pencarian, per halaman) makan 2–5 ms CPU untuk 100 kandidat, padahal batas paket gratis 10 ms. Setiap halaman tetap berisi 20 kartu berbeda. Bila kolom `grup` belum ada di database, hasil tampil tanpa dilipat.
 - **Contoh halaman pertama:** "niat" melipat 15 jalur, "kuda" 17, "larangan minum berdiri" 13.
 
-Kode: `lipat()` di `site/src/cari.js`. Uji: `site/test/kelompok.test.js`, `pipeline/test_export.py`.
+Kode: `lipat()` di `site/src/cari.js`.
+
+**Di halaman hadits:** anggota kelompok yang sama ditampilkan di "Diriwayatkan juga oleh" (kotak utuh, keterangan "lafaz matan hampir sama, ≥80% kata Arabnya sama"), dan penilaian ulamanya ikut di "Penilaian ulama atas jalur lain yang matannya sama atau hampir sama". Hasilnya, 4.363 riwayat yang tidak punya data takhrij kini punya daftar riwayat serupa (mis. Bukhari 329 dan 478, hadits yang diulang di bab lain). Kueri memakai indeks `ix_riwayat_grup` (parsial, hanya baris bergrup). Di database tanpa kolom `grup`, halaman tetap tampil seperti dulu. Uji: `site/test/kelompok.test.js`, `pipeline/test_export.py`.
 
 **Nama di sanad tidak lagi ikut dicari sebagai kata biasa (7 Nov 2026):** terjemah Lidwa menulis perawi dalam kurung siku ("dari [Hisyam] dari [ayahnya] dari ['Aisyah]"). Dulu seluruh terjemah diindeks, sehingga "ayah" cocok dengan 6.767 riwayat, kebanyakan karena "dari [ayahnya]" di sanad. Kini:
 

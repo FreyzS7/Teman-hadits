@@ -68,21 +68,33 @@ async function halamanHadits(env, url, kid, slug) {
   if (!r) return html(T.layout({ judul: "Tidak ditemukan · Teman Hadits", noindex: true, isi: T.halamanGalat("Nomor tidak ditemukan", `${T.PENDEK[kid] || kid} no. ${slug} tidak ada di data kami. Penomoran bisa berbeda antar-edisi; coba cari dengan kata kunci.`) }), 404);
   // takhrij, penilaian, perawi, dan judul tersimpan di baris riwayat (kolom *_json, judul_id): lihat pipeline/export_d1.py
   const jal = JSON.parse(r.jalur_json || "[]");
-  const [anggota, tetangga, tema, bab, dikutip, judul] = await db.batch([
+  // riwayat sekelompok (pipeline/serupa.py: matan Arab >= 80% sama) melengkapi takhrij, yang tidak ada untuk
+  // banyak riwayat; kolom grup hanya ada di database yang diekspor sesudah fitur itu
+  const grup = r.grup ?? null;
+  const [anggota, tetangga, tema, bab, dikutip, judul, sekelompok] = await db.batch([
     db.prepare("SELECT x.n, x.kitab_id, x.slug, x.no_tampil, x.urut, x.nilai_json, k.nama AS kitab_nama, k.urut AS ku FROM riwayat x JOIN kitab k ON k.id = x.kitab_id WHERE x.n IN (SELECT value FROM json_each(?1))").bind(JSON.stringify(jal.map(([n]) => n))),
     db.prepare("SELECT slug, no_tampil, urut FROM riwayat WHERE kitab_id = ?1 AND urut IN (?2, ?3)").bind(kid, r.urut - 1, r.urut + 1),
     db.prepare("SELECT DISTINCT t.id, t.judul FROM he_riwayat hr JOIN he_tema ht ON ht.he_id = hr.he_id JOIN tema t ON t.id = ht.tema_id WHERE hr.n = ?1 LIMIT 8").bind(r.n),
     db.prepare("SELECT no, nama FROM bab WHERE kitab_id = ?1 AND no = ?2").bind(kid, r.bab_no ?? -1),
     db.prepare("SELECT x.slug, x.no_tampil FROM sumber s JOIN riwayat x ON x.n = s.a WHERE s.b = ?1 ORDER BY x.urut").bind(r.n),
     db.prepare("SELECT kitab_ar, kitab_nama_id, bab_ar, catatan FROM judul_bab WHERE id = ?1").bind(r.judul_id ?? -1),
+    grup === null ? db.prepare("SELECT 1 WHERE 0")
+      : db.prepare("SELECT x.n, x.kitab_id, x.slug, x.no_tampil, x.urut, x.nilai_json, k.nama AS kitab_nama, k.urut AS ku FROM riwayat x JOIN kitab k ON k.id = x.kitab_id WHERE x.grup = ?1 AND x.n <> ?2").bind(grup, r.n),
   ]);
   const pen = { results: nilai(r.nilai_json) };
   const per = new Map(anggota.results.map((x) => [x.n, x]));
   const jalur = jal.filter(([n]) => per.has(n))
-    .map(([n, skor, tingkat_mirip]) => { const { nilai_json, ...x } = per.get(n); return { ...x, skor, tingkat_mirip }; })
-    .sort((a, b) => a.ku - b.ku || a.urut - b.urut);
+    .map(([n, skor, tingkat_mirip]) => { const { nilai_json, ...x } = per.get(n); return { ...x, skor, tingkat_mirip }; });
+  // anggota kelompok yang belum ada di takhrij: "serupa" (lafaz matan hampir sama); yang sudah ada: tandai sama
+  const diJalur = new Map(jalur.map((j) => [j.n, j]));
+  for (const x of sekelompok.results) {
+    if (diJalur.has(x.n)) { diJalur.get(x.n).tingkat_mirip = "sama"; continue; }
+    const { nilai_json, ...y } = x;
+    jalur.push({ ...y, skor: null, tingkat_mirip: "serupa" });
+  }
+  jalur.sort((a, b) => a.ku - b.ku || a.urut - b.urut);
   const jalurPenilaian = new Map();
-  for (const x of anggota.results) { const p = nilai(x.nilai_json); if (p.length) jalurPenilaian.set(x.n, p); }
+  for (const x of [...anggota.results, ...sekelompok.results]) { const p = nilai(x.nilai_json); if (p.length) jalurPenilaian.set(x.n, p); }
   if (kid === "riyadh") return halamanRiyadh(env, url, kitab, r);
   const pisah = pisahSanad(r.arab);
   if (pisah && kid === "tirmidzi") Object.assign(pisah, pisahKomentar(pisah.matan));

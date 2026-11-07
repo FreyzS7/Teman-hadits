@@ -61,6 +61,13 @@ test("kueri berupa kalimat: ucapan populer dikenali, Cek Hadits disarankan", ops
   assert.doesNotMatch((await ambil("/cari?q=" + encodeURIComponent("tolong carikan hadits tentang sholat tarawih") + "&z=" + Date.now())).teks, /Cek kalimat ini/);
 });
 
+test("halaman hadits: riwayat sekelompok (matan hampir sama) melengkapi takhrij", opsi, async () => {
+  const { teks } = await ambil("/bukhari/329?z=" + Date.now());
+  // dulu "Belum ditemukan riwayat lain": tanpa data takhrij, tetapi punya kelompok (kolom grup, database baru)
+  if (/hampir sama \(≥80% kata Arabnya sama\)"/.test(teks)) assert.doesNotMatch(teks, /Belum ditemukan riwayat lain/);
+  else assert.match(teks, /Belum ditemukan riwayat lain/); // database lama tanpa kolom grup: halaman tetap tampil
+});
+
 test("rujukan 'muslim 1907' langsung dibuka", opsi, async () => {
   const r = await ambil("/cari?q=muslim%201907");
   assert.equal(r.status, 302);

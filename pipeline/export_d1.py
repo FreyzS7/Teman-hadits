@@ -68,6 +68,7 @@ CREATE INDEX ix_riwayat_edisi ON riwayat (kitab_id, no_edisi) WHERE no_edisi IS 
 CREATE UNIQUE INDEX ix_riwayat_slug ON riwayat (kitab_id, slug);
 CREATE INDEX ix_riwayat_urut ON riwayat (kitab_id, urut);
 CREATE INDEX ix_riwayat_bab ON riwayat (kitab_id, bab_no, urut);
+CREATE INDEX ix_riwayat_grup ON riwayat (grup) WHERE grup IS NOT NULL;   -- halaman hadits: riwayat sekelompok
 CREATE TABLE kata_df (kata TEXT PRIMARY KEY, n INT) WITHOUT ROWID;
 CREATE VIRTUAL TABLE cari USING fts5 (
   arab_polos, arab_akar, terjemah_polos, perawi, judul,
