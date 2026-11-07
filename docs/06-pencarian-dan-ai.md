@@ -350,6 +350,13 @@ Kode: `tanpa_kurung()` dan `nama_saja()` di `pipeline/export_d1.py` (uji: `pipel
 
 Perintah (di folder `site`): `npm run catatan:siapkan` (sekali, membuat tabel di D1 online) dan `npm run catatan:lihat` (100 kueri teratas). Analytics Engine sempat dipertimbangkan, tetapi ketentuan paket gratisnya belum bisa dipastikan dari dokumentasi resmi.
 
+**Cek Hadits untuk pesan WhatsApp (7 Nov 2026):** teks yang beredar jarang berupa potongan bersih. Dua mode uji baru di `scripts/uji-cek.mjs`:
+
+- `wa`: potongan dibungkus seperti pesan berantai. Ada pembuka («Rasulullah SAW bersabda:», «📿 Dari Abu Hurairah ra, …»), singkatan (yg, dgn, utk, krn, kpd, …), huruf besar acak, emoji, tagar, dan penutup («(HR. Bukhari)», «Semoga bermanfaat 🙏», «Aamiin»). Hasil awal **36/100**: 59 kasus "tidak ditemukan", karena singkatan 3 huruf (dgn, krn, kpd) dianggap kata yang tidak ada di terjemahan mana pun. Setelah `bersihkanPesan()` di `site/src/cek.js`: **90/100**. Fungsi itu membuang tagar dan emoji, mengambil isi kutipan saja bila kutipannya ≥ 4 kata, membuang pembuka "… bersabda:" bila sesudahnya masih ≥ 4 kata, membuang penutup berantai, dan memulihkan 50-an singkatan umum. Teks Arab tidak dipotong.
+- `pendek`: potongan 4–6 kata, hasilnya **44/100**. Ini wajar: potongan sependek itu memang muncul di banyak riwayat (56 kasus "lain" semuanya memuat seluruh kata potongan). Karena itu, bila semua kata juga muncul bersama di ≥ 2 riwayat lain di luar keluarga hasil, halaman Cek kini mengatakannya («Teks ini pendek atau umum: … juga muncul bersama di N riwayat lain») dan menyarankan kalimat yang lebih panjang atau halaman Cari.
+
+Mode lain tidak berubah: biasa 86, ejaan 89, kata dasar 81, Arab 95.
+
 **Kamus dari judul bab Arab (7 Nov 2026):** sebelum ada pengguna, topik diambil dari 16.066 judul kitab/bab Arab (OpenITI). Kata judul yang paling sering (حيض, حجامة, خمر, سحر, طاعون, وزغ, تجارة, سواك, بول, خطبة, صف, ذكر, ضحى ...) dipadankan dengan istilah awam Indonesia, lalu ±130 kueri diuji ke mesin pencari lokal. Yang ditambahkan hanya istilah yang terbukti lemah (hasil 0–8, atau cocok dengan kata yang salah), dan setiap padanan dicek jumlahnya di database:
 
 | Kueri | Sebelum | Sesudah | Entri |

@@ -258,3 +258,20 @@ test("kamus dari judul bab: istilah awam tanpa padanan di terjemah", opsi, async
   assert.match((await ambil("/cari?q=cicak&z=" + Date.now())).teks, /href="\/(bukhari|muslim|abudawud|nasai|ibnumajah)\/[^"]+"/);
   assert.match((await ambil("/cari?q=zikir+pagi&z=" + Date.now())).teks, /zikir→dzikir/);
 });
+
+test("Cek Hadits: pesan berantai WhatsApp dan potongan pendek", opsi, async () => {
+  const wa = "📿 Dari Abu Hurairah ra, Rasulullah ﷺ bersabda:\n“Sesungguhnya amal itu tergantung niatnya, dan setiap org akan mendapatkan apa yg ia niatkan” (HR. Bukhari) Semoga bermanfaat 🙏 #sharing";
+  const a = (await ambil("/cek?t=" + encodeURIComponent(wa) + "&z=" + Date.now())).teks;
+  assert.match(a, /DITEMUKAN/);
+  assert.match(a, /href="\/bukhari\/1"/);
+  assert.match(a, /Atribusi sesuai/);
+  const pendek = (await ambil("/cek?t=" + encodeURIComponent("Allah mengetahui bahwa") + "&z=" + Date.now())).teks;
+  assert.match(pendek, /Teks ini pendek atau umum/);
+});
+
+test("populer: lafaz mirip yang dibahas ulama ditampilkan terpisah", opsi, async () => {
+  const t = (await ambil("/populer/kebersihan-iman?z=" + Date.now())).teks;
+  assert.match(t, /Lafaz mirip yang dibahas ulama/);
+  assert.match(t, /href="\/tirmidzi\/2799"/);
+  assert.match(t, /tidak ditemukan sebagai judul entri/);   // lafaz aslinya tetap dinyatakan tidak dibahas
+});

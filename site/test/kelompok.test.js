@@ -56,3 +56,16 @@ test("cuplikMatan: deskripsi halaman dimulai dari matan, bukan sanad", () => {
   assert.equal(cuplikMatan("Tanpa sanad dan pendek."), "Tanpa sanad dan pendek.");
   assert.equal(cuplikMatan(""), "");
 });
+
+import { bersihkanPesan } from "../src/cek.js";
+test("bersihkanPesan: pesan berantai WhatsApp -> isi hadits saja", () => {
+  assert.equal(bersihkanPesan("📿 Dari Abu Hurairah ra, Rasulullah ﷺ bersabda:\n“barangsiapa yg Tuan rendahkan pd hari ini, maka” #sharing"),
+    "barangsiapa yang Tuan rendahkan pada hari ini, maka");
+  assert.equal(bersihkanPesan("Rasulullah SAW bersabda: Barang siapa yg berutang kpd seseorang. Semoga bermanfaat 🙏 Aamiin").trim(),
+    "Barang siapa yang berutang kepada seseorang");
+  // pembuka tidak dibuang bila sesudahnya kurang dari 4 kata
+  assert.equal(bersihkanPesan("Seorang laki-laki datang kepada Nabi seraya berkata,"), "Seorang laki-laki datang kepada Nabi seraya berkata");
+  assert.equal(bersihkanPesan("Tuntutlah ilmu walau sampai ke negeri Cina"), "Tuntutlah ilmu walau sampai ke negeri Cina");
+  // teks Arab tidak dipotong
+  assert.equal(bersihkanPesan("قال \"إنما الأعمال بالنيات\""), "قال \"إنما الأعمال بالنيات\"");
+});

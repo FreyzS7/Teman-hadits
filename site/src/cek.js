@@ -20,6 +20,29 @@ export function bacaKlaim(teks) {
   return [...kitab];
 }
 
+// Teks yang beredar di WhatsApp: singkatan, tagar, pembuka "Rasulullah SAW bersabda:", penutup "Semoga bermanfaat 🙏".
+const SINGKATAN = new Map(Object.entries({ yg: "yang", dgn: "dengan", dg: "dengan", dng: "dengan", utk: "untuk", tdk: "tidak", gak: "tidak",
+  ga: "tidak", nggak: "tidak", krn: "karena", karna: "karena", org: "orang", sdh: "sudah", udah: "sudah", kpd: "kepada", dr: "dari",
+  spt: "seperti", jg: "juga", blm: "belum", dlm: "dalam", pd: "pada", tsb: "tersebut", bs: "bisa", sm: "sama", hrs: "harus",
+  sblm: "sebelum", stlh: "setelah", bhw: "bahwa", sj: "saja", aja: "saja", klo: "kalau", kalo: "kalau", tp: "tapi", sbg: "sebagai",
+  thd: "terhadap", ttg: "tentang", bnyk: "banyak", byk: "banyak", lbh: "lebih", mk: "maka", jgn: "jangan", jngn: "jangan",
+  dpt: "dapat", tlh: "telah", akn: "akan", sy: "saya", km: "kamu", kmu: "kamu", sbb: "sebab", sgl: "segala", smua: "semua" }));
+const PENUTUP = /(?:[\s\p{P}\p{S}]|\b(?:semoga\s+(?:bermanfaat|berkah|menjadi\s+amal\s+jariyah)|aa+mi+n+|ami+n+\s+ya\s+rabb\w*|wallahu\s+a'?lam(?:\s+bish?[\s-]*sh?awab)?|sebarkan|share|bagikan|copas|copy\s*paste)\b)+$/iu;
+export function bersihkanPesan(t) {
+  t = String(t || "").replace(/#[\p{L}\p{N}_]+/gu, " ").replace(/\p{Extended_Pictographic}|\uFE0F|\u200D/gu, " ");
+  if (adaArab(t)) return t;
+  const awal = t.search(/[“"]/), akhir = Math.max(t.lastIndexOf("”"), t.lastIndexOf('"'));
+  // isi kutipan saja (pembuka & penutup di luarnya dibuang) bila kutipan memuat minimal 4 kata
+  if (awal >= 0 && akhir > awal && t.slice(awal + 1, akhir).trim().split(/\s+/).length >= 4) t = t.slice(awal + 1, akhir);
+  else {
+    // pembuka "Rasulullah SAW bersabda:" dibuang hanya bila sesudahnya masih ada minimal 4 kata
+    const tanpaPembuka = t.replace(/^[^.!?]{0,120}?\b(?:bersabda|berkata|berfirman)\b\s*[:,]/i, " ");
+    if (tanpaPembuka !== t && tanpaPembuka.trim().split(/\s+/).length >= 4) t = tanpaPembuka;
+  }
+  for (let i = 0; i < 4; i++) t = t.replace(PENUTUP, "");
+  return t.replace(/[\p{L}]+/gu, (w) => SINGKATAN.get(w.toLowerCase()) || w);
+}
+
 const tanpaKlaim = (t) => t.replace(/\((?:[^()]*\b(?:HR|H\.R|riwayat|muttafaq)[^()]*)\)/gi, " ").replace(/\b(?:HR|H\.R)\.?\s.*$/i, " ");
 
 function duaGram(teksNorm) {
@@ -51,7 +74,7 @@ function samaDuaGram(G, teksNorm) {
 export async function cek(db, teks) {
   const masukan = String(teks ?? "").slice(0, 2000);
   const klaim = bacaKlaim(masukan);
-  const isi = tanpaKlaim(masukan);
+  const isi = bersihkanPesan(tanpaKlaim(masukan));
   const total = (await db.prepare("SELECT nilai FROM info WHERE kunci = 'terbit'").first())?.nilai;
   const hasil = { teks: masukan, klaim, total: Number(total), mode: adaArab(isi) ? "arab" : "indonesia" };
 
@@ -90,9 +113,11 @@ export async function cek(db, teks) {
     const jendela = 3 * Q.length + 6;
     const urutKitab = (k) => { const i = URUT_KITAB.indexOf(k); return i < 0 ? 99 : i; };
     let rentangTerbaik = Infinity, kitabTerbaik = 99;
+    const penuh = [];   // riwayat yang memuat SEMUA kata kueri dalam satu jendela (potongan pendek: bisa banyak)
     for (const c of cand) {
       const { skor, rentang } = liputanJendela(c.terjemah, Q, idf, jendela, kunciDari);
       const s = skor / tot, uk = urutKitab(c.kitab_id);
+      if (s >= 0.999) penuh.push(c.n);
       const seri = Math.abs(s - skorTerbaik) <= 1e-9;
       // selisih jarak <= 2 kata (mis. "agama itu adalah nasihat" vs "agama adalah nasihat") dianggap setara
       const rapat = rentang + 2 < rentangTerbaik, setara = Math.abs(rentang - rentangTerbaik) <= 2;
@@ -100,6 +125,8 @@ export async function cek(db, teks) {
       if (s > 0 && lebih) { skorTerbaik = s; terbaik = c.n; rentangTerbaik = rentang; kitabTerbaik = uk; }
     }
     hasil.skor = Math.round(skorTerbaik * 100) / 100;
+    hasil.penuh = penuh;
+    hasil.kandidatPenuh = cand.length >= 120;
     if (skorTerbaik < AMBANG_ID) return { ...hasil, status: "tidak-ditemukan", alasan: "kata-katanya ada, tetapi tidak muncul bersama dalam satu riwayat" };
   } else {
     const norm = normAr(isi);
@@ -130,8 +157,12 @@ export async function cek(db, teks) {
   const keluarga = kel.map(({ nilai_json, ...x }) => ({
     ...x, hubungan: x.n === terbaik ? "terbaik" : jal.get(x.n) ?? null, penilaian: nilai(nilai_json) }));
   const adaDi = new Set(keluarga.map((x) => x.kitab_id));
+  // berapa riwayat LAIN (di luar keluarga & kelompok hasil) yang juga memuat semua kata: tanda potongan terlalu umum
+  const diKeluarga = new Set(keluarga.map((x) => x.n));
+  const { penuh = [], kandidatPenuh, ...sisa } = hasil;
+  const lainPenuh = penuh.filter((n) => !diKeluarga.has(n)).length;
   return {
-    ...hasil, status: "ditemukan", terbaik, keluarga,
+    ...sisa, status: "ditemukan", terbaik, keluarga, lainPenuh, lainPenuhLebih: Boolean(kandidatPenuh && lainPenuh),
     klaimHasil: klaim.map((k) => ({ kitab: k, ada: adaDi.has(k), nomor: keluarga.filter((x) => x.kitab_id === k).map((x) => x.no_tampil) })),
   };
 }
