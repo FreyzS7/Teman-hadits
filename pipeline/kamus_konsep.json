@@ -196,6 +196,13 @@
       "kaffarah",
       "kafarah",
       "kafaroh"
+    ],
+    [
+      "khusyu",
+      "khusyuk",
+      "khusu",
+      "kusyuk",
+      "khusyuu"
     ]
   ],
   "_catatan_varian": "Kata pertama = bentuk baku untuk tampilan. Saat mencari, SEMUA varian dicari bersamaan (terjemahan Lidwa memakai ejaan campuran: sedekah 821, shadaqah 248, shodaqoh 16).",
@@ -2251,6 +2258,108 @@
       "bab": [],
       "catatan": "Kisah Ibnul Lutbiyyah, petugas zakat yang menerima hadiah: أفلا جلس في بيت أبيه وأمه فينظر أيهدى له أم لا. \"Gratifikasi\" adalah istilah modern; ini riwayat yang paling dekat. Teman Hadits hanya menampilkan riwayat; hukumnya tanyakan kepada ulama.",
       "bukti": "arab_akar:\"ابن اللتبية\" = 8; \"هدايا العمال\" = 1 (build 2026-11-07)"
+    },
+    {
+      "id": "mushafahah",
+      "label": "Berjabat tangan (mushafahah)",
+      "pemicu": [
+        "bersalaman",
+        "salaman",
+        "mushafahah",
+        "berjabat"
+      ],
+      "arab": [
+        "يتصافحان",
+        "المصافحة",
+        "لا أصافح النساء"
+      ],
+      "terjemah": [
+        "berjabat tangan",
+        "bersalaman"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: ما من مسلمين يلتقيان فيتصافحان إلا غفر لهما (dua muslim yang bertemu lalu berjabat tangan diampuni), dan ucapan Nabi إني لا أصافح النساء.",
+      "bukti": "arab_akar:يتصافحان = 5; المصافحة = 11; \"لا أصافح النساء\" = 6; terjemah 'berjabat tangan' = 21, 'bersalaman' = 5 (build 2026-11-07)"
+    },
+    {
+      "id": "lihyah",
+      "label": "Jenggot (lihyah)",
+      "pemicu": [
+        "jenggot",
+        "janggut",
+        "lihyah"
+      ],
+      "arab": [
+        "أعفوا اللحى",
+        "وفروا اللحى",
+        "اللحى"
+      ],
+      "terjemah": [
+        "jenggot",
+        "janggut"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: أحفوا الشوارب وأعفوا اللحى (pendekkan kumis dan biarkan jenggot).",
+      "bukti": "arab_akar:\"أعفوا اللحى\" = 15; \"وفروا اللحى\" = 1; اللحى = 65; terjemah 'jenggot' = 102, 'janggut' = 10 (build 2026-11-07)"
+    },
+    {
+      "id": "waswas",
+      "label": "Was-was (bisikan dalam hati)",
+      "pemicu": [
+        "waswas",
+        "wiswas"
+      ],
+      "arab": [
+        "الوسوسة",
+        "يوسوس",
+        "صريح الإيمان",
+        "حدثت به أنفسها"
+      ],
+      "terjemah": [
+        "was was"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: إن الله تجاوز لأمتي ما حدثت به أنفسها (Allah memaafkan apa yang terlintas dalam hati umatku) dan ذاك صريح الإيمان (itulah iman yang murni, tentang rasa takut terhadap bisikan).",
+      "bukti": "arab_akar:الوسوسة = 6; يوسوس = 2; \"صريح الإيمان\" = 5; \"حدثت به أنفسها\" = 15; terjemah 'was-was' = 16 (build 2026-11-07)"
+    },
+    {
+      "id": "hinna",
+      "label": "Inai (hinna')",
+      "pemicu": [
+        "inai",
+        "henna",
+        "hinna",
+        "hena"
+      ],
+      "arab": [
+        "الحناء"
+      ],
+      "terjemah": [
+        "inai"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: الحناء (inai), untuk mewarnai rambut, kuku, atau tangan. Terjemah Lidwa kadang memakai \"daun pacar\"; kata \"pacar\" tidak dijadikan pemicu karena pengguna umumnya bermaksud lain.",
+      "bukti": "arab_akar:الحناء = 80; terjemah 'inai' = 44, 'pacar' = 46 (tidak dipakai sebagai pemicu) (build 2026-11-07)"
+    },
+    {
+      "id": "qalansuwah",
+      "label": "Peci/kopiah (qalansuwah)",
+      "pemicu": [
+        "peci",
+        "kopiah",
+        "songkok",
+        "qalansuwah",
+        "kopyah"
+      ],
+      "arab": [
+        "القلنسوة"
+      ],
+      "terjemah": [
+        "peci"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai القلنسوة (penutup kepala); riwayatnya sedikit.",
+      "bukti": "arab_akar:القلنسوة = 6; terjemah 'peci' = 8 (build 2026-11-07)"
     }
   ]
 }

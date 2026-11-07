@@ -206,6 +206,8 @@ Putaran ketiga belas (45 kueri akad muamalah, waris, utang, sumpah/nadzar). Grup
 | "muflis" | 0 | 32 | أدرك ماله بعينه, أتدرون ما المفلس |
 | "gratifikasi" | 0 | 10, dibuka Bukhari 1500 | ابن اللتبية, هدايا العمال (catatan: istilah modern, riwayat terdekat) |
 
+Putaran keempat belas (45 kueri adab sehari-hari, penampilan, shalat). Hanya 6 yang lemah. Konsep baru: mushafahah ("bersalaman dengan wanita" 2 → 37, dibuka Nasa'i 4181), lihyah ("memanjangkan jenggot" 8 → 158), was-was (حدثت به أنفسها, صريح الإيمان; 8 → 41), inai (الحناء, 3 → 86), dan qalansuwah/peci (11). Grup ejaan khusyu/khusyuk (5 → 70). "pacar" tidak dijadikan pemicu inai: di terjemah Lidwa artinya daun pacar, tetapi pengguna umumnya bermaksud lain.
+
 **Kueri berupa kalimat (putaran kesepuluh):** 20 potongan hadits populer diuji, termasuk 4 yang dikenal lemah/palsu. Pencarian kata kunci kurang tepat untuk kalimat: "senyummu kepada saudaramu adalah sedekah" jatuh ke mode "sebagian kata" (63.721 hasil), dan "tuntutlah ilmu sampai ke negeri cina" dibuka kisah Nabi Musa. Cek Hadits menangani kalimat ini jauh lebih baik, dan daftar Populer mengenali keempat ucapan lemah/palsu.
 
 Bila kueri minimal 4 kata dan menyisakan minimal 3 kata kunci (setelah kata pengisi dan istilah kamus), halaman Cari kini:
