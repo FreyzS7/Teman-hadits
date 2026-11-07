@@ -337,7 +337,7 @@ async function rute(req, env) {
     if (!q) return Response.json({ galat: "parameter q kosong" }, { status: 400 });
     const out = await cari(db, q, { halaman: halamanKe(url), abaikanIdRiyadh: env.TERJEMAH_RIYADH === "sembunyi" });
     return Response.json({
-      rencana: { ...out.rencana, konsep: out.rencana.konsep.map((k) => ({ id: k.id, label: k.label })) }, total: out.total,
+      rencana: { ...out.rencana, konsep: out.rencana.konsep.map((k) => ({ id: k.id, label: k.label })) }, total: out.total, total_lebih: out.totalLebih,
       hasil: out.hasil.map((h) => ({ id: h.id, url: `${url.origin}/${h.kitab_id}/${h.slug}`, kitab: h.kitab_id, no: h.no_tampil, tingkat: h.tingkat, alasan: h.alasan, penilaian: h.penilaian.map(({ penilai, hukum }) => ({ penilai, hukum })) })),
     });
   }

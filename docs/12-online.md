@@ -99,6 +99,24 @@ Catatan: angka ini dari Node di mesin pengembangan, bukan dari Cloudflare. Sesud
 - **CPU:** semua halaman yang diukur di bawah 5 ms (p90), jadi ada jarak lebih dari 2x dari batas 10 ms (lihat di atas).
 - **Permintaan:** 100.000 per hari, termasuk yang dilayani dari cache.
 
+### Pengukuran ulang (7 Nov 2026, sesudah fitur pencarian baru)
+
+- **CPU** (`node scripts/ukur-cpu.mjs`): semua rute di bawah 10 ms (p90). Yang terberat Cari (±5,2 ms) dan Cek (±5,1 ms). Halaman lain di bawah 2,3 ms.
+- **Baris D1 per halaman (tanpa cache):**
+
+| Halaman | Baris |
+|---|---:|
+| Beranda | 167 |
+| Halaman hadits | 16–106 |
+| Daftar perawi | 300 |
+| Cari "sabar" | 1.493 |
+| Cari "sedekah" | 2.924 |
+| Cari "shalat" (halaman 5) | 3.495 |
+| Cek kalimat | 191–553 |
+
+- **Hitung total hasil dibatasi 2.000** (`BATAS_HITUNG` di `site/src/cari.js`). Sebelumnya `count(*)` penuh untuk kata umum membaca seluruh kecocokan dan memakan ±90% baris satu pencarian. "shalat" halaman 5 turun dari 14.254 ke 3.495 baris, dan "tuntutlah ilmu sampai ke negeri cina" dari 9.240 ke 4.065. Di atas batas, situs menulis "Lebih dari 2.000 riwayat ditemukan" (API: `total_lebih`).
+- **Tampilan ponsel:** 21 jenis halaman diperiksa di lebar iPhone SE. Tidak ada geser horizontal. Sasaran sentuh di bawah 24 px dibesarkan. Kepala halaman tidak lagi menempel di layar ≤ 720 px (dulu memakan ±30% layar).
+
 ## Rekomendasi jalur terbit
 
 1. **Impor awal memakai Workers Paid selama 1 bulan** (US$5, ±Rp 85 ribu). Impor penuh menulis ±564 ribu baris. Di paket gratis itu butuh ±6 hari, dan setiap kali batas harian habis, situs ikut mati sampai 00:00 UTC.

@@ -151,9 +151,11 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
   let totalKata = 0, modeKata = null;
   // jumlah kecocokan teks Indonesia, tanpa rentang n Riyadh bila terjemahnya disembunyikan
   const ry = peta && peta.rentang.find(([kid]) => kid === "riyadh");
+  // Dihitung paling banyak BATAS_HITUNG + 1: count(*) penuh untuk kata umum ("shalat") membaca seluruh kecocokan dan dulu
+  // memakan ±90% baris D1 satu pencarian (12.759 dari 14.254). Di atas batas, situs menulis "lebih dari 2.000".
   const hitung = async (match) => (ry
-    ? await db.prepare("SELECT count(*) AS c FROM cari WHERE cari MATCH ?1 AND rowid NOT BETWEEN ?2 AND ?3").bind(match, ry[1], ry[2]).first()
-    : await db.prepare("SELECT count(*) AS c FROM cari WHERE cari MATCH ?1").bind(match).first()).c;
+    ? await db.prepare(`SELECT count(*) AS c FROM (SELECT rowid FROM cari WHERE cari MATCH ?1 AND rowid NOT BETWEEN ?2 AND ?3 LIMIT ${BATAS_HITUNG + 1})`).bind(match, ry[1], ry[2]).first()
+    : await db.prepare(`SELECT count(*) AS c FROM (SELECT rowid FROM cari WHERE cari MATCH ?1 LIMIT ${BATAS_HITUNG + 1})`).bind(match).first()).c;
   if (r.kata.length && !r.konsep.length) {
     let mode = "semua kata";
     let match = r.kata.map(grupFts).join(" AND ");
@@ -244,10 +246,12 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
     hasil = halamanIni.filter((x) => byN.has(x.n)).map((x) => ({ ...byN.get(x.n), skor: skor.get(x.n), alasan: alasan.get(x.n),
       serupa: x.serupa.map((m) => ringkas.get(m)).filter(Boolean).map(({ kitab_id, slug, no_tampil }) => ({ kitab_id, slug, no_tampil })) }));
   }
-  return { rencana: r, total: Math.max(urut.length, totalKata), tampil: daftar.length, hasil, perKitab, halaman, perHalaman, modeKata };
+  const totalLebih = totalKata > BATAS_HITUNG && urut.length <= BATAS_HITUNG;
+  return { rencana: r, total: totalLebih ? BATAS_HITUNG : Math.max(urut.length, totalKata), totalLebih, tampil: daftar.length, hasil, perKitab, halaman, perHalaman, modeKata };
 }
 
 export const JENDELA_SERUPA = 200;
+export const BATAS_HITUNG = 2000;
 /**
  * Lipat riwayat sekelompok (grupDari: n -> nomor kelompok) di bawah riwayat pertamanya menurut urutan peringkat,
  * hanya untuk `jendela` kandidat teratas; sisanya tetap satu per kartu. Hasil: [{n, serupa: [n, ...]}].
