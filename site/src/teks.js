@@ -86,10 +86,10 @@ const alnum = (c) => (c >= 97 && c <= 122) || (c >= 48 && c <= 57);
 /**
  * Liputan terbaik dalam satu jendela: jumlah bobot kata kueri (Q, sudah di-stem; aturan cocok sama dengan awalanId)
  * yang muncul bersama dalam `jendela` kata berurutan, beserta rentangnya (jarak kata pertama-terakhir; makin kecil
- * makin rapat). Dipakai Cek Hadits supaya kata-kata yang tersebar jauh di
+ * makin rapat). `kunci` (opsional): ejaan -> kunci grupnya, supaya "sholat" dan "shalat" dihitung sebagai satu kata. Dipakai Cek Hadits supaya kata-kata yang tersebar jauh di
  * riwayat panjang tidak dianggap satu kalimat.
  */
-export function liputanJendela(teks, Q, bobot, jendela) {
+export function liputanJendela(teks, Q, bobot, jendela, kunci = null) {
   const t = dasarId(teks), kena = [];
   const awal = new Uint8Array(128);
   for (const w of Q) awal[w.charCodeAt(0) & 127] = 1;
@@ -102,7 +102,7 @@ export function liputanJendela(teks, Q, bobot, jendela) {
       const L = e - i;
       let st = L;
       for (const s of AKHIRAN_ID) if (L - s.length >= 4 && t.startsWith(s, e - s.length)) { st = L - s.length; break; }
-      for (const w of Q) if (st >= w.length && t.startsWith(w, i)) kena.push([pos, w]);
+      for (const w of Q) if (st >= w.length && t.startsWith(w, i)) kena.push([pos, kunci ? kunci.get(w) ?? w : w]);
     }
     pos++;
     i = e;

@@ -260,6 +260,14 @@ Dari 14 "riwayat lain", 6 memuat potongan yang sama persis (riwayat saudara, mis
 
 **Teks Arab (`npm run uji:cek -- arab`):** 100 potongan 6–12 kata matan Arab berharakat (tanpa sanad). Hasilnya 75 riwayat asal, 20 kelompok/keluarga, 5 riwayat lain, 0 tidak ditemukan, jadi **95/100**. Kelima sisanya potongan yang memang tidak menunjuk satu hadits: frasa baku ("صلى الله عليه وسلم أما إنك"), potongan sanad ("عن ابن أبي مليكة عن عائشة"), komentar at-Tirmidzi ("وفي الباب عن أبي"), dan "صليت خمسا" yang ada di beberapa hadits sujud sahwi. Pencocokan Arab (2-gram) tidak diubah. Tambahkan `rinci` untuk mencetak setiap kasus.
 
+**Ejaan lain di Cek Hadits:** teks yang beredar sering memakai ejaan berbeda dari terjemah Lidwa (sholat, shodaqoh, dzalim, wudu). Kini setiap kata kueri diperlakukan sebagai satu grup ejaan dari `kamus_konsep.json` (`varian`):
+
+- **Dianggap ada** bila salah satu ejaannya ada. df grup = jumlah df ejaan-ejaannya.
+- **Di jendela kecocokan**, ejaan-ejaan itu dihitung sebagai satu kata (`liputanJendela(..., kunci)`).
+- **Langkah pemeriksaan di halaman Cek** menampilkan grupnya, mis. "shalat/sholat/solat/salat/sembahyang".
+
+`npm run uji:cek -- ejaan` memakai 100 potongan acak yang kata-katanya diganti ejaan lain dari grup yang sama. Hasilnya 45/100 → **88/100** ("tidak ditemukan" 47 → 0). Potongan berejaan asli tetap 86/100.
+
 Belum terpecahkan: "kebersihan sebagian dari iman" tetap ke Ahmad 9498. Terjemah Lidwa untuk Muslim 223 (الطهور شطر الإيمان) memakai kata "bersuci", bukan "kebersihan", jadi Cek Hadits yang mencocokkan kata tidak bisa menemukannya. Kotak populer tetap menampilkan pembahasan ulamanya.
 
 **Awalan kata (7 Nov 2026):** orang mengetik kata dasar ("baca", "puasa", "minum"), terjemah memakai kata berimbuhan ("membaca", "berpuasa", "meminum"). Kini kata 3+ huruf juga dicari dengan awalan me-/di-/ber-/ter-, dengan peluluhan meN- yang lazim (pukul→memukul, tulis→menulis, sapu→menyapu, kirim→mengirim). Bentuk yang tidak ada dalam bahasa Indonesia (mis. "meriba") tidak berbahaya karena tidak pernah muncul di terjemah. "wanita haid baca quran": 8.238 (hanya sebagian kata) → 642, dibuka Ibnu Majah 596. "wudhu" 951 → 2.052 ("berwudhu"), "doa" 877 → 2.325 ("berdoa"). Kode: `bentukKata()` di `site/src/cari.js`.

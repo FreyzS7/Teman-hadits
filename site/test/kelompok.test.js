@@ -37,3 +37,11 @@ test("Cek Hadits: kata kueri harus muncul berdekatan, bukan tersebar di riwayat 
   assert.ok(liputanJendela(tersebar, Q, bobot, 18).skor <= 2);
   assert.ok(liputanJendela("surga ada di bawah kaki ibu", Q, bobot, 18).rentang < liputanJendela("surga itu ada nanti di sana di bawah kaki para ibu", Q, bobot, 18).rentang);
 });
+
+test("Cek Hadits: ejaan lain dalam satu grup dihitung sebagai satu kata", () => {
+  const Q = ["shalat", "sholat", "malam"], bobot = new Map([["shalat", 1], ["malam", 1]]);
+  const kunci = new Map([["shalat", "shalat"], ["sholat", "shalat"], ["malam", "malam"]]);
+  // "sholat" dan "shalat" sama-sama ada: tetap satu kata (bobot 1), bukan dua
+  assert.equal(liputanJendela("sholat malam dan shalat malam", Q, bobot, 10, kunci).skor, 2);
+  assert.equal(liputanJendela("Rasulullah sholat malam", Q, bobot, 10, kunci).skor, 2);
+});

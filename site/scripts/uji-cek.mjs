@@ -4,12 +4,15 @@
 // lain (bisa sah: potongan umum atau riwayat saudara dengan teks sama, lihat docs/06). Butuh Node >= 22.5 (node:sqlite).
 //   node scripts/uji-cek.mjs          (teks Indonesia)
 //   node scripts/uji-cek.mjs arab     (potongan 6-12 kata matan Arab, berharakat, tanpa sanad)
-//   tambahkan "rinci" untuk mencetak setiap kasus "lain"
+//   tambahkan "rinci" untuk mencetak setiap kasus "lain"; "ejaan" untuk potongan yang ejaannya diganti varian lain
 import { DatabaseSync } from "node:sqlite";
 import fs from "node:fs";
 import { cek } from "../src/cek.js";
 import { pisahSanad } from "../src/teks.js";
-const ARAB = process.argv.includes("arab"), RINCI = process.argv.includes("rinci");
+const ARAB = process.argv.includes("arab"), RINCI = process.argv.includes("rinci"), EJAAN = process.argv.includes("ejaan");
+// mode ejaan: hanya potongan yang memuat kata dari grup ejaan kamus, lalu kata itu diganti varian lain (sholat, shodaqoh, ...)
+const KAMUS = JSON.parse(fs.readFileSync(new URL("../../pipeline/kamus_konsep.json", import.meta.url)));
+const GANTI = new Map(KAMUS.varian.flatMap((g) => g.map((v, i) => [v, g[(i + 1) % g.length]])));
 
 const d = new URL("../.wrangler/state/v3/d1/miniflare-D1DatabaseObject/", import.meta.url);
 const f = fs.readdirSync(d).find((x) => x.endsWith(".sqlite") && !x.startsWith("metadata"));
@@ -41,7 +44,13 @@ while (sampel.length < 100) {
   const kata = kutip[0].split(/\s+/).filter(Boolean);
   if (kata.length < 10) continue;
   const mulai = Math.floor(acak() * Math.max(1, kata.length - 12));
-  sampel.push({ ...r, teks: kata.slice(mulai, mulai + 8 + Math.floor(acak() * 8)).join(" ") });
+  let potong = kata.slice(mulai, mulai + 8 + Math.floor(acak() * 8));
+  if (EJAAN) {
+    const bersih = (w) => w.toLowerCase().replace(/[^a-z']/g, "").replace(/'/g, "");
+    if (!potong.some((w) => GANTI.has(bersih(w)))) continue;
+    potong = potong.map((w) => (GANTI.has(bersih(w)) ? GANTI.get(bersih(w)) : w));
+  }
+  sampel.push({ ...r, teks: potong.join(" ") });
   dipakai.add(r.n);
 }
 const hasil = { tepat: 0, keluarga: 0, lain: 0, tidak: 0 };

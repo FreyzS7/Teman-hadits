@@ -2,7 +2,7 @@
 // Prinsip: kata kunci khas harus ADA. Bila satu saja tidak muncul di terjemahan mana pun, jawabannya
 // "tidak ditemukan" dan kata itu disebutkan. Tidak ada tebakan.
 import { akarAr, adaArab, liputanJendela, normAr, normId, stemAr, stemId } from "./teks.js";
-import { NAMA_KITAB, nilai } from "./cari.js";
+import { NAMA_KITAB, nilai, varianDari } from "./cari.js";
 
 const STOP = new Set(("yang dan itu ini dengan akan ia dia ke di dari pada untuk apa sesuai seseorang sesungguhnya kepada kami " +
   "telah adalah bahwa atau juga tidak orang dalam saya beliau bersabda berkata hr bukhari muslim sampai shallallahu alaihi " +
@@ -57,16 +57,27 @@ export async function cek(db, teks) {
 
   let terbaik = null, skorTerbaik = 0;
   if (hasil.mode === "indonesia") {
-    const Q = [...new Set(normId(isi).split(" ").filter((w) => w.length >= 3 && !STOP.has(w)).map(stemId))];
+    // Setiap kata kueri = satu grup ejaan dari kamus (sholat/shalat/salat, shodaqoh/sedekah, dzalim/zhalim, ...):
+    // teks yang beredar sering memakai ejaan lain dari terjemah Lidwa. Kata dianggap ada bila salah satu ejaannya ada.
+    const mentah = [...new Set(normId(isi).split(" ").filter((w) => w.length >= 3 && !STOP.has(w)))];
+    const grupKata = new Map(); // kunci grup (ejaan pertama, di-stem) -> ejaan-ejaannya (di-stem)
+    for (const w of mentah) {
+      const g = [...new Set(varianDari(w).concat(varianDari(stemId(w)).length > 1 ? varianDari(stemId(w)) : []).map(stemId))];
+      const v = g.length > 1 ? g : [stemId(w)];
+      if (!grupKata.has(v[0])) grupKata.set(v[0], v);
+    }
+    const kunciDari = new Map([...grupKata].flatMap(([k, vs]) => vs.map((v) => [v, k])));
+    const Q = [...kunciDari.keys()];
     if (!Q.length) return { ...hasil, status: "kosong" };
-    const df = new Map((await db.prepare("SELECT kata, n FROM kata_df WHERE kata IN (SELECT value FROM json_each(?1))").bind(JSON.stringify(Q)).all()).results.map((x) => [x.kata, x.n]));
-    hasil.langkah = Q.map((w) => ({ kata: w, muncul: df.get(w) || 0 }));
-    hasil.absen = Q.filter((w) => !df.get(w));
+    const dfV = new Map((await db.prepare("SELECT kata, n FROM kata_df WHERE kata IN (SELECT value FROM json_each(?1))").bind(JSON.stringify(Q)).all()).results.map((x) => [x.kata, x.n]));
+    const df = new Map([...grupKata].map(([k, vs]) => [k, vs.reduce((a, v) => a + (dfV.get(v) || 0), 0)]));
+    hasil.langkah = [...grupKata].map(([k, vs]) => ({ kata: vs.length > 1 ? vs.join("/") : k, muncul: df.get(k) }));
+    hasil.absen = [...grupKata.keys()].filter((k) => !df.get(k)).map((k) => (grupKata.get(k).length > 1 ? grupKata.get(k).join("/") : k));
     if (hasil.absen.length) return { ...hasil, status: "tidak-ditemukan" };
     const N = hasil.total || 60000;
-    const idf = new Map(Q.map((w) => [w, Math.log(N / (1 + df.get(w)))]));
+    const idf = new Map([...df].map(([k, n]) => [k, Math.log(N / (1 + n))]));
     const tot = [...idf.values()].reduce((a, b) => a + b, 0);
-    const match = "terjemah_polos:(" + Q.map((w) => (w.length >= 4 ? `"${w}"*` : `"${w}"`)).join(" OR ") + ")";
+    const match = "terjemah_polos:(" + Q.filter((w) => dfV.get(w)).map((w) => (w.length >= 4 ? `"${w}"*` : `"${w}"`)).join(" OR ") + ")";
     const cand = (await db.prepare("SELECT r.n, r.kitab_id, r.terjemah FROM riwayat r WHERE r.n IN (SELECT rowid FROM cari WHERE cari MATCH ?1 ORDER BY rank LIMIT 120)").bind(match).all()).results;
     // kata kueri harus muncul BERSAMA dalam satu potongan teks (jendela), bukan tersebar di riwayat panjang:
     // "surga di bawah telapak kaki ibu" dulu cocok 100% dengan Abu Dawud 726 (tata cara meletakkan tangan dalam
@@ -77,7 +88,7 @@ export async function cek(db, teks) {
     const urutKitab = (k) => { const i = URUT_KITAB.indexOf(k); return i < 0 ? 99 : i; };
     let rentangTerbaik = Infinity, kitabTerbaik = 99;
     for (const c of cand) {
-      const { skor, rentang } = liputanJendela(c.terjemah, Q, idf, jendela);
+      const { skor, rentang } = liputanJendela(c.terjemah, Q, idf, jendela, kunciDari);
       const s = skor / tot, uk = urutKitab(c.kitab_id);
       const seri = Math.abs(s - skorTerbaik) <= 1e-9;
       // selisih jarak <= 2 kata (mis. "agama itu adalah nasihat" vs "agama adalah nasihat") dianggap setara

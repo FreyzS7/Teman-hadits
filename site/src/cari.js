@@ -49,7 +49,7 @@ export function rencana(kueri) {
   };
 }
 
-const varianDari = (w) => VARIAN.get(w) || [w];
+export const varianDari = (w) => VARIAN.get(w) || [w];
 // Kata 4+ huruf juga dicari dengan akhiran Indonesia (sedekahnya, puasanya, berikan). Dulu memakai awalan FTS ("riba"*),
 // yang ikut mencocokkan kata lain: "riba" → "ribath" (Muslim 587).
 const AKHIRAN = ["", "nya", "ku", "mu", "lah", "kah", "pun", "kan", "kannya", "kanku", "kanmu", "kanlah",
