@@ -81,3 +81,48 @@ class Sumber(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class PergeseranPasangan(unittest.TestCase):
+    """Terjemah Riyadh nomor k dibandingkan dengan terjemah Lidwa riwayat sumber k-2..k+2. Bila jauh lebih mirip ke
+    sumber tetangga, pasangannya mungkin bergeser. Setiap temuan harus sudah ditinjau manusia: dibatalkan
+    (riyadh.BATAL_MANUAL) atau dicek dan benar (DICEK_BENAR). Temuan baru = uji gagal, periksa dulu (docs/08)."""
+    # dicek manual 7 Nov 2026: isi terjemahnya hadits yang sama; mirip ke tetangga hanya karena tetangganya serupa
+    DICEK_BENAR = {54, 114, 169, 244, 436, 632, 867, 926, 1047, 1187, 1426, 1477}  # 12 nomor (1187 = pasangan benar dari 1187/1189)
+
+    def test_setiap_dugaan_pergeseran_sudah_ditinjau(self):
+        import collections
+        import math
+        from riyadh import BATAL_MANUAL
+        m = sqlite3.connect(DB_PATH)
+        stop = set("yang dan itu ini dengan akan ia dia ke di dari pada untuk apa adalah bahwa atau juga tidak orang dalam "
+                   "saya beliau bersabda berkata telah kepada kami rasulullah nabi shallallahu alaihi wasallam saw "
+                   "radhiallahu anhu anha engkau kamu mereka maka katanya sabdanya lagi pula riwayat bukhari muslim".split())
+        kata = lambda t: {w[:5] for w in norm_id(re.sub(r"\[[^\]]*\]", " ", t or "")).split() if len(w) >= 4 and w not in stop}
+        src = dict(q("SELECT urut, riwayat_id FROM riyadh_sumber WHERE peringkat = 1 AND skor >= 0.8"))
+        lid = {}
+        for u, rid in src.items():
+            r = m.execute("SELECT terjemah FROM riwayat WHERE id = ?", (rid,)).fetchone()
+            if r and r[0]:
+                lid[u] = kata(r[0])
+        df = collections.Counter(w for s in lid.values() for w in s)
+        n = len(lid)
+        bobot = lambda ws: sum(math.log(n / (1 + df[w])) for w in ws)
+        sim = lambda a, b: bobot(a & b) / max(1e-9, bobot(a)) if a and b else 0
+        temuan = set()
+        for u, no, t in q("SELECT urut, no, terjemah FROM riyadh WHERE status_terjemah = 'pasti'"):
+            if u not in lid:
+                continue
+            a = kata(t)
+            sendiri = sim(a, lid[u])
+            tetangga = max([sim(a, lid[v]) for v in (u - 2, u - 1, u + 1, u + 2) if v in lid] or [0])
+            if tetangga > max(0.15, sendiri * 1.5):
+                temuan.add(no)
+        belum = temuan - self.DICEK_BENAR - set(BATAL_MANUAL)
+        self.assertFalse(belum, f"dugaan pergeseran baru, periksa manual: {sorted(belum)}")
+
+    def test_pasangan_yang_dibatalkan_tidak_pasti(self):
+        from riyadh import BATAL_MANUAL
+        for no in BATAL_MANUAL:
+            st = q("SELECT status_terjemah FROM riyadh WHERE no = ?", no)[0][0]
+            self.assertNotEqual(st, "pasti", no)

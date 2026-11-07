@@ -44,6 +44,15 @@ _NOMOR_AR = re.compile(r"^\s*(\d{1,4})\s*[-–]\s*(.*)$")
 _KITAB_AR = re.compile(r"^\s*\(\s*(\d{1,2})\s*\)\s*[-–]\s*(.*)$")
 
 
+BATAL_MANUAL = {
+    124: "Arab = لا تحقرن جارة لجارتها; terjemah terpasang = hadits cabang iman (no. 125): bergeser satu",
+    125: "Arab = الإيمان بضع وسبعون شعبة; terjemah terpasang = kisah orang memberi minum anjing (no. 126)",
+    126: "Arab = kisah orang memberi minum anjing; terjemah terpasang = orang yang bersuka-ria di surga (no. 127)",
+    253: "Arab = ما رأيك في هذا (orang terpandang dan orang miskin); terjemah terpasang = perselisihan Bani 'Amr bin 'Auf (no. 251)",
+    1189: "Arab = من قام ليلة القدر; terjemah terpasang = teks yang sama dengan no. 1187 (من قام رمضان)",
+}
+
+
 def pecah_arab(rows):
     hadits, bab, kitab_ar = [], {}, None
     bab_no = None
@@ -351,6 +360,15 @@ def main():
         else:
             a["kandidat"] = (I[ii]["no_id"], round(nama, 2), atr)
             status["ragu (tidak dipasang)"] += 1
+    # Pasangan yang terbukti salah saat diperiksa manual (7 Nov 2026, docs/08): skor nama/atribusi tinggi karena
+    # hadits berurutan dari sahabat yang sama, tetapi isi terjemahnya hadits lain. Dibatalkan, tidak ditebak ulang.
+    for a in A:
+        alasan = BATAL_MANUAL.get(a["no"])
+        if alasan and a.get("status_terjemah") == "pasti":
+            a["kandidat"] = (a["no_terjemah"], a["skor_pasangan"], "dibatalkan manual: " + alasan)
+            a["status_terjemah"] = "ragu"
+            status["pasti"] -= 1
+            status["dibatalkan manual"] += 1
     print(f"penjajaran: {dict(status)} ({time.time() - t0:.0f}s)", file=sys.stderr)
 
     # takhrij

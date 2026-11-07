@@ -54,7 +54,17 @@ Label di halaman: "terjemahan riwayat sumbernya · Lidwa Pusaka", ditambah tauta
 
 **Pemeriksaan:** contoh dicek manual, yaitu Riyadh 2 → Bukhari 2118, Riyadh 3 → Muslim 1864, Riyadh 727 → Bukhari 5376, Riyadh 1366 → Muslim 7400, dan Riyadh 160 → Bukhari 717. Semuanya hadits yang sama. Kecocokan kata antara kedua terjemah rendah (kebanyakan < 50%) karena gaya bahasa kedua penerjemah berbeda dan riwayat sumber lebih panjang, bukan karena salah pasang.
 
-**Temuan:** pada Riyadh 125, teks Arabnya hadits cabang-cabang iman (الإيمان بضع وسبعون شعبة), dan sumbernya Muslim 153 benar. Tetapi terjemah Riyadhus Shalihin yang terpasang untuk nomor itu berisi hadits lain (orang yang memberi minum anjing). Jadi ada pemasangan Arab↔terjemah Riyadh yang perlu diperiksa ulang sebelum terjemah aslinya ditampilkan.
+**Audit pasangan Arab–terjemah (7 Nov 2026):** terjemah Riyadh nomor k dibandingkan dengan terjemah Lidwa riwayat sumber k−2…k+2. Kosakata kedua penerjemah berbeda, jadi perbandingannya relatif: apakah terjemah k jauh lebih mirip ke sumber tetangga daripada sumbernya sendiri. Ini bisa dicek untuk 1.080 dari 1.726 pasangan "pasti" (yang sumbernya skor ≥ 0,8 dan punya terjemah). Hasilnya 16 dugaan, semuanya dibaca manual: 4 salah (124, 125, 253, 1189) dan 12 benar. Satu lagi (126) ditemukan saat memeriksa sekitar 124–125, karena sumber pembanding no. 127 tidak tersedia.
+
+- **5 pasangan salah, kini dibatalkan** (`BATAL_MANUAL` di `pipeline/riyadh.py`, status `ragu`, terjemah aslinya tidak akan ditampilkan):
+  - 124 (لا تحقرن جارة) mendapat terjemah no. 125, 125 (cabang iman) mendapat kisah anjing, dan 126 (kisah anjing) mendapat "bersuka-ria di surga". Ini pergeseran satu nomor, karena hadits Abu Hurairah yang berurutan membuat skor nama sama.
+  - 253 (ما رأيك في هذا) mendapat terjemah no. 251; keduanya dari Sahl bin Sa'd.
+  - 1189 (من قام ليلة القدر) mendapat terjemah yang teksnya sama persis dengan no. 1187 (من قام رمضان).
+- **12 benar** (`DICEK_BENAR` di `pipeline/test_riyadh.py`). Terdeteksi hanya karena tetangganya hadits serupa (mis. 54 kejujuran, 632 "Allah Maha Lembut", 867 salam Ahlul Kitab).
+
+Pemeriksaan terjemah ganda (teks terjemah sama untuk dua nomor) hanya menemukan 1187/1189. Tiga kelompok lain wajar, karena teks Arabnya juga sama (an-Nawawi mengulang hadits di bab lain). Uji `PergeseranPasangan` kini gagal bila muncul dugaan pergeseran yang belum ditinjau. Pasangan "pasti" 1.726 → 1.721.
+
+**Keterbatasan:** 646 pasangan "pasti" tanpa sumber kuat tidak bisa dicek dengan cara ini. Sebelum terjemah aslinya ditampilkan (`TERJEMAH_RIYADH="tampil"`), pasangan-pasangan itu perlu sampel pemeriksaan manual.
 
 ## Yang belum
 
