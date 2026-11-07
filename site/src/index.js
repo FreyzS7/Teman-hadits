@@ -174,7 +174,18 @@ async function halamanCari(env, url) {
       return { ...t, skor: 2 * nInti + maksudS.filter((w) => j.includes(w)).length, kena: nInti > 0 };
     })
     .filter((t) => t.kena).sort((a, b) => b.skor - a.skor || b.jumlah - a.jumlah).slice(0, 6) : [];
-  const isi = T.hasilCari({ q, out, kitab, sorot: kataSorot(out.rencana), akar: akarSorot(out.rencana), filter, rujukan, tema, sembunyiRiyadh: env.TERJEMAH_RIYADH === "sembunyi" });
+  // Kueri berbentuk kalimat ("senyummu kepada saudaramu adalah sedekah"): pencarian kata kunci kurang tepat untuk itu.
+  // Cocokkan ke daftar ucapan populer (pembahasan ulama, termasuk yang palsu) dan sarankan Cek Hadits.
+  let kalimat = null;
+  const r1 = out.rencana;
+  if (!r1.rujukan && normId(q).split(" ").filter(Boolean).length >= 4 && r1.kata.length + r1.maksud.length >= 3) {
+    // ambang lebih ketat dari Cek Hadits (0,6): "malu sebagian dari iman" (shahih) tidak boleh diarahkan ke entri
+    // populer "kebersihan sebagian dari iman" hanya karena 2 dari 3 katanya sama
+    const pop0 = await cocokPopuler(db, q), pop = pop0 && pop0.skor >= 0.75 ? pop0 : null;
+    const p = pop ? await db.prepare("SELECT id, teks_id FROM populer WHERE id = ?1").bind(pop.id).first() : null;
+    kalimat = { populer: p, sebagian: out.modeKata === "sebagian kata" };
+  }
+  const isi = T.hasilCari({ q, out, kitab, sorot: kataSorot(out.rencana), akar: akarSorot(out.rencana), filter, rujukan, tema, kalimat, sembunyiRiyadh: env.TERJEMAH_RIYADH === "sembunyi" });
   return html(T.layout({ judul: `${q} · Cari · Teman Hadits`, aktif: "cari", isi, noindex: true }));
 }
 

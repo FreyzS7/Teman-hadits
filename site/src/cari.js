@@ -142,7 +142,7 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
     for (const t of k.terjemah) for (const n of await ftsIds(`terjemah_polos:"${normId(t)}"`)) tambahId(n, 2, `terjemah memuat "${t}"`);
   }
 
-  let totalKata = 0;
+  let totalKata = 0, modeKata = null;
   // jumlah kecocokan teks Indonesia, tanpa rentang n Riyadh bila terjemahnya disembunyikan
   const ry = peta && peta.rentang.find(([kid]) => kid === "riyadh");
   const hitung = async (match) => (ry
@@ -157,6 +157,7 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
       match = r.kata.map(grupFts).join(" OR ");
       totalKata = await hitung(match);
     }
+    modeKata = mode;
     const ids = await ftsIds(match, 400);
     ids.forEach((n, i) => tambahId(n, 1 + (ids.length - i) / (10 * ids.length), `terjemah memuat ${mode}: ${r.kata.join(", ")}`));
   }
@@ -237,7 +238,7 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
     hasil = halamanIni.filter((x) => byN.has(x.n)).map((x) => ({ ...byN.get(x.n), skor: skor.get(x.n), alasan: alasan.get(x.n),
       serupa: x.serupa.map((m) => ringkas.get(m)).filter(Boolean).map(({ kitab_id, slug, no_tampil }) => ({ kitab_id, slug, no_tampil })) }));
   }
-  return { rencana: r, total: Math.max(urut.length, totalKata), tampil: daftar.length, hasil, perKitab, halaman, perHalaman };
+  return { rencana: r, total: Math.max(urut.length, totalKata), tampil: daftar.length, hasil, perKitab, halaman, perHalaman, modeKata };
 }
 
 export const JENDELA_SERUPA = 200;

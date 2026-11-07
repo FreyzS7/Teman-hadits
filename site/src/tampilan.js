@@ -132,7 +132,7 @@ export function beranda({ kitab, info, populer = [] }) {
 // ------------------------------------------------------------------------------------------------
 // HASIL CARI
 // ------------------------------------------------------------------------------------------------
-export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan, tema = [], sembunyiRiyadh = false }) {
+export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan, tema = [], kalimat = null, sembunyiRiyadh = false }) {
   const r = out.rencana;
   const urlDengan = (ubah) => {
     const p = new URLSearchParams({ q, ...filter, ...ubah });
@@ -183,6 +183,7 @@ export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan, tema = 
   <div class="dua-kolom">
     <div>
       ${rujuk}
+      ${kalimat ? `<div class="rujukan-langsung">${kalimat.populer ? `<span>Kalimat ini mirip ucapan yang sering beredar:</span><a href="/populer/${esc(kalimat.populer.id)}">“${esc(kalimat.populer.teks_id)}” <span class="kecil">lihat pembahasan ulama →</span></a>` : ""}<span>${kalimat.sebagian ? "Tidak ada riwayat yang memuat semua kata kalimat ini, jadi hasil di bawah hanya cocok sebagian." : "Anda mengetik kalimat."} Untuk memeriksa kalimat lengkap, gunakan Cek Hadits:</span><a href="/cek?t=${encodeURIComponent(q)}">Cek kalimat ini →</a></div>` : ""}
       ${tema.length ? `<div class="rujukan-langsung"><span>Tema terkait (kurasi HadeethEnc):</span>${tema.map((t) => `<a href="/tema/${esc(t.id)}">${esc(t.judul)} <span class="kecil">${fmt(t.jumlah)} hadits</span></a>`).join("")}</div>` : ""}
       ${catatan.length ? `<div class="catatan">${catatan.join("<br><br>")}</div>` : ""}
       ${out.hasil.length ? `<p class="kecil" style="margin-top:14px">${fmt(out.total)} riwayat ditemukan${filter.k || filter.t ? `, ${fmt(out.tampil)} sesuai saringan` : ""}. Diurutkan menurut kekuatan alasan, lalu tingkat data, lalu urutan kitab. Riwayat yang lafaz matannya hampir sama dilipat di bawah riwayat pertamanya. <a href="/cara-cari">Cara kerja pencarian</a>.</p>` : kosong}
@@ -496,7 +497,7 @@ export function halamanCaraCari({ konsep }) {
     <ul>
       <li>Coba ejaan atau kata lain yang lebih umum, misalnya “hutang” untuk “utang”, atau “berduaan” untuk “khalwat”.</li>
       <li>Kalau Anda tahu nomornya, ketik langsung, misalnya ${cari("muslim 1907")} atau ${cari("hr bukhari no 1")}.</li>
-      <li>Kalau Anda punya teks lengkap yang beredar, gunakan <a href="/cek">Cek Hadits</a> untuk memeriksa apakah teks itu ada di kitab-kitab kami.</li>
+      <li>Kalau Anda punya teks lengkap yang beredar, gunakan <a href="/cek">Cek Hadits</a> untuk memeriksa apakah teks itu ada di kitab-kitab kami. Bila Anda mengetik kalimat di kolom Cari, kami menyarankan Cek Hadits secara otomatis, dan menunjukkan pembahasan ulama bila kalimat itu termasuk ucapan yang sering beredar (misalnya ${cari("tuntutlah ilmu sampai ke negeri cina")}).</li>
       <li>Tidak ditemukan di sini <i>tidak</i> berarti hadits itu tidak ada. Kami hanya memuat kitab yang tercantum di halaman <a href="/kitab">Kitab</a>.</li>
     </ul>
 

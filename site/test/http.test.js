@@ -52,6 +52,15 @@ test("halaman Cara mencari: penjelasan dan daftar istilah dari kamus", opsi, asy
   assert.match((await ambil("/cari?q=niat&z=" + Date.now())).teks, /href="\/cara-cari"/);
 });
 
+test("kueri berupa kalimat: ucapan populer dikenali, Cek Hadits disarankan", opsi, async () => {
+  const cina = (await ambil("/cari?q=" + encodeURIComponent("tuntutlah ilmu sampai ke negeri cina") + "&z=" + Date.now())).teks;
+  assert.match(cina, /href="\/populer\/ilmu-negeri-cina"/);
+  assert.match(cina, /Cek kalimat ini/);
+  const malu = (await ambil("/cari?q=" + encodeURIComponent("malu sebagian dari iman") + "&z=" + Date.now())).teks;
+  assert.doesNotMatch(malu, /href="\/populer\/kebersihan-iman">/);
+  assert.doesNotMatch((await ambil("/cari?q=" + encodeURIComponent("tolong carikan hadits tentang sholat tarawih") + "&z=" + Date.now())).teks, /Cek kalimat ini/);
+});
+
 test("rujukan 'muslim 1907' langsung dibuka", opsi, async () => {
   const r = await ambil("/cari?q=muslim%201907");
   assert.equal(r.status, 302);

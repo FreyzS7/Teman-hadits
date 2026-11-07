@@ -166,6 +166,15 @@ Ditambah dua konsep: mengusap khuf (على الخفين, 128) dan ahlul bait (أ
 
 "ahlul" sengaja bukan pemicu, karena juga dipakai untuk "ahlul kitab".
 
+**Kueri berupa kalimat (putaran kesepuluh):** 20 potongan hadits populer diuji, termasuk 4 yang dikenal lemah/palsu. Pencarian kata kunci kurang tepat untuk kalimat: "senyummu kepada saudaramu adalah sedekah" jatuh ke mode "sebagian kata" (63.721 hasil), dan "tuntutlah ilmu sampai ke negeri cina" dibuka kisah Nabi Musa. Cek Hadits menangani kalimat ini jauh lebih baik, dan daftar Populer mengenali keempat ucapan lemah/palsu.
+
+Bila kueri minimal 4 kata dan menyisakan minimal 3 kata kunci (setelah kata pengisi dan istilah kamus), halaman Cari kini:
+
+- menampilkan kotak berisi tautan ke pembahasan ulama bila kalimatnya mirip ucapan populer;
+- menyarankan Cek Hadits ("Cek kalimat ini"), dengan keterangan tambahan bila tidak ada riwayat yang memuat semua katanya.
+
+Ambang kemiripan populer di halaman Cari 0,75, lebih ketat dari Cek Hadits (0,6). Alasannya: "malu sebagian dari iman" (shahih) tidak boleh diarahkan ke entri "kebersihan sebagian dari iman" hanya karena 2 dari 3 kata sama. Kueri pertanyaan biasa ("tolong carikan hadits tentang sholat tarawih") tidak memunculkan kotak, karena hanya tersisa satu istilah kamus.
+
 **Awalan kata (7 Nov 2026):** orang mengetik kata dasar ("baca", "puasa", "minum"), terjemah memakai kata berimbuhan ("membaca", "berpuasa", "meminum"). Kini kata 3+ huruf juga dicari dengan awalan me-/di-/ber-/ter-, dengan peluluhan meN- yang lazim (pukul→memukul, tulis→menulis, sapu→menyapu, kirim→mengirim). Bentuk yang tidak ada dalam bahasa Indonesia (mis. "meriba") tidak berbahaya karena tidak pernah muncul di terjemah. "wanita haid baca quran": 8.238 (hanya sebagian kata) → 642, dibuka Ibnu Majah 596. "wudhu" 951 → 2.052 ("berwudhu"), "doa" 877 → 2.325 ("berdoa"). Kode: `bentukKata()` di `site/src/cari.js`.
 
 Bukti hitungan tiap entri ada di kolom `bukti` di `kamus_konsep.json`.
