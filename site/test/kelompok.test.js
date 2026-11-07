@@ -27,3 +27,13 @@ test("kata dasar juga dicari dengan awalan me-/di-/ber-/ter- (peluluhan lazim)",
   assert.ok(b("doa").includes("berdoa"));
   assert.ok(!b("riba").includes("ribath"));
 });
+
+import { liputanJendela } from "../src/teks.js";
+test("Cek Hadits: kata kueri harus muncul berdekatan, bukan tersebar di riwayat panjang", () => {
+  const Q = ["surga", "bawah", "kaki", "ibu"], bobot = new Map(Q.map((w) => [w, 1]));
+  const rapat = "Jagalah ibumu, karena surga itu di bawah kakinya.";
+  const tersebar = "Ibu berkata. " + "lalu dia pergi ".repeat(20) + "ke surga " + "dan seterusnya ".repeat(20) + "di bawah " + "kemudian ".repeat(20) + "kaki";
+  assert.equal(liputanJendela(rapat, Q, bobot, 18).skor, 4);
+  assert.ok(liputanJendela(tersebar, Q, bobot, 18).skor <= 2);
+  assert.ok(liputanJendela("surga ada di bawah kaki ibu", Q, bobot, 18).rentang < liputanJendela("surga itu ada nanti di sana di bawah kaki para ibu", Q, bobot, 18).rentang);
+});

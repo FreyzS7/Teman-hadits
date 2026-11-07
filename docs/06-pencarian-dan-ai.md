@@ -175,6 +175,25 @@ Bila kueri minimal 4 kata dan menyisakan minimal 3 kata kunci (setelah kata peng
 
 Ambang kemiripan populer di halaman Cari 0,75, lebih ketat dari Cek Hadits (0,6). Alasannya: "malu sebagian dari iman" (shahih) tidak boleh diarahkan ke entri "kebersihan sebagian dari iman" hanya karena 2 dari 3 kata sama. Kueri pertanyaan biasa ("tolong carikan hadits tentang sholat tarawih") tidak memunculkan kotak, karena hanya tersisa satu istilah kamus.
 
+**Ketepatan Cek Hadits (teks Indonesia):** Cek Hadits mencari riwayat yang memuat semua kata khas dari teks yang ditempel, dengan bobot idf. Dulu kata-kata itu boleh tersebar di mana saja dalam riwayat. Akibatnya "surga di bawah telapak kaki ibu" cocok 100% dengan Abu Dawud 726 (tata cara meletakkan tangan dalam shalat) yang panjang. Perubahannya:
+
+- **Skor dihitung dalam satu jendela** sepanjang 3×(jumlah kata kunci)+6 kata yang paling banyak memuat kata kunci (`liputanJendela()` di `site/src/teks.js`).
+- **Pemecah seri:** pertama jarak kata yang lebih rapat (selisih ≤ 2 kata dianggap setara), lalu urutan kitab (Bukhari, Muslim, Sunan, al-Muwaththa', Ahmad, ad-Darimi, asy-Syafi'i). Sebelumnya urutan seri ditentukan kebetulan oleh indeks.
+
+Diuji dengan 22 kalimat:
+
+| Kalimat | Sebelum | Sesudah |
+|---|---|---|
+| surga di bawah telapak kaki ibu | Abu Dawud 726 (salah) | Nasa'i 3104 ("surga di bawah kakinya") |
+| menuntut ilmu wajib bagi setiap muslim | Tirmidzi 619 | Ibnu Majah 224 (hadits itu sendiri) |
+| sebaik-baik manusia yang paling bermanfaat bagi manusia | "ditemukan" di Abu Dawud 4089 (soal isbal) | tidak ditemukan (memang tidak ada di kitab-kitab ini) |
+| tangan di atas lebih baik dari tangan di bawah | Bukhari 1429 | Bukhari 1472 (hadits Hakim bin Hizam) |
+| agama itu nasihat | Muslim 55a | Muslim 55a |
+
+Biaya CPU tetap sekitar 2 ms untuk 120 kandidat.
+
+Belum terpecahkan: "kebersihan sebagian dari iman" tetap ke Ahmad 9498. Terjemah Lidwa untuk Muslim 223 (الطهور شطر الإيمان) memakai kata "bersuci", bukan "kebersihan", jadi Cek Hadits yang mencocokkan kata tidak bisa menemukannya. Kotak populer tetap menampilkan pembahasan ulamanya.
+
 **Awalan kata (7 Nov 2026):** orang mengetik kata dasar ("baca", "puasa", "minum"), terjemah memakai kata berimbuhan ("membaca", "berpuasa", "meminum"). Kini kata 3+ huruf juga dicari dengan awalan me-/di-/ber-/ter-, dengan peluluhan meN- yang lazim (pukul→memukul, tulis→menulis, sapu→menyapu, kirim→mengirim). Bentuk yang tidak ada dalam bahasa Indonesia (mis. "meriba") tidak berbahaya karena tidak pernah muncul di terjemah. "wanita haid baca quran": 8.238 (hanya sebagian kata) → 642, dibuka Ibnu Majah 596. "wudhu" 951 → 2.052 ("berwudhu"), "doa" 877 → 2.325 ("berdoa"). Kode: `bentukKata()` di `site/src/cari.js`.
 
 Bukti hitungan tiap entri ada di kolom `bukti` di `kamus_konsep.json`.

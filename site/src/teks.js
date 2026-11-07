@@ -83,6 +83,50 @@ const alnum = (c) => (c >= 97 && c <= 122) || (c >= 48 && c <= 57);
  * tetapi tanpa membuat string per kata (dipakai "cek teks" untuk 120 terjemah kandidat). Kata = deretan [a-z0-9] di
  * dasarId(teks); stemId(kata) selalu awalan kata itu, jadi cukup periksa kata.startsWith(w) lalu panjang stem-nya.
  */
+/**
+ * Liputan terbaik dalam satu jendela: jumlah bobot kata kueri (Q, sudah di-stem; aturan cocok sama dengan awalanId)
+ * yang muncul bersama dalam `jendela` kata berurutan, beserta rentangnya (jarak kata pertama-terakhir; makin kecil
+ * makin rapat). Dipakai Cek Hadits supaya kata-kata yang tersebar jauh di
+ * riwayat panjang tidak dianggap satu kalimat.
+ */
+export function liputanJendela(teks, Q, bobot, jendela) {
+  const t = dasarId(teks), kena = [];
+  const awal = new Uint8Array(128);
+  for (const w of Q) awal[w.charCodeAt(0) & 127] = 1;
+  let pos = 0;
+  for (let i = 0; i < t.length;) {
+    if (!alnum(t.charCodeAt(i))) { i++; continue; }
+    let e = i + 1;
+    while (e < t.length && alnum(t.charCodeAt(e))) e++;
+    if (awal[t.charCodeAt(i)]) {
+      const L = e - i;
+      let st = L;
+      for (const s of AKHIRAN_ID) if (L - s.length >= 4 && t.startsWith(s, e - s.length)) { st = L - s.length; break; }
+      for (const w of Q) if (st >= w.length && t.startsWith(w, i)) kena.push([pos, w]);
+    }
+    pos++;
+    i = e;
+  }
+  const hitung = new Map();
+  let terbaik = 0, rentang = Infinity, jumlah = 0, kiri = 0;
+  for (let kanan = 0; kanan < kena.length; kanan++) {
+    const [p, w] = kena[kanan];
+    hitung.set(w, (hitung.get(w) || 0) + 1);
+    if (hitung.get(w) === 1) jumlah += bobot.get(w);
+    while (p - kena[kiri][0] >= jendela) {
+      const v = kena[kiri][1];
+      hitung.set(v, hitung.get(v) - 1);
+      if (hitung.get(v) === 0) jumlah -= bobot.get(v);
+      kiri++;
+    }
+    // geser kiri selama kata paling kiri masih ada di sisi kanan: jendela terpendek untuk liputan ini
+    while (kiri < kanan && hitung.get(kena[kiri][1]) > 1) { hitung.set(kena[kiri][1], hitung.get(kena[kiri][1]) - 1); kiri++; }
+    const r = p - kena[kiri][0];
+    if (jumlah > terbaik + 1e-9 || (Math.abs(jumlah - terbaik) <= 1e-9 && r < rentang)) { terbaik = jumlah; rentang = r; }
+  }
+  return { skor: terbaik, rentang };
+}
+
 export function awalanId(teks, Q) {
   const t = dasarId(teks), ada = new Set();
   const awal = new Uint8Array(128);

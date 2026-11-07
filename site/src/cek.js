@@ -1,13 +1,14 @@
 // Cek teks yang beredar: apakah teks ini ada di kitab-kitab kita, dan apakah klaim "HR. …" di belakangnya benar.
 // Prinsip: kata kunci khas harus ADA. Bila satu saja tidak muncul di terjemahan mana pun, jawabannya
 // "tidak ditemukan" dan kata itu disebutkan. Tidak ada tebakan.
-import { akarAr, adaArab, awalanId, normAr, normId, stemAr, stemId } from "./teks.js";
+import { akarAr, adaArab, liputanJendela, normAr, normId, stemAr, stemId } from "./teks.js";
 import { NAMA_KITAB, nilai } from "./cari.js";
 
 const STOP = new Set(("yang dan itu ini dengan akan ia dia ke di dari pada untuk apa sesuai seseorang sesungguhnya kepada kami " +
   "telah adalah bahwa atau juga tidak orang dalam saya beliau bersabda berkata hr bukhari muslim sampai shallallahu alaihi " +
   "wasallam rasulullah nabi saw radhiyallahu anhu anha ra allah swt").split(" "));
 const AMBANG_ID = 0.75;
+const URUT_KITAB = ["bukhari", "muslim", "abudawud", "tirmidzi", "nasai", "ibnumajah", "malik", "ahmad", "darimi", "syafii", "riyadh"];
 const AMBANG_AR = 0.5;
 
 export function bacaKlaim(teks) {
@@ -66,11 +67,23 @@ export async function cek(db, teks) {
     const idf = new Map(Q.map((w) => [w, Math.log(N / (1 + df.get(w)))]));
     const tot = [...idf.values()].reduce((a, b) => a + b, 0);
     const match = "terjemah_polos:(" + Q.map((w) => (w.length >= 4 ? `"${w}"*` : `"${w}"`)).join(" OR ") + ")";
-    const cand = (await db.prepare("SELECT r.n, r.terjemah FROM riwayat r WHERE r.n IN (SELECT rowid FROM cari WHERE cari MATCH ?1 ORDER BY rank LIMIT 120)").bind(match).all()).results;
+    const cand = (await db.prepare("SELECT r.n, r.kitab_id, r.terjemah FROM riwayat r WHERE r.n IN (SELECT rowid FROM cari WHERE cari MATCH ?1 ORDER BY rank LIMIT 120)").bind(match).all()).results;
+    // kata kueri harus muncul BERSAMA dalam satu potongan teks (jendela), bukan tersebar di riwayat panjang:
+    // "surga di bawah telapak kaki ibu" dulu cocok 100% dengan Abu Dawud 726 (tata cara meletakkan tangan dalam
+    // shalat) karena kelima katanya ada di tempat yang berjauhan.
+    // Seri (mis. dua riwayat sama-sama memuat "paling baik akhlaknya"): yang katanya lebih rapat, lalu urutan kitab
+    // (Bukhari, Muslim, Sunan, al-Muwaththa', Ahmad, ...), bukan urutan kebetulan dari indeks.
+    const jendela = 3 * Q.length + 6;
+    const urutKitab = (k) => { const i = URUT_KITAB.indexOf(k); return i < 0 ? 99 : i; };
+    let rentangTerbaik = Infinity, kitabTerbaik = 99;
     for (const c of cand) {
-      const ada = awalanId(c.terjemah, Q); // kata kueri yang menjadi awalan kata (ber-stem) di terjemah ini
-      const s = Q.reduce((a, w) => a + (ada.has(w) ? idf.get(w) : 0), 0) / tot;
-      if (s > skorTerbaik) { skorTerbaik = s; terbaik = c.n; }
+      const { skor, rentang } = liputanJendela(c.terjemah, Q, idf, jendela);
+      const s = skor / tot, uk = urutKitab(c.kitab_id);
+      const seri = Math.abs(s - skorTerbaik) <= 1e-9;
+      // selisih jarak <= 2 kata (mis. "agama itu adalah nasihat" vs "agama adalah nasihat") dianggap setara
+      const rapat = rentang + 2 < rentangTerbaik, setara = Math.abs(rentang - rentangTerbaik) <= 2;
+      const lebih = s > skorTerbaik + 1e-9 || (seri && (rapat || (setara && (uk < kitabTerbaik || (uk === kitabTerbaik && c.n < terbaik)))));
+      if (s > 0 && lebih) { skorTerbaik = s; terbaik = c.n; rentangTerbaik = rentang; kitabTerbaik = uk; }
     }
     hasil.skor = Math.round(skorTerbaik * 100) / 100;
     if (skorTerbaik < AMBANG_ID) return { ...hasil, status: "tidak-ditemukan", alasan: "kata-katanya ada, tetapi tidak muncul bersama dalam satu riwayat" };
