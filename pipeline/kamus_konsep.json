@@ -142,6 +142,43 @@
       "kezhaliman",
       "kezaliman",
       "kedzaliman"
+    ],
+    [
+      "adzan",
+      "azan",
+      "adhan",
+      "azhan"
+    ],
+    [
+      "iqamah",
+      "iqamat",
+      "iqomah"
+    ],
+    [
+      "iddah",
+      "idah"
+    ],
+    [
+      "itikaf",
+      "iktikaf"
+    ],
+    [
+      "qishash",
+      "qisas",
+      "qishas",
+      "qisash",
+      "kisas"
+    ],
+    [
+      "zhihar",
+      "zihar",
+      "dzihar",
+      "dhihar"
+    ],
+    [
+      "istihadhah",
+      "istihadlah",
+      "istihadah"
     ]
   ],
   "_catatan_varian": "Kata pertama = bentuk baku untuk tampilan. Saat mencari, SEMUA varian dicari bersamaan (terjemahan Lidwa memakai ejaan campuran: sedekah 821, shadaqah 248, shodaqoh 16).",
@@ -1718,6 +1755,44 @@
       "bab": [],
       "catatan": "Teks Arabnya: ما يزال الرجل يسأل الناس حتى يأتي يوم القيامة... Kata المسألة sendirian tidak dipakai, karena juga berarti \"pertanyaan/masalah\".",
       "bukti": "arab_akar:\"يسأل الناس\" = 33; المسألة = 149 (bercampur 'pertanyaan', tidak dipakai); terjemah 'meminta-minta' = 172 (build 2026-11-07)"
+    },
+    {
+      "id": "khuf",
+      "label": "Mengusap khuf (sepatu kulit)",
+      "pemicu": [
+        "khuf",
+        "khuff",
+        "khuffain",
+        "khufain"
+      ],
+      "arab": [
+        "على الخفين"
+      ],
+      "terjemah": [
+        "khuf",
+        "khuff"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: المسح على الخفين (mengusap bagian atas khuf saat wudhu). Kata \"sepatu\" tidak dijadikan pemicu karena terlalu umum.",
+      "bukti": "arab_akar:\"على الخفين\" = 128; \"المسح على الخفين\" = 80; terjemah 'khuf' = 114, 'khuff' = 25 (build 2026-11-07)"
+    },
+    {
+      "id": "ahlul_bait",
+      "label": "Ahlul bait (keluarga Nabi)",
+      "pemicu": [
+        "ahlulbait",
+        "ahlibait"
+      ],
+      "arab": [
+        "أهل بيتي"
+      ],
+      "terjemah": [
+        "ahlul bait",
+        "ahli bait"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: أهل بيتي (keluargaku), mis. hadits أذكركم الله في أهل بيتي. Kata \"ahlul\" sendirian tidak dijadikan pemicu karena juga dipakai untuk \"ahlul kitab\".",
+      "bukti": "arab_akar:\"أهل بيتي\" = 57; terjemah 'ahlul bait' = 32, 'ahli bait' = 23 (build 2026-11-07)"
     }
   ]
 }

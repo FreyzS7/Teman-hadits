@@ -145,6 +145,27 @@ Putaran kedelapan (50 kueri pergaulan, keluarga, isu modern, harta):
 
 Tidak diberi entri karena tidak ada lafaz hadits yang khusus dan pemetaannya sudah berupa ijtihad: pacaran, ikhtilat, ta'aruf, nikah siri, aborsi, onani, LGBT (selain liwath), valentine, tahun baru, ulang tahun, foto, televisi, rokok, narkoba, olahraga. "wali" tidak dijadikan pemicu karena juga berarti wali Allah.
 
+Putaran kesembilan (297 judul tema HadeethEnc sebagai kueri). Sebagian besar judul yang lemah adalah nama kategori (mis. "Akidah", "Sirah Nabawiyah", "Fikih Muamalah"); untuk kueri itu situs sudah menampilkan tautan "Tema terkait", jadi tidak dibuat entri. Yang diperbaiki adalah ejaan yang berbeda dari terjemah Lidwa, yaitu grup varian:
+
+- adzan/azan (793/12)
+- iqamah/iqamat/iqomah
+- iddah/idah
+- itikaf/iktikaf
+- qishash/qisas/qishas
+- zhihar/zihar
+- istihadhah/istihadlah/istihadah
+
+Ditambah dua konsep: mengusap khuf (على الخفين, 128) dan ahlul bait (أهل بيتي, 57). Hasilnya:
+
+| Kueri | Sebelum | Sesudah |
+|---|---:|---:|
+| "azan dan iqamah" | 3 | 570 |
+| "zihar" | 0 | 21 |
+| "idah" | 5 | 327 |
+| "iktikaf" | 8 | 193 |
+
+"ahlul" sengaja bukan pemicu, karena juga dipakai untuk "ahlul kitab".
+
 **Awalan kata (7 Nov 2026):** orang mengetik kata dasar ("baca", "puasa", "minum"), terjemah memakai kata berimbuhan ("membaca", "berpuasa", "meminum"). Kini kata 3+ huruf juga dicari dengan awalan me-/di-/ber-/ter-, dengan peluluhan meN- yang lazim (pukul→memukul, tulis→menulis, sapu→menyapu, kirim→mengirim). Bentuk yang tidak ada dalam bahasa Indonesia (mis. "meriba") tidak berbahaya karena tidak pernah muncul di terjemah. "wanita haid baca quran": 8.238 (hanya sebagian kata) → 642, dibuka Ibnu Majah 596. "wudhu" 951 → 2.052 ("berwudhu"), "doa" 877 → 2.325 ("berdoa"). Kode: `bentukKata()` di `site/src/cari.js`.
 
 Bukti hitungan tiap entri ada di kolom `bukti` di `kamus_konsep.json`.
