@@ -52,6 +52,15 @@ const varianDari = (w) => VARIAN.get(w) || [w];
 const fraseId = (v) => (v.length >= 4 ? `"${v}"*` : `"${v}"`);
 const grupFts = (w) => "(" + varianDari(w).map((v) => `terjemah_polos:${fraseId(v)}`).join(" OR ") + ")";
 const jsonIds = (xs) => JSON.stringify([...xs]);
+const JARAK_DEKAT = 8;
+const PRIORITAS_KITAB = { bukhari: 0.12, muslim: 0.12, abudawud: 0.06, tirmidzi: 0.06, nasai: 0.06, ibnumajah: 0.06, malik: 0.06 };
+/** FTS5 NEAR untuk beberapa kata beserta varian ejaannya; null bila kombinasi varian terlalu banyak. */
+function dekat(kata, jarak) {
+  let kombinasi = [[]];
+  for (const w of kata) kombinasi = kombinasi.flatMap((k) => varianDari(w).map((v) => [...k, v]));
+  if (kombinasi.length > 24) return null;
+  return "terjemah_polos:(" + kombinasi.map((k) => `NEAR(${k.map(fraseId).join(" ")}, ${jarak})`).join(" OR ") + ")";
+}
 
 /** n -> {kitab_id, tingkat, urut, ku} dari dua baris info (2 baris dibaca, berapa pun jumlah hasilnya). */
 async function petaN(db) {
@@ -121,6 +130,13 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
     ids.forEach((n, i) => tambahId(n, 1 + (ids.length - i) / (10 * ids.length), `terjemah memuat ${mode}: ${r.kata.join(", ")}`));
   }
 
+  // kata-kata kueri yang berdekatan di terjemah ("puasa ... arafah", "doa ... sebelum tidur") lebih mungkin memang
+  // membahas hal itu daripada yang hanya kebetulan memuat semua katanya di tempat terpisah.
+  if (r.kata.length >= 2 && !r.konsep.length && skor.size) {
+    const m = dekat(r.kata, JARAK_DEKAT);
+    if (m) for (const n of await ftsIds(m, 400)) tambahId(n, 0.5, `kata ${r.kata.join(", ")} berdekatan`);
+  }
+
   // judul kitab/bab (Arab & Indonesia) yang memuat kata kunci: "haid" -> riwayat di "Kitab Haid"
   if (r.kata.length && !r.konsep.length) {
     for (const w of r.kata) {
@@ -130,12 +146,15 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
   }
 
   // penguat: kata sisa (bila ada konsep) + kata maksud — tidak diwajibkan, hanya menaikkan peringkat
+  // Kata maksud ("keutamaan", "larangan") tanpa konsep hanya dihitung bila dekat dengan kata inti: "keutamaan anda
+  // wahai Abu Bakr" di riwayat yang kebetulan juga memuat "sedekah" bukan hadits keutamaan sedekah.
   const penguat = [...(r.konsep.length ? r.kata : []), ...r.maksud];
   if (penguat.length && skor.size) {
     for (const w of penguat) {
-      const match = "terjemah_polos:(" + varianDari(w).map(fraseId).join(" OR ") + ")";
+      const dekatInti = !r.konsep.length && r.maksud.includes(w) && r.kata.length ? dekat([w, ...r.kata], JARAK_DEKAT) : null;
+      const match = dekatInti || "terjemah_polos:(" + varianDari(w).map(fraseId).join(" OR ") + ")";
       const rs = await db.prepare("SELECT rowid AS n FROM cari WHERE cari MATCH ?1 AND rowid IN (SELECT value FROM json_each(?2))").bind(match, jsonIds(skor.keys())).all();
-      for (const x of rs.results) tambahId(x.n, 1, `terjemah memuat "${w}"`);
+      for (const x of rs.results) tambahId(x.n, 1, dekatInti ? `"${w}" berdekatan dengan kata kunci` : `terjemah memuat "${w}"`);
     }
   }
 
@@ -146,6 +165,12 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
   if (skor.size) {
     const peta = await petaN(db);
     for (const n of skor.keys()) { const m = peta(n); if (m) meta.set(n, m); }
+  }
+  // Bila relevansinya setara (selisih skor kurang dari bobot ini), riwayat Shahihain lalu kitab Sunan dan al-Muwaththa'
+  // didahulukan. Bobotnya lebih kecil dari bonus kedekatan kata (0,5), jadi hanya memecah hasil yang hampir seri.
+  for (const [n, m] of meta) {
+    const p = PRIORITAS_KITAB[m.kitab_id];
+    if (p) { skor.set(n, skor.get(n) + p); alasan.get(n).push(p >= 0.1 ? "kitab Shahih (didahulukan bila relevansinya setara)" : "kitab Sunan/Muwaththa' (didahulukan dari kitab lain bila relevansinya setara)"); }
   }
   const urut = [...skor.keys()].filter((n) => meta.has(n)).sort((a, b) => {
     const A = meta.get(a), B = meta.get(b);

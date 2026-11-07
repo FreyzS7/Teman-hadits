@@ -51,6 +51,13 @@ Putaran kedua menguji 60 kueri lagi. Kueri lain sudah cukup baik tanpa entri bar
 
 Bukti hitungan tiap entri ada di kolom `bukti` di `kamus_konsep.json`.
 
+**Urutan hasil (7 Nov 2026)**, di `site/src/cari.js`. Setiap aturan tampil sebagai alasan di hasil:
+
+- **Kata berdekatan (+0,5):** bila semua kata kueri muncul berdekatan (FTS5 `NEAR`, jarak 8 kata). "larangan minum berdiri" kini dibuka oleh Muslim 5274 ("melarang minum sambil berdiri").
+- **Kata maksud harus dekat kata inti:** "keutamaan", "larangan", dan sejenisnya hanya menambah skor bila letaknya dekat kata kunci. Sebelumnya "keutamaan sedekah" dibuka oleh Bukhari 3711 ("keutamaan anda wahai Abu Bakr").
+- **Prioritas kitab bila relevansinya setara:** Bukhari/Muslim +0,12; Abu Dawud, Tirmidzi, Nasa'i, Ibnu Majah, al-Muwaththa' +0,06. Bobot ini lebih kecil dari bonus kedekatan, jadi hanya memecah hasil yang hampir seri. Sebelumnya urutan seperti itu ditentukan oleh selisih bm25 yang sangat kecil, sehingga Musnad Ahmad (riwayatnya paling banyak) memenuhi bagian atas.
+- **Keterbatasan:** kata 4 huruf atau lebih dicocokkan sebagai awalan, agar imbuhan seperti "-nya" tetap ketemu. Akibatnya "riba" juga cocok dengan "ribath" (Muslim 587).
+
 Jalan perbaikan yang lain:
 
 - **Kategori HadeethEnc** (tanpa AI): 447 tema berbahasa Indonesia yang disusun dan ditinjau ulama, misalnya "Sedekah Sunah" berisi 27 hadits. Pertanyaan bertema dicocokkan dulu ke kategori ini.
