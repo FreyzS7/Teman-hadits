@@ -208,6 +208,17 @@ Putaran ketiga belas (45 kueri akad muamalah, waris, utang, sumpah/nadzar). Grup
 
 Putaran keempat belas (45 kueri adab sehari-hari, penampilan, shalat). Hanya 6 yang lemah. Konsep baru: mushafahah ("bersalaman dengan wanita" 2 → 37, dibuka Nasa'i 4181), lihyah ("memanjangkan jenggot" 8 → 158), was-was (حدثت به أنفسها, صريح الإيمان; 8 → 41), inai (الحناء, 3 → 86), dan qalansuwah/peci (11). Grup ejaan khusyu/khusyuk (5 → 70). "pacar" tidak dijadikan pemicu inai: di terjemah Lidwa artinya daun pacar, tetapi pengguna umumnya bermaksud lain.
 
+Putaran kelima belas (44 kueri satu kata: akhlak, sosial, alam, hewan). Konsep baru:
+
+- muraqabah (كأنك تراه, 0 → 21)
+- husnuzhan (عند ظن عبدي, حسن الظن; 0 → 35)
+- su'uzhan (إياكم والظن; 0 → 56, dibuka Bukhari 6064)
+- ukhuwah (المسلم أخو المسلم; 0 → 37)
+- persatuan (عليكم بالجماعة; "jamaah" sengaja bukan pemicu karena umumnya berarti shalat berjamaah)
+- thaharah/kebersihan (الطهور شطر الإيمان): "kebersihan sebagian dari iman" di halaman Cari kini dibuka Muslim 534 (= Muslim 223, "bersuci adalah setengah dari iman")
+
+Ditambah grup ejaan takwa/taqwa dan bertakwa/bertaqwa. Tidak diberi entri: hoax, gosip, tabayyun, gotong royong, lingkungan (istilah modern, atau riwayatnya hampir tidak ada di data).
+
 **Kueri berupa kalimat (putaran kesepuluh):** 20 potongan hadits populer diuji, termasuk 4 yang dikenal lemah/palsu. Pencarian kata kunci kurang tepat untuk kalimat: "senyummu kepada saudaramu adalah sedekah" jatuh ke mode "sebagian kata" (63.721 hasil), dan "tuntutlah ilmu sampai ke negeri cina" dibuka kisah Nabi Musa. Cek Hadits menangani kalimat ini jauh lebih baik, dan daftar Populer mengenali keempat ucapan lemah/palsu.
 
 Bila kueri minimal 4 kata dan menyisakan minimal 3 kata kunci (setelah kata pengisi dan istilah kamus), halaman Cari kini:

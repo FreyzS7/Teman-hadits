@@ -203,6 +203,15 @@
       "khusu",
       "kusyuk",
       "khusyuu"
+    ],
+    [
+      "takwa",
+      "taqwa",
+      "taqwaa"
+    ],
+    [
+      "bertakwa",
+      "bertaqwa"
     ]
   ],
   "_catatan_varian": "Kata pertama = bentuk baku untuk tampilan. Saat mencari, SEMUA varian dicari bersamaan (terjemahan Lidwa memakai ejaan campuran: sedekah 821, shadaqah 248, shodaqoh 16).",
@@ -2360,6 +2369,117 @@
       "bab": [],
       "catatan": "Teks Arabnya memakai القلنسوة (penutup kepala); riwayatnya sedikit.",
       "bukti": "arab_akar:القلنسوة = 6; terjemah 'peci' = 8 (build 2026-11-07)"
+    },
+    {
+      "id": "muraqabah",
+      "label": "Muraqabah (merasa diawasi Allah)",
+      "pemicu": [
+        "muraqabah",
+        "muroqobah"
+      ],
+      "arab": [
+        "كأنك تراه"
+      ],
+      "terjemah": [
+        "seakan-akan engkau melihat"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya (hadits Jibril): أن تعبد الله كأنك تراه فإن لم تكن تراه فإنه يراك.",
+      "bukti": "arab_akar:\"كأنك تراه\" = 20; terjemah 'seakan-akan engkau melihat' = 3 (build 2026-11-07)"
+    },
+    {
+      "id": "husnuzhan",
+      "label": "Husnuzhan (berprasangka baik)",
+      "pemicu": [
+        "husnudzon",
+        "husnuzhan",
+        "husnuzan",
+        "husnuzon",
+        "husnudzan"
+      ],
+      "arab": [
+        "حسن الظن",
+        "عند ظن عبدي"
+      ],
+      "terjemah": [
+        "berprasangka baik"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: أنا عند ظن عبدي بي (Aku sesuai prasangka hamba-Ku kepada-Ku) dan حسن الظن.",
+      "bukti": "arab_akar:\"حسن الظن\" = 8; \"عند ظن عبدي\" = 24; terjemah 'berprasangka baik' = 3 (build 2026-11-07)"
+    },
+    {
+      "id": "suuzhan",
+      "label": "Su'uzhan (berprasangka buruk)",
+      "pemicu": [
+        "suudzon",
+        "suuzhan",
+        "suuzan",
+        "suudzan",
+        "suuzon"
+      ],
+      "arab": [
+        "إياكم والظن",
+        "الظن أكذب الحديث"
+      ],
+      "terjemah": [
+        "prasangka"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: إياكم والظن فإن الظن أكذب الحديث (jauhilah prasangka, karena prasangka adalah perkataan paling dusta).",
+      "bukti": "arab_akar:\"إياكم والظن\" = 20; \"الظن أكذب الحديث\" = 17; terjemah 'prasangka' = 42 (build 2026-11-07)"
+    },
+    {
+      "id": "ukhuwah",
+      "label": "Ukhuwah (persaudaraan sesama muslim)",
+      "pemicu": [
+        "ukhuwah",
+        "ukhuwwah"
+      ],
+      "arab": [
+        "المسلم أخو المسلم"
+      ],
+      "terjemah": [
+        "saudara muslim"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: المسلم أخو المسلم لا يظلمه ولا يسلمه.",
+      "bukti": "arab_akar:\"المسلم أخو المسلم\" = 28; terjemah 'saudara muslim' = 18 (build 2026-11-07)"
+    },
+    {
+      "id": "persatuan",
+      "label": "Persatuan (al-jama'ah)",
+      "pemicu": [
+        "persatuan"
+      ],
+      "arab": [
+        "عليكم بالجماعة",
+        "يد الله مع الجماعة"
+      ],
+      "terjemah": [],
+      "bab": [],
+      "catatan": "Teks Arabnya: عليكم بالجماعة dan يد الله مع الجماعة. Kata \"jamaah\" tidak dijadikan pemicu, karena umumnya berarti shalat berjamaah.",
+      "bukti": "arab_akar:\"عليكم بالجماعة\" = 6; \"يد الله مع الجماعة\" = 1 (build 2026-11-07)"
+    },
+    {
+      "id": "thaharah",
+      "label": "Thaharah (bersuci, kebersihan)",
+      "pemicu": [
+        "thaharah",
+        "taharah",
+        "kebersihan",
+        "thoharoh"
+      ],
+      "arab": [
+        "الطهور شطر الإيمان",
+        "مفتاح الصلاة الطهور"
+      ],
+      "terjemah": [
+        "bersuci adalah setengah"
+      ],
+      "bab": [],
+      "catatan": "Kata \"kebersihan\" diarahkan ke sini: riwayat yang paling dekat dengan ucapan \"kebersihan sebagian dari iman\" adalah الطهور شطر الإيمان (bersuci adalah setengah iman, Muslim). Terjemah Lidwa memakai kata \"bersuci\".",
+      "bukti": "arab_akar:\"الطهور شطر الإيمان\" = 4; \"مفتاح الصلاة الطهور\" = 9; terjemah 'bersuci adalah setengah' = 5, 'kebersihan' = 7 (build 2026-11-07)"
     }
   ]
 }
