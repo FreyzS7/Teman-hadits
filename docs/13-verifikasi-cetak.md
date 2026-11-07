@@ -283,7 +283,11 @@ Teks digital kita: ar-Risalah (tahqiq Syu'aib al-Arna'uth dkk., 1416–1421 H). 
 
 **Judul musnad: sampel acak 24 judul** dibaca dari kaligrafinya. 23 sama persis dengan data (mis. «زيادة في حديث أبي لبابة بن عبد المنذر البدري», «بقية حديث كعب بن مالك الأنصاري», «حديث أبي مويهبة مولى رسول الله ﷺ»). Satu tidak bisa dicek: halaman 348 PDF jilid 34 tertukar dengan halaman lain (memuat hadits 20878), sehingga judul «حديث رجل رضي الله تعالى عنه» (20744) tidak terlihat.
 
-Batasan: judul musnad baru dicek dengan sampel (24 dari ±1.300). Teks hadits tidak dibandingkan per halaman.
+**Sampel acak kedua, 48 judul** (seed 20261107). 47 halamannya ditemukan; 43 judul terlihat di gambar dan **semuanya sama persis** dengan data, termasuk judul lanjutan («بقية حديث أبي مسعود البدري الأنصاري», «تمام حديث أسيد بن حضير»), judul kelompok («تتمة مسند المكيين» di atas «حديث حجاج الأسلمي»), dan judul tanpa nama («حديث رجل», «حديث رجل آخر»). Empat judul (15714, 15917, 21986, 27513) berada di bagian halaman sebelumnya yang tidak ikut dipotong.
+
+Jadi dari kedua sampel, **66 dari 66 judul yang terbaca sama**. Bila data punya salah judul, perkiraan kasarnya di bawah ±5% (batas atas 95% untuk 0 salah dari 66).
+
+Batasan: judul musnad baru dicek dengan sampel (66 terbaca dari ±1.300). Judul kaligrafi tidak bisa dibaca OCR, jadi pengecekan menyeluruh harus membaca gambar satu per satu. Teks hadits tidak dibandingkan per halaman.
 
 ### Nomor edisi ad-Darimi dan asy-Syafi'i: pembersihan yang sama
 
@@ -375,4 +379,4 @@ Perbedaan yang sah (letak atau varian naskah yang dicatat pentahqiq) tidak diuba
 - **Teks dan nomor hadits Bukhari:** sampel acak 14 hadits cocok nomor dan awal sanadnya; dari 10 yang dicek teks lengkapnya, 8 sama persis, 1 beda letak keterangan mu'allaq, 1 memakai varian margin (lihat bagian Bukhari di atas). Sisanya belum dicek satu per satu.
 - Muslim: halaman fihris Muqaddimah dan Kitab al-Iman bab 1–18 belum dicek (tidak ada di scan).
 - **Fihris Bukhari sudah dibaca utuh**, tetapi hanya untuk bab tanpa judul. Judul bab bertajuk belum dibandingkan satu per satu dengan fihris; baru 14 judul Kitab 62 yang dicek persis.
-- **Sudah dicek dengan fihris cetak:** Bukhari, Muslim, Ibnu Majah, Abu Dawud, Nasa'i, Tirmidzi, Malik, ad-Darimi (untuk Abu Dawud, Nasa'i, dan Tirmidzi: struktur dan judul lewat OCR, kandidat dilihat di gambar; Tirmidzi juga di halaman isi). Al-Muwaththa' dan ad-Darimi juga sudah dicek (OCR al-Muwaththa' lebih lemah); asy-Syafi'i (al-Fahl) seluruh daftar isinya. Musnad Ahmad: nomor edisi diperbaiki dan dicek dengan sampel; judul musnad baru sampel 24 judul.
+- **Sudah dicek dengan fihris cetak:** Bukhari, Muslim, Ibnu Majah, Abu Dawud, Nasa'i, Tirmidzi, Malik, ad-Darimi (untuk Abu Dawud, Nasa'i, dan Tirmidzi: struktur dan judul lewat OCR, kandidat dilihat di gambar; Tirmidzi juga di halaman isi). Al-Muwaththa' dan ad-Darimi juga sudah dicek (OCR al-Muwaththa' lebih lemah); asy-Syafi'i (al-Fahl) seluruh daftar isinya. Musnad Ahmad: nomor edisi diperbaiki dan dicek dengan sampel; judul musnad sampel 66 judul (semua sama).
