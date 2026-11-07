@@ -223,6 +223,24 @@ Putaran keenam belas (uji kejenuhan: 45 kueri bergaya awam, dengan singkatan "tt
 
 **Penutup perluasan kamus:** setelah 16 putaran (sekitar 700 kueri uji), kamus berisi 112 konsep dan 38 grup ejaan. Pada putaran 14–16 tiap 45 kueri hanya menyisakan 4–6 kueri lemah, dan kebanyakan berupa istilah modern tanpa lafaz hadits atau topik yang memang tidak ada di kitab-kitab ini. Penambahan berikutnya sebaiknya diambil dari kueri nyata pengguna yang hasilnya kosong.
 
+**Perluasan sistematis sebelum ada pengguna (7 Nov 2026):** belum ada kueri nyata, jadi istilah diambil dari dua sumber yang pasti relevan, bukan ditebak:
+
+1. **Kata dari 1.597 judul kitab/bab Indonesia** (tabel `bab`, `judul_bab`). Setiap kata dihitung kemunculannya di terjemah, termasuk bentuk berimbuhan dan varian ejaannya. Ada 136 yang jarang atau tidak ada, dan kebanyakan hanya gaya bahasa lama judul Riyadh ("memperbanyakkan"). Yang relevan: ejaan bulan Hijriah (zulhijjah 0 → 57), muadzin (muazin 3 → 360), rukyatul hilal (0 → 160), bulan haram, dan tasu'a.
+2. **Istilah serapan Arab di terjemah Lidwa** (pola dh/dz/sy/ts/kh/gh/zh/sh/th). Untuk setiap kata dasar (tanpa imbuhan), dibuat ejaan awam menurut aturan transliterasi yang lazim (dh→d, dz→z, sy→s, kh→k, …). Varian hanya dipakai bila **tidak pernah muncul** di seluruh terjemah, supaya tidak menabrak kata Indonesia lain. Daftar 71 kata dikurasi menjadi 31 grup, mis.:
+   - dzuhur/zhuhur/dhuhur/zuhur
+   - khamr/khamer/khamar
+   - akhirat/akherat
+   - shahih/sahih/shohih
+   - dhaif/dlaif/dhoif
+   - syaikh/syekh
+   - arsy/arasy
+   - thaghut/taghut
+   - mudharat/madharat/mudarat
+
+   Varian yang sengaja dibuang: "sirik" (iri), "aras" (tingkat), "isa" (Nabi 'Isa), "safar" untuk bulan Shafar (perjalanan), "saban" (setiap).
+
+Hasil contoh: khamar 60 → 444, akherat 29 → 532, taghut 0 → 15, mudarat 0 → 46, syekh 15 → 187, "kunut subuh" 1.711 (sebagian kata) → 45, "puasa tasua" (sebagian kata) → 3 riwayat yang tepat. Catatan: "hadits sahih" kini lebih dari 2.000, karena "shahih" banyak muncul di komentar penilaian at-Tirmidzi. Alat ujinya: `node scripts/uji-kueri.mjs berkas.txt` (laporkan kueri yang kosong, hanya sebagian kata, atau < 3 hasil). Kamus kini 115 konsep dan 78 grup ejaan.
+
 **Kueri berupa kalimat (putaran kesepuluh):** 20 potongan hadits populer diuji, termasuk 4 yang dikenal lemah/palsu. Pencarian kata kunci kurang tepat untuk kalimat: "senyummu kepada saudaramu adalah sedekah" jatuh ke mode "sebagian kata" (63.721 hasil), dan "tuntutlah ilmu sampai ke negeri cina" dibuka kisah Nabi Musa. Cek Hadits menangani kalimat ini jauh lebih baik, dan daftar Populer mengenali keempat ucapan lemah/palsu.
 
 Bila kueri minimal 4 kata dan menyisakan minimal 3 kata kunci (setelah kata pengisi dan istilah kamus), halaman Cari kini:

@@ -212,6 +212,222 @@
     [
       "bertakwa",
       "bertaqwa"
+    ],
+    [
+      "zhuhur",
+      "dzuhur",
+      "dhuhur",
+      "zuhur",
+      "duhur",
+      "zhuhr",
+      "dzuhr",
+      "lohor"
+    ],
+    [
+      "khamer",
+      "khamr",
+      "khamar",
+      "kamer",
+      "kamr"
+    ],
+    [
+      "akhirat",
+      "akherat",
+      "akirat",
+      "aherat",
+      "ahirat"
+    ],
+    [
+      "shahih",
+      "sahih",
+      "shohih",
+      "sohih"
+    ],
+    [
+      "dhaif",
+      "dlaif",
+      "dhoif",
+      "daif"
+    ],
+    [
+      "syafaat",
+      "safaat",
+      "syafaah"
+    ],
+    [
+      "ghanimah",
+      "ghonimah",
+      "ganimah",
+      "gonimah"
+    ],
+    [
+      "khalifah",
+      "kalifah",
+      "halifah"
+    ],
+    [
+      "tasyahud",
+      "tasyahhud",
+      "tasahud",
+      "tasahhud"
+    ],
+    [
+      "syaikh",
+      "syekh",
+      "syeikh"
+    ],
+    [
+      "akhlak",
+      "akhlaq",
+      "aklak"
+    ],
+    [
+      "madzi",
+      "mazi",
+      "madzy"
+    ],
+    [
+      "mushaf",
+      "mushhaf",
+      "musaf"
+    ],
+    [
+      "rukhshah",
+      "rukhsah",
+      "ruksah",
+      "rukhshoh"
+    ],
+    [
+      "ikhlas",
+      "ikhlash",
+      "iklas"
+    ],
+    [
+      "syahadat",
+      "syahadah",
+      "sahadat"
+    ],
+    [
+      "syahwat",
+      "sahwat"
+    ],
+    [
+      "istighfar",
+      "istigfar"
+    ],
+    [
+      "beristighfar",
+      "beristigfar"
+    ],
+    [
+      "syariat",
+      "syariah",
+      "sariat"
+    ],
+    [
+      "mudharat",
+      "madharat",
+      "mudarat",
+      "mudhorot"
+    ],
+    [
+      "khianat",
+      "kianat",
+      "hianat"
+    ],
+    [
+      "thaghut",
+      "taghut",
+      "tagut",
+      "thogut"
+    ],
+    [
+      "musyawarah",
+      "musawarah"
+    ],
+    [
+      "arsy",
+      "arasy"
+    ],
+    [
+      "asyura",
+      "asyuro",
+      "asura"
+    ],
+    [
+      "nabidz",
+      "nabiz",
+      "nabid"
+    ],
+    [
+      "gharib",
+      "garib"
+    ],
+    [
+      "tsiqah",
+      "siqah",
+      "tsiqat"
+    ],
+    [
+      "ashar",
+      "asar",
+      "ashr",
+      "asr"
+    ],
+    [
+      "maghrib",
+      "magrib",
+      "maghrip"
+    ],
+    [
+      "muharram",
+      "muharam",
+      "muharom"
+    ],
+    [
+      "syaban",
+      "syakban"
+    ],
+    [
+      "syawal",
+      "syawwal",
+      "sawal"
+    ],
+    [
+      "dzulqadah",
+      "dzulqodah",
+      "zulkaidah",
+      "dzulqaidah",
+      "zulqaidah",
+      "dzulkaidah"
+    ],
+    [
+      "dzulhijjah",
+      "dzulhijah",
+      "zulhijjah",
+      "zulhijah"
+    ],
+    [
+      "muadzin",
+      "muadzdzin",
+      "muazin",
+      "muazzin"
+    ],
+    [
+      "tahiyyat",
+      "tahiyat",
+      "attahiyat",
+      "attahiyyat"
+    ],
+    [
+      "qashar",
+      "qasar",
+      "qosor",
+      "qoshor"
+    ],
+    [
+      "qunut",
+      "kunut"
     ]
   ],
   "_catatan_varian": "Kata pertama = bentuk baku untuk tampilan. Saat mencari, SEMUA varian dicari bersamaan (terjemahan Lidwa memakai ejaan campuran: sedekah 821, shadaqah 248, shodaqoh 16).",
@@ -2498,6 +2714,60 @@
       "bab": [],
       "catatan": "Kata \"jodoh\" diarahkan ke hadits memilih pasangan: تنكح المرأة لأربع... فاظفر بذات الدين (wanita dinikahi karena empat hal... pilihlah yang taat beragama). Hadits tentang takdir jodoh secara khusus tidak ada di kitab-kitab ini.",
       "bukti": "arab_akar:\"فاظفر بذات الدين\" = 6; \"تنكح المرأة لأربع\" = 2; terjemah 'dinikahi karena empat' = 7 (build 2026-11-07)"
+    },
+    {
+      "id": "rukyatul_hilal",
+      "label": "Rukyatul hilal (melihat hilal)",
+      "pemicu": [
+        "rukyat",
+        "rukyatul",
+        "rukyah",
+        "ruyat"
+      ],
+      "arab": [
+        "صوموا لرؤيته",
+        "لرؤيته"
+      ],
+      "terjemah": [
+        "melihat hilal"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: صوموا لرؤيته وأفطروا لرؤيته (berpuasalah karena melihatnya dan berbukalah karena melihatnya). Kata \"rukyah\" diarahkan ke sini; untuk jampi/ruqyah, ketik \"ruqyah\".",
+      "bukti": "arab_akar:\"صوموا لرؤيته\" = 28; لرؤيته = 54; terjemah 'melihat hilal' = 116 (build 2026-11-07)"
+    },
+    {
+      "id": "bulan_haram",
+      "label": "Bulan-bulan haram (al-asyhur al-hurum)",
+      "pemicu": [
+        "hurum",
+        "asyhurul"
+      ],
+      "arab": [
+        "الأشهر الحرم",
+        "أربعة حرم"
+      ],
+      "terjemah": [
+        "bulan haram",
+        "bulan-bulan haram"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: السنة اثنا عشر شهرا منها أربعة حرم (setahun dua belas bulan, empat di antaranya bulan haram).",
+      "bukti": "arab_akar:\"الأشهر الحرم\" = 9; \"أربعة حرم\" = 9; terjemah 'bulan haram' = 57, 'bulan-bulan haram' = 18 (build 2026-11-07)"
+    },
+    {
+      "id": "tasua",
+      "label": "Puasa Tasu'a (9 Muharram)",
+      "pemicu": [
+        "tasua",
+        "tasuah"
+      ],
+      "arab": [
+        "لأصومن التاسع"
+      ],
+      "terjemah": [],
+      "bab": [],
+      "catatan": "Teks Arabnya: لئن بقيت إلى قابل لأصومن التاسع (bila aku masih hidup tahun depan, aku akan berpuasa pada hari kesembilan). Riwayatnya sedikit.",
+      "bukti": "arab_akar:\"لأصومن التاسع\" = 2; التاسع = 16 (umum, tidak dipakai) (build 2026-11-07)"
     }
   ]
 }
