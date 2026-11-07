@@ -309,7 +309,7 @@ export function halamanKitab({ k, bab, daftar, halaman, halMaks }) {
   <p class="sub">${esc(k.penyusun)} (w. ${k.wafat_h} H). Penomoran: ${k.id === "riyadh" ? "nomor hadits Riyadhus Shalihin pada teks Arab (1–1896); terjemah memakai penomoran edisinya sendiri, ditampilkan sebagai pembanding" : k.jumlah_standar ? "standar (fawazahmed0), dengan nomor Lidwa sebagai pembanding" : k.edisi ? `Lidwa Pusaka (alamat halaman); nomor edisi ${esc(k.edisi)} ditampilkan di setiap hadits yang teksnya cocok` : "Lidwa Pusaka"}.</p>
   ${ringkasKitab(k)}`;
   if (bab.length) {
-    const ket = k.id === "riyadh" ? "Nama bab Indonesia dari terjemahnya; nama Arab dari teks an-Nawawi."
+    const ket = k.id === "riyadh" ? (k.sembunyiNamaBab ? "Nama bab dari teks Arab an-Nawawi. Nama bab Indonesia belum ditampilkan, karena berasal dari terjemah yang izinnya sedang dipastikan." : "Nama bab Indonesia dari terjemahnya; nama Arab dari teks an-Nawawi.")
       : "Nama Arab dari teks kitabnya (korpus OpenITI). Nama Indonesia disusun Teman Hadits dan belum ditinjau ahli; nama Inggris dari fawazahmed0.";
     return kepala + `<section class="bagian" style="margin-top:34px"><header><h2>Daftar bab</h2><p>${ket}</p></header>
       <ol class="daftar-bab">${bab.map((b) => `<li><a href="/kitab/${esc(k.id)}/bab/${b.no}">${b.no}. ${esc(b.nama || "Riwayat tanpa nomor kitab di sumber penomoran (campuran)")}${b.nama_ar ? `<br><span class="ar" style="font-size:1.05rem;color:var(--tinta-2);display:block;text-align:left">${esc(b.nama_ar)}</span>` : ""}${b.nama_en && b.nama_en !== b.nama ? `<span class="kecil" style="display:block">${esc(b.nama_en)}</span>` : ""}</a><span class="nb">${fmt(b.jumlah)}</span></li>`).join("")}</ol></section>`;

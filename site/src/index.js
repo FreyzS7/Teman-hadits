@@ -112,7 +112,7 @@ async function halamanRiyadh(env, url, kitab, r) {
   for (const x of sumber.results) { const p = nilai(x.nilai_json); if (p.length) penilaianSumber.set(x.n, p); delete x.nilai_json; }
   const kanonik = `${url.origin}/riyadh/${r.slug}`;
   const isi = T.halamanRiyadh({
-    r, kitab, bab: bab.results[0] || null, info: info.results[0] || null, sumber: sumber.results, penilaianSumber, tema: tema.results,
+    r, kitab, bab: babTanpaTerjemah(env, "riyadh", bab.results[0] || null), info: info.results[0] || null, sumber: sumber.results, penilaianSumber, tema: tema.results,
     sebelum: tetangga.results.find((x) => x.urut === r.urut - 1), sesudah: tetangga.results.find((x) => x.urut === r.urut + 1), kanonik,
     sembunyiTerjemah: env.TERJEMAH_RIYADH === "sembunyi",
   });
@@ -129,7 +129,7 @@ async function halamanCari(env, url) {
   if (filter.k && !kitab.some((k) => k.id === filter.k)) filter.k = "";
   if (!["", "A", "B"].includes(filter.t)) filter.t = "";
   const halaman = halamanKe(url);
-  const out = await cari(db, q, { halaman, kitab: filter.k || null, tingkat: filter.t || null });
+  const out = await cari(db, q, { halaman, kitab: filter.k || null, tingkat: filter.t || null, abaikanIdRiyadh: env.TERJEMAH_RIYADH === "sembunyi" });
   let rujukan = null;
   if (out.rencana.rujukan) {
     const { kitab: kid, no } = out.rencana.rujukan;
@@ -178,19 +178,24 @@ async function halamanCari(env, url) {
   return html(T.layout({ judul: `${q} · Cari · Teman Hadits`, aktif: "cari", isi, noindex: true }));
 }
 
+// Riyadhus Shalihin: nama bab Indonesia berasal dari berkas terjemah yang sama, yang izinnya belum jelas. Dalam mode
+// "sembunyi" nama itu tidak ditampilkan (nama Arab an-Nawawi tetap tampil); lihat docs/08-riyadhus-shalihin.md.
+const babTanpaTerjemah = (env, kid, b) => (b && kid === "riyadh" && env.TERJEMAH_RIYADH === "sembunyi" ? { ...b, nama: `Bab ${b.no}`, tanpaNamaId: true } : b);
+
 async function halamanKitab(env, url, kid, babNo) {
   const db = env.DB;
-  const k = await db.prepare("SELECT * FROM kitab WHERE id = ?1").bind(kid).first();
-  if (!k) return null;
+  const k0 = await db.prepare("SELECT * FROM kitab WHERE id = ?1").bind(kid).first();
+  if (!k0) return null;
+  const k = kid === "riyadh" && env.TERJEMAH_RIYADH === "sembunyi" ? { ...k0, sembunyiNamaBab: true } : k0;
   const halaman = halamanKe(url);
   const kolom = "SELECT r.slug, r.no_tampil, substr(r.terjemah, 1, 300) AS terjemah, r.tingkat, coalesce(json_array_length(r.nilai_json), 0) AS n_nilai FROM riwayat r";
   if (babNo != null) {
-    const b = await db.prepare("SELECT * FROM bab WHERE kitab_id = ?1 AND no = ?2").bind(kid, babNo).first();
+    const b = babTanpaTerjemah(env, kid, await db.prepare("SELECT * FROM bab WHERE kitab_id = ?1 AND no = ?2").bind(kid, babNo).first());
     if (!b) return null;
     const daftar = (await db.prepare(`${kolom} WHERE r.kitab_id = ?1 AND r.bab_no = ?2 ORDER BY r.urut LIMIT ${PER_HALAMAN} OFFSET ?3`).bind(kid, babNo, (halaman - 1) * PER_HALAMAN).all()).results;
     return html(T.layout({ judul: `${b.nama || "Bab " + b.no} · ${k.nama} · Teman Hadits`, aktif: "kitab", kanonik: `${url.origin}/kitab/${kid}/bab/${babNo}`, isi: T.halamanBab({ k, b, daftar, halaman, halMaks: Math.ceil(b.jumlah / PER_HALAMAN) }) }));
   }
-  const bab = (await db.prepare("SELECT no, nama, nama_ar, jumlah FROM bab WHERE kitab_id = ?1 ORDER BY no").bind(kid).all()).results;
+  const bab = (await db.prepare("SELECT no, nama, nama_ar, jumlah FROM bab WHERE kitab_id = ?1 ORDER BY no").bind(kid).all()).results.map((b) => babTanpaTerjemah(env, kid, b));
   let daftar = [], halMaks = 1;
   if (!bab.length) {
     daftar = (await db.prepare(`${kolom} WHERE r.kitab_id = ?1 ORDER BY r.urut LIMIT ${PER_HALAMAN} OFFSET ?2`).bind(kid, (halaman - 1) * PER_HALAMAN).all()).results;
@@ -278,7 +283,7 @@ async function rute(req, env) {
   if (p === "/api/cari") {
     const q = (url.searchParams.get("q") || "").trim().slice(0, 200);
     if (!q) return Response.json({ galat: "parameter q kosong" }, { status: 400 });
-    const out = await cari(db, q, { halaman: halamanKe(url) });
+    const out = await cari(db, q, { halaman: halamanKe(url), abaikanIdRiyadh: env.TERJEMAH_RIYADH === "sembunyi" });
     return Response.json({
       rencana: { ...out.rencana, konsep: out.rencana.konsep.map((k) => ({ id: k.id, label: k.label })) }, total: out.total,
       hasil: out.hasil.map((h) => ({ id: h.id, url: `${url.origin}/${h.kitab_id}/${h.slug}`, kitab: h.kitab_id, no: h.no_tampil, tingkat: h.tingkat, alasan: h.alasan, penilaian: h.penilaian.map(({ penilai, hukum }) => ({ penilai, hukum })) })),

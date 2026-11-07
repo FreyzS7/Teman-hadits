@@ -58,7 +58,7 @@ async function petaN(db) {
   const info = Object.fromEntries((await db.prepare("SELECT kunci, nilai FROM info WHERE kunci IN ('peta_n', 'bitmap_tingkat_b')").all()).results.map((x) => [x.kunci, x.nilai]));
   const rentang = JSON.parse(info.peta_n || "[]");
   const bit = atob(info.bitmap_tingkat_b || ""); // string biner: satu karakter = satu byte bitmap
-  return (n) => {
+  const f = (n) => {
     let lo = 0, hi = rentang.length - 1;
     while (lo <= hi) {
       const m = (lo + hi) >> 1, [kid, a, b] = rentang[m];
@@ -67,15 +67,21 @@ async function petaN(db) {
     }
     return null;
   };
+  f.rentang = rentang;
+  return f;
 }
 
 /**
  * @param {D1Database} db
  * @returns {Promise<{rencana, total, hasil, perKitab, halaman, perHalaman}>}
  */
-export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = null, tingkat = null } = {}) {
+export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = null, tingkat = null, abaikanIdRiyadh = false } = {}) {
   const r = rencana(kueri);
   const skor = new Map(), alasan = new Map();
+  // abaikanIdRiyadh: terjemah & nama bab Indonesia Riyadhus Shalihin belum boleh dipakai (TERJEMAH_RIYADH="sembunyi"),
+  // jadi kecocokan lewat teks Indonesia untuk riwayat Riyadh diabaikan; kecocokan lewat teks Arab tetap dipakai.
+  const peta = abaikanIdRiyadh ? await petaN(db) : null;
+  const tambahId = (n, nilai, sebab) => { if (!peta || peta(n)?.kitab_id !== "riyadh") tambah(n, nilai, sebab); };
   const tambah = (n, nilai, sebab) => {
     skor.set(n, (skor.get(n) || 0) + nilai);
     if (!alasan.has(n)) alasan.set(n, []);
@@ -93,28 +99,33 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
       const rs = await db.prepare("SELECT r.n FROM riwayat r WHERE r.kitab_id = ?1 AND r.bab_no IN (SELECT no FROM bab WHERE kitab_id = ?1 AND (nama = ?2 OR nama_en = ?2 OR nama_ar = ?2))").bind(kid, bab).all();
       for (const x of rs.results) tambah(x.n, 3, `masuk kitab/bab "${bab}"`);
     }
-    for (const t of k.terjemah) for (const n of await ftsIds(`terjemah_polos:"${normId(t)}"`)) tambah(n, 2, `terjemah memuat "${t}"`);
+    for (const t of k.terjemah) for (const n of await ftsIds(`terjemah_polos:"${normId(t)}"`)) tambahId(n, 2, `terjemah memuat "${t}"`);
   }
 
   let totalKata = 0;
+  // jumlah kecocokan teks Indonesia, tanpa rentang n Riyadh bila terjemahnya disembunyikan
+  const ry = peta && peta.rentang.find(([kid]) => kid === "riyadh");
+  const hitung = async (match) => (ry
+    ? await db.prepare("SELECT count(*) AS c FROM cari WHERE cari MATCH ?1 AND rowid NOT BETWEEN ?2 AND ?3").bind(match, ry[1], ry[2]).first()
+    : await db.prepare("SELECT count(*) AS c FROM cari WHERE cari MATCH ?1").bind(match).first()).c;
   if (r.kata.length && !r.konsep.length) {
     let mode = "semua kata";
     let match = r.kata.map(grupFts).join(" AND ");
-    totalKata = (await db.prepare("SELECT count(*) AS c FROM cari WHERE cari MATCH ?1").bind(match).first()).c;
+    totalKata = await hitung(match);
     if (!totalKata) {
       mode = "sebagian kata";
       match = r.kata.map(grupFts).join(" OR ");
-      totalKata = (await db.prepare("SELECT count(*) AS c FROM cari WHERE cari MATCH ?1").bind(match).first()).c;
+      totalKata = await hitung(match);
     }
     const ids = await ftsIds(match, 400);
-    ids.forEach((n, i) => tambah(n, 1 + (ids.length - i) / (10 * ids.length), `terjemah memuat ${mode}: ${r.kata.join(", ")}`));
+    ids.forEach((n, i) => tambahId(n, 1 + (ids.length - i) / (10 * ids.length), `terjemah memuat ${mode}: ${r.kata.join(", ")}`));
   }
 
   // judul kitab/bab (Arab & Indonesia) yang memuat kata kunci: "haid" -> riwayat di "Kitab Haid"
   if (r.kata.length && !r.konsep.length) {
     for (const w of r.kata) {
       const match = "judul:(" + varianDari(w).map(fraseId).join(" OR ") + ")";
-      for (const n of await ftsIds(match, 400)) tambah(n, 1, `judul kitab/bab memuat "${w}"`);
+      for (const n of await ftsIds(match, 400)) tambahId(n, 1, `judul kitab/bab memuat "${w}"`);
     }
   }
 
@@ -124,7 +135,7 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
     for (const w of penguat) {
       const match = "terjemah_polos:(" + varianDari(w).map(fraseId).join(" OR ") + ")";
       const rs = await db.prepare("SELECT rowid AS n FROM cari WHERE cari MATCH ?1 AND rowid IN (SELECT value FROM json_each(?2))").bind(match, jsonIds(skor.keys())).all();
-      for (const x of rs.results) tambah(x.n, 1, `terjemah memuat "${w}"`);
+      for (const x of rs.results) tambahId(x.n, 1, `terjemah memuat "${w}"`);
     }
   }
 

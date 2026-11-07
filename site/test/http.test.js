@@ -83,6 +83,16 @@ test("Riyadhus Shalihin: terjemah dipasangkan menurut isi, sumber diperiksa", op
   assert.match((await ambil("/bukhari/1")).teks, /Dikutip dalam[\s\S]*href="\/riyadh\/1"/);
 });
 
+test("mode sembunyi: terjemah Riyadh tidak ikut dicari, nama bab Indonesianya tidak tampil", opsi, async () => {
+  const sembunyi = /belum ditampilkan sampai izin penerjemahnya dipastikan/.test((await ambil("/riyadh/727")).teks);
+  if (!sembunyi) return;
+  const { teks } = await ambil("/cari?q=sabar&z=" + Date.now());
+  assert.doesNotMatch(teks, /href="\/riyadh\/\d+"/);
+  const kitab = (await ambil("/kitab/riyadh?z=" + Date.now())).teks;
+  assert.match(kitab, /Nama bab Indonesia belum ditampilkan/);
+  assert.match(kitab, />1\. Bab 1</);
+});
+
 test("judul kitab & bab dari teks kitabnya tampil di halaman hadits", opsi, async () => {
   const { teks } = await ambil("/bukhari/2009");
   assert.match(teks, /كتاب صلاة التراويح/);
