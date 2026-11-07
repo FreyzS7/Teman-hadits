@@ -22,6 +22,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import BUILD, DB_PATH, KITAB, akar_ar, norm_ar, norm_id
+import rapikan_terjemah  # noqa: E402
 import serupa  # noqa: E402
 
 OUT = os.path.join(BUILD, "d1")
@@ -110,6 +111,12 @@ CREATE INDEX ix_perawi_n ON perawi (n_riwayat);
 # dicari lewat kolom perawi, yang hanya memuat kata nama (huruf kapital, al-/az-/..., bin/binti), bukan kata kerabat.
 _KURUNG = re.compile(r"\[[^\]]*\]")
 _KATA_NAMA = re.compile(r"^([A-Z'`‘’]|(al|a[sztdnr]|asy|adz|ash|adh|ats|adl)-|bin$|binti$)")
+
+
+# Catatan di halaman hadits bila terjemah Lidwa tidak lengkap (pipeline/rapikan_terjemah.py)
+CATATAN_BELUM_SELESAI = ("terjemah di sumber Lidwa belum selesai (ditandai oleh penerjemahnya); "
+                         "bagian yang belum diterjemahkan ditandai (…); rujuk teks Arabnya")
+CATATAN_TERPOTONG = "terjemah di sumber Lidwa tampaknya terpotong: bagian akhir teks Arab belum diterjemahkan"
 
 
 def tanpa_kurung(teks):
@@ -263,6 +270,7 @@ def main():
     bab = {}
     for n, r in enumerate(rows, start=1):
         rid, kid, nos, noa, nol, babno, babnama, arab, terj, rantai, kc, tk, al = r
+        terj, tak_lengkap = rapikan_terjemah.rapikan(terj, rid)
         n_of[rid] = n
         urut_dalam[kid] += 1
         if kid == "muslim":
@@ -296,6 +304,10 @@ def main():
                     pen_edisi.append((n, PENILAI_EDISI[kid], j["tahqiq"][:400], kategori_ar(j["tahqiq"])))
             else:
                 al = (al + "; " if al else "") + f"belum cocok >= 90% dengan edisi {LIDWA_SAJA[kid]}"
+        if tak_lengkap:
+            al = (al + "; " if al else "") + CATATAN_BELUM_SELESAI
+        elif rapikan_terjemah.terpotong(terj, arab):
+            al = (al + "; " if al else "") + CATATAN_TERPOTONG
         data_riwayat.append((n, rid, kid, slug, urut_dalam[kid], tampil, nos, noa, nol, babno, arab, terj, rantai, kc, tk, al, no_edisi))
         if no_edisi and "–" in no_edisi:
             alias_edisi.extend((kid, x, n) for x in no_edisi.split("–"))
@@ -324,6 +336,7 @@ def main():
                 "SELECT urut, no, bab_no, arab, catatan_ar, atribusi_ar, kitab_atribusi, terjemah, no_terjemah, "
                 "status_terjemah FROM riyadh ORDER BY no"):
             n += 1
+            terj = rapikan_terjemah.rapikan(terj, f"riyadh:{no}")[0]
             src_ok = any(kd for _, _, kd, _, _ in sumber_ry[u])
             pasti = st == "pasti"
             tk = "A" if (pasti and src_ok) else "B"

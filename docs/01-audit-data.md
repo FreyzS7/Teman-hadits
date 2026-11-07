@@ -98,6 +98,20 @@ Perawi teridentifikasi: 4,316 (4,174 tertaut ke Taqrib). Hubungan guru-murid Tah
 - Teks identik di nomor berbeda **tidak** dianggap rusak: al-Bukhari dan penyusun lain memang mengulang hadits yang sama di bab berbeda. Ditandai sebagai "pengulangan".
 - Musnad Ahmad, Sunan ad-Darimi, Musnad asy-Syafi'i baru punya **satu** sumber digital (Lidwa) dan belum ada penilaian derajat per hadits → tingkat B, label "belum ada penilaian tercatat".
 - Terjemahan Indonesia di **kedua** sumber berasal dari Lidwa Pusaka (gaya `[nama perawi]` identik). Jadi terjemahan baru diverifikasi oleh satu pihak; kecocokan dua sumber hanya menguji teks Arab dan nomor.
+- **Cacat teknis terjemah Lidwa** (pemindaian 64.108 terjemah, 7 Nov 2026). Diperbaiki saat ekspor oleh `pipeline/rapikan_terjemah.py` (2.763 terjemah kitab + 15 terjemah Riyadhus Shalihin berubah; angka di tabel = jumlah riwayat). Makna tidak diubah:
+
+  | Cacat | Jumlah | Contoh | Perbaikan |
+  |---|---:|---|---|
+  | Kata tugas tertulis dua kali | 565 | bukhari:87 «dari dari al hantam», «telah telah menceritakan», «[Abu Abu Hurairah]» | jadi satu kata. Hanya kata tugas yang pengulangannya pasti salah ketik; «Allah Allah», «tidak tidak», «labbaika labbaika», «ummatku ummatku» dibiarkan |
+  | Kata ulang tanpa tanda hubung | 412 | «orang orang», «laki laki», «tiba tiba» | «orang-orang» dst. (daftar kata tetap); pencarian tidak berubah |
+  | Nomor catatan menempel di akhir | 1.596 | syafii:L179 «… kelihatan. 185» (1.599 dari 1.800 terjemah asy-Syafi'i) | dihapus bila sesudah tanda akhir kalimat |
+  | Spasi ganda / spasi sebelum tanda baca | 1.095 / 512 | «Rasulullah  pernah» (ikon ﷺ hilang di asy-Syafi'i), «Aufa . Abu Isa» | dirapatkan |
+  | Kurung siku nama perawi rusak | 16 | darimi:L509 «[Aun bin Abdullah [kepadaku, …» | diperbaiki satu per satu. Penting untuk pencarian: isi kurung dianggap nama perawi, jadi kurung yang tak tertutup membuang potongan matan dari kolom pencarian |
+  | Entitas HTML | 3 (15 kali) | tirmidzi:1973 «&quot;» | jadi tanda kutip |
+  | Penanda penerjemah «#BELUM SELESAI#», «#KOSONG#» | 6 | ahmad:L16917 | diganti «(…)» dan halaman hadits memberi catatan bahwa terjemah belum selesai |
+  | Terjemah terpotong di sumber | 10 | tirmidzi:491 berakhir «… dan janganlah» | tidak bisa dipulihkan; halaman hadits memberi catatan «tampaknya terpotong». Kriteria (semua 10 dicek manual): tanpa tanda akhir kalimat dan < 0,65 × panjang Arab (Arab > 300 huruf), atau berakhir koma/titik koma dan lebih pendek dari Arabnya |
+
+  Tidak diubah: tanda kutip yang tidak berpasangan (±15.500 terjemah; gaya Lidwa mengutip bertingkat dan sering tidak menutup kutipan, jadi bukan cacat yang bisa dipastikan) dan angka dalam kurung seperti «(Qs. Al Hijr [15]: 87)». Uji: `pipeline/test_export.py` (kelas `RapikanTerjemah`).
 - Lima berkas SQL yang diunggah pemilik proyek identik byte-per-byte (sha256) dengan berkas di repo irsyadulibad/hadits-database commit `db43bda`.
 
 ## Sumber terkunci

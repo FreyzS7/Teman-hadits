@@ -45,3 +45,55 @@ class KelompokSerupa(unittest.TestCase):
         a = kata_matan(self.r("إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى") + " قَالَ أَبُو عِيسَى هَذَا حَدِيثٌ حَسَنٌ صَحِيحٌ")
         b = kata_matan(self.r("إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى"))
         self.assertEqual(a, b)
+
+
+class RapikanTerjemah(unittest.TestCase):
+    """pipeline/rapikan_terjemah.py: contoh nyata dari pemindaian terjemah Lidwa."""
+
+    def setUp(self):
+        from rapikan_terjemah import rapikan, terpotong
+        self.r = lambda t, rid=None: rapikan(t, rid)[0]
+        self.rapikan, self.terpotong = rapikan, terpotong
+
+    def test_kata_tugas_ganda(self):
+        self.assertEqual(self.r("yaitu dari meminum dari dari al hantam"), "yaitu dari meminum dari al hantam")   # bukhari:87
+        self.assertEqual(self.r("berkata, telah telah menceritakan kepada kami"), "berkata, telah menceritakan kepada kami")
+        self.assertEqual(self.r("dari [Abu Abu Hurairah] Rasulullah"), "dari [Abu Hurairah] Rasulullah")          # muslim:7278
+        self.assertEqual(self.r("kepada kami kami [Baqiyah]"), "kepada kami [Baqiyah]")
+
+    def test_pengulangan_yang_mungkin_sengaja_dibiarkan(self):
+        for t in ("Nama Allah Allah yang paling agung", "Aku tidak tidak peduli", "Labbaika labbaika",
+                  "ummatku ummatku", "[Harun Al Al'war]"):
+            self.assertEqual(self.r(t), t)
+
+    def test_kata_ulang_diberi_tanda_hubung(self):
+        self.assertEqual(self.r("orang orang dan laki laki, tiba tiba"), "orang-orang dan laki-laki, tiba-tiba")
+        self.assertEqual(self.r("Hamba Hamba Allah"), "Hamba-hamba Allah")
+        self.assertEqual(self.r("khawatir jangAn jangan hal itu"), "khawatir jangan-jangan hal itu")      # ahmad:L15433
+
+    def test_entitas_spasi_dan_nomor_catatan(self):
+        self.assertEqual(self.r("bertaubat darinya.&quot;"), 'bertaubat darinya."')                          # tirmidzi:1973
+        self.assertEqual(self.r("Ibnu Abu Aufa . Abu Isa berkata"), "Ibnu Abu Aufa. Abu Isa berkata")          # tirmidzi:507
+        self.assertEqual(self.r("bahwa Rasulullah  pernah bersabda"), "bahwa Rasulullah pernah bersabda")
+        self.assertEqual(self.r("hingga pipinya kelihatan. 185"), "hingga pipinya kelihatan.")                # syafii:L179
+        self.assertEqual(self.r('oleh kalian."731'), 'oleh kalian."')
+        self.assertEqual(self.r("sebanyak 100"), "sebanyak 100")                                             # angka isi tetap
+
+    def test_kurung_rusak_diperbaiki_manual(self):
+        t = "disampaikan oleh [Aun bin Abdullah [kepadaku, aku kagum dengan hadis tersebut"
+        self.assertEqual(self.r(t, "darimi:L509"), "disampaikan oleh [Aun bin Abdullah] kepadaku, aku kagum dengan hadis tersebut")
+        self.assertIn("aku kagum", tanpa_kurung(self.r(t, "darimi:L509")))   # matan tidak lagi terbuang dari pencarian
+        self.assertEqual(self.r(t), t.replace("  ", " "))                  # perbaikan manual hanya untuk riwayatnya
+
+    def test_penanda_belum_selesai(self):
+        t, tl = self.rapikan("belum sampai pada bagian dasarnya #BELUM SELESAI#")                           # ahmad:L16917
+        self.assertEqual((t, tl), ("belum sampai pada bagian dasarnya (…)", True))
+        self.assertFalse(self.rapikan("terjemah biasa.")[1])
+
+    def test_terpotong(self):
+        arab = "ا" * 400
+        self.assertTrue(self.terpotong("x" * 200, arab))                     # tanpa tanda akhir, 0,5 x Arab
+        self.assertFalse(self.terpotong("x" * 200 + ".", arab))
+        self.assertTrue(self.terpotong("x" * 300 + ",", arab))              # berakhir koma, lebih pendek dari Arab
+        self.assertFalse(self.terpotong("x" * 500 + ",", arab))
+        self.assertFalse(self.terpotong("x" * 100, "ا" * 200))              # Arab pendek: tidak dinilai
