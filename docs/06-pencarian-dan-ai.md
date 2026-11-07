@@ -66,6 +66,23 @@ Tidak dipakai karena bermakna ganda: تميمة/"tamimah" (nama perawi Abu Tamim
 
 "doa", "berdoa", dan "bacaan" kini menjadi kata maksud: tidak diwajibkan, tetapi menambah +1,5 bila letaknya dekat kata kunci. Banyak hadits doa tidak memuat kata "doa" ("apabila naik kendaraan, beliau mengucapkan ..."). Bila kueri hanya berisi kata maksud ("doa", "keutamaan"), kata itu dicari sebagai kata biasa.
 
+Putaran keempat (50 kueri akhlak, keluarga, akhirat, sirah):
+
+| Kueri | Sebelum | Sesudah | Padanan / catatan |
+|---|---:|---:|---|
+| "telaga kautsar" | 9 | 226 | على الحوض, حوضي, الكوثر (bukan الحوض sendirian: kolam biasa) |
+| "isra miraj" | 8 | 63 | أسري بي, عرج بي (bukan terjemah "isra" sendirian: Surat al-Isra') |
+| "shirath" | 26 | 51 | على الصراط, جسر جهنم (bukan الصراط sendirian: الصراط المستقيم) |
+| "padang mahsyar" | 12 | 55 | يحشر الناس, المحشر |
+| "namimah" | 5 | 53 | النميمة, لا يدخل الجنة قتات (bukan قتات sendirian: nama perawi) |
+| "tawadhu" | 4 | 27 | تواضع |
+| "qanaah" | 1 | 9 | قنعه الله (riwayatnya memang sedikit) |
+| "poligami" | 0 | 11 | امرأتان فمال, أمسك أربعا (bukan كانت له امرأتان / أربع نسوة: kisah lain) |
+| "khulafaur rasyidin" | 4 | 12 | الخلفاء الراشدين |
+| "mizan" | – | – | أثقل في الميزان, تملأ الميزان (bukan الميزان sendirian: timbangan dagang) |
+
+Tidak diberi entri karena tidak ada padanan Arab yang khusus: "mukjizat" (آية terlalu umum), "mertua" (الحمو berarti kerabat suami, bukan mertua), "mendidik anak".
+
 Bukti hitungan tiap entri ada di kolom `bukti` di `kamus_konsep.json`.
 
 **Urutan hasil (7 Nov 2026)**, di `site/src/cari.js`. Setiap aturan tampil sebagai alasan di hasil:

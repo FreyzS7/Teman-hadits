@@ -106,6 +106,28 @@
       "haid",
       "haidh",
       "haidl"
+    ],
+    [
+      "tawadhu",
+      "tawaduk",
+      "tawadu",
+      "tawadlu"
+    ],
+    [
+      "qanaah",
+      "qonaah",
+      "qanaat"
+    ],
+    [
+      "kautsar",
+      "kaustar",
+      "kausar"
+    ],
+    [
+      "shirath",
+      "sirath",
+      "shirat",
+      "sirat"
     ]
   ],
   "_catatan_varian": "Kata pertama = bentuk baku untuk tampilan. Saat mencari, SEMUA varian dicari bersamaan (terjemahan Lidwa memakai ejaan campuran: sedekah 821, shadaqah 248, shodaqoh 16).",
@@ -811,6 +833,211 @@
       "bab": [],
       "catatan": "Kata الميسر sendirian tidak dipakai, karena setelah dinormalkan sama dengan ميسر (dimudahkan) di hadits takdir (كل ميسر لما خلق له). Yang dipakai: الخمر والميسر, القمار, dan النرد (permainan dadu).",
       "bukti": "arab_akar:الميسر = 63 (bercampur 'dimudahkan', tidak dipakai); \"الخمر والميسر\" = 18; القمار = 4; النرد = 32; terjemah 'judi' = 29, 'berjudi' = 14, 'dadu' = 17 (build 2026-11-07)"
+    },
+    {
+      "id": "telaga_kautsar",
+      "label": "Telaga (al-Haudh / al-Kautsar)",
+      "pemicu": [
+        "kautsar",
+        "haudh",
+        "haudl",
+        "telaga"
+      ],
+      "arab": [
+        "على الحوض",
+        "حوضي",
+        "الكوثر"
+      ],
+      "terjemah": [
+        "telagaku",
+        "telaga al haudl",
+        "al haudl",
+        "al kautsar"
+      ],
+      "bab": [],
+      "catatan": "Kata الحوض sendirian tidak dipakai, karena di sebagian hadits berarti kolam minum biasa. Yang dipakai: إني فرطكم على الحوض (aku mendahului kalian di telaga), حوضي (telagaku), dan الكوثر.",
+      "bukti": "arab_akar:الحوض = 165 (bercampur kolam biasa, tidak dipakai); \"على الحوض\" = 107; حوضي = 69; الكوثر = 42; terjemah 'telagaku' = 84, 'al haudl' = 12, 'al kautsar' = 36 (build 2026-11-07)"
+    },
+    {
+      "id": "isra_miraj",
+      "label": "Isra' Mi'raj",
+      "pemicu": [
+        "isra",
+        "miraj",
+        "mikraj",
+        "israk"
+      ],
+      "arab": [
+        "أسري بي",
+        "عرج بي",
+        "المعراج",
+        "الإسراء"
+      ],
+      "terjemah": [
+        "malam isra",
+        "isra miraj",
+        "miraj"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai أسري بي (aku diperjalankan di malam hari) dan عرج بي (aku dinaikkan). Terjemah \"isra\" sendirian tidak dipakai, karena kebanyakan merujuk ke Surat al-Isra'.",
+      "bukti": "arab_akar:\"أسري بي\" = 33; \"عرج بي\" = 8; المعراج = 1; الإسراء = 3; terjemah 'malam isra' = 14, 'isra miraj' = 4, 'miraj' = 12; 'isra' = 51 (kebanyakan nama surat, tidak dipakai) (build 2026-11-07)"
+    },
+    {
+      "id": "mizan",
+      "label": "Mizan (timbangan amal)",
+      "pemicu": [
+        "mizan"
+      ],
+      "arab": [
+        "أثقل في الميزان",
+        "ثقيلتان في الميزان",
+        "تملأ الميزان",
+        "يوضع في الميزان",
+        "توضع الموازين"
+      ],
+      "terjemah": [
+        "mizan",
+        "timbangan amal"
+      ],
+      "bab": [],
+      "catatan": "Kata الميزان sendirian tidak dipakai, karena juga berarti timbangan dagang (أرجح في الميزان). Yang dipakai: أثقل في الميزان, ثقيلتان في الميزان, تملأ الميزان.",
+      "bukti": "arab_akar:الميزان = 84 (bercampur timbangan dagang, tidak dipakai); \"أثقل في الميزان\" = 7; \"ثقيلتان في الميزان\" = 7; \"تملأ الميزان\" = 6; terjemah 'mizan' = 17, 'timbangan amal' = 9 (build 2026-11-07)"
+    },
+    {
+      "id": "shirath",
+      "label": "Shirath (jembatan di atas Jahannam)",
+      "pemicu": [
+        "shirath"
+      ],
+      "arab": [
+        "على الصراط",
+        "يضرب الصراط",
+        "جسر جهنم",
+        "الصراط بين"
+      ],
+      "terjemah": [
+        "shirath",
+        "shirat"
+      ],
+      "bab": [],
+      "catatan": "Kata الصراط sendirian tidak dipakai, karena banyak muncul di ayat الصراط المستقيم (jalan yang lurus). Yang dipakai: على الصراط, يضرب الصراط بين ظهري جهنم, جسر جهنم.",
+      "bukti": "arab_akar:الصراط = 58 (bercampur الصراط المستقيم, tidak dipakai); \"على الصراط\" = 20; \"يضرب الصراط\" = 5; \"جسر جهنم\" = 10; \"الصراط بين\" = 8; terjemah 'shirath' = 26, 'shirat' = 3 (build 2026-11-07)"
+    },
+    {
+      "id": "mahsyar",
+      "label": "Padang Mahsyar (dikumpulkannya manusia)",
+      "pemicu": [
+        "mahsyar",
+        "masyhar"
+      ],
+      "arab": [
+        "يحشر الناس",
+        "المحشر",
+        "تحشرون"
+      ],
+      "terjemah": [
+        "padang mahsyar",
+        "mahsyar"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai يحشر الناس (manusia dikumpulkan) dan المحشر. Kata الحشر sendirian tidak dipakai, karena juga nama surat dan pengusiran Bani Nadhir.",
+      "bukti": "arab_akar:\"يحشر الناس\" = 29; المحشر = 10; تحشرون = 8; terjemah 'padang mahsyar' = 12, 'mahsyar' = 15 (build 2026-11-07)"
+    },
+    {
+      "id": "namimah",
+      "label": "Namimah (mengadu domba)",
+      "pemicu": [
+        "namimah",
+        "nammam"
+      ],
+      "arab": [
+        "النميمة",
+        "الجنة قتات",
+        "نمام"
+      ],
+      "terjemah": [
+        "namimah",
+        "adu domba",
+        "mengadu domba"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai النميمة dan لا يدخل الجنة قتات (tukang adu domba). Kata قتات sendirian tidak dipakai, karena juga nama perawi (Abu Yahya al-Qattat).",
+      "bukti": "arab_akar:النميمة = 24; \"الجنة قتات\" = 11; قتات = 18 (sebagian nama perawi, tidak dipakai); نمام = 6; terjemah 'namimah' = 5, 'adu domba' = 5, 'mengadu domba' = 35 (build 2026-11-07)"
+    },
+    {
+      "id": "tawadhu",
+      "label": "Tawadhu (rendah hati)",
+      "pemicu": [
+        "tawadhu"
+      ],
+      "arab": [
+        "تواضع"
+      ],
+      "terjemah": [
+        "tawadhu",
+        "rendah hati",
+        "merendahkan diri"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai تواضع / التواضع: وما تواضع أحد لله إلا رفعه الله.",
+      "bukti": "arab_akar:تواضع = 11; terjemah 'tawadhu' = 4, 'rendah hati' = 3, 'merendahkan diri' = 11 (build 2026-11-07)"
+    },
+    {
+      "id": "qanaah",
+      "label": "Qana'ah (merasa cukup)",
+      "pemicu": [
+        "qanaah"
+      ],
+      "arab": [
+        "قنعه الله",
+        "القناعة"
+      ],
+      "terjemah": [
+        "qanaah",
+        "menerima apa adanya"
+      ],
+      "bab": [],
+      "catatan": "Riwayatnya sedikit: قد أفلح من أسلم ورزق كفافا وقنعه الله بما آتاه. Terjemah \"merasa cukup\" tidak dipakai karena terlalu umum.",
+      "bukti": "arab_akar:\"قنعه الله\" = 4; القناعة = 1; terjemah 'qanaah' = 1, 'menerima apa adanya' = 3; 'merasa cukup' = 37 (umum, tidak dipakai) (build 2026-11-07)"
+    },
+    {
+      "id": "poligami",
+      "label": "Beristri lebih dari satu",
+      "pemicu": [
+        "poligami",
+        "berpoligami"
+      ],
+      "arab": [
+        "امرأتان فمال",
+        "يعدل بينهما",
+        "أمسك أربعا",
+        "اختر منهن أربعا"
+      ],
+      "terjemah": [
+        "condong kepada salah satunya"
+      ],
+      "bab": [],
+      "catatan": "Kata \"poligami\" tidak ada di terjemah. Riwayat yang dipakai: من كانت له امرأتان فمال إلى إحداهما (ancaman bagi yang tidak adil di antara dua istri) dan perintah memilih empat istri bagi yang masuk Islam dengan istri lebih banyak (أمسك أربعا / اختر منهن أربعا). Frasa umum seperti كانت له امرأتان dan أربع نسوة tidak dipakai, karena banyak muncul dalam kisah yang tidak membahas hal ini. Teman Hadits hanya menampilkan riwayat; hukumnya tanyakan kepada ulama.",
+      "bukti": "arab_akar:\"امرأتان فمال\" = 2; \"يعدل بينهما\" = 1; \"أمسك أربعا\" = 3; \"اختر منهن أربعا\" = 4; \"كانت له امرأتان\" = 10 dan \"أربع نسوة\" = 8 (sebagian kisah lain, tidak dipakai); terjemah 'poligami' = 0 (build 2026-11-07)"
+    },
+    {
+      "id": "khulafaur_rasyidin",
+      "label": "Khulafaur Rasyidin",
+      "pemicu": [
+        "khulafaur",
+        "khulafa",
+        "rasyidin"
+      ],
+      "arab": [
+        "الخلفاء الراشدين"
+      ],
+      "terjemah": [
+        "khulafaur rasyidin",
+        "khulafa"
+      ],
+      "bab": [],
+      "catatan": "Hadits al-'Irbadh bin Sariyah: عليكم بسنتي وسنة الخلفاء الراشدين المهديين.",
+      "bukti": "arab_akar:\"الخلفاء الراشدين\" = 7; terjemah 'khulafaur rasyidin' = 4, 'khulafa' = 6 (build 2026-11-07)"
     }
   ]
 }
