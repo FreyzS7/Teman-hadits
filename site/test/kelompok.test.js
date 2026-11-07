@@ -45,3 +45,14 @@ test("Cek Hadits: ejaan lain dalam satu grup dihitung sebagai satu kata", () => 
   assert.equal(liputanJendela("sholat malam dan shalat malam", Q, bobot, 10, kunci).skor, 2);
   assert.equal(liputanJendela("Rasulullah sholat malam", Q, bobot, 10, kunci).skor, 2);
 });
+
+import { cuplikMatan } from "../src/teks.js";
+test("cuplikMatan: deskripsi halaman dimulai dari matan, bukan sanad", () => {
+  const t = "Telah menceritakan kepada kami [Al Humaidi Abdullah bin Az Zubair] dia berkata, Telah menceritakan kepada kami [Sufyan] dari [Yahya bin Sa'id Al Anshari] berkata, saya mendengar [Umar bin Al Khaththab] diatas mimbar berkata; saya mendengar Rasulullah shallallahu 'alaihi wasallam bersabda: \"Semua perbuatan tergantung niatnya, dan (balasan) bagi tiap-tiap orang (tergantung) apa yang diniatkan; Barangsiapa niat hijrahnya karena dunia yang ingin digapainya atau karena seorang perempuan yang ingin dinikahinya, maka hijrahnya adalah kepada apa dia diniatkan\"";
+  const d = cuplikMatan(t);
+  assert.ok(d.startsWith("Saya mendengar Rasulullah shallallahu 'alaihi wasallam bersabda: \"Semua perbuatan"), d);
+  assert.ok(d.length <= 155 && d.endsWith("…"));
+  assert.ok(!/[[\]]/.test(d));
+  assert.equal(cuplikMatan("Tanpa sanad dan pendek."), "Tanpa sanad dan pendek.");
+  assert.equal(cuplikMatan(""), "");
+});

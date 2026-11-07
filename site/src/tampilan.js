@@ -34,7 +34,14 @@ export function bukuBesar(pen, kitab, tambahan = []) {
 
 const SVG_BINTANG = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0l2.6 6.3L21 3l-3.3 6.4L24 12l-6.3 2.6L21 21l-6.4-3.3L12 24l-2.6-6.3L3 21l3.3-6.4L0 12l6.3-2.6L3 3l6.4 3.3z"/></svg>`;
 
-export function layout({ judul, deskripsi, isi, aktif = "", kanonik = "", noindex = false }) {
+export function layout({ judul, deskripsi, isi, aktif = "", kanonik = "", noindex = false, asal = "", jsonld = null }) {
+  const desk = deskripsi || "Pustaka hadits berbahasa Indonesia: cari hadits, cek teks yang beredar, lihat sanad dan penilaian ulama beserta sumbernya.";
+  // Pratinjau tautan saat dibagikan (WhatsApp, Telegram, media sosial): judul tanpa nama situs, deskripsi, gambar 1200x630
+  const og = asal ? `
+<meta property="og:site_name" content="Teman Hadits"><meta property="og:locale" content="id_ID"><meta property="og:type" content="${aktif === "beranda" ? "website" : "article"}">
+<meta property="og:title" content="${esc(judul.replace(/ · Teman Hadits$/, ""))}"><meta property="og:description" content="${esc(desk)}">${kanonik ? `<meta property="og:url" content="${esc(kanonik)}">` : ""}
+<meta property="og:image" content="${asal}/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Teman Hadits: cek dulu sumbernya, baru sebarkan">
+<meta name="twitter:card" content="summary_large_image">` : "";
   const nav = [["/", "Beranda", "beranda"], ["/cari", "Cari", "cari"], ["/cek", "Cek Hadits", "cek"], ["/kitab", "Kitab", "kitab"], ["/tema", "Tema", "tema"], ["/populer", "Populer", "populer"], ["/perawi", "Perawi", "perawi"], ["/metode", "Metode", "metode"]];
   return `<!doctype html>
 <html lang="id">
@@ -42,8 +49,9 @@ export function layout({ judul, deskripsi, isi, aktif = "", kanonik = "", noinde
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(judul)}</title>
-<meta name="description" content="${esc(deskripsi || "Pustaka hadits berbahasa Indonesia: cari hadits, cek teks yang beredar, lihat sanad dan penilaian ulama beserta sumbernya.")}">
-${kanonik ? `<link rel="canonical" href="${esc(kanonik)}">` : ""}${noindex ? '<meta name="robots" content="noindex">' : ""}
+<meta name="description" content="${esc(desk)}">
+${kanonik ? `<link rel="canonical" href="${esc(kanonik)}">` : ""}${noindex ? '<meta name="robots" content="noindex">' : ""}${og}
+${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld).replace(/</g, "\\u003c")}</script>` : ""}
 <link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="theme-color" content="#0E3F2F">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,6 +60,7 @@ ${kanonik ? `<link rel="canonical" href="${esc(kanonik)}">` : ""}${noindex ? '<m
 <script src="/assets/th.js"></script>
 </head>
 <body>
+<a class="lewati" href="#isi">Langsung ke isi</a>
 <header class="kepala">
   <div class="wrap">
     <a class="merek" href="/" aria-label="Teman Hadits, ke beranda"><img src="/assets/emblem.webp" alt="" width="46" height="38"><span><b>Teman Hadits</b><small>cek dulu sumbernya, baru sebarkan</small></span></a>
@@ -64,7 +73,7 @@ ${kanonik ? `<link rel="canonical" href="${esc(kanonik)}">` : ""}${noindex ? '<m
     </div>
   </div>
 </header>
-<main class="wrap">${isi}</main>
+<main class="wrap" id="isi" tabindex="-1">${isi}</main>
 <footer class="kaki"><div class="wrap">
   <p><b>Teman Hadits</b> adalah layanan umum tanpa iklan. Teks Arab: fawazahmed0/hadith-api dan Lidwa Pusaka; judul kitab &amp; bab serta kitab katalog hadits palsu: OpenITI (<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.id" rel="license noopener">CC BY-NC-SA 4.0</a>). Terjemahan: Lidwa Pusaka (digunakan dengan izin), via carihadis.com. Penilaian derajat selalu disertai nama ulama penilainya.</p>
   <p>Teman Hadits menampilkan riwayat, bukan fatwa. Untuk hukum suatu perkara, tanyakan kepada ulama yang Anda percaya. <a href="/cara-cari">Cara mencari</a> · <a href="/metode">Cara kami menjaga kebenaran data</a> · <a href="/metode#sumber">Sumber dan lisensi</a>.</p>
@@ -191,10 +200,10 @@ export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan, tema = 
       ${nav}
     </div>
     <aside class="panel-samping" aria-labelledby="h-sebaran">
-      <h3 id="h-sebaran">Sebaran per kitab</h3>
+      <h2 id="h-sebaran">Sebaran per kitab</h2>
       <div class="sebaran">${sebaran || '<p class="kecil">Belum ada hasil.</p>'}</div>
       ${filter.k ? `<a class="kecil" href="${urlDengan({ k: "", h: "" })}">Tampilkan semua kitab</a>` : '<p class="label">ketuk kitab untuk menyaring</p>'}
-      <h3>Tingkat data</h3>
+      <h2>Tingkat data</h2>
       <div class="saring">${[["", "Semua"], ["A", "Hanya tingkat A"], ["B", "Hanya tingkat B"]].map(([t, l]) => `<a href="${urlDengan({ t, h: "" })}" aria-current="${(filter.t || "") === t}">${l}</a>`).join("")}</div>
     </aside>
   </div>`;
@@ -360,7 +369,7 @@ export function halamanCek({ t, hasil, kitab, info, katalog = "" }) {
       vonis = `<section class="vonis"><header><span class="stempel ok">DITEMUKAN</span><p>Teks ini cocok dengan hadits yang tercatat di <b>${Object.keys(grup).length} kitab</b>, dalam <b>${hasil.keluarga.length} riwayat</b>. Kemiripan terbaik ${Math.round(hasil.skor * 100)}%.</p></header>
         <div class="isi">${klaim}${langkah}
           ${katalog}
-          <div><div class="label" style="margin-bottom:10px">semua riwayat yang ditemukan</div><div class="keluarga">${Object.entries(grup).map(([k, fs]) => `<article><h4>${esc(nama(k))}</h4><div class="nomor">${fs.map((f) => `<a href="/${esc(f.kitab_id)}/${esc(f.slug)}" title="${f.hubungan === "terbaik" ? "paling cocok dengan teks Anda" : f.hubungan === "sama" ? "matan sama" : "matan mirip"}"${f.hubungan === "terbaik" ? ' style="border-color:var(--zamrud);border-width:2px"' : f.hubungan === "mirip" ? ' style="border-style:dashed"' : ""}>${esc(f.no_tampil)}</a>`).join("")}</div>${bukuBesar(fs.find((f) => f.penilaian.length)?.penilaian, k)}</article>`).join("")}</div></div>
+          <div><div class="label" style="margin-bottom:10px">semua riwayat yang ditemukan</div><div class="keluarga">${Object.entries(grup).map(([k, fs]) => `<article><h2>${esc(nama(k))}</h2><div class="nomor">${fs.map((f) => `<a href="/${esc(f.kitab_id)}/${esc(f.slug)}" title="${f.hubungan === "terbaik" ? "paling cocok dengan teks Anda" : f.hubungan === "sama" ? "matan sama" : "matan mirip"}"${f.hubungan === "terbaik" ? ' style="border-color:var(--zamrud);border-width:2px"' : f.hubungan === "mirip" ? ' style="border-style:dashed"' : ""}>${esc(f.no_tampil)}</a>`).join("")}</div>${bukuBesar(fs.find((f) => f.penilaian.length)?.penilaian, k)}</article>`).join("")}</div></div>
         </div></section>`;
     } else {
       vonis = `<section class="vonis"><header><span class="stempel tidak">TIDAK DITEMUKAN</span><p>Kalimat ini <b>tidak ditemukan</b> di ${kitab.length} kitab yang kami muat (${fmt(info.terbit)} riwayat).</p></header>

@@ -191,6 +191,19 @@ Token itu bisa mengubah Worker dan database di akun Anda. Cabut token itu di das
 | 7 | **Domain** | Belum | Untuk `.my.id`, registrar PANDI biasanya meminta identitas WNI. Alternatif: `.com` atau `.id` |
 | 8 | **Privasi** | Sudah dijelaskan di halaman Metode (#privasi) | Tidak ada cookie, iklan, atau analitik pihak ketiga. Teks Cek Hadits dan kata pencarian ada di alamat halaman dan bisa tersimpan di cache Cloudflare ±1 jam; pengguna diminta tidak menempel data pribadi |
 
+### Kesiapan teknis (dicek 7 Nov 2026, server lokal)
+
+| Hal | Status |
+|---|---|
+| Judul & deskripsi halaman | Setiap halaman punya judul sendiri. Deskripsi halaman hadits kini diambil dari **awal matan** («Saya mendengar Rasulullah ﷺ bersabda: "Semua perbuatan…»), bukan 155 huruf pertama terjemah yang isinya sanad («Telah menceritakan kepada kami…»). Halaman Kitab, Tema, Metode, dan Cek kini punya deskripsi sendiri |
+| Alamat kanonik | Semua halaman yang boleh diindeks punya `rel=canonical` (ditambahkan untuk /kitab, /tema, /tema/…, /metode, /cek) |
+| Pratinjau tautan (WhatsApp, Telegram, media sosial) | Tag Open Graph & Twitter di semua halaman: judul, deskripsi, gambar `/og.png` 1200×630 (110 KB). Ini penting karena situs ini dibuat untuk dicek sebelum dibagikan |
+| Mesin pencari | `robots.txt` (halaman Cari, Cek berisi teks, dan API tidak diindeks), `sitemap.xml` per kitab + perawi, data terstruktur `WebSite` + `SearchAction` di beranda |
+| Halaman galat | 404 (alamat/nomor/perawi tidak ada) dan 500 berbahasa Indonesia, `noindex`, tidak disimpan lama di cache |
+| Ikon | favicon 64×64, apple-touch-icon 180×180 |
+| Aksesibilitas | Audit axe-core (WCAG 2 A/AA + best practice) di 14 halaman, tema terang dan gelap: **0 pelanggaran** setelah perbaikan kontras menu aktif (3,9 → 5,6), teks "belum dinilai" (4,45 → 5,1), urutan judul di Cari & Cek, dan tautan "Langsung ke isi" untuk papan ketik |
+| Kecepatan | CPU p90 semua rute < 10 ms (`npm run ukur:cpu`) |
+
 ## Anggaran tahun pertama (batas Rp 500.000)
 
 | Pos | Perkiraan |

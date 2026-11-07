@@ -19,7 +19,7 @@
   --terima: #17603F;      /* derajat diterima (shahih/hasan) */
   --lemah: #8E4F0C;       /* derajat lemah */
   --palsu: #A3231A;       /* palsu / batil */
-  --kosong: #6B6656;      /* belum dinilai */
+  --kosong: #625D4E;      /* belum dinilai (kontras >= 4.5 di kertas) */
   --tanda: #F0D77A;       /* stabilo <mark> */
   --fokus: #C08A12;
 
@@ -78,7 +78,7 @@ p { margin: 0; }
 .merek small { display: block; font: 500 .72rem/1.2 var(--f-ui); color: var(--sampul-teks); opacity: .8; letter-spacing: .02em; }
 .nav { display: flex; gap: 4px; }
 .nav a { color: var(--sampul-teks); text-decoration: none; font: 500 .95rem/1 var(--f-ui); padding: 9px 12px; border-radius: var(--r); }
-.nav a[aria-current="page"] { background: color-mix(in srgb, var(--emas-terang) 22%, transparent); color: var(--emas-terang); }
+.nav a[aria-current="page"] { background: color-mix(in srgb, var(--emas-terang) 14%, transparent); color: #E6C66F; }
 .nav a:hover { background: color-mix(in srgb, var(--sampul-teks) 10%, transparent); color: var(--sampul-teks); }
 .alat { display: flex; gap: 4px; align-items: center; }
 .alat button { background: transparent; border: 1px solid color-mix(in srgb, var(--sampul-teks) 30%, transparent); color: var(--sampul-teks); border-radius: var(--r); min-width: 38px; height: 34px; padding: 0 9px; cursor: pointer; font: 500 .85rem/1 var(--f-ui); }
@@ -196,7 +196,7 @@ main { padding-block: 28px 64px; }
 .sebaran .batang i { display: block; height: 100%; background: var(--zamrud); }
 .sebaran .n { text-align: right; font-variant-numeric: lining-nums tabular-nums; color: var(--tinta-2); }
 .panel-samping { background: var(--kertas); border: 1px solid var(--garis); padding: 18px; display: grid; gap: 14px; }
-.panel-samping h3 { font-size: 1.05rem; color: var(--zamrud); }
+.panel-samping h2, .panel-samping h3 { font-size: 1.05rem; color: var(--zamrud); }
 .tab-kueri { display: flex; gap: 0; border-bottom: 1px solid var(--garis); flex-wrap: wrap; }
 .tab-kueri button { background: none; border: 0; border-bottom: 3px solid transparent; padding: 10px 14px; cursor: pointer; font: 500 .95rem/1.2 var(--f-ui); color: var(--tinta-2); text-align: left; }
 .tab-kueri button[aria-selected="true"] { color: var(--zamrud); border-bottom-color: var(--zamrud); }
@@ -269,7 +269,7 @@ main { padding-block: 28px 64px; }
 .langkah .chip.nol { border-color: var(--palsu); color: var(--palsu); border-style: dashed; }
 .keluarga { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 12px; }
 .keluarga article { border: 1px solid var(--garis); padding: 12px 14px; display: grid; gap: 8px; align-content: start; background: color-mix(in srgb, var(--kertas) 50%, var(--meja)); }
-.keluarga h4 { margin: 0; font: 700 1rem/1.25 var(--f-tampil); color: var(--zamrud); }
+.keluarga h2, .keluarga h4 { margin: 0; font: 700 1rem/1.25 var(--f-tampil); color: var(--zamrud); }
 .keluarga .nomor { display: flex; flex-wrap: wrap; gap: 4px; }
 .keluarga .nomor a, .keluarga .nomor span { border: 1px solid var(--garis); padding: 2px 6px; font: 500 .85rem/1.2 var(--f-ui); font-variant-numeric: lining-nums tabular-nums; border-radius: 2px; text-decoration: none; }
 .slot-kosong { border: 2px dashed var(--garis); padding: 16px; display: grid; gap: 6px; color: var(--tinta-2); font: 400 .95rem/1.5 var(--f-ui); }
@@ -389,3 +389,8 @@ a.punggung:hover { color: var(--sampul-teks); }
 /* Ponsel: kepala halaman (logo, alat, 2 baris menu) dulu menempel saat digulir dan memakan ±30% layar.
    Di layar sempit kepala ikut tergulir; di layar lebar tetap menempel. */
 @media (max-width: 720px) { .kepala { position: static; } }
+
+/* Tautan "Langsung ke isi" untuk pengguna papan ketik & pembaca layar: tersembunyi sampai difokus */
+.lewati{position:absolute;left:8px;top:-60px;z-index:100;background:#0E4A36;color:#fff;padding:10px 14px;border-radius:6px;text-decoration:none;font-weight:700}
+.lewati:focus{top:8px}
+main:focus{outline:none}

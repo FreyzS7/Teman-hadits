@@ -1,7 +1,7 @@
 // Teman Hadits — Cloudflare Worker. Semua halaman dirender di server dari database D1.
 import { cari, akarSorot, kataSorot, NAMA_KITAB, nilai, daftarKonsep } from "./cari.js";
 import { cek } from "./cek.js";
-import { hukumTirmidzi, normId, pisahKomentar, pisahSanad, rantaiArab, rubrik } from "./teks.js";
+import { cuplikMatan, hukumTirmidzi, normId, pisahKomentar, pisahSanad, rantaiArab, rubrik } from "./teks.js";
 import * as T from "./tampilan.js";
 import { cocokKatalogArab, cocokPopuler, dataPopuler, daftarPopuler, entriKatalog } from "./katalog.js";
 import { dataPerawi, daftarPerawi, perawiSanad } from "./perawi.js";
@@ -65,7 +65,7 @@ async function halamanHadits(env, url, kid, slug) {
   if (!kitab) return null;
   const { r, alih } = await cariRiwayat(db, kid, slug);
   if (alih) return alihkan(alih, 301);
-  if (!r) return html(T.layout({ judul: "Tidak ditemukan · Teman Hadits", noindex: true, isi: T.halamanGalat("Nomor tidak ditemukan", `${T.PENDEK[kid] || kid} no. ${slug} tidak ada di data kami. Penomoran bisa berbeda antar-edisi; coba cari dengan kata kunci.`) }), 404);
+  if (!r) return html(T.layout({ asal: url.origin, judul: "Tidak ditemukan · Teman Hadits", noindex: true, isi: T.halamanGalat("Nomor tidak ditemukan", `${T.PENDEK[kid] || kid} no. ${slug} tidak ada di data kami. Penomoran bisa berbeda antar-edisi; coba cari dengan kata kunci.`) }), 404);
   // takhrij, penilaian, perawi, dan judul tersimpan di baris riwayat (kolom *_json, judul_id): lihat pipeline/export_d1.py
   const jal = JSON.parse(r.jalur_json || "[]");
   // riwayat sekelompok (pipeline/serupa.py: matan Arab >= 80% sama) melengkapi takhrij, yang tidak ada untuk
@@ -107,8 +107,8 @@ async function halamanHadits(env, url, kid, slug) {
     sebelum: tetangga.results.find((x) => x.urut === r.urut - 1), sesudah: tetangga.results.find((x) => x.urut === r.urut + 1), kanonik,
     dikutip: dikutip.results, judul: judul.results[0] ? { ...judul.results[0], cara: r.judul_cara } : null,
   });
-  const desk = (r.terjemah || "").replace(/\[|\]/g, "").replace(/\s+/g, " ").slice(0, 155);
-  return html(T.layout({ judul: `${kitab.nama} no. ${r.no_tampil} · Teman Hadits`, deskripsi: desk, isi, kanonik }));
+  const desk = cuplikMatan(r.terjemah);
+  return html(T.layout({ asal: url.origin, judul: `${kitab.nama} no. ${r.no_tampil} · Teman Hadits`, deskripsi: desk, isi, kanonik }));
 }
 
 async function halamanRiyadh(env, url, kitab, r) {
@@ -138,8 +138,8 @@ async function halamanRiyadh(env, url, kitab, r) {
     sebelum: tetangga.results.find((x) => x.urut === r.urut - 1), sesudah: tetangga.results.find((x) => x.urut === r.urut + 1), kanonik,
     sembunyiTerjemah: env.TERJEMAH_RIYADH === "sembunyi", pengganti,
   });
-  const desk = (env.TERJEMAH_RIYADH === "sembunyi" ? "" : (r.terjemah || "")).replace(/\s+/g, " ").slice(0, 155) || `Riyadhus Shalihin no. ${r.no_tampil}: teks Arab, sumber menurut an-Nawawi, dan riwayat sumbernya.`;
-  return html(T.layout({ judul: `Riyadhus Shalihin no. ${r.no_tampil} · Teman Hadits`, deskripsi: desk, isi, kanonik }));
+  const desk = cuplikMatan(env.TERJEMAH_RIYADH === "sembunyi" ? "" : r.terjemah) || `Riyadhus Shalihin no. ${r.no_tampil}: teks Arab, sumber menurut an-Nawawi, dan riwayat sumbernya.`;
+  return html(T.layout({ asal: url.origin, judul: `Riyadhus Shalihin no. ${r.no_tampil} · Teman Hadits`, deskripsi: desk, isi, kanonik }));
 }
 
 // Catat kueri yang tidak menemukan hasil (scripts/catatan.sql): teks yang dinormalkan saja, maksimal 2.000 per hari,
@@ -162,7 +162,7 @@ async function halamanCari(env, url) {
   const db = env.DB;
   const q = (url.searchParams.get("q") || "").trim().slice(0, 200);
   const kitab = await semuaKitab(db);
-  if (!q) return html(T.layout({ judul: "Cari hadits · Teman Hadits", aktif: "cari", isi: T.halamanGalat("Cari hadits", "Ketik kata kunci, tema, atau rujukan seperti “muslim 1907”.") }));
+  if (!q) return html(T.layout({ asal: url.origin, judul: "Cari hadits · Teman Hadits", aktif: "cari", isi: T.halamanGalat("Cari hadits", "Ketik kata kunci, tema, atau rujukan seperti “muslim 1907”.") }));
   const filter = { k: url.searchParams.get("k") || "", t: url.searchParams.get("t") || "" };
   if (filter.k && !kitab.some((k) => k.id === filter.k)) filter.k = "";
   if (!["", "A", "B"].includes(filter.t)) filter.t = "";
@@ -226,7 +226,7 @@ async function halamanCari(env, url) {
   if (halaman === 1 && !filter.k && !filter.t && !rujukan && (out.total === 0 || out.modeKata === "sebagian kata"))
     catatKueriKosong(env, q, out.total === 0 ? "kosong" : "sebagian");
   const isi = T.hasilCari({ q, out, kitab, sorot: kataSorot(out.rencana), akar: akarSorot(out.rencana), filter, rujukan, tema, kalimat, sembunyiRiyadh: env.TERJEMAH_RIYADH === "sembunyi" });
-  return html(T.layout({ judul: `${q} · Cari · Teman Hadits`, aktif: "cari", isi, noindex: true }));
+  return html(T.layout({ asal: url.origin, judul: `${q} · Cari · Teman Hadits`, aktif: "cari", isi, noindex: true }));
 }
 
 // Riyadhus Shalihin: nama bab Indonesia berasal dari berkas terjemah yang sama, yang izinnya belum jelas. Dalam mode
@@ -244,7 +244,7 @@ async function halamanKitab(env, url, kid, babNo) {
     const b = babTanpaTerjemah(env, kid, await db.prepare("SELECT * FROM bab WHERE kitab_id = ?1 AND no = ?2").bind(kid, babNo).first());
     if (!b) return null;
     const daftar = (await db.prepare(`${kolom} WHERE r.kitab_id = ?1 AND r.bab_no = ?2 ORDER BY r.urut LIMIT ${PER_HALAMAN} OFFSET ?3`).bind(kid, babNo, (halaman - 1) * PER_HALAMAN).all()).results;
-    return html(T.layout({ judul: `${b.nama || "Bab " + b.no} · ${k.nama} · Teman Hadits`, aktif: "kitab", kanonik: `${url.origin}/kitab/${kid}/bab/${babNo}`, isi: T.halamanBab({ k, b, daftar, halaman, halMaks: Math.ceil(b.jumlah / PER_HALAMAN) }) }));
+    return html(T.layout({ asal: url.origin, judul: `${b.nama || "Bab " + b.no} · ${k.nama} · Teman Hadits`, aktif: "kitab", kanonik: `${url.origin}/kitab/${kid}/bab/${babNo}`, isi: T.halamanBab({ k, b, daftar, halaman, halMaks: Math.ceil(b.jumlah / PER_HALAMAN) }) }));
   }
   const bab = (await db.prepare("SELECT no, nama, nama_ar, jumlah FROM bab WHERE kitab_id = ?1 ORDER BY no").bind(kid).all()).results.map((b) => babTanpaTerjemah(env, kid, b));
   let daftar = [], halMaks = 1;
@@ -252,7 +252,7 @@ async function halamanKitab(env, url, kid, babNo) {
     daftar = (await db.prepare(`${kolom} WHERE r.kitab_id = ?1 ORDER BY r.urut LIMIT ${PER_HALAMAN} OFFSET ?2`).bind(kid, (halaman - 1) * PER_HALAMAN).all()).results;
     halMaks = Math.ceil(k.terbit / PER_HALAMAN);
   }
-  return html(T.layout({ judul: `${k.nama} · Teman Hadits`, aktif: "kitab", kanonik: `${url.origin}/kitab/${kid}`, deskripsi: `${k.nama} karya ${k.penyusun}: ${k.terbit} riwayat dengan teks Arab, terjemah, dan penilaian ulama.`, isi: T.halamanKitab({ k, bab, daftar, halaman, halMaks }) }));
+  return html(T.layout({ asal: url.origin, judul: `${k.nama} · Teman Hadits`, aktif: "kitab", kanonik: `${url.origin}/kitab/${kid}`, deskripsi: `${k.nama} karya ${k.penyusun}: ${k.terbit} riwayat dengan teks Arab, terjemah, dan penilaian ulama.`, isi: T.halamanKitab({ k, bab, daftar, halaman, halMaks }) }));
 }
 
 /** Semua tema HadeethEnc dari SATU baris info (tema_json; pipeline/export_d1.py), urut baris tabel tema. */
@@ -270,7 +270,7 @@ async function halamanTema(env, url, id) {
   if (!id) {
     const anak = {};
     for (const t of semua) if (!akarIdx(t)) (anak[t.induk] ||= []).push(t);
-    return html(T.layout({ judul: "Tema · Teman Hadits", aktif: "tema", isi: T.daftarTema({ akar: semua.filter(akarIdx), anak, versi }) }));
+    return html(T.layout({ asal: url.origin, judul: "Tema hadits · Teman Hadits", aktif: "tema", kanonik: url.origin + "/tema", deskripsi: "Hadits menurut tema (HadeethEnc): akhlak, ibadah, muamalah, dan lainnya, lengkap dengan teks Arab, terjemah, dan sumbernya.", isi: T.daftarTema({ akar: semua.filter(akarIdx), anak, versi }) }));
   }
   const t = semua.find((x) => x.id === id);
   if (!t) return null;
@@ -278,7 +278,7 @@ async function halamanTema(env, url, id) {
   const link = (await db.prepare("SELECT hr.he_id, r.kitab_id, r.slug, r.no_tampil FROM he_riwayat hr JOIN riwayat r ON r.n = hr.n JOIN kitab k ON k.id = r.kitab_id WHERE hr.he_id IN (SELECT value FROM json_each(?1)) ORDER BY hr.he_id, k.urut, r.urut").bind(JSON.stringify(hadits.map((h) => h.id))).all()).results;
   const per = {};
   for (const l of link) ((per[l.he_id] ||= []).length < 8) && per[l.he_id].push(l);
-  return html(T.layout({ judul: `${t.judul} · Tema · Teman Hadits`, aktif: "tema", isi: T.halamanTema({ t, induk: semua.find((x) => x.id === t.induk), sub: semua.filter((x) => x.induk === t.id), hadits: hadits.map((h) => ({ ...h, riwayat: per[h.id] || [] })), versi }) }));
+  return html(T.layout({ asal: url.origin, judul: `${t.judul} · Tema · Teman Hadits`, aktif: "tema", kanonik: `${url.origin}/tema/${t.id}`, deskripsi: `Hadits-hadits bertema ${t.judul}: teks Arab, terjemah Indonesia, dan sumber kitabnya.`, isi: T.halamanTema({ t, induk: semua.find((x) => x.id === t.induk), sub: semua.filter((x) => x.induk === t.id), hadits: hadits.map((h) => ({ ...h, riwayat: per[h.id] || [] })), versi }) }));
 }
 
 async function sitemap(env, url, kid) {
@@ -304,7 +304,7 @@ async function rute(req, env) {
   if (req.method !== "GET" && req.method !== "HEAD") return new Response("Metode tidak didukung", { status: 405 });
   if (p === "/") {
     const [kitab, info, populer] = await Promise.all([semuaKitab(db), infoDb(db), daftarPopuler(db)]);
-    return html(T.layout({ judul: "Teman Hadits · Pustaka hadits: cari, cek, dan lihat sumbernya", aktif: "beranda", kanonik: url.origin + "/", isi: T.beranda({ kitab, info, populer }) }));
+    return html(T.layout({ asal: url.origin, judul: "Teman Hadits · Pustaka hadits: cari, cek, dan lihat sumbernya", aktif: "beranda", kanonik: url.origin + "/", jsonld: { "@context": "https://schema.org", "@type": "WebSite", name: "Teman Hadits", url: url.origin + "/", inLanguage: "id", potentialAction: { "@type": "SearchAction", target: url.origin + "/cari?q={search_term_string}", "query-input": "required name=search_term_string" } }, isi: T.beranda({ kitab, info, populer }) }));
   }
   if (p === "/cari") return halamanCari(env, url);
   if (p === "/cek") {
@@ -323,13 +323,13 @@ async function rute(req, env) {
         if (ids.length) katalog = T.kotakKatalog({ entri: await entriKatalog(db, ids) });
       }
     }
-    return html(T.layout({ judul: "Cek hadits · Teman Hadits", aktif: "cek", noindex: Boolean(t), isi: T.halamanCek({ t, hasil, kitab, info, katalog }) }));
+    return html(T.layout({ asal: url.origin, judul: "Cek hadits · Teman Hadits", aktif: "cek", noindex: Boolean(t), kanonik: url.origin + "/cek", deskripsi: "Tempel teks yang beredar sebagai hadits, lalu lihat apakah ada di kitab hadits, di riwayat mana, dan bagaimana penilaian ulama.", isi: T.halamanCek({ t, hasil, kitab, info, katalog }) }));
   }
-  if (p === "/cara-cari") return html(T.layout({ judul: "Cara mencari hadits · Teman Hadits", aktif: "cari", kanonik: url.origin + "/cara-cari", deskripsi: "Cara kerja pencarian Teman Hadits: istilah awam dipetakan ke lafaz hadits, alasan setiap hasil, urutan, dan tips bila belum ketemu.", isi: T.halamanCaraCari({ konsep: daftarKonsep() }) }));
-  if (p === "/metode") return html(T.layout({ judul: "Metode · Teman Hadits", aktif: "metode", isi: T.halamanMetode({ info: await infoDb(db) }) }));
-  if (p === "/kitab") return html(T.layout({ judul: "Kitab · Teman Hadits", aktif: "kitab", isi: T.daftarKitab({ kitab: await semuaKitab(db) }) }));
+  if (p === "/cara-cari") return html(T.layout({ asal: url.origin, judul: "Cara mencari hadits · Teman Hadits", aktif: "cari", kanonik: url.origin + "/cara-cari", deskripsi: "Cara kerja pencarian Teman Hadits: istilah awam dipetakan ke lafaz hadits, alasan setiap hasil, urutan, dan tips bila belum ketemu.", isi: T.halamanCaraCari({ konsep: daftarKonsep() }) }));
+  if (p === "/metode") return html(T.layout({ asal: url.origin, judul: "Metode · Teman Hadits", aktif: "metode", kanonik: url.origin + "/metode", deskripsi: "Cara Teman Hadits menjaga kebenaran data: sumber teks Arab dan terjemah, pencocokan antarsumber, penilaian ulama, lisensi, dan privasi.", isi: T.halamanMetode({ info: await infoDb(db) }) }));
+  if (p === "/kitab") return html(T.layout({ asal: url.origin, judul: "Kitab hadits · Teman Hadits", aktif: "kitab", kanonik: url.origin + "/kitab", deskripsi: "Daftar kitab hadits di Teman Hadits: Shahih al-Bukhari, Shahih Muslim, kitab Sunan, Musnad, Muwaththa', dan Riyadhus Shalihin, per bab.", isi: T.daftarKitab({ kitab: await semuaKitab(db) }) }));
   if (p === "/tema") return halamanTema(env, url, null);
-  if (p === "/populer") return html(T.layout({ judul: "Sering beredar, benarkah hadits? · Teman Hadits", aktif: "populer", kanonik: url.origin + "/populer", deskripsi: "Ucapan yang sering disebut hadits di masyarakat, dengan pembahasan ulama dari kitab-kitab tentang hadits populer dan palsu.", isi: T.halamanPopulerDaftar({ daftar: await daftarPopuler(db) }) }));
+  if (p === "/populer") return html(T.layout({ asal: url.origin, judul: "Sering beredar, benarkah hadits? · Teman Hadits", aktif: "populer", kanonik: url.origin + "/populer", deskripsi: "Ucapan yang sering disebut hadits di masyarakat, dengan pembahasan ulama dari kitab-kitab tentang hadits populer dan palsu.", isi: T.halamanPopulerDaftar({ daftar: await daftarPopuler(db) }) }));
   if (p === "/robots.txt") return new Response(`User-agent: *\nAllow: /\nDisallow: /cari\nDisallow: /cek?\nDisallow: /api/\nSitemap: ${url.origin}/sitemap.xml\n`, { headers: { "Content-Type": "text/plain" } });
   if (p === "/sitemap.xml") return sitemap(env, url, null);
   if (p === "/api/cari") {
@@ -343,11 +343,11 @@ async function rute(req, env) {
   }
   let m;
   if ((m = p.match(/^\/sitemap-([a-z]+)\.xml$/))) return sitemap(env, url, m[1]);
-  if (p === "/perawi") return html(T.layout({ judul: "Perawi hadits · Teman Hadits", aktif: "perawi", kanonik: url.origin + "/perawi", deskripsi: "Biodata perawi hadits dari Taqrib at-Tahdzib (Ibnu Hajar): penilaian, tabaqah, tahun wafat, guru dan murid.", isi: T.halamanPerawiDaftar({ daftar: await daftarPerawi(db) }) }));
+  if (p === "/perawi") return html(T.layout({ asal: url.origin, judul: "Perawi hadits · Teman Hadits", aktif: "perawi", kanonik: url.origin + "/perawi", deskripsi: "Biodata perawi hadits dari Taqrib at-Tahdzib (Ibnu Hajar): penilaian, tabaqah, tahun wafat, guru dan murid.", isi: T.halamanPerawiDaftar({ daftar: await daftarPerawi(db) }) }));
   if ((m = p.match(/^\/perawi\/([tk]\d+)$/))) {
     const pr = await dataPerawi(db, m[1]);
-    if (!pr) return html(T.layout({ judul: "Tidak ditemukan · Teman Hadits", noindex: true, isi: T.halamanGalat("Perawi tidak ditemukan", "Perawi ini belum teridentifikasi di sanad mana pun dalam data kami.") }), 404);
-    return html(T.layout({ judul: `${pr.nama} · Perawi hadits · Teman Hadits`, aktif: "perawi", kanonik: `${url.origin}/perawi/${pr.id}`, deskripsi: `Biodata ${pr.nama}${pr.penilaian ? `: ${pr.penilaian}` : ""} (Taqrib at-Tahdzib${pr.taqrib ? " no. " + pr.taqrib : ""}).`, isi: T.halamanPerawi({ p: pr }) }));
+    if (!pr) return html(T.layout({ asal: url.origin, judul: "Tidak ditemukan · Teman Hadits", noindex: true, isi: T.halamanGalat("Perawi tidak ditemukan", "Perawi ini belum teridentifikasi di sanad mana pun dalam data kami.") }), 404);
+    return html(T.layout({ asal: url.origin, judul: `${pr.nama} · Perawi hadits · Teman Hadits`, aktif: "perawi", kanonik: `${url.origin}/perawi/${pr.id}`, deskripsi: `Biodata ${pr.nama}${pr.penilaian ? `: ${pr.penilaian}` : ""} (Taqrib at-Tahdzib${pr.taqrib ? " no. " + pr.taqrib : ""}).`, isi: T.halamanPerawi({ p: pr }) }));
   }
   if ((m = p.match(/^\/kitab\/([a-z]+)$/))) return halamanKitab(env, url, m[1], null);
   if ((m = p.match(/^\/kitab\/([a-z]+)\/bab\/(\d+)$/))) return halamanKitab(env, url, m[1], parseInt(m[2], 10));
@@ -355,7 +355,7 @@ async function rute(req, env) {
   if ((m = p.match(/^\/populer\/([a-z0-9-]+)$/))) {
     const pp = await dataPopuler(db, m[1]);
     if (!pp) return null;
-    return html(T.layout({ judul: `“${pp.teks_id}”: benarkah hadits? · Teman Hadits`, aktif: "populer", kanonik: `${url.origin}/populer/${pp.id}`, deskripsi: `Pembahasan ulama tentang ucapan “${pp.teks_id}” (${pp.arab}).`, isi: T.halamanPopuler({ p: pp }) }));
+    return html(T.layout({ asal: url.origin, judul: `“${pp.teks_id}”: benarkah hadits? · Teman Hadits`, aktif: "populer", kanonik: `${url.origin}/populer/${pp.id}`, deskripsi: `Pembahasan ulama tentang ucapan “${pp.teks_id}” (${pp.arab}).`, isi: T.halamanPopuler({ p: pp }) }));
   }
   if ((m = p.match(/^\/([a-z]+)\/([0-9a-z.\-]+)$/))) return halamanHadits(env, url, m[1], m[2]);
   return null;
@@ -419,10 +419,10 @@ export default {
     try {
       const res = await rute(req, env);
       if (res) return beri(res);
-      return beri(html(T.layout({ judul: "Halaman tidak ditemukan · Teman Hadits", noindex: true, isi: T.halamanGalat("Halaman tidak ditemukan", "Alamat ini tidak ada. Coba cari hadits yang Anda maksud.") }), 404));
+      return beri(html(T.layout({ asal: url.origin, judul: "Halaman tidak ditemukan · Teman Hadits", noindex: true, isi: T.halamanGalat("Halaman tidak ditemukan", "Alamat ini tidak ada. Coba cari hadits yang Anda maksud.") }), 404));
     } catch (e) {
       console.error(e && e.stack || e);
-      return beri(html(T.layout({ judul: "Terjadi kesalahan · Teman Hadits", noindex: true, isi: T.halamanGalat("Terjadi kesalahan", "Maaf, halaman ini gagal dimuat. Coba lagi sebentar lagi.") }), 500));
+      return beri(html(T.layout({ asal: url.origin, judul: "Terjadi kesalahan · Teman Hadits", noindex: true, isi: T.halamanGalat("Terjadi kesalahan", "Maaf, halaman ini gagal dimuat. Coba lagi sebentar lagi.") }), 500));
     }
   },
 };

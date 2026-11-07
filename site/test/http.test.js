@@ -229,3 +229,32 @@ test("catatan cetakan tampil hanya di riwayat yang sudah dicek", opsi, async () 
   const c = await ambil("/bukhari/1");
   assert.doesNotMatch(c.teks, /Catatan cetakan:/);
 });
+
+test("siap dibagikan: pratinjau tautan (Open Graph), deskripsi dari matan, kanonik, tautan lewati", opsi, async () => {
+  const { teks } = await ambil("/bukhari/1?z=" + Date.now());
+  assert.match(teks, /<meta property="og:image" content="[^"]+\/og\.png">/);
+  assert.match(teks, /<meta property="og:title" content="Shahih al-Bukhari no\. 1">/);
+  assert.match(teks, /<meta name="description" content="Saya mendengar Rasulullah/);
+  assert.match(teks, /<a class="lewati" href="#isi">/);
+  const og = await fetch(BASE + "/og.png");
+  assert.equal(og.status, 200);
+  assert.equal(og.headers.get("content-type"), "image/png");
+  for (const p of ["/kitab", "/tema", "/metode", "/cek"]) assert.match((await ambil(p + "?z=" + Date.now())).teks, /<link rel="canonical" href="[^"]+(\/kitab|\/tema|\/metode|\/cek)">/, p);
+  assert.match((await ambil("/?z=" + Date.now())).teks, /"@type":"SearchAction"/);
+});
+
+test("terjemah Lidwa dirapikan; terjemah yang tidak lengkap diberi catatan", opsi, async () => {
+  const b87 = (await ambil("/bukhari/87?z=" + Date.now())).teks;
+  assert.doesNotMatch(b87, /dari dari/);
+  const belum = (await ambil("/ahmad/16917?z=" + Date.now())).teks;
+  assert.match(belum, /terjemah di sumber Lidwa belum selesai/);
+  assert.doesNotMatch(belum, /#BELUM SELESAI#/);
+  assert.match((await ambil("/tirmidzi/560?z=" + Date.now())).teks, /tampaknya terpotong/);
+});
+
+test("kamus dari judul bab: istilah awam tanpa padanan di terjemah", opsi, async () => {
+  const miras = (await ambil("/cari?q=miras&z=" + Date.now())).teks;
+  assert.match(miras, /Minuman keras \(khamr\)/);
+  assert.match((await ambil("/cari?q=cicak&z=" + Date.now())).teks, /href="\/(bukhari|muslim|abudawud|nasai|ibnumajah)\/[^"]+"/);
+  assert.match((await ambil("/cari?q=zikir+pagi&z=" + Date.now())).teks, /zikir→dzikir/);
+});

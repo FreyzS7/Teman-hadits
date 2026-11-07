@@ -301,3 +301,22 @@ export function cuplikAr(arab, akar, jendela = 8) {
 // sama dengan Number(n).toLocaleString("id-ID"), tetapi formatter dibuat sekali (toLocaleString membuatnya tiap panggilan)
 const ANGKA_ID = new Intl.NumberFormat("id-ID");
 export const fmt = (n) => ANGKA_ID.format(Number(n ?? 0));
+
+/** Cuplikan matan untuk meta description / pratinjau tautan. Terjemah Lidwa diawali sanad («Telah menceritakan kepada
+ *  kami [A] dari [B] ...»); cuplikan dimulai sesudah nama perawi terakhir sebelum kutipan pertama. */
+export function cuplikMatan(t, maks = 155) {
+  t = String(t || "");
+  const kutip = t.search(/["“]/);
+  const akhirSanad = t.lastIndexOf("]", kutip > 0 ? kutip : Math.floor(t.length * 0.6));
+  let awal = akhirSanad >= 0 ? akhirSanad + 1 : 0;
+  if (kutip > awal) {                     // mulai dari klausa terakhir sebelum kutipan: «saya mendengar Rasulullah ... bersabda: "...»
+    const jeda = Math.max(...[";", ",", "."].map((c) => t.lastIndexOf(c, kutip - 2)));
+    if (jeda > awal) awal = jeda + 1;
+  }
+  let s = t.slice(awal).replace(/[[\]]/g, "").replace(/\s+/g, " ").replace(/^[\s,;:."“”']+/, "").trim();
+  s = s.charAt(0).toUpperCase() + s.slice(1);
+  if (s.length < 40) s = t.replace(/[[\]]/g, "").replace(/\s+/g, " ").trim();
+  if (s.length <= maks) return s;
+  const potong = s.slice(0, maks - 1);
+  return potong.slice(0, Math.max(potong.lastIndexOf(" "), maks - 20)).replace(/[\s,;:]+$/, "") + "…";
+}
