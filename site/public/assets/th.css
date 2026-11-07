@@ -379,3 +379,13 @@ a.punggung:hover { color: var(--sampul-teks); }
 .daftar-perawi li { display: grid; gap: 4px; padding: 10px 0; border-bottom: 1px solid var(--garis); }
 .daftar-perawi .ar { font-size: calc(1.25rem * var(--ar)); }
 @media (max-width: 560px) { .fakta { grid-template-columns: 1fr; } .fakta dt { margin-top: 6px; } }
+
+/* Sasaran sentuh di ponsel: minimal ±32px tinggi (diukur: tautan sebaran 17px, saringan 19px, nomor keluarga 22px). */
+.sebaran a { display: block; padding: 7px 0; }
+.saring a { display: inline-block; padding: 6px 0; }
+.keluarga .nomor a, .jalur .nomor a { display: inline-flex; align-items: center; min-height: 32px; min-width: 32px; justify-content: center; }
+.remah a { display: inline-block; padding: 6px 0; }
+.rujukan-langsung a { padding-top: 4px; padding-bottom: 4px; }
+/* Ponsel: kepala halaman (logo, alat, 2 baris menu) dulu menempel saat digulir dan memakan ±30% layar.
+   Di layar sempit kepala ikut tergulir; di layar lebar tetap menempel. */
+@media (max-width: 720px) { .kepala { position: static; } }
