@@ -2480,6 +2480,24 @@
       "bab": [],
       "catatan": "Kata \"kebersihan\" diarahkan ke sini: riwayat yang paling dekat dengan ucapan \"kebersihan sebagian dari iman\" adalah الطهور شطر الإيمان (bersuci adalah setengah iman, Muslim). Terjemah Lidwa memakai kata \"bersuci\".",
       "bukti": "arab_akar:\"الطهور شطر الإيمان\" = 4; \"مفتاح الصلاة الطهور\" = 9; terjemah 'bersuci adalah setengah' = 5, 'kebersihan' = 7 (build 2026-11-07)"
+    },
+    {
+      "id": "memilih_pasangan",
+      "label": "Memilih pasangan (jodoh)",
+      "pemicu": [
+        "jodoh",
+        "berjodoh"
+      ],
+      "arab": [
+        "فاظفر بذات الدين",
+        "تنكح المرأة لأربع"
+      ],
+      "terjemah": [
+        "dinikahi karena empat"
+      ],
+      "bab": [],
+      "catatan": "Kata \"jodoh\" diarahkan ke hadits memilih pasangan: تنكح المرأة لأربع... فاظفر بذات الدين (wanita dinikahi karena empat hal... pilihlah yang taat beragama). Hadits tentang takdir jodoh secara khusus tidak ada di kitab-kitab ini.",
+      "bukti": "arab_akar:\"فاظفر بذات الدين\" = 6; \"تنكح المرأة لأربع\" = 2; terjemah 'dinikahi karena empat' = 7 (build 2026-11-07)"
     }
   ]
 }

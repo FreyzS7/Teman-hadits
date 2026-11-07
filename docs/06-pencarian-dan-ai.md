@@ -219,6 +219,10 @@ Putaran kelima belas (44 kueri satu kata: akhlak, sosial, alam, hewan). Konsep b
 
 Ditambah grup ejaan takwa/taqwa dan bertakwa/bertaqwa. Tidak diberi entri: hoax, gosip, tabayyun, gotong royong, lingkungan (istilah modern, atau riwayatnya hampir tidak ada di data).
 
+Putaran keenam belas (uji kejenuhan: 45 kueri bergaya awam, dengan singkatan "ttg"/"dlm"/"ortu"). Hanya 4 yang masih lemah dan punya padanan jelas. Ditambah satu konsep: "jodoh" → memilih pasangan (فاظفر بذات الدين, 2 → 8, dibuka Bukhari 5090), dengan catatan bahwa hadits khusus tentang takdir jodoh tidak ada di kitab-kitab ini. "doa bercermin" memang tidak ada di data. "ulama pewaris nabi" sudah menemukan 6 riwayat yang tepat.
+
+**Penutup perluasan kamus:** setelah 16 putaran (sekitar 700 kueri uji), kamus berisi 112 konsep dan 38 grup ejaan. Pada putaran 14–16 tiap 45 kueri hanya menyisakan 4–6 kueri lemah, dan kebanyakan berupa istilah modern tanpa lafaz hadits atau topik yang memang tidak ada di kitab-kitab ini. Penambahan berikutnya sebaiknya diambil dari kueri nyata pengguna yang hasilnya kosong.
+
 **Kueri berupa kalimat (putaran kesepuluh):** 20 potongan hadits populer diuji, termasuk 4 yang dikenal lemah/palsu. Pencarian kata kunci kurang tepat untuk kalimat: "senyummu kepada saudaramu adalah sedekah" jatuh ke mode "sebagian kata" (63.721 hasil), dan "tuntutlah ilmu sampai ke negeri cina" dibuka kisah Nabi Musa. Cek Hadits menangani kalimat ini jauh lebih baik, dan daftar Populer mengenali keempat ucapan lemah/palsu.
 
 Bila kueri minimal 4 kata dan menyisakan minimal 3 kata kunci (setelah kata pengisi dan istilah kamus), halaman Cari kini:
