@@ -166,6 +166,23 @@ Ditambah dua konsep: mengusap khuf (على الخفين, 128) dan ahlul bait (أ
 
 "ahlul" sengaja bukan pemicu, karena juga dipakai untuk "ahlul kitab".
 
+Putaran kesebelas (45 kueri akhlak, ibadah, jenazah):
+
+| Kueri | Sebelum | Sesudah | Padanan / catatan |
+|---|---:|---:|---|
+| "takabur" | 3 | 316, dibuka Tirmidzi 1999 | مثقال ذرة من كبر, بطر الحق (bukan الكبر sendirian: usia tua/takbir) |
+| "israf"/"boros" | 0/1 | 47 | الإسراف, ولا مخيلة |
+| "ghadhab" | 0 | 32, dibuka Bukhari 6114 | لا تغضب, يملك نفسه عند الغضب (bukan الغضب sendirian: murka Allah) |
+| "tahnik" | 4 | 31 | فحنكه |
+| "husnul khatimah" | 3 | 12 | الأعمال بالخواتيم, من كان آخر كلامه (bukan بالخواتيم sendirian: ayat penutup surat) |
+| "talqin" | 8 | 12 | لقنوا موتاكم |
+| "menembok kuburan" | 461 (sebagian kata) | 26 | أن يجصص القبر, يجلس على قبر |
+| "ifthar" | 6 | 14 | فطر صائما |
+| "takjil" | – | 28, dibuka Bukhari 1957 | عجلوا الفطر (takjil = ta'jil, menyegerakan) |
+| "amal jariyah" | 11 | 8, dibuka Tirmidzi 1376 | انقطع عمله إلا من ثلاث, صدقة جارية |
+
+Tidak diberi entri: "ujub" (العجب juga berarti "heran"), "shalat hajat" ("hajat" sudah dipakai untuk buang hajat), "shalat tasbih" ("tasbih" juga dzikir), "adzan di telinga bayi" (hanya 4 riwayat dan tidak ada kata pemicu tunggal).
+
 **Kueri berupa kalimat (putaran kesepuluh):** 20 potongan hadits populer diuji, termasuk 4 yang dikenal lemah/palsu. Pencarian kata kunci kurang tepat untuk kalimat: "senyummu kepada saudaramu adalah sedekah" jatuh ke mode "sebagian kata" (63.721 hasil), dan "tuntutlah ilmu sampai ke negeri cina" dibuka kisah Nabi Musa. Cek Hadits menangani kalimat ini jauh lebih baik, dan daftar Populer mengenali keempat ucapan lemah/palsu.
 
 Bila kueri minimal 4 kata dan menyisakan minimal 3 kata kunci (setelah kata pengisi dan istilah kamus), halaman Cari kini:

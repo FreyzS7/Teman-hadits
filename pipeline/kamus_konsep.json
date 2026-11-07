@@ -1793,6 +1793,203 @@
       "bab": [],
       "catatan": "Teks Arabnya: أهل بيتي (keluargaku), mis. hadits أذكركم الله في أهل بيتي. Kata \"ahlul\" sendirian tidak dijadikan pemicu karena juga dipakai untuk \"ahlul kitab\".",
       "bukti": "arab_akar:\"أهل بيتي\" = 57; terjemah 'ahlul bait' = 32, 'ahli bait' = 23 (build 2026-11-07)"
+    },
+    {
+      "id": "kibr",
+      "label": "Sombong (kibr)",
+      "pemicu": [
+        "takabur",
+        "takabbur",
+        "kibr",
+        "kibir",
+        "kesombongan"
+      ],
+      "arab": [
+        "مثقال ذرة من كبر",
+        "بطر الحق"
+      ],
+      "terjemah": [
+        "sombong",
+        "kesombongan",
+        "takabbur"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: لا يدخل الجنة من كان في قلبه مثقال ذرة من كبر, dan الكبر بطر الحق وغمط الناس. Kata الكبر sendirian tidak dipakai, karena juga berarti usia tua dan seakar dengan takbir.",
+      "bukti": "arab_akar:\"مثقال ذرة من كبر\" = 4; \"بطر الحق\" = 4; الكبر = 665 (bercampur usia tua/takbir, tidak dipakai); terjemah 'sombong' = 212, 'kesombongan' = 105, 'takabbur' = 4 (build 2026-11-07)"
+    },
+    {
+      "id": "israf",
+      "label": "Israf (berlebih-lebihan, boros)",
+      "pemicu": [
+        "israf",
+        "boros",
+        "pemborosan",
+        "mubazir",
+        "mubadzir",
+        "tabdzir"
+      ],
+      "arab": [
+        "الإسراف",
+        "ولا مخيلة"
+      ],
+      "terjemah": [
+        "berlebih-lebihan",
+        "boros"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: كلوا واشربوا والبسوا وتصدقوا في غير إسراف ولا مخيلة. Riwayat yang memuat kata ini sedikit; terjemah \"berlebih-lebihan\" ikut dipakai.",
+      "bukti": "arab_akar:الإسراف = 4; \"ولا مخيلة\" = 2; terjemah 'berlebih-lebihan' = 46, 'boros' = 1 (build 2026-11-07)"
+    },
+    {
+      "id": "ghadhab",
+      "label": "Marah (ghadhab)",
+      "pemicu": [
+        "ghadhab",
+        "ghadab",
+        "ghodob"
+      ],
+      "arab": [
+        "لا تغضب",
+        "يملك نفسه عند الغضب",
+        "عند الغضب"
+      ],
+      "terjemah": [
+        "jangan marah"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: لا تغضب (jangan marah) dan إنما الشديد الذي يملك نفسه عند الغضب (orang kuat adalah yang menguasai dirinya ketika marah). Kata الغضب sendirian tidak dipakai, karena banyak tentang murka Allah.",
+      "bukti": "arab_akar:\"لا تغضب\" = 16; \"يملك نفسه عند الغضب\" = 10; \"عند الغضب\" = 10; terjemah 'jangan marah' = 5 (build 2026-11-07)"
+    },
+    {
+      "id": "tahnik",
+      "label": "Tahnik bayi",
+      "pemicu": [
+        "tahnik",
+        "mentahnik"
+      ],
+      "arab": [
+        "فحنكه"
+      ],
+      "terjemah": [
+        "mentahnik",
+        "mentahniknya"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: فحنكه بتمرة (beliau mengunyah kurma lalu menggosokkannya ke langit-langit mulut bayi).",
+      "bukti": "arab_akar:فحنكه = 18; terjemah 'mentahnik' = 5, 'mentahniknya' = 14 (build 2026-11-07)"
+    },
+    {
+      "id": "husnul_khatimah",
+      "label": "Akhir hidup (husnul/su'ul khatimah)",
+      "pemicu": [
+        "khatimah",
+        "khotimah",
+        "husnul",
+        "suul"
+      ],
+      "arab": [
+        "الأعمال بالخواتيم",
+        "بخواتيمها",
+        "من كان آخر كلامه"
+      ],
+      "terjemah": [
+        "akhir hidupnya"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: إنما الأعمال بالخواتيم (amal tergantung penutupnya) dan من كان آخر كلامه لا إله إلا الله دخل الجنة. Kata الخواتيم sendirian tidak dipakai, karena juga dipakai untuk ayat-ayat penutup surat (خواتيم سورة البقرة).",
+      "bukti": "arab_akar:\"الأعمال بالخواتيم\" = 2; بخواتيمها = 3; \"من كان آخر كلامه\" = 3; بالخواتيم = 61 (bercampur ayat penutup surat, tidak dipakai); terjemah 'akhir hidupnya' = 3 (build 2026-11-07)"
+    },
+    {
+      "id": "talqin",
+      "label": "Talqin orang yang sakaratul maut",
+      "pemicu": [
+        "talqin",
+        "mentalqin"
+      ],
+      "arab": [
+        "لقنوا موتاكم"
+      ],
+      "terjemah": [
+        "mentalqin"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: لقنوا موتاكم لا إله إلا الله (tuntunlah orang yang akan meninggal mengucapkan la ilaha illallah).",
+      "bukti": "arab_akar:\"لقنوا موتاكم\" = 9; terjemah 'mentalqin' = 2 (build 2026-11-07)"
+    },
+    {
+      "id": "menembok_kubur",
+      "label": "Menembok dan duduk di atas kuburan",
+      "pemicu": [
+        "menembok",
+        "mengapur",
+        "tajshish",
+        "mengijing"
+      ],
+      "arab": [
+        "أن يجصص القبر",
+        "تجصيص القبور",
+        "يجلس على قبر"
+      ],
+      "terjemah": [
+        "menembok kuburan",
+        "duduk di atas kuburan"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: نهى رسول الله صلى الله عليه وسلم أن يجصص القبر وأن يقعد عليه وأن يبنى عليه.",
+      "bukti": "arab_akar:\"أن يجصص القبر\" = 2; \"تجصيص القبور\" = 2; \"يجلس على قبر\" = 6; terjemah 'menembok kuburan' = 4, 'duduk di atas kuburan' = 17 (build 2026-11-07)"
+    },
+    {
+      "id": "memberi_buka",
+      "label": "Memberi makan orang berbuka puasa",
+      "pemicu": [
+        "ifthar",
+        "iftar"
+      ],
+      "arab": [
+        "فطر صائما",
+        "أفطر عندكم الصائمون"
+      ],
+      "terjemah": [
+        "memberi makan orang yang berpuasa"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: من فطر صائما كان له مثل أجره (siapa memberi makan orang berbuka, baginya pahala seperti orang itu).",
+      "bukti": "arab_akar:\"فطر صائما\" = 6; \"أفطر عندكم الصائمون\" = 6; terjemah 'memberi makan orang yang berpuasa' = 3 (build 2026-11-07)"
+    },
+    {
+      "id": "takjil",
+      "label": "Menyegerakan berbuka (ta'jil)",
+      "pemicu": [
+        "takjil",
+        "tajil"
+      ],
+      "arab": [
+        "عجلوا الفطر"
+      ],
+      "terjemah": [
+        "menyegerakan berbuka"
+      ],
+      "bab": [],
+      "catatan": "Kata \"takjil\" berasal dari ta'jil (menyegerakan). Teks Arabnya: لا يزال الناس بخير ما عجلوا الفطر (manusia senantiasa dalam kebaikan selama menyegerakan berbuka).",
+      "bukti": "arab_akar:\"عجلوا الفطر\" = 14; terjemah 'menyegerakan berbuka' = 24 (build 2026-11-07)"
+    },
+    {
+      "id": "amal_jariyah",
+      "label": "Amal jariyah",
+      "pemicu": [
+        "jariyah",
+        "jariah"
+      ],
+      "arab": [
+        "انقطع عمله إلا من ثلاث",
+        "صدقة جارية"
+      ],
+      "terjemah": [
+        "sedekah jariyah"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: إذا مات الإنسان انقطع عمله إلا من ثلاث: صدقة جارية، أو علم ينتفع به، أو ولد صالح يدعو له.",
+      "bukti": "arab_akar:\"انقطع عمله إلا من ثلاث\" = 1; \"صدقة جارية\" = 5; terjemah 'sedekah jariyah' = 6 (build 2026-11-07)"
     }
   ]
 }
