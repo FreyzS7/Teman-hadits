@@ -22,6 +22,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import BUILD, DB_PATH, KITAB, akar_ar, norm_ar, norm_id
+import serupa  # noqa: E402
 
 OUT = os.path.join(BUILD, "d1")
 MAKS_PERNYATAAN = 90_000      # D1 membatasi panjang satu pernyataan SQL (~100 KB)
@@ -60,7 +61,8 @@ CREATE TABLE riwayat (
   nilai_json TEXT,              -- [[penilai, hukum, kategori], ...] urut penilai
   jalur_json TEXT,              -- takhrij: [[n, skor, tingkat], ...] kedua arah, satu per riwayat ('sama' didahulukan)
   perawi_json TEXT,             -- [[posisi segmen sanad, id perawi], ...] hanya yang pasti
-  judul_id INT, judul_cara TEXT
+  judul_id INT, judul_cara TEXT,
+  grup INT                      -- kelompok riwayat serupa (pipeline/serupa.py): n terkecil di kelompok; NULL = tunggal
 );
 CREATE INDEX ix_riwayat_edisi ON riwayat (kitab_id, no_edisi) WHERE no_edisi IS NOT NULL;
 CREATE UNIQUE INDEX ix_riwayat_slug ON riwayat (kitab_id, slug);
@@ -424,6 +426,12 @@ def main():
                          js(pos_perawi.get(r[0])),
                          judul_id[judul_n[r[0]][:4]] if r[0] in judul_n else None,
                          judul_n[r[0]][4] if r[0] in judul_n else None) for r in data_riwayat]
+    # kelompok riwayat serupa untuk melipat hasil pencarian: HANYA kemiripan matan. Tautan takhrij 'sama' tidak
+    # dipakai: digabung berantai, tautan itu menyatukan hadits berbeda (diukur: satu kelompok 473 riwayat berisi
+    # doa qunut, asmaul husna, talbiyah, ...); kemiripan matan >= 0,8 tetap rapi (kelompok terbesar 33).
+    grup = serupa.kelompok((r[0], r[10]) for r in data_riwayat)
+    data_riwayat = [r + (grup.get(r[0]),) for r in data_riwayat]
+    print(f"riwayat serupa: {len(grup)} riwayat dalam {len(set(grup.values()))} kelompok", file=sys.stderr)
     w.sisip("judul_bab", ["id", "kitab_ar", "kitab_nama_id", "bab_ar", "catatan"], [(i,) + k for k, i in judul_id.items()])
     w.sisip("edisi_alias", ["kitab_id", "no", "n"], alias_edisi)
     # Peta n -> kitab & tingkat untuk pencarian (site/src/cari.js): n sudah urut (urutan kitab, urutan riwayat) dan
@@ -445,7 +453,7 @@ def main():
     w.sisip("sumber", ["a", "b", "skor", "kitab_disebut", "sahabat_sama", "peringkat"], data_sumber)
     w.sisip("riwayat", ["n", "id", "kitab_id", "slug", "urut", "no_tampil", "no_standar", "no_arab", "no_lidwa", "bab_no",
                         "arab", "terjemah", "rantai_json", "kecocokan", "tingkat", "alasan", "no_edisi",
-                        "nilai_json", "jalur_json", "perawi_json", "judul_id", "judul_cara"], data_riwayat)
+                        "nilai_json", "jalur_json", "perawi_json", "judul_id", "judul_cara", "grup"], data_riwayat)
     w.sisip("cari", ["rowid", "arab_polos", "arab_akar", "terjemah_polos", "perawi", "judul"], data_cari)
 
     # frekuensi kata Indonesia (untuk "cek teks"): berapa riwayat memuat kata (setelah stem ringan)

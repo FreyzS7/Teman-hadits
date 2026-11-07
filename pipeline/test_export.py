@@ -23,3 +23,25 @@ class KolomPencarianTerjemah(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class KelompokSerupa(unittest.TestCase):
+    SANAD = "حَدَّثَنَا قُتَيْبَةُ، حَدَّثَنَا اللَّيْثُ، عَنْ نَافِعٍ، عَنِ ابْنِ عُمَرَ، أَنَّ رَسُولَ اللَّهِ صلى الله عليه وسلم قَالَ "
+
+    def r(self, matan):
+        return self.SANAD + '"' + matan + '"'
+
+    def test_matan_sama_sekelompok_yang_beda_tidak(self):
+        from serupa import kelompok
+        g = kelompok([
+            (1, self.r("إِذَا دَخَلَ أَحَدُكُمُ الْمَسْجِدَ فَلْيَقُلِ اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ")),
+            (2, self.r("لاَ يَشْرَبَنَّ أَحَدٌ مِنْكُمْ قَائِمًا فَمَنْ نَسِيَ فَلْيَسْتَقِئْ")),
+            (3, self.r("إِذَا دَخَلَ أَحَدُكُمُ الْمَسْجِدَ فَلْيَقُلِ اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ")),
+        ])
+        self.assertEqual(g, {1: 1, 3: 1})
+
+    def test_komentar_penyusun_tidak_ikut_matan(self):
+        from serupa import kata_matan
+        a = kata_matan(self.r("إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى") + " قَالَ أَبُو عِيسَى هَذَا حَدِيثٌ حَسَنٌ صَحِيحٌ")
+        b = kata_matan(self.r("إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى"))
+        self.assertEqual(a, b)

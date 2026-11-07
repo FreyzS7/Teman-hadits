@@ -29,7 +29,7 @@ test("istilah awam dipetakan ke lafaz Arabnya (kamus konsep)", opsi, async () =>
 
 test("riwayat yang lafaz matannya sama dilipat, tetap tertaut", opsi, async () => {
   const { teks } = await ambil("/cari?q=niat&z=" + Date.now());
-  assert.match(teks, /Riwayat serupa di halaman ini/);
+  assert.match(teks, /Riwayat serupa \(lafaz matan/);
   assert.match(teks, /href="\/bukhari\/1"/);
   assert.match(teks, /href="\/muslim\/1907a"/);
 });

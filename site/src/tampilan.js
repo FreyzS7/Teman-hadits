@@ -166,7 +166,7 @@ export function hasilCari({ q, out, kitab, sorot, akar, filter, rujukan, tema = 
       ${h.terjemah && !(sembunyiRiyadh && h.kitab_id === "riyadh") ? `<p class="id">${cuplik(h.terjemah.replace(/\[|\]/g, ""), sorot)}</p>` : `<p class="tanpa-nilai">Terjemahan belum ditampilkan untuk nomor ini.</p>`}
       <p class="ar">${cuplikAr(h.arab, akar)}</p>
       <p class="alasan">Muncul karena: ${h.alasan.map((a) => `<b>${esc(a)}</b>`).join(" · ")}</p>
-      ${h.serupa?.length ? `<p class="alasan serupa">Riwayat serupa di halaman ini (lafaz matan hampir sama): ${h.serupa.map((x) => `<a href="/${esc(x.kitab_id)}/${esc(x.slug)}">${esc(PENDEK[x.kitab_id] || x.kitab_id)} ${esc(x.no_tampil)}</a>`).join(", ")}</p>` : ""}
+      ${h.serupa?.length ? `<p class="alasan serupa">Riwayat serupa (lafaz matan hampir sama): ${h.serupa.map((x) => `<a href="/${esc(x.kitab_id)}/${esc(x.slug)}">${esc(PENDEK[x.kitab_id] || x.kitab_id)} ${esc(x.no_tampil)}</a>`).join(", ")}</p>` : ""}
       <footer>${bukuBesar(h.penilaian, h.kitab_id)}</footer>
     </li>`).join("");
   const halMaks = Math.ceil(out.tampil / out.perHalaman);
