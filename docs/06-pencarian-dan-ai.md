@@ -350,6 +350,24 @@ Kode: `tanpa_kurung()` dan `nama_saja()` di `pipeline/export_d1.py` (uji: `pipel
 
 Perintah (di folder `site`): `npm run catatan:siapkan` (sekali, membuat tabel di D1 online) dan `npm run catatan:lihat` (100 kueri teratas). Analytics Engine sempat dipertimbangkan, tetapi ketentuan paket gratisnya belum bisa dipastikan dari dokumentasi resmi.
 
+**Kamus dari judul bab Arab (7 Nov 2026):** sebelum ada pengguna, topik diambil dari 16.066 judul kitab/bab Arab (OpenITI). Kata judul yang paling sering (حيض, حجامة, خمر, سحر, طاعون, وزغ, تجارة, سواك, بول, خطبة, صف, ذكر, ضحى ...) dipadankan dengan istilah awam Indonesia, lalu ±130 kueri diuji ke mesin pencari lokal. Yang ditambahkan hanya istilah yang terbukti lemah (hasil 0–8, atau cocok dengan kata yang salah), dan setiap padanan dicek jumlahnya di database:
+
+| Kueri | Sebelum | Sesudah | Entri |
+|---|---:|---:|---|
+| menstruasi | 1 | 858 | konsep → haid, حيض/حائض/المحيض |
+| miras, alkohol | 1, 0 | 701 | konsep → khamer, memabukkan, خمر/مسكر |
+| santet, teluh | 0 | 108 | konsep → sihir (hanya terjemah: سحر Arab sama tulisannya dengan سَحَر "waktu sahur") |
+| peramal, paranormal | 5, 0 | 89 | konsep → dukun, tukang ramal, الكاهن/عرافا |
+| cicak | 11 | 42 | konsep → tokek, وزغ |
+| pandemi | 0 | 183 | konsep → tha'un, wabah, طاعون/وباء |
+| parfum | 20 | 465 | konsep → wewangian, minyak wangi (طيب tidak dipakai: juga berarti "baik") |
+| bisnis | 8 | 222 | konsep → berdagang, pedagang, perniagaan, تجارة |
+| pipis | 0 | 339 | konsep → kencing, بول |
+| sikat gigi | 5 | 253 | konsep "sikat" → siwak, سواك |
+| zikir, duha, khotbah, umroh, saf, dajal, syaitan, kiyamat, azab, tatto, taun, hijamah, istikhoroh | 0–28 | sama dengan ejaan Lidwa | 13 grup ejaan baru (mis. dhuha/dluha/duha: Lidwa menulis "dluha" 142 kali) |
+
+Tidak ditambahkan: "datang bulan", "mandi wajib", "buang air kecil" (frasa; kata-katanya sudah cocok di terjemah), "makam" (di terjemah juga berarti maqam Ibrahim), "pelet" (التولة setelah dinormalkan bercampur kata lain), "kesurupan" dan "ceramah" (tidak ada lafaz hadits yang pasti). Kamus kini **125 konsep dan 91 grup ejaan**. Uji Cek Hadits mode ejaan naik 86 → 89/100 karena grup ejaan baru; mode biasa 86/100 dan Arab 95/100 tidak berubah.
+
 Jalan perbaikan yang lain:
 
 - **Kategori HadeethEnc** (tanpa AI): 447 tema berbahasa Indonesia yang disusun dan ditinjau ulama, misalnya "Sedekah Sunah" berisi 27 hadits. Pertanyaan bertema dicocokkan dulu ke kategori ini.

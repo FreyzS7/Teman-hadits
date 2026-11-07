@@ -428,6 +428,74 @@
     [
       "qunut",
       "kunut"
+    ],
+    [
+      "bekam",
+      "hijamah",
+      "hijama"
+    ],
+    [
+      "dajjal",
+      "dajal"
+    ],
+    [
+      "umrah",
+      "umroh"
+    ],
+    [
+      "khutbah",
+      "khotbah",
+      "kutbah"
+    ],
+    [
+      "shaf",
+      "saf",
+      "shof"
+    ],
+    [
+      "dzikir",
+      "zikir",
+      "dzikr",
+      "zikr"
+    ],
+    [
+      "istikharah",
+      "istikhoroh",
+      "istikharoh",
+      "istikhara"
+    ],
+    [
+      "dhuha",
+      "dluha",
+      "duha"
+    ],
+    [
+      "setan",
+      "syetan",
+      "syaitan",
+      "syaithan",
+      "syaiton"
+    ],
+    [
+      "kiamat",
+      "qiyamat",
+      "kiyamat",
+      "qiamat"
+    ],
+    [
+      "adzab",
+      "azab",
+      "azhab"
+    ],
+    [
+      "tato",
+      "tatto",
+      "tattoo"
+    ],
+    [
+      "thaun",
+      "taun",
+      "thoun"
     ]
   ],
   "_catatan_varian": "Kata pertama = bentuk baku untuk tampilan. Saat mencari, SEMUA varian dicari bersamaan (terjemahan Lidwa memakai ejaan campuran: sedekah 821, shadaqah 248, shodaqoh 16).",
@@ -2768,6 +2836,194 @@
       "bab": [],
       "catatan": "Teks Arabnya: لئن بقيت إلى قابل لأصومن التاسع (bila aku masih hidup tahun depan, aku akan berpuasa pada hari kesembilan). Riwayatnya sedikit.",
       "bukti": "arab_akar:\"لأصومن التاسع\" = 2; التاسع = 16 (umum, tidak dipakai) (build 2026-11-07)"
+    },
+    {
+      "id": "menstruasi",
+      "label": "Haid (menstruasi)",
+      "pemicu": [
+        "menstruasi"
+      ],
+      "arab": [
+        "حيض",
+        "حائض",
+        "المحيض"
+      ],
+      "terjemah": [
+        "haid"
+      ],
+      "bab": [],
+      "catatan": "Terjemah Lidwa memakai kata \"haid\" (haidh/haidl), bukan \"menstruasi\". Teks Arabnya: حيض, حائض (perempuan yang haid), المحيض.",
+      "bukti": "terjemah 'menstruasi' = 1; 'haid' = 669, 'haidh' = 115, 'haidl' = 207; arab_akar:حائض = 429; حيض = 119; المحيض = 41 (build 2026-11-07)"
+    },
+    {
+      "id": "miras",
+      "label": "Minuman keras (khamr)",
+      "pemicu": [
+        "miras",
+        "alkohol",
+        "beralkohol"
+      ],
+      "arab": [
+        "خمر",
+        "مسكر"
+      ],
+      "terjemah": [
+        "khamer",
+        "memabukkan",
+        "minuman keras"
+      ],
+      "bab": [],
+      "catatan": "Kata \"miras\" dan \"alkohol\" tidak ada di terjemah. Teks Arabnya memakai خمر (khamr) dan مسكر (yang memabukkan), mis. كل مسكر حرام.",
+      "bukti": "terjemah 'miras' = 0, 'alkohol' = 0; 'khamer' = 338, 'memabukkan' = 207, 'minuman keras' = 49; arab_akar:خمر = 472; مسكر = 114 (build 2026-11-07)"
+    },
+    {
+      "id": "santet",
+      "label": "Santet (sihir)",
+      "pemicu": [
+        "santet",
+        "teluh"
+      ],
+      "arab": [],
+      "terjemah": [
+        "sihir",
+        "penyihir",
+        "tukang sihir"
+      ],
+      "bab": [],
+      "catatan": "Dalam hadits, santet termasuk sihir (سحر), mis. hadits tujuh dosa yang membinasakan dan kisah Nabi ﷺ terkena sihir. Kata Arab سحر tidak dipakai di sini karena tulisannya sama dengan سَحَر (waktu menjelang subuh).",
+      "bukti": "terjemah 'santet' = 0, 'teluh' = 0; 'sihir' = 101; arab_akar:سحر = 140 (bercampur 'waktu sahur', tidak dipakai) (build 2026-11-07)"
+    },
+    {
+      "id": "peramal",
+      "label": "Dukun dan peramal (kahin, 'arraf)",
+      "pemicu": [
+        "peramal",
+        "paranormal",
+        "ramalan",
+        "meramal"
+      ],
+      "arab": [
+        "الكاهن",
+        "عرافا"
+      ],
+      "terjemah": [
+        "dukun",
+        "tukang ramal",
+        "peramal"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai كاهن (dukun) dan عراف (tukang ramal), mis. من أتى عرافا فسأله عن شيء.",
+      "bukti": "terjemah 'peramal' = 3, 'paranormal' = 0; 'dukun' = 74, 'tukang ramal' = 6; arab_akar:الكاهن = 35; عرافا = 4 (build 2026-11-07)"
+    },
+    {
+      "id": "cicak",
+      "label": "Cicak / tokek (wazagh)",
+      "pemicu": [
+        "cicak"
+      ],
+      "arab": [
+        "وزغ"
+      ],
+      "terjemah": [
+        "tokek",
+        "cicak"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: وزغ (wazagh). Terjemah Lidwa umumnya menulis \"tokek\".",
+      "bukti": "terjemah 'cicak' = 11, 'tokek' = 18; arab_akar:وزغ = 20 (build 2026-11-07)"
+    },
+    {
+      "id": "pandemi",
+      "label": "Wabah (tha'un)",
+      "pemicu": [
+        "pandemi",
+        "epidemi",
+        "wabah"
+      ],
+      "arab": [
+        "طاعون",
+        "وباء"
+      ],
+      "terjemah": [
+        "thaun",
+        "wabah"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: طاعون (tha'un) dan وباء (wabah), mis. hadits larangan masuk ke negeri yang terkena tha'un.",
+      "bukti": "terjemah 'pandemi' = 0; 'thaun' = 89, 'wabah' = 83; arab_akar:طاعون = 110; وباء = 33 (build 2026-11-07)"
+    },
+    {
+      "id": "parfum",
+      "label": "Parfum (wewangian)",
+      "pemicu": [
+        "parfum"
+      ],
+      "arab": [],
+      "terjemah": [
+        "wewangian",
+        "minyak wangi",
+        "parfum"
+      ],
+      "bab": [],
+      "catatan": "Terjemah Lidwa memakai \"wewangian\" atau \"minyak wangi\" untuk طيب. Kata Arab طيب tidak dipakai di sini karena juga berarti \"baik\".",
+      "bukti": "terjemah 'parfum' = 20; 'wewangian' = 257, 'minyak wangi' = 216; arab_akar:طيب = 385 (bercampur arti 'baik', tidak dipakai) (build 2026-11-07)"
+    },
+    {
+      "id": "bisnis",
+      "label": "Bisnis (perdagangan)",
+      "pemicu": [
+        "bisnis",
+        "berbisnis",
+        "pebisnis"
+      ],
+      "arab": [
+        "تجاره",
+        "تاجر",
+        "تجار"
+      ],
+      "terjemah": [
+        "berdagang",
+        "perdagangan",
+        "pedagang",
+        "perniagaan",
+        "berniaga"
+      ],
+      "bab": [],
+      "catatan": "Terjemah Lidwa memakai \"berdagang\", \"pedagang\", \"perniagaan\". Teks Arabnya: تجارة, تاجر, تجار. Untuk hukum jual beli, cari juga \"jual beli\".",
+      "bukti": "terjemah 'bisnis' = 8; 'pedagang' = 93, 'perdagangan' = 36, 'berdagang' = 34, 'perniagaan' = 24, 'berniaga' = 8; arab_akar:تجاره = 78; تاجر = 15 (build 2026-11-07)"
+    },
+    {
+      "id": "pipis",
+      "label": "Pipis (kencing)",
+      "pemicu": [
+        "pipis"
+      ],
+      "arab": [
+        "بول"
+      ],
+      "terjemah": [
+        "kencing"
+      ],
+      "bab": [],
+      "catatan": "Terjemah Lidwa memakai \"kencing\" atau \"buang air kecil\"; teks Arabnya بول.",
+      "bukti": "terjemah 'pipis' = 0; 'kencing' = 283; arab_akar:بول = 125 (build 2026-11-07)"
+    },
+    {
+      "id": "sikat_gigi",
+      "label": "Sikat gigi (siwak)",
+      "pemicu": [
+        "sikat"
+      ],
+      "arab": [
+        "سواك"
+      ],
+      "terjemah": [
+        "siwak",
+        "bersiwak"
+      ],
+      "bab": [],
+      "catatan": "Dalam hadits, membersihkan gigi disebut bersiwak (سواك).",
+      "bukti": "terjemah 'sikat gigi' = 0; 'bersiwak' = 157, 'siwak' = 96; arab_akar:سواك = 166 (build 2026-11-07)"
     }
   ]
 }
