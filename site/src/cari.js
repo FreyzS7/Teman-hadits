@@ -49,7 +49,12 @@ export function rencana(kueri) {
 }
 
 const varianDari = (w) => VARIAN.get(w) || [w];
-const fraseId = (v) => (v.length >= 4 ? `"${v}"*` : `"${v}"`);
+// Kata 4+ huruf juga dicari dengan akhiran Indonesia (sedekahnya, puasanya, berikan). Dulu memakai awalan FTS ("riba"*),
+// yang ikut mencocokkan kata lain: "riba" → "ribath" (Muslim 587).
+const AKHIRAN = ["", "nya", "ku", "mu", "lah", "kah", "pun", "kan", "kannya", "kanku", "kanmu", "kanlah",
+  "an", "annya", "i", "inya", "iku", "imu", "ilah"];
+const fraseId = (v) => (v.length >= 4 ? "(" + AKHIRAN.map((a) => `"${v}${a}"`).join(" OR ") + ")" : `"${v}"`);
+const awalanId = (v) => (v.length >= 4 ? `"${v}"*` : `"${v}"`);
 const grupFts = (w) => "(" + varianDari(w).map((v) => `terjemah_polos:${fraseId(v)}`).join(" OR ") + ")";
 const jsonIds = (xs) => JSON.stringify([...xs]);
 const JARAK_DEKAT = 8;
@@ -59,7 +64,8 @@ function dekat(kata, jarak) {
   let kombinasi = [[]];
   for (const w of kata) kombinasi = kombinasi.flatMap((k) => varianDari(w).map((v) => [...k, v]));
   if (kombinasi.length > 24) return null;
-  return "terjemah_polos:(" + kombinasi.map((k) => `NEAR(${k.map(fraseId).join(" ")}, ${jarak})`).join(" OR ") + ")";
+  // NEAR hanya menerima frasa (tanpa OR), jadi di sini memakai awalan; hasilnya hanya dipakai untuk riwayat yang sudah cocok.
+  return "terjemah_polos:(" + kombinasi.map((k) => `NEAR(${k.map(awalanId).join(" ")}, ${jarak})`).join(" OR ") + ")";
 }
 
 /** n -> {kitab_id, tingkat, urut, ku} dari dua baris info (2 baris dibaca, berapa pun jumlah hasilnya). */
@@ -134,7 +140,10 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
   // membahas hal itu daripada yang hanya kebetulan memuat semua katanya di tempat terpisah.
   if (r.kata.length >= 2 && !r.konsep.length && skor.size) {
     const m = dekat(r.kata, JARAK_DEKAT);
-    if (m) for (const n of await ftsIds(m, 400)) tambahId(n, 0.5, `kata ${r.kata.join(", ")} berdekatan`);
+    if (m) {
+      const rs = await db.prepare("SELECT rowid AS n FROM cari WHERE cari MATCH ?1 AND rowid IN (SELECT value FROM json_each(?2))").bind(m, jsonIds(skor.keys())).all();
+      for (const x of rs.results) tambahId(x.n, 0.5, `kata ${r.kata.join(", ")} berdekatan`);
+    }
   }
 
   // judul kitab/bab (Arab & Indonesia) yang memuat kata kunci: "haid" -> riwayat di "Kitab Haid"
