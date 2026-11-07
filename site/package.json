@@ -13,7 +13,8 @@
     "deploy": "bash scripts/deploy.sh",
     "uji:cek": "node scripts/uji-cek.mjs",
     "catatan:siapkan": "npx wrangler d1 execute teman-hadits --env production --remote --file scripts/catatan.sql",
-    "catatan:lihat": "npx wrangler d1 execute teman-hadits --env production --remote --command \"SELECT kueri, n, jenis, terakhir FROM kueri_kosong ORDER BY n DESC, terakhir DESC LIMIT 100\""
+    "catatan:lihat": "npx wrangler d1 execute teman-hadits --env production --remote --command \"SELECT kueri, n, jenis, terakhir FROM kueri_kosong ORDER BY n DESC, terakhir DESC LIMIT 100\"",
+    "terbit": "bash scripts/terbit.sh"
   },
   "devDependencies": {
     "wrangler": "4.151.1"
