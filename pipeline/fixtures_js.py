@@ -26,7 +26,9 @@ for t in TEPI:
     teks.append({"id": "tepi", "arab": t, "terjemah": t})
 KUERI = ["tolong carikan hadits tentang sholat tarawih", "apakah makan babi itu hukumnya haram?", "hadits yang membolehkan makan babi",
          "min ada hadist tentang keutamaan sedekah ga", "niat", "Terawih di bulan Romadhon", "adab makan dan minum", "wudu",
-         "muslim 1907", "hr bukhari no 1", "sholat subuh berjamaah", "keutamaan shodaqoh di hari jum'at", ""]
+         "muslim 1907", "hr bukhari no 1", "sholat subuh berjamaah", "keutamaan shodaqoh di hari jum'at",
+         "birrul walidain", "keutamaan sholat tahajjud", "silaturrahim memperpanjang umur", "apa itu gibah", "hukum isbal",
+         "ziarah kubur", "hukum musik", "bayar utang", ""]
 def _sanad(arab):
     p = pisah_sanad(arab)
     return None if p is None else {"sanad": p[0], "matan": p[1], "rantai": [{"lafaz": x["lafaz"], "sighah": x["sighah"], "namaAr": x["nama_ar"], "nabi": x["nabi"]} for x in rantai_arab(p[0])]}

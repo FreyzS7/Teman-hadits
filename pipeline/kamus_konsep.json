@@ -61,6 +61,26 @@
       "jum'at",
       "jumuah",
       "jumu'ah"
+    ],
+    [
+      "tahajud",
+      "tahajjud",
+      "tahajut"
+    ],
+    [
+      "silaturahmi",
+      "silaturrahim",
+      "silaturahim",
+      "silaturrahmi",
+      "silaturohim"
+    ],
+    [
+      "hutang",
+      "utang"
+    ],
+    [
+      "ghibah",
+      "gibah"
     ]
   ],
   "_catatan_varian": "Kata pertama = bentuk baku untuk tampilan. Saat mencari, SEMUA varian dicari bersamaan (terjemahan Lidwa memakai ejaan campuran: sedekah 821, shadaqah 248, shodaqoh 16).",
@@ -194,6 +214,154 @@
       "bab": [],
       "catatan": "Hadits pokok tentang niat diriwayatkan dengan lafaz بالنيات (jamak) dan بالنية (tunggal).",
       "bukti": "uji emas Takhrij: 7 tempat di Shahih al-Bukhari + Muslim 1907"
+    },
+    {
+      "id": "birrul_walidain",
+      "label": "Berbakti kepada orang tua (birrul walidain)",
+      "pemicu": [
+        "birrul",
+        "birul",
+        "walidain"
+      ],
+      "arab": [
+        "بر الوالدين",
+        "عقوق الوالدين"
+      ],
+      "terjemah": [
+        "berbakti kepada kedua orang tua",
+        "berbakti kepada orang tua",
+        "durhaka kepada kedua orang tua"
+      ],
+      "bab": [],
+      "catatan": "Istilah \"birrul walidain\" tidak muncul di terjemah. Hadits-haditsnya memakai بر الوالدين (berbakti kepada kedua orang tua); hadits tentang lawannya, عقوق الوالدين (durhaka kepada kedua orang tua), ikut ditampilkan.",
+      "bukti": "arab_akar:\"بر الوالدين\" = 12; arab_akar:\"عقوق الوالدين\" = 32; terjemah 'berbakti kepada kedua orang tua' = 16; 'durhaka kepada kedua orang tua' = 18; 'birrul walidain' = 0 (build 2026-11-07)"
+    },
+    {
+      "id": "tahajud",
+      "label": "Shalat tahajud (qiyamul lail)",
+      "pemicu": [
+        "tahajud",
+        "qiyamul",
+        "qiyamullail"
+      ],
+      "arab": [
+        "تهجد",
+        "يتهجد",
+        "قيام الليل"
+      ],
+      "terjemah": [
+        "tahajjud",
+        "qiyamullail",
+        "qiyamul lail"
+      ],
+      "bab": [],
+      "catatan": "Di teks Arab, shalat malam disebut التهجد (tahajud) atau قيام الليل (qiyamul lail). Banyak terjemah menulisnya \"shalat malam\"; kata itu menaikkan peringkat bila Anda mengetiknya.",
+      "bukti": "arab_akar:تهجد = 13; يتهجد = 10; \"قيام الليل\" = 29; terjemah 'tahajjud' = 23, 'qiyamullail' = 34, 'qiyamul lail' = 6, 'tahajud' = 2 (build 2026-11-07)"
+    },
+    {
+      "id": "silaturahmi",
+      "label": "Silaturahmi (menyambung kekerabatan)",
+      "pemicu": [
+        "silaturahmi"
+      ],
+      "arab": [
+        "صلة الرحم",
+        "فليصل رحمه",
+        "يصل الرحم",
+        "قاطع رحم",
+        "الرحم شجنة"
+      ],
+      "terjemah": [
+        "silaturrahim",
+        "silaturahim",
+        "silaturahmi",
+        "silaturrahmi",
+        "menyambung tali"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai صلة الرحم (menyambung rahim/kekerabatan) dan bentuk kerjanya (فليصل رحمه). Terjemah Lidwa menulis ejaan campuran: silaturrahim, silaturahim, silaturahmi.",
+      "bukti": "arab_akar:\"صلة الرحم\" = 18; \"فليصل رحمه\" = 15; \"يصل الرحم\" = 9; \"قاطع رحم\" = 8; \"الرحم شجنة\" = 9; terjemah silaturrahim 80, silaturahim 22, silaturahmi 25, silaturrahmi 28 (build 2026-11-07)"
+    },
+    {
+      "id": "ghibah",
+      "label": "Ghibah (menggunjing)",
+      "pemicu": [
+        "ghibah",
+        "menggunjing",
+        "gunjing"
+      ],
+      "arab": [
+        "ما الغيبة",
+        "يغتاب"
+      ],
+      "terjemah": [
+        "ghibah",
+        "menggunjing"
+      ],
+      "bab": [],
+      "catatan": "Kata الغيبة sendirian tidak dipakai, karena di teks Arab juga berarti \"bepergian lama\" (إذا أطال أحدكم الغيبة). Yang dipakai: pertanyaan ما الغيبة (apa itu ghibah) dan terjemah \"ghibah\"/\"menggunjing\".",
+      "bukti": "arab_akar:الغيبة = 23 (sebagian bermakna bepergian, tidak dipakai); \"ما الغيبة\" = 8; يغتاب = 1; terjemah 'ghibah' = 20, 'menggunjing' = 3 (build 2026-11-07)"
+    },
+    {
+      "id": "isbal",
+      "label": "Isbal (menjulurkan kain melewati mata kaki)",
+      "pemicu": [
+        "isbal"
+      ],
+      "arab": [
+        "إسبال",
+        "جر ثوبه",
+        "أسبل"
+      ],
+      "terjemah": [
+        "isbal",
+        "menjulurkan kain",
+        "menjulurkan pakaian"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai إسبال الإزار (menjulurkan kain) dan جر ثوبه (menyeret pakaiannya), sering disertai خيلاء (karena sombong).",
+      "bukti": "arab_akar:إسبال = 11; \"جر ثوبه\" = 28; أسبل = 3; terjemah 'isbal' = 20, 'menjulurkan kain' = 24, 'menjulurkan pakaian' = 5 (build 2026-11-07)"
+    },
+    {
+      "id": "ziarah_kubur",
+      "label": "Ziarah kubur",
+      "pemicu": [
+        "ziarah",
+        "ziyarah",
+        "nyekar"
+      ],
+      "arab": [
+        "زيارة القبور",
+        "زوروا القبور",
+        "زيارة القبر"
+      ],
+      "terjemah": [
+        "ziarah kubur",
+        "menziarahi kubur",
+        "ziarahilah kubur"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai زيارة القبور (ziarah kubur) dan perintah زوروا القبور (berziarahlah ke kubur).",
+      "bukti": "arab_akar:\"زيارة القبور\" = 32; \"زوروا القبور\" = 7; \"زيارة القبر\" = 3; terjemah 'ziarah kubur' = 19, 'menziarahi kubur' = 2 (build 2026-11-07)"
+    },
+    {
+      "id": "musik",
+      "label": "Alat musik (al-ma'azif) dalam hadits",
+      "pemicu": [
+        "musik",
+        "maazif"
+      ],
+      "arab": [
+        "المعازف",
+        "مزمار الشيطان"
+      ],
+      "terjemah": [
+        "alat musik",
+        "alat-alat musik"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai المعازف (alat-alat musik) dan ungkapan مزمار الشيطان (seruling setan). Kata مزامير tidak dipakai, karena di hadits Abu Musa berarti suara merdu membaca al-Qur'an. Teman Hadits hanya menampilkan riwayatnya; hukumnya tanyakan kepada ulama.",
+      "bukti": "arab_akar:المعازف = 8; \"مزمار الشيطان\" = 4; مزامير = 26 (sebagian besar suara merdu, tidak dipakai); terjemah 'alat musik' = 6, 'musik' = 7 (build 2026-11-07)"
     }
   ]
 }

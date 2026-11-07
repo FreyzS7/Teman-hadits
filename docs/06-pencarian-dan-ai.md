@@ -25,6 +25,21 @@ Contoh kedua adalah batas aturan: kata kuncinya cocok, tetapi maknanya tidak.
 
 **Pembaruan (tema HadeethEnc sudah dimuat):** pencarian kini menampilkan *Tema terkait* di atas hasil. Kata inti (mis. "sedekah", dengan semua varian ejaannya) wajib cocok dengan judul tema, sementara kata maksud ("keutamaan") hanya menambah skor. "keutamaan sedekah" → tema **Sedekah Sunah** (27 hadits kurasi ulama, terhubung ke Bukhari 1442, Muslim 1010, dst.); "keutamaan puasa" → **Keutamaan Puasa**. Ini tanpa AI.
 
+**Pembaruan 7 Nov 2026 (kamus diperluas):** 45 kueri awam diuji; yang hasilnya lemah karena istilah awamnya tidak ada di terjemah diberi entri kamus. Setiap padanan dicek jumlahnya di database dan contoh teks Arabnya dibaca. Padanan yang bermakna ganda tidak dipakai (mis. الغيبة sendirian juga berarti "bepergian lama"; مزامير di hadits Abu Musa berarti suara merdu).
+
+| Kueri | Sebelum | Sesudah | Padanan |
+|---|---:|---:|---|
+| "birrul walidain" | 0 | 60 | بر الوالدين, عقوق الوالدين |
+| "tahajud" | 2 | 95 | تهجد, قيام الليل, ejaan tahajjud |
+| "silaturahmi" | 26 | 199 | صلة الرحم, فليصل رحمه, ejaan silaturrahim |
+| "isbal" | 22 | 84 | إسبال, جر ثوبه |
+| "ziarah kubur" | 26 | 42 | زيارة القبور, زوروا القبور |
+| "musik" | 7 | 13 | المعازف, مزمار الشيطان (hanya riwayat; tanpa kesimpulan hukum) |
+| "utang" | 57 | 540 | ejaan Lidwa "hutang" |
+| "ghibah" | 20 | 24 | ما الغيبة, ejaan gibah |
+
+Bukti hitungan tiap entri ada di kolom `bukti` di `kamus_konsep.json`.
+
 Jalan perbaikan yang lain:
 
 - **Kategori HadeethEnc** (tanpa AI): 447 tema berbahasa Indonesia yang disusun dan ditinjau ulama, misalnya "Sedekah Sunah" berisi 27 hadits. Pertanyaan bertema dicocokkan dulu ke kategori ini.

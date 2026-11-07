@@ -17,6 +17,16 @@ test("tarawih ditemukan lewat qiyam Ramadhan", opsi, async () => {
   assert.match(teks, /قيام رمضان/);
 });
 
+test("istilah awam dipetakan ke lafaz Arabnya (kamus konsep)", opsi, async () => {
+  const birr = (await ambil("/cari?q=" + encodeURIComponent("birrul walidain") + "&z=" + Date.now())).teks;
+  assert.match(birr, /href="\/bukhari\/5970"/);
+  assert.match(birr, /بر الوالدين/);
+  const tahajud = (await ambil("/cari?q=tahajud&z=" + Date.now())).teks;
+  assert.match(tahajud, /href="\/bukhari\/1136"/);
+  const utang = (await ambil("/cari?q=utang&z=" + Date.now())).teks;
+  assert.match(utang, /utang→hutang/);
+});
+
 test("rujukan 'muslim 1907' langsung dibuka", opsi, async () => {
   const r = await ambil("/cari?q=muslim%201907");
   assert.equal(r.status, 302);
