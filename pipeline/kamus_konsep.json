@@ -1338,6 +1338,158 @@
       "bab": [],
       "catatan": "Kata رقية sendirian tidak dipakai, karena sama dengan nama Ruqayyah (رقية) setelah dinormalkan, dan الرقى bisa tertukar dengan \"naik\". Yang dipakai: بالمعوذات, لا رقية إلا من عين أو حمة, وما يدريك أنها رقية, dan terjemah \"ruqyah\"/\"jampi\".",
       "bukti": "arab_akar:رقية = 83 (bercampur nama Ruqayyah, tidak dipakai); بالمعوذات = 26; \"لا رقية إلا\" = 12; \"أنها رقية\" = 16; terjemah 'ruqyah' = 67, 'meruqyah' = 51, 'jampi' = 28, 'menjampi' = 8 (build 2026-11-07); 'rukyah' sengaja bukan pemicu (rukyatul hilal)"
+    },
+    {
+      "id": "khidir",
+      "label": "Nabi Khidir",
+      "pemicu": [
+        "khidir",
+        "khidr",
+        "khidhir",
+        "khadhir",
+        "khadlir"
+      ],
+      "arab": [
+        "صاحب موسى",
+        "هو الخضر",
+        "قتله الخضر",
+        "موسى والخضر",
+        "لقي الخضر"
+      ],
+      "terjemah": [
+        "khidhir",
+        "khadhir",
+        "khadlir",
+        "khidir"
+      ],
+      "bab": [],
+      "catatan": "Kata الخضر sendirian tidak dipakai, karena juga berarti \"hijau\" (طير خضر, ثياب خضر). Yang dipakai: صاحب موسى هو الخضر, الغلام الذي قتله الخضر, dan ejaan terjemah khidhir/khadhir/khadlir.",
+      "bukti": "arab_akar:الخضر = 69 (bercampur 'hijau', tidak dipakai); \"صاحب موسى\" = 12; \"هو الخضر\" = 8; \"قتله الخضر\" = 5; \"موسى والخضر\" = 2; terjemah khidhir 12, khadhir 6, khadlir 6, khidir 4 (build 2026-11-07)"
+    },
+    {
+      "id": "munkar_nakir",
+      "label": "Munkar dan Nakir",
+      "pemicu": [
+        "nakir",
+        "nakiir"
+      ],
+      "arab": [
+        "المنكر والآخر"
+      ],
+      "terjemah": [
+        "nakir"
+      ],
+      "bab": [],
+      "catatan": "Riwayatnya hanya satu di koleksi ini (Tirmidzi): يقال لأحدهما المنكر وللآخر النكير.",
+      "bukti": "arab_akar:\"المنكر والآخر\" = 1; النكير = 1; terjemah 'nakir' = 1 (build 2026-11-07)"
+    },
+    {
+      "id": "asmaul_husna",
+      "label": "Asmaul Husna (99 nama Allah)",
+      "pemicu": [
+        "asmaul",
+        "asmaulhusna",
+        "husna"
+      ],
+      "arab": [
+        "تسعة وتسعين اسما",
+        "تسعة وتسعون اسما"
+      ],
+      "terjemah": [
+        "sembilan puluh sembilan nama"
+      ],
+      "bab": [],
+      "catatan": "Istilah \"asmaul husna\" tidak ada di terjemah. Haditsnya: إن لله تسعة وتسعين اسما من أحصاها دخل الجنة.",
+      "bukti": "arab_akar:\"تسعة وتسعين اسما\" = 13; \"تسعة وتسعون اسما\" = 4; terjemah 'sembilan puluh sembilan nama' = 16, 'asmaul husna' = 0 (build 2026-11-07)"
+    },
+    {
+      "id": "hauqalah",
+      "label": "Hauqalah (la haula wala quwwata illa billah)",
+      "pemicu": [
+        "hauqalah",
+        "hauqolah"
+      ],
+      "arab": [
+        "لا حول ولا قوة إلا بالله"
+      ],
+      "terjemah": [
+        "laa haula walaa quwwata",
+        "la haula wala quwwata"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: لا حول ولا قوة إلا بالله, di antaranya \"perbendaharaan surga\" (كنز من كنوز الجنة).",
+      "bukti": "arab_akar:\"لا حول ولا قوة إلا بالله\" = 74; terjemah 'laa haula walaa quwwata' = 38, 'la haula wala quwwata' = 6 (build 2026-11-07)"
+    },
+    {
+      "id": "istirja",
+      "label": "Istirja' (inna lillahi wa inna ilaihi raji'un)",
+      "pemicu": [
+        "istirja",
+        "istirjak"
+      ],
+      "arab": [
+        "إنا لله وإنا إليه راجعون"
+      ],
+      "terjemah": [
+        "inna lillahi"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: إنا لله وإنا إليه راجعون, diucapkan saat tertimpa musibah.",
+      "bukti": "arab_akar:\"إنا لله وإنا إليه راجعون\" = 20; terjemah 'inna lillahi' = 16 (build 2026-11-07)"
+    },
+    {
+      "id": "yasin",
+      "label": "Surat Yasin",
+      "pemicu": [
+        "yasin",
+        "yaasiin",
+        "yasiin"
+      ],
+      "arab": [
+        "يس"
+      ],
+      "terjemah": [
+        "yasin",
+        "yaasiin"
+      ],
+      "bab": [],
+      "catatan": "Riwayat tentang Surat Yasin (يس), mis. اقرءوا يس على موتاكم. Derajat tiap riwayat berbeda; lihat penilaian ulama di setiap hasil.",
+      "bukti": "arab_akar:يس = 15; terjemah 'yasin' = 21, 'yaasiin' = 3 (build 2026-11-07)"
+    },
+    {
+      "id": "al_mulk",
+      "label": "Surat al-Mulk (Tabarak)",
+      "pemicu": [
+        "mulk",
+        "tabarak"
+      ],
+      "arab": [
+        "تبارك الذي بيده الملك"
+      ],
+      "terjemah": [
+        "surat al mulk",
+        "tabarak"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya mengutip awal surat: تبارك الذي بيده الملك.",
+      "bukti": "arab_akar:\"تبارك الذي بيده الملك\" = 10; terjemah 'surat al mulk' = 7, 'tabarak' = 2 (build 2026-11-07)"
+    },
+    {
+      "id": "ayat_kursi",
+      "label": "Ayat Kursi",
+      "pemicu": [
+        "kursi",
+        "kursiy"
+      ],
+      "arab": [
+        "آية الكرسي"
+      ],
+      "terjemah": [
+        "ayat kursi"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: آية الكرسي.",
+      "bukti": "arab_akar:\"آية الكرسي\" = 19; terjemah 'ayat kursi' = 20 (build 2026-11-07)"
     }
   ]
 }

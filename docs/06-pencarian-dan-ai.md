@@ -113,6 +113,21 @@ Putaran keenam (50 kueri adab makan-minum, kesehatan, hewan, penampilan). Sebagi
 
 Konsep sutrah tadi tidak memakai pemicu "sutra"; kini "sutra" memicu konsep kain sutra (الحرير). "rukyah" sengaja bukan pemicu ruqyah, karena berarti rukyatul hilal.
 
+Putaran ketujuh (44 kueri nabi, malaikat, jin, surat, dzikir):
+
+| Kueri | Sebelum | Sesudah | Padanan / catatan |
+|---|---:|---:|---|
+| "nabi khidir" | 4 | 38 | صاحب موسى هو الخضر (bukan الخضر sendirian: "hijau") |
+| "munkar nakir" | 1 | 1 | Tirmidzi 1071, satu-satunya riwayat di koleksi ini |
+| "asmaul husna" | 0 | 17 | تسعة وتسعين اسما |
+| "hauqalah" | 0 | 84 | لا حول ولا قوة إلا بالله |
+| "istirja" | 16 | 28 | إنا لله وإنا إليه راجعون |
+| "surat yasin" | 11 | 25 | يس (derajat tiap riwayat berbeda; lihat penilaiannya) |
+| "surat al mulk" | 9 | 15 | تبارك الذي بيده الملك |
+| "ayat kursi" | 24 | 24 | آية الكرسي, kini dibuka Bukhari 5010 |
+
+Tidak diberi entri: "kesurupan" (hampir tidak ada di data), "surat al ikhlas" ("ikhlas" juga tema keikhlasan, jadi tidak dijadikan pemicu), dan "malaikat maut" (sudah 16 hasil yang tepat lewat ملك الموت di terjemah).
+
 Bukti hitungan tiap entri ada di kolom `bukti` di `kamus_konsep.json`.
 
 **Urutan hasil (7 Nov 2026)**, di `site/src/cari.js`. Setiap aturan tampil sebagai alasan di hasil:
