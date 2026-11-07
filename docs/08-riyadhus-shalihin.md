@@ -39,6 +39,23 @@ Angka terbaru ada di `docs/01-audit-data.md`. Pada build 1 Nov 2026:
 
 Pemeriksaan manual 8 sampel acak pasangan "pasti": semuanya benar. Pasangan dengan skor validasi terendah juga diperiksa manual dan ternyata benar. Skornya rendah karena sumber teratasnya diriwayatkan sahabat lain dengan matan yang sama, dan hal itu sekarang ditangani oleh urutan sumber.
 
+## Terjemah pengganti dari riwayat sumber (7 Nov 2026)
+
+Selama terjemah Riyadhus Shalihin disembunyikan (`TERJEMAH_RIYADH="sembunyi"`), halaman Riyadh menampilkan **terjemah Lidwa Pusaka (berizin) dari riwayat sumbernya**, bila sumber peringkat 1 memenuhi semua syarat berikut:
+
+1. Kitabnya disebut an-Nawawi dalam atribusinya.
+2. Sahabatnya sama.
+3. Teks Arabnya memuat ≥ 90% teks Riyadh. Ini skor di tabel `sumber`, yaitu bobot 2-gram teks Riyadh yang ada di riwayat sumber (`pipeline/riyadh.py`).
+4. Riwayat sumbernya punya terjemah.
+
+Ada **769 dari 1.896** hadits yang memenuhi: Bukhari 314, Muslim 313, Abu Dawud 69, Tirmidzi 69, dan sisanya kitab lain.
+
+Label di halaman: "terjemahan riwayat sumbernya · Lidwa Pusaka", ditambah tautan ke riwayat itu, persentase kecocokan teks Arab, dan keterangan bahwa riwayat sumber memuat sanad lengkap, bisa lebih panjang, dan lafaznya bisa sedikit berbeda. Hadits lain tetap tanpa terjemah. Bila nanti izin terjemah aslinya pasti (`"tampil"`), terjemah Riyadhus Shalihin yang dipakai.
+
+**Pemeriksaan:** contoh dicek manual, yaitu Riyadh 2 → Bukhari 2118, Riyadh 3 → Muslim 1864, Riyadh 727 → Bukhari 5376, Riyadh 1366 → Muslim 7400, dan Riyadh 160 → Bukhari 717. Semuanya hadits yang sama. Kecocokan kata antara kedua terjemah rendah (kebanyakan < 50%) karena gaya bahasa kedua penerjemah berbeda dan riwayat sumber lebih panjang, bukan karena salah pasang.
+
+**Temuan:** pada Riyadh 125, teks Arabnya hadits cabang-cabang iman (الإيمان بضع وسبعون شعبة), dan sumbernya Muslim 153 benar. Tetapi terjemah Riyadhus Shalihin yang terpasang untuk nomor itu berisi hadits lain (orang yang memberi minum anjing). Jadi ada pemasangan Arab↔terjemah Riyadh yang perlu diperiksa ulang sebelum terjemah aslinya ditampilkan.
+
 ## Yang belum
 
 - **Izin terjemah:** terjemah Indonesia Riyadhus Shalihin ini **bukan** dari Lidwa Pusaka, dan penerjemahnya belum dipastikan.

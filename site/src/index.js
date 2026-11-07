@@ -122,11 +122,21 @@ async function halamanRiyadh(env, url, kitab, r) {
   ]);
   const penilaianSumber = new Map();
   for (const x of sumber.results) { const p = nilai(x.nilai_json); if (p.length) penilaianSumber.set(x.n, p); delete x.nilai_json; }
+  // Bila terjemah Riyadhus Shalihin tidak ditampilkan (izin belum pasti, atau tidak terpasang): pakai terjemah Lidwa
+  // (berizin) dari riwayat sumbernya, HANYA bila sumber peringkat 1 berada di kitab yang disebut an-Nawawi, sahabatnya
+  // sama, dan teks Arabnya memuat >= 90% teks Riyadh (skor tabel sumber, pipeline/riyadh.py).
+  let pengganti = null;
+  const tampilAsli = r.terjemah && env.TERJEMAH_RIYADH !== "sembunyi";
+  const calon = sumber.results.find((s) => s.peringkat === 1 && s.skor >= 0.9 && s.sahabat_sama && s.kitab_disebut);
+  if (!tampilAsli && calon) {
+    const t = await db.prepare("SELECT terjemah FROM riwayat WHERE n = ?1").bind(calon.n).first();
+    if (t?.terjemah) pengganti = { ...calon, terjemah: t.terjemah };
+  }
   const kanonik = `${url.origin}/riyadh/${r.slug}`;
   const isi = T.halamanRiyadh({
     r, kitab, bab: babTanpaTerjemah(env, "riyadh", bab.results[0] || null), info: info.results[0] || null, sumber: sumber.results, penilaianSumber, tema: tema.results,
     sebelum: tetangga.results.find((x) => x.urut === r.urut - 1), sesudah: tetangga.results.find((x) => x.urut === r.urut + 1), kanonik,
-    sembunyiTerjemah: env.TERJEMAH_RIYADH === "sembunyi",
+    sembunyiTerjemah: env.TERJEMAH_RIYADH === "sembunyi", pengganti,
   });
   const desk = (env.TERJEMAH_RIYADH === "sembunyi" ? "" : (r.terjemah || "")).replace(/\s+/g, " ").slice(0, 155) || `Riyadhus Shalihin no. ${r.no_tampil}: teks Arab, sumber menurut an-Nawawi, dan riwayat sumbernya.`;
   return html(T.layout({ judul: `Riyadhus Shalihin no. ${r.no_tampil} · Teman Hadits`, deskripsi: desk, isi, kanonik }));

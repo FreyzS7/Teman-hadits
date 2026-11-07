@@ -561,7 +561,7 @@ export const halamanGalat = (judul, pesan) => `<div class="galat"><h1 class="hal
 const NAMA_SUMBER = { bukhari: "al-Bukhari", muslim: "Muslim", abudawud: "Abu Dawud", tirmidzi: "at-Tirmidzi", nasai: "an-Nasa'i", ibnumajah: "Ibnu Majah", malik: "Malik", ahmad: "Ahmad", darimi: "ad-Darimi", syafii: "asy-Syafi'i" };
 
 export function halamanRiyadh(d) {
-  const { r, kitab, bab, info, sumber, penilaianSumber, tema, sebelum, sesudah, kanonik, sembunyiTerjemah } = d;
+  const { r, kitab, bab, info, sumber, penilaianSumber, tema, sebelum, sesudah, kanonik, sembunyiTerjemah, pengganti = null } = d;
   const disebut = JSON.parse(info?.kitab_atribusi || "[]");
   const kelompok = {};
   for (const s of sumber) (kelompok[s.kitab_id] ||= { nama: s.kitab_nama, xs: [] }).xs.push(s);
@@ -582,8 +582,10 @@ export function halamanRiyadh(d) {
       <div class="label">teks Riyadhus Shalihin · an-Nawawi menyebut sahabatnya, tanpa sanad lengkap</div>
       <p class="ar teks-utuh" id="teks-matan">${esc(r.arab)}</p>
       <div class="pemisah" aria-hidden="true">${SVG_BINTANG}</div>
-      <div class="label">terjemahan Riyadhus Shalihin · bukan dari Lidwa Pusaka</div>
-      ${terjemah ? `<p class="terjemah">${esc(r.terjemah)}</p>` : `<p class="tanpa-nilai">${r.terjemah ? "Terjemahan Riyadhus Shalihin belum ditampilkan sampai izin penerjemahnya dipastikan." : "Terjemahan belum terpasang untuk nomor ini, karena pasangannya di sumber terjemah tidak pasti."} Terjemahan riwayat sumbernya bisa dibaca lewat tautan di samping.</p>`}
+      ${!terjemah && pengganti ? `<div class="label">terjemahan riwayat sumbernya · Lidwa Pusaka</div>
+      <p class="terjemah">${esc(pengganti.terjemah.replace(/\[|\]/g, ""))}</p>
+      <p class="kecil">Terjemah di atas adalah terjemah Lidwa Pusaka untuk riwayat sumbernya, <a href="/${esc(pengganti.kitab_id)}/${esc(pengganti.slug)}">${esc(pengganti.kitab_nama)} no. ${esc(pengganti.no_tampil)}</a>, yang teks Arabnya memuat ${Math.round(pengganti.skor * 100)}% teks Riyadhus Shalihin ini. Riwayat sumbernya memuat sanad lengkap dan bisa lebih panjang; lafaznya bisa sedikit berbeda dari teks an-Nawawi di atas.${r.terjemah && sembunyiTerjemah ? " Terjemahan Riyadhus Shalihin sendiri belum ditampilkan sampai izin penerjemahnya dipastikan." : ""}</p>` : `<div class="label">terjemahan Riyadhus Shalihin · bukan dari Lidwa Pusaka</div>
+      ${terjemah ? `<p class="terjemah">${esc(r.terjemah)}</p>` : `<p class="tanpa-nilai">${r.terjemah ? "Terjemahan Riyadhus Shalihin belum ditampilkan sampai izin penerjemahnya dipastikan." : "Terjemahan belum terpasang untuk nomor ini, karena pasangannya di sumber terjemah tidak pasti."} Terjemahan riwayat sumbernya bisa dibaca lewat tautan di samping.</p>`}`}
       ${info?.catatan_ar ? `<details><summary class="kecil" style="cursor:pointer">Catatan kaki dalam teks digital ini (bukan teks an-Nawawi)</summary><p class="ar sanad" style="margin-top:8px">${esc(info.catatan_ar)}</p></details>` : ""}
       <div class="aksi">
         <button type="button" data-salin="${esc(rujukanTeks)}" data-pesan="Rujukan tersalin.">Salin rujukan</button>
