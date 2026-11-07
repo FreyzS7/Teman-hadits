@@ -1038,6 +1038,222 @@
       "bab": [],
       "catatan": "Hadits al-'Irbadh bin Sariyah: عليكم بسنتي وسنة الخلفاء الراشدين المهديين.",
       "bukti": "arab_akar:\"الخلفاء الراشدين\" = 7; terjemah 'khulafaur rasyidin' = 4, 'khulafa' = 6 (build 2026-11-07)"
+    },
+    {
+      "id": "tahiyatul_masjid",
+      "label": "Shalat tahiyatul masjid",
+      "pemicu": [
+        "tahiyatul",
+        "tahiyyatul"
+      ],
+      "arab": [
+        "ركعتين قبل أن يجلس",
+        "فلا يجلس حتى يصلي ركعتين"
+      ],
+      "terjemah": [
+        "tahiyatul",
+        "tahiyyatul"
+      ],
+      "bab": [],
+      "catatan": "Istilah \"tahiyatul masjid\" hampir tidak ada di terjemah. Hadits-haditsnya berbunyi: إذا دخل أحدكم المسجد فليركع ركعتين قبل أن يجلس (bila masuk masjid, shalatlah dua rakaat sebelum duduk).",
+      "bukti": "arab_akar:\"ركعتين قبل أن يجلس\" = 11; \"فلا يجلس حتى يصلي ركعتين\" = 2; \"قبل أن يجلس\" = 15 (sebagian tentang duduk tasyahud, tidak dipakai); terjemah 'tahiyatul' = 4, 'tahiyyatul' = 1 (build 2026-11-07)"
+    },
+    {
+      "id": "rawatib",
+      "label": "Shalat sunnah rawatib (12 rakaat)",
+      "pemicu": [
+        "rawatib",
+        "rowatib"
+      ],
+      "arab": [
+        "ثنتي عشرة ركعة",
+        "اثنتي عشرة ركعة"
+      ],
+      "terjemah": [
+        "dua belas rakaat"
+      ],
+      "bab": [],
+      "catatan": "Istilah \"rawatib\" tidak ada di terjemah. Hadits Ummu Habibah: من صلى اثنتي عشرة ركعة في يوم وليلة بني له بيت في الجنة (dua belas rakaat sunnah sehari semalam).",
+      "bukti": "arab_akar:\"ثنتي عشرة ركعة\" = 39; \"اثنتي عشرة ركعة\" = 11; terjemah 'dua belas rakaat' = 63, 'rawatib' = 0 (build 2026-11-07)"
+    },
+    {
+      "id": "masbuq",
+      "label": "Masbuq (makmum yang tertinggal)",
+      "pemicu": [
+        "masbuq",
+        "masbuk"
+      ],
+      "arab": [
+        "وما فاتكم فأتموا",
+        "وما فاتكم فاقضوا"
+      ],
+      "terjemah": [],
+      "bab": [],
+      "catatan": "Istilah \"masbuq\" tidak ada di terjemah. Hadits-haditsnya: فما أدركتم فصلوا وما فاتكم فأتموا (yang kalian dapati, shalatlah; yang tertinggal, sempurnakanlah).",
+      "bukti": "arab_akar:\"وما فاتكم فأتموا\" = 18; \"وما فاتكم فاقضوا\" = 6; terjemah 'masbuq' = 0 (build 2026-11-07)"
+    },
+    {
+      "id": "badal_haji",
+      "label": "Badal haji (berhaji untuk orang lain)",
+      "pemicu": [
+        "badal"
+      ],
+      "arab": [
+        "حج عن أبيك",
+        "حجي عنه",
+        "أحج عنه"
+      ],
+      "terjemah": [
+        "hajikanlah",
+        "berhaji untuknya"
+      ],
+      "bab": [],
+      "catatan": "Istilah \"badal haji\" tidak ada di terjemah. Hadits-haditsnya: حج عن أبيك (berhajilah untuk ayahmu), حجي عنها, أفأحج عنه.",
+      "bukti": "arab_akar:\"حج عن أبيك\" = 15; \"حجي عنه\" = 6; \"أحج عنه\" = 13; terjemah 'hajikanlah' = 8, 'berhaji untuknya' = 13 (build 2026-11-07)"
+    },
+    {
+      "id": "mudharabah",
+      "label": "Mudharabah (qiradh)",
+      "pemicu": [
+        "mudharabah",
+        "mudarabah",
+        "qiradh",
+        "qirad"
+      ],
+      "arab": [
+        "قراضا"
+      ],
+      "terjemah": [],
+      "bab": [],
+      "catatan": "Riwayatnya sedikit dan berupa atsar sahabat (al-Muwaththa', Musnad asy-Syafi'i): harta yang diberikan قراضا (untuk diperdagangkan dengan bagi hasil).",
+      "bukti": "arab_akar:قراضا = 3; القراض = 0; terjemah 'mudharabah' = 0, 'qiradh' = 0 (build 2026-11-07)"
+    },
+    {
+      "id": "ghasab",
+      "label": "Ghasab (merampas hak orang lain)",
+      "pemicu": [
+        "ghasab",
+        "gasab"
+      ],
+      "arab": [
+        "طوقه من سبع أرضين",
+        "شبرا من الأرض",
+        "قيد شبر من الأرض"
+      ],
+      "terjemah": [],
+      "bab": [],
+      "catatan": "Istilah \"ghasab\" (غصب) tidak muncul di teks hadits koleksi ini. Hadits yang paling dekat: من ظلم من الأرض شيئا طوقه من سبع أرضين (siapa merampas sejengkal tanah, akan dikalungkan tujuh lapis bumi).",
+      "bukti": "arab_akar:غصب = 0; \"طوقه من سبع أرضين\" = 16; \"شبرا من الأرض\" = 12; \"قيد شبر من الأرض\" = 5 (build 2026-11-07)"
+    },
+    {
+      "id": "luqathah",
+      "label": "Luqathah (barang temuan)",
+      "pemicu": [
+        "luqathah",
+        "luqatah",
+        "lukatah"
+      ],
+      "arab": [
+        "اللقطة"
+      ],
+      "terjemah": [
+        "barang temuan",
+        "luqathah"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai اللقطة (barang temuan); terjemah Lidwa menulis \"barang temuan\".",
+      "bukti": "arab_akar:اللقطة = 36; terjemah 'barang temuan' = 59, 'luqathah' = 3 (build 2026-11-07)"
+    },
+    {
+      "id": "gharar",
+      "label": "Jual beli gharar",
+      "pemicu": [
+        "gharar",
+        "garar"
+      ],
+      "arab": [
+        "بيع الغرر"
+      ],
+      "terjemah": [
+        "gharar"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: نهى رسول الله صلى الله عليه وسلم عن بيع الغرر.",
+      "bukti": "arab_akar:\"بيع الغرر\" = 20; terjemah 'gharar' = 11 (build 2026-11-07)"
+    },
+    {
+      "id": "sutrah",
+      "label": "Sutrah (pembatas di depan orang shalat)",
+      "pemicu": [
+        "sutrah",
+        "sutroh"
+      ],
+      "arab": [
+        "إلى سترة",
+        "مثل مؤخرة الرحل",
+        "ليس بينهما سترة",
+        "بين يديه سترة"
+      ],
+      "terjemah": [
+        "sutrah"
+      ],
+      "bab": [],
+      "catatan": "Kata سترة sendirian tidak dipakai, karena lebih sering muncul sebagai ستره الله (Allah menutupi aibnya). Yang dipakai: فليصل إلى سترة dan مثل مؤخرة الرحل (setinggi sandaran pelana).",
+      "bukti": "arab_akar:سترة = 68 (sebagian besar 'Allah menutupi', tidak dipakai); \"إلى سترة\" = 5; \"مثل مؤخرة الرحل\" = 11; terjemah 'sutrah' = 19 (build 2026-11-07)"
+    },
+    {
+      "id": "basmalah",
+      "label": "Basmalah",
+      "pemicu": [
+        "basmalah",
+        "basmallah"
+      ],
+      "arab": [
+        "بسم الله الرحمن الرحيم"
+      ],
+      "terjemah": [
+        "basmalah",
+        "bismillahirrahmanirrahim"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: بسم الله الرحمن الرحيم, termasuk dalam surat-surat Nabi dan hadits tentang membacanya dalam shalat.",
+      "bukti": "arab_akar:\"بسم الله الرحمن الرحيم\" = 82; terjemah 'basmalah' = 34, 'bismillahirrahmanirrahim' = 13 (build 2026-11-07)"
+    },
+    {
+      "id": "fidyah",
+      "label": "Fidyah",
+      "pemicu": [
+        "fidyah",
+        "fidiah",
+        "fidya"
+      ],
+      "arab": [
+        "طعام مسكين",
+        "يطيقونه"
+      ],
+      "terjemah": [
+        "fidyah",
+        "memberi makan orang miskin"
+      ],
+      "bab": [],
+      "catatan": "Kata فدية sendirian tidak dipakai, karena juga berarti tebusan tawanan. Yang dipakai: ayat وعلى الذين يطيقونه فدية طعام مسكين dan terjemah \"fidyah\" (termasuk fidyah ihram).",
+      "bukti": "arab_akar:فدية = 244 (bercampur tebusan tawanan, tidak dipakai); \"طعام مسكين\" = 13; يطيقونه = 11; terjemah 'fidyah' = 29, 'memberi makan orang miskin' = 15 (build 2026-11-07)"
+    },
+    {
+      "id": "bughat",
+      "label": "Bughat (kelompok pembangkang)",
+      "pemicu": [
+        "bughat",
+        "bugat",
+        "pemberontak"
+      ],
+      "arab": [
+        "الفئة الباغية"
+      ],
+      "terjemah": [],
+      "bab": [],
+      "catatan": "Istilah \"bughat\" tidak ada di terjemah. Riwayat yang ada: تقتل عمارا الفئة الباغية ('Ammar akan dibunuh oleh kelompok yang membangkang).",
+      "bukti": "arab_akar:\"الفئة الباغية\" = 22; \"تقتله الفئة الباغية\" = 9 (build 2026-11-07)"
     }
   ]
 }

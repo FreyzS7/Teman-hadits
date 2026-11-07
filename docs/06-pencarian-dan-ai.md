@@ -83,6 +83,25 @@ Putaran keempat (50 kueri akhlak, keluarga, akhirat, sirah):
 
 Tidak diberi entri karena tidak ada padanan Arab yang khusus: "mukjizat" (آية terlalu umum), "mertua" (الحمو berarti kerabat suami, bukan mertua), "mendidik anak".
 
+Putaran kelima (55 kueri fiqih ibadah dan muamalah). Banyak istilah fiqih tidak ada di teks hadits, karena hadits memakai kalimat, bukan nama bab fiqih:
+
+| Kueri | Sebelum | Sesudah | Padanan / catatan |
+|---|---:|---:|---|
+| "shalat tahiyatul masjid" | 13.652 (hanya "shalat" yang cocok) | 19 | فليركع ركعتين قبل أن يجلس |
+| "shalat rawatib" | 12.264 (hanya "shalat") | 67 | اثنتي عشرة ركعة |
+| "masbuq" | 0 | 25 | وما فاتكم فأتموا |
+| "badal haji" | 1.659 (hanya "haji") | 50 | حج عن أبيك, أحج عنه |
+| "mudharabah" | 0 | 3 | قراضا (atsar, al-Muwaththa') |
+| "ghasab" | 0 | 29 | طوقه من سبع أرضين (غصب sendiri tidak ada di teks) |
+| "luqathah" | 3 | 62 | اللقطة, terjemah "barang temuan" |
+| "gharar" | 11 | 20 | بيع الغرر |
+| "sutrah" | 19 | 25 | إلى سترة, مثل مؤخرة الرحل (bukan سترة sendirian: "Allah menutupi aib") |
+| "fidyah" | 30 | 43 | طعام مسكين, يطيقونه (bukan فدية sendirian: tebusan tawanan) |
+| "bughat" | 0 | 22 | الفئة الباغية |
+| "basmalah" | 34 | 114 | بسم الله الرحمن الرحيم |
+
+Tidak diberi entri: "syirkah" (الشركة bercampur dengan doa "شر الشيطان وشركه") dan "mustahik zakat" (hanya 1 riwayat memuat ayatnya). Kata "sutra" tidak dijadikan pemicu karena berarti kain sutra.
+
 Bukti hitungan tiap entri ada di kolom `bukti` di `kamus_konsep.json`.
 
 **Urutan hasil (7 Nov 2026)**, di `site/src/cari.js`. Setiap aturan tampil sebagai alasan di hasil:
