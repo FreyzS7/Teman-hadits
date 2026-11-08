@@ -123,6 +123,8 @@ Catatan: angka ini dari Node di mesin pengembangan, bukan dari Cloudflare. Sesud
 2. Sesudah impor dan pengecekan, **kembali ke paket gratis.** Ukuran 275 MB masih di bawah batas 500 MB per database paket gratis.
 3. **Pembaruan data besar berikutnya** (impor ulang penuh) juga sebaiknya dilakukan dalam bulan berbayar. Pembaruan kecil bisa langsung dilakukan di paket gratis.
 
+**Status (8 Nov 2026):** langganan Workers Paid **sudah dibatalkan** oleh pemilik proyek; tidak ada tagihan lanjutan. Akibatnya, setelah masa berbayar berakhir, impor ulang penuh (±564 ribu tulisan) tidak muat dalam batas 100 ribu tulisan/hari paket gratis. `npm run terbit` kini memberi peringatan sebelum impor; pembaruan yang mengubah data sebaiknya dikumpulkan dan diterbitkan dalam satu bulan berbayar, atau impornya dibuat bertahap (belum ada).
+
 Sisa tulisan terbesar: tabel `riwayat` sendiri beserta 3 indeksnya (±310 ribu), tabel bayangan pencarian teks (±97 ribu), dan `kata_df` (±47 ribu). Semuanya dipakai langsung oleh halaman, jadi tidak dipangkas.
 
 ## Langkah menerbitkan (dari komputer pemilik proyek)

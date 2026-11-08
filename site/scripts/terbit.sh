@@ -61,6 +61,8 @@ if [ "$sidik" = "$(cat "$STATUS/sidik-data" 2>/dev/null || true)" ]; then
   echo "Data sama dengan impor terakhir: impor online dilewati."
 else
   echo "Data berubah sejak impor terakhir: impor online diperlukan (bagian yang lama)."
+  echo "PERHATIAN: impor penuh menulis ±564 ribu baris. Paket GRATIS hanya 100 ribu tulisan/hari: bila Workers Paid sudah tidak aktif,"
+  echo "           jawab selain YA lalu tanyakan Claude (lihat docs/12, bagian Rekomendasi jalur terbit)."
   jalan bash scripts/impor-online.sh
   [ "${COBA:-}" = 1 ] || echo "$sidik" > "$STATUS/sidik-data"
 fi
