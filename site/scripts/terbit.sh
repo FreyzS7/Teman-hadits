@@ -24,6 +24,7 @@ done
 pyu() { (cd "$ROOT" && "$PY" -X utf8 "$@"); }
 jalan() { if [ "${COBA:-}" = 1 ]; then echo "   [COBA] $*"; else "$@"; fi; }
 
+bahan() { case "$1" in katalog_palsu) echo "hadits_populer\.json" ;; bab_openiti) echo "glosarium_kitab\.json|koreksi_bab\.json" ;; *) echo "-" ;; esac; }
 cabang="$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)"
 echo "== 1/4 Tarik perubahan ($cabang)"
 jalan git -C "$ROOT" pull --ff-only origin "$cabang"
@@ -47,8 +48,9 @@ else
     exit 1
   fi
   langkah=""
+  # langkah + berkas data yang dibacanya (hadits_populer.json -> katalog_palsu, glosarium/koreksi -> bab_openiti)
   for s in riyadh bab_openiti katalog_palsu rijal perawi; do
-    if echo "$berubah" | grep -qx "pipeline/$s.py"; then langkah="$langkah $s"; fi
+    if echo "$berubah" | grep -qxE "pipeline/($s\.py|$(bahan "$s"))"; then langkah="$langkah $s"; fi
   done
   # perawi.py memakai hasil rijal.py
   case " $langkah " in *" rijal "*) case " $langkah " in *" perawi "*) ;; *) langkah="$langkah perawi" ;; esac ;; esac
@@ -108,8 +110,13 @@ elif [ "$sidik" = "$(cat "$STATUS/sidik-data" 2>/dev/null || true)" ]; then
     echo "Cermin data online disimpan di site/.terbit/ (dasar impor bertahap untuk perubahan data berikutnya)."
   fi
 else
-  echo "Data berubah, tetapi belum ada cermin data online (site/.terbit/cermin.sqlite): impor bertahap belum bisa."
-  impor_penuh
+  echo "Data berubah, tetapi belum ada cermin data online (site/.terbit/cermin.sqlite)."
+  if [ "${COBA:-}" != 1 ] && bash scripts/cermin-awal.sh; then
+    echo "Cermin data online berhasil disusun ulang. Jalankan npm run terbit sekali lagi untuk mulai impor bertahap."
+  else
+    echo "Cermin data online tidak bisa disusun ulang: impor bertahap belum bisa."
+    impor_penuh
+  fi
 fi
 jalan npx wrangler d1 execute teman-hadits --env production --remote --yes --file scripts/catatan.sql
 
