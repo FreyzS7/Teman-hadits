@@ -123,7 +123,21 @@ Catatan: angka ini dari Node di mesin pengembangan, bukan dari Cloudflare. Sesud
 2. Sesudah impor dan pengecekan, **kembali ke paket gratis.** Ukuran 275 MB masih di bawah batas 500 MB per database paket gratis.
 3. **Pembaruan data besar berikutnya** (impor ulang penuh) juga sebaiknya dilakukan dalam bulan berbayar. Pembaruan kecil bisa langsung dilakukan di paket gratis.
 
-**Status (8 Nov 2026):** langganan Workers Paid **sudah dibatalkan** oleh pemilik proyek; tidak ada tagihan lanjutan. Akibatnya, setelah masa berbayar berakhir, impor ulang penuh (±564 ribu tulisan) tidak muat dalam batas 100 ribu tulisan/hari paket gratis. `npm run terbit` kini memberi peringatan sebelum impor; pembaruan yang mengubah data sebaiknya dikumpulkan dan diterbitkan dalam satu bulan berbayar, atau impornya dibuat bertahap (belum ada).
+**Status (8 Nov 2026):** langganan Workers Paid **sudah dibatalkan** oleh pemilik proyek; tidak ada tagihan lanjutan. Impor ulang penuh (±564 ribu tulisan) tidak muat di batas 100 ribu tulisan/hari paket gratis, jadi pembaruan data kini memakai **impor bertahap** (di bawah).
+
+### Impor bertahap (21 Nov 2026)
+
+Pembaruan data biasanya hanya mengubah sebagian kecil baris (perapian terjemah: ±2.800 riwayat). `npm run terbit` kini menulis **hanya baris yang berubah**, dibagi menjadi cicilan harian:
+
+1. `pipeline/export_d1.py` juga menulis **cermin** `build/d1-cermin.sqlite`: tabel biasa berisi persis baris yang diimpor, termasuk isi tabel pencarian FTS (yang di D1 tidak bisa dibaca kembali, padahal menghapus baris FTS tanpa konten harus menyebut nilai lamanya).
+2. `site/.terbit/cermin.sqlite` = cermin data yang sedang online. Dibuat otomatis pada terbit pertama yang datanya **sama** dengan impor terakhir.
+3. Bila data berubah, `pipeline/impor_cicil.py` membandingkan kedua cermin dan menulis `build/d1-cicil/001.sql, 002.sql, …`. Tiap cicilan paling banyak ±70 ribu tulisan; sisanya ruang untuk catatan kueri dan cadangan perkiraan. Perkiraannya: (1 + jumlah indeks) per baris yang dihapus atau disisipkan, dan 10 per baris FTS (diukur 8,5 dengan SQLite: 100 baris hapus+sisip = 850 tulisan bayangan). Hapus + sisip satu baris tidak pernah terpisah ke dua hari, jadi tidak ada baris yang hilang semalaman. Tabel tanpa kunci (he_tema, sumber, …) diganti seluruhnya dalam satu cicilan.
+4. `npm run terbit` mengirim **satu cicilan per hari UTC** (hari baru mulai pukul 07.00 WIB). Bila dijalankan lagi di hari yang sama, cicilan tidak dikirim dan kode tetap di-deploy. Setelah cicilan terakhir, cermin online diperbarui. Bila data berubah lagi di tengah cicilan, cicilan lama diselesaikan dulu (targetnya disimpan di `site/.terbit/cermin-target.sqlite`).
+5. Impor penuh hanya dipakai bila belum ada cermin, atau bila skema/kolom tabel berubah (`impor_cicil.py` keluar dengan kode 2).
+
+Selama cicilan berjalan (1–2 hari), sebagian data online sudah baru dan sebagian masih lama. Ini aman untuk perubahan isi seperti perapian terjemah, tetapi sebaiknya tidak dipakai untuk perubahan yang saling bergantung antar-tabel.
+
+Diuji: `pipeline/test_impor_cicil.py` memakai cermin kecil, dengan batas normal dan batas kecil yang memaksa banyak cicilan. Simulasi penuh: ±3.000 terjemah, satu riwayat hilang, satu tabel tanpa kunci, dan info berubah, menghasilkan 2 cicilan, ±113 ribu tulisan. Setelah diterapkan ke data lama, semua tabel identik dengan data baru, dan 300 kata acak memberi hasil FTS yang sama. Berkas cicilan juga dijalankan dengan `wrangler d1 execute` pada salinan D1 lokal (172 + 68 perintah), lalu pemeriksaan integritas SQLite dan FTS lulus. Alur `terbit.sh` diuji dalam 4 skenario dengan `npx` tiruan: cermin dibuat, cicilan 1 dikirim, hari yang sama ditolak, cicilan 2 esoknya lalu selesai. Cermin berukuran ±370 MB (di `build/` dan `site/.terbit/`, tidak ikut git).
 
 Sisa tulisan terbesar: tabel `riwayat` sendiri beserta 3 indeksnya (±310 ribu), tabel bayangan pencarian teks (±97 ribu), dan `kata_df` (±47 ribu). Semuanya dipakai langsung oleh halaman, jadi tidak dipangkas.
 

@@ -26,6 +26,7 @@ import rapikan_terjemah  # noqa: E402
 import serupa  # noqa: E402
 
 OUT = os.path.join(BUILD, "d1")
+CERMIN = os.path.join(BUILD, "d1-cermin.sqlite")   # isi yang diimpor, untuk impor bertahap (pipeline/impor_cicil.py)
 MAKS_PERNYATAAN = 90_000      # D1 membatasi panjang satu pernyataan SQL (~100 KB)
 MAKS_BERKAS = 40_000_000
 MAKS_BARIS = 500              # baris per INSERT; VALUES majemuk yang terlalu panjang -> SQLITE_NOMEM di D1 lokal
@@ -145,7 +146,17 @@ def sql_val(v):
     return " || char(10) || ".join("'" + bagian.replace("'", "''") + "'" for bagian in s.split("\n"))
 
 
+def nilai_cermin(v):
+    """Nilai persis seperti yang sampai di D1 (sql_val menyeragamkan baris baru)."""
+    if v is None or isinstance(v, (int, float)):
+        return v
+    return str(v).replace("\r\n", "\n").replace("\r", "\n")
+
+
 class Penulis:
+    """Menulis build/d1/*.sql, sekaligus CERMIN (build/d1-cermin.sqlite): tabel biasa berisi persis baris yang diimpor,
+    termasuk isi tabel FTS (yang di D1 tidak bisa dibaca kembali). Dipakai pipeline/impor_cicil.py untuk menghitung
+    baris yang berubah sejak impor terakhir, supaya pembaruan data muat di batas tulis harian paket gratis."""
     def __init__(self):
         os.makedirs(OUT, exist_ok=True)
         for f in os.listdir(OUT):
@@ -153,6 +164,11 @@ class Penulis:
                 os.remove(os.path.join(OUT, f))
         self.no, self.f, self.ukuran = 0, None, 0
         self._buka()
+        if os.path.exists(CERMIN):
+            os.remove(CERMIN)
+        self.cermin = sqlite3.connect(CERMIN)
+        self.cermin.execute("PRAGMA journal_mode=OFF")
+        self.cermin.execute("PRAGMA synchronous=OFF")
 
     def _buka(self):
         if self.f:
@@ -168,6 +184,11 @@ class Penulis:
         self.ukuran += len(s.encode("utf8"))
 
     def sisip(self, tabel, kolom, baris):
+        baris = list(baris)
+        kol = ", ".join(f'"{k}"' for k in kolom)
+        self.cermin.execute(f'CREATE TABLE IF NOT EXISTS "{tabel}" ({kol})')
+        self.cermin.executemany(f'INSERT INTO "{tabel}" ({kol}) VALUES ({",".join("?" * len(kolom))})',
+                                ([nilai_cermin(x) for x in b] for b in baris))
         kepala = f"INSERT INTO {tabel} ({', '.join(kolom)}) VALUES "
         buf, pjg = [], len(kepala)
         for b in baris:
@@ -184,6 +205,8 @@ class Penulis:
 
     def tutup(self):
         self.f.close()
+        self.cermin.commit()
+        self.cermin.close()
 
 
 # Kitab yang di sumber penomoran kita hanya punya satu sumber digital (Lidwa). Edisi tahqiq OpenITI menjadi
@@ -229,6 +252,8 @@ def main():
     w = Penulis()
     with open(os.path.join(OUT, "000-skema.sql"), "w", encoding="utf8") as f:
         f.write(SKEMA)
+    w.cermin.execute("CREATE TABLE _skema (sql TEXT)")   # impor bertahap hanya boleh bila skemanya sama
+    w.cermin.execute("INSERT INTO _skema VALUES (?)", (SKEMA,))
 
     urut_kitab = {k[0]: i for i, k in enumerate(KITAB)}
     rows = q("SELECT id, kitab_id, no_standar, no_arab, no_lidwa, bab_no, bab_nama, arab, terjemah, rantai_json, "
