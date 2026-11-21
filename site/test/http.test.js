@@ -275,3 +275,18 @@ test("populer: lafaz mirip yang dibahas ulama ditampilkan terpisah", opsi, async
   assert.match(t, /href="\/tirmidzi\/2799"/);
   assert.match(t, /tidak ditemukan sebagai judul entri/);   // lafaz aslinya tetap dinyatakan tidak dibahas
 });
+
+test("Cari: pertanyaan panjang gaya awam", opsi, async () => {
+  const q = async (s) => (await ambil("/cari?q=" + encodeURIComponent(s) + "&z=" + Date.now())).teks;
+  // kata tanya/pengisi tidak lagi diwajibkan
+  assert.match(await q("apakah boleh menjamak sholat karena hujan"), /href="\/tirmidzi\/187"/);
+  // tidak ada riwayat yang memuat semua kata: kata paling umum dilepas, kata khas tetap wajib
+  const bohong = await q("apa hukum berbohong untuk mendamaikan orang");
+  assert.match(bohong, /href="\/abudawud\/4921"/);
+  assert.match(bohong, /tidak diwajibkan/);
+  const kahfi = await q("apa keutamaan membaca surat al kahfi di hari jumat");
+  assert.match(kahfi, /href="\/darimi\/3273"/);
+  assert.match(kahfi, /tidak diwajibkan\. Hasil di bawah memuat: <b>membaca, surat, kahfi, jumat<\/b>/);
+  // kata yang tidak ada di terjemahan mana pun disebutkan terus terang
+  assert.match(await q("apa hukumnya mengucapkan selamat natal"), /Kata <b>“natal”<\/b> tidak muncul di terjemahan mana pun/);
+});

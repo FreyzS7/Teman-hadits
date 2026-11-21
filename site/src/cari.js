@@ -1,7 +1,7 @@
 // Pencarian lapis 1 (tanpa AI). Port dari pipeline/cari.py; rencana() harus memberi hasil yang sama
 // (diuji oleh test/paritas.test.js). Semua hasil berasal dari database dan membawa alasan kemunculannya.
 import KAMUS from "../../pipeline/kamus_konsep.json" with { type: "json" };
-import { akarAr, normAr, normId } from "./teks.js";
+import { akarAr, normAr, normId, stemId } from "./teks.js";
 
 /** Kolom riwayat.nilai_json -> [{penilai, hukum, kategori}] (urut penilai; lihat pipeline/export_d1.py). */
 export const nilai = (j) => (j ? JSON.parse(j) : []).map(([penilai, hukum, kategori]) => ({ penilai, hukum, kategori }));
@@ -156,35 +156,61 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
   const hitung = async (match) => (ry
     ? await db.prepare(`SELECT count(*) AS c FROM (SELECT rowid FROM cari WHERE cari MATCH ?1 AND rowid NOT BETWEEN ?2 AND ?3 LIMIT ${BATAS_HITUNG + 1})`).bind(match, ry[1], ry[2]).first()
     : await db.prepare(`SELECT count(*) AS c FROM (SELECT rowid FROM cari WHERE cari MATCH ?1 LIMIT ${BATAS_HITUNG + 1})`).bind(match).first()).c;
+  let kataInti = r.kata, kataLepas = [], kataNol = [];
   if (r.kata.length && !r.konsep.length) {
     let mode = "semua kata";
     let match = r.kata.map(grupFts).join(" AND ");
     totalKata = await hitung(match);
+    if (!totalKata && r.kata.length >= 3) {
+      // Tidak ada riwayat yang memuat semua kata: lepaskan kata yang PALING UMUM satu per satu (menurut kata_df),
+      // sehingga kata yang khas ("kahfi", "yatim", "najis") tetap wajib ada. Dulu langsung OR semua kata, dan kata
+      // umum ("hari", "membaca", "surat") mengalahkan kata khasnya.
+      const unik = [...new Set(r.kata)];
+      const stem = new Map(unik.map((w) => [w, [...new Set(varianDari(w).map(stemId))]]));
+      const df = new Map((await db.prepare("SELECT kata, n FROM kata_df WHERE kata IN (SELECT value FROM json_each(?1))")
+        .bind(JSON.stringify([...stem.values()].flat())).all()).results.map((x) => [x.kata, x.n]));
+      const dfKata = (w) => stem.get(w).reduce((t, v) => t + (df.get(v) || 0), 0);
+      // kata yang tidak ada di terjemahan mana pun ("disantuni", "nisab") dilepas paling dulu, lalu kata paling umum
+      const umum = [...unik].sort((a, b) => ((dfKata(a) === 0) - (dfKata(b) === 0)) * -1 || dfKata(b) - dfKata(a));
+      const nol = unik.filter((w) => dfKata(w) === 0).length;
+      for (let lepas = 1; lepas <= Math.max(unik.length - 2, nol) && lepas < unik.length && !totalKata; lepas++) {
+        const sisa = unik.filter((w) => !umum.slice(0, lepas).includes(w));
+        match = sisa.map(grupFts).join(" AND ");
+        totalKata = await hitung(match);
+        if (totalKata) { mode = "sebagian kata"; kataInti = sisa; kataLepas = umum.slice(0, lepas); kataNol = kataLepas.filter((w) => dfKata(w) === 0); }
+      }
+    }
     if (!totalKata) {
       mode = "sebagian kata";
       match = r.kata.map(grupFts).join(" OR ");
       totalKata = await hitung(match);
+      kataInti = r.kata; kataLepas = []; kataNol = [];
     }
     modeKata = mode;
     const ids = await ftsIds(match, 400);
-    ids.forEach((n, i) => tambahId(n, 1 + (ids.length - i) / (10 * ids.length), `terjemah memuat ${mode}: ${r.kata.join(", ")}`));
+    const ket = kataLepas.length ? `${kataInti.join(", ")} (tanpa: ${kataLepas.join(", ")})` : r.kata.join(", ");
+    ids.forEach((n, i) => tambahId(n, 1 + (ids.length - i) / (10 * ids.length), `terjemah memuat ${mode}: ${ket}`));
   }
 
   // kata-kata kueri yang berdekatan di terjemah ("puasa ... arafah", "doa ... sebelum tidur") lebih mungkin memang
   // membahas hal itu daripada yang hanya kebetulan memuat semua katanya di tempat terpisah.
-  if (r.kata.length >= 2 && !r.konsep.length && skor.size) {
-    const m = dekat(r.kata, JARAK_DEKAT);
+  if (kataInti.length >= 2 && !r.konsep.length && skor.size) {
+    const m = dekat(kataInti, JARAK_DEKAT);
     if (m) {
       const rs = await db.prepare("SELECT rowid AS n FROM cari WHERE cari MATCH ?1 AND rowid IN (SELECT value FROM json_each(?2))").bind(m, jsonIds(skor.keys())).all();
-      for (const x of rs.results) tambahId(x.n, 0.5, `kata ${r.kata.join(", ")} berdekatan`);
+      for (const x of rs.results) tambahId(x.n, 0.5, `kata ${kataInti.join(", ")} berdekatan`);
     }
   }
 
   // judul kitab/bab (Arab & Indonesia) yang memuat kata kunci: "haid" -> riwayat di "Kitab Haid"
+  // Bobotnya sebanding dengan bagian kata kueri yang ada di judul (semua kata = 1): dulu setiap kata bernilai 1, sehingga
+  // riwayat yang hanya cocok judul untuk satu kata umum ("shalat", jutaan bab Kitab Shalat) menyamai riwayat yang
+  // terjemahnya memuat semua kata ("menjamak shalat karena hujan").
   if (r.kata.length && !r.konsep.length) {
-    for (const w of r.kata) {
+    const unik = [...new Set(r.kata)];
+    for (const w of unik) {
       const match = "judul:(" + varianDari(w).map(fraseId).join(" OR ") + ")";
-      for (const n of await ftsIds(match, 400)) tambahId(n, 1, `judul kitab/bab memuat "${w}"`);
+      for (const n of await ftsIds(match, 400)) tambahId(n, 1 / unik.length, `judul kitab/bab memuat "${w}"`);
     }
   }
 
@@ -247,7 +273,7 @@ export async function cari(db, kueri, { halaman = 1, perHalaman = 20, kitab = nu
       serupa: x.serupa.map((m) => ringkas.get(m)).filter(Boolean).map(({ kitab_id, slug, no_tampil }) => ({ kitab_id, slug, no_tampil })) }));
   }
   const totalLebih = totalKata > BATAS_HITUNG && urut.length <= BATAS_HITUNG;
-  return { rencana: r, total: totalLebih ? BATAS_HITUNG : Math.max(urut.length, totalKata), totalLebih, tampil: daftar.length, hasil, perKitab, halaman, perHalaman, modeKata };
+  return { rencana: r, total: totalLebih ? BATAS_HITUNG : Math.max(urut.length, totalKata), totalLebih, tampil: daftar.length, hasil, perKitab, halaman, perHalaman, modeKata, kataInti, kataLepas, kataNol };
 }
 
 export const JENDELA_SERUPA = 200;
