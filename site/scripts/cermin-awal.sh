@@ -17,8 +17,25 @@ git -C "$ROOT" cat-file -e "$c" 2>/dev/null || { echo "Commit terbit terakhir $c
 if git -C "$ROOT" diff --name-only "$c" HEAD -- pipeline/ | grep -qE '^pipeline/(common|fetch_sources|build_db|takhrij|hadeethenc)\.py$'; then
   echo "Berkas inti pipeline berubah sejak terbit terakhir: cermin tidak bisa disusun ulang." >&2; exit 1
 fi
-TMP="$(mktemp -d)"; W="$TMP/wt"
-selesai() { git -C "$ROOT" worktree remove --force "$W" >/dev/null 2>&1 || true; rm -rf "$TMP"; }
+TMP="$(mktemp -d)"; W="$TMP/wt"; TAUTAN=()
+# Tautan folder (hanya dibaca). Di Git Bash Windows `ln -s` diam-diam MENYALIN folder, jadi dipakai junction (tanpa admin).
+tautkan() {
+  if command -v cygpath >/dev/null 2>&1; then
+    cmd.exe //c mklink //J "$(cygpath -w "$2")" "$(cygpath -w "$1")" >/dev/null
+  else
+    ln -s "$1" "$2"
+  fi
+  TAUTAN+=("$2")
+}
+# Tautan dilepas DULU (tanpa mengikuti isinya) sebelum folder sementara dihapus.
+selesai() {
+  for t in "${TAUTAN[@]}"; do
+    if command -v cygpath >/dev/null 2>&1; then cmd.exe //c rmdir "$(cygpath -w "$t")" >/dev/null 2>&1 || true; else rm -f "$t"; fi
+  done
+  git -C "$ROOT" worktree remove --force "$W" >/dev/null 2>&1 || true
+  rm -rf "$TMP"
+  git -C "$ROOT" worktree prune >/dev/null 2>&1 || true
+}
 trap selesai EXIT
 echo "Menyusun ulang data online dari commit $(git -C "$ROOT" rev-parse --short "$c")..."
 git -C "$ROOT" worktree add --detach --quiet "$W" "$c"
@@ -26,8 +43,8 @@ mkdir -p "$W/build"
 for f in "$ROOT"/build/*.sqlite "$ROOT"/build/*.json; do
   case "$(basename "$f")" in d1-cermin.sqlite) ;; *) cp "$f" "$W/build/" ;; esac
 done
-for d in cetak ifta; do [ -e "$ROOT/build/$d" ] && ln -s "$ROOT/build/$d" "$W/build/$d"; done
-[ -e "$W/sources" ] || ln -s "$ROOT/sources" "$W/sources"
+for d in cetak ifta; do if [ -e "$ROOT/build/$d" ]; then tautkan "$ROOT/build/$d" "$W/build/$d"; fi; done
+[ -e "$W/sources" ] || tautkan "$ROOT/sources" "$W/sources"
 berubah="$(git -C "$ROOT" diff --name-only "$c" HEAD -- pipeline/)"
 langkah=""
 for s in riyadh bab_openiti katalog_palsu rijal perawi; do
