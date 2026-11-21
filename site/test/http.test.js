@@ -290,3 +290,14 @@ test("Cari: pertanyaan panjang gaya awam", opsi, async () => {
   // kata yang tidak ada di terjemahan mana pun disebutkan terus terang
   assert.match(await q("apa hukumnya mengucapkan selamat natal"), /Kata <b>“natal”<\/b> tidak muncul di terjemahan mana pun/);
 });
+
+test("populer: penilaian yang dibantah tidak jadi label; tautan entri ucapan lain ditolak", opsi, async () => {
+  const dunia = (await ambil("/populer/dunia-penjara-mukmin?z=" + Date.now())).teks;
+  assert.match(dunia, /href="\/muslim\//);
+  assert.doesNotMatch(dunia, /kk-palsu/);                       // «من أنه موضوع فلا يعول عليه»: klaim yang ditolak
+  const kaum = (await ambil("/populer/menyerupai-kaum?z=" + Date.now())).teks;
+  assert.match(kaum, /href="\/abudawud\/4031"/);
+  assert.match(kaum, /Disebut dalam pembahasan entri lain/);   // «من كثر سواد قوم» hanya disebut, bukan entri ucapan ini
+  const cek = (await ambil("/cek?t=" + encodeURIComponent("Rajab bulan Allah, Sya'ban bulanku, Ramadhan bulan umatku") + "&z=" + Date.now())).teks;
+  assert.match(cek, /href="\/populer\/rajab-bulan-allah"/);
+});

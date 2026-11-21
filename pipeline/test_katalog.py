@@ -51,6 +51,16 @@ class KataKunci(unittest.TestCase):
     def test_bantahan_pendapat_bukan_dusta(self):
         self.assertNotIn("dusta", padanan("وكذب من قال إنه اسم امرأة"))
 
+    def test_penilaian_yang_dibantah_tidak_dihitung(self):
+        # Kasyf 1318 (hadits Muslim): klaim ash-Shaghani dikutip lalu ditolak
+        kk = lambda t: {k for k, *_ in kata_kunci(t)}
+        self.assertNotIn("موضوع", kk("رواه مسلم واما ما في الموضوعات للصغاني من انه موضوع فلا يعول عليه"))
+        self.assertNotIn("لا يصح", kk("وقول الاصيلي لا يصح مرفوعا مردود بتصريحهما بالرفع"))
+        # «لا يعول عليه» / «غلط» yang MENGUATKAN penilaian tetap dihitung
+        self.assertIn("ضعيف جدا", kk("واما حديث خلق الله الارواح قبل الاجسام فضعيف جدا فلا يعول عليه"))
+        self.assertIn("موضوع", kk("هذا حديث موضوع ورشدين لا يعول عليه"))
+        self.assertIn("لا يصح", kk("هذا حديث لا يصح وقد غلط بعض الرواه"))
+
     def test_penilaian_dikenali(self):
         self.assertEqual(padanan("هذا حديث موضوع"), ["maudhu' (palsu)"])
         self.assertEqual(padanan("إسناده صحيح"), ["shahih"])

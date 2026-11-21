@@ -81,6 +81,15 @@ def _penilaian_positif(n, m):
     return bool((depan and depan[0] in _DEPAN_NILAI) or (belakang and belakang[0] in _BELAKANG_NILAI))
 
 
+# Penilaian orang lain yang DIKUTIP LALU DIBANTAH. Hanya dua pola yang jelas, karena «لا يعول عليه» dan «غلط» juga
+# sering MENGUATKAN penilaian («فضعيف جدا فلا يعول عليه», «هذا حديث موضوع ورشدين لا يعول عليه»):
+#   «… من أنه موضوع فلا يعول عليه» (Kasyf 1318: klaim ash-Shaghani atas hadits Muslim «الدنيا سجن المؤمن» ditolak)
+#   «وقول الأصيلي لا يصح مرفوعا مردود» (Kasyf 925)
+def _dibantah(n, m):
+    depan, belakang = [_lepas(w) for w in n[:m.start()].split()[-3:]], [_lepas(w) for w in n[m.end():].split()[:5]]
+    return ("انه" in depan and "يعول" in belakang[:4]) or ("قول" in depan and "مردود" in belakang)
+
+
 def kata_kunci(teks):
     """[(kunci, padanan, kalimat, kelas)] — kalimat = potongan teks ulama tempat kata itu pertama muncul."""
     n = norm_ar(teks)
@@ -100,6 +109,8 @@ def kata_kunci(teks):
             if k == "من كلام" and sesudah and _lepas(sesudah[0]) in ("النبي", "رسول", "الرسول", "نبي", "النبوه"):
                 continue                                   # "من كلام النبي" justru sebaliknya
             if k in ("صحيح", "حسن") and not _penilaian_positif(n, x):
+                continue
+            if _dibantah(n, x):
                 continue
             m = x
             break
@@ -241,12 +252,13 @@ def main():
         # tidak ditautkan, karena kata kunci penilaian entri itu berlaku untuk ucapan lain.
         lafaz, sebut = norm_ar(p["arab"]), 0
         pola_lafaz = re.compile(f"(?<![{_HUR}]){re.escape(lafaz)}(?![{_HUR}])")
+        bukan = set(p.get("bukan", []))   # entri yang dicek manual membahas ucapan LAIN (mis. «من كثر سواد قوم»)
         for eid, gj, teks_n in semua:
             s = len(g & gj) / len(g)
             persis = bool(pola_lafaz.search(teks_n))
             # Tautan judul: judul (+10 kata pertama) memuat >= 75% 2-gram lafaz, ATAU lafaz ada persis di teks entri
             # dan judulnya memuat >= 50% (judul bab al-Maudhu'at sering parafrase: "طلب العلم ولو بالصين").
-            if s >= 0.75 or (persis and s >= 0.5):
+            if eid not in bukan and (s >= 0.75 or (persis and s >= 0.5)):
                 db.execute("INSERT INTO populer_katalog VALUES (?,?,?)", (p["id"], eid, round(s, 2)))
                 stat["tautan_katalog"] += 1
             elif sebut < 8 and persis:

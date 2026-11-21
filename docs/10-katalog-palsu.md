@@ -56,7 +56,7 @@ Saat memeriksa hasil untuk *حب الوطن من الإيمان* ("cinta tanah a
 
 ## Ucapan populer berbahasa Indonesia
 
-`pipeline/hadits_populer.json` berisi 20 ucapan yang sering beredar sebagai "hadits", masing-masing dengan varian kalimat dan lafaz Arabnya. Daftar ini **disusun Teman Hadits dan belum ditinjau** (`"ditinjau": false`). Fungsinya hanya menghubungkan kalimat Indonesia ke lafaz Arab; penilaian yang tampil selalu kutipan dari kitab. Empat di antaranya sengaja berupa hadits yang memang ada (kontrol), agar sistem diuji tidak asal menandai "bermasalah".
+`pipeline/hadits_populer.json` berisi 42 ucapan (20 awal + 22 tambahan 21 Nov 2026) yang sering beredar sebagai "hadits", masing-masing dengan varian kalimat dan lafaz Arabnya. Daftar ini **disusun Teman Hadits dan belum ditinjau** (`"ditinjau": false`). Fungsinya hanya menghubungkan kalimat Indonesia ke lafaz Arab; penilaian yang tampil selalu kutipan dari kitab. Empat di antaranya sengaja berupa hadits yang memang ada (kontrol), agar sistem diuji tidak asal menandai "bermasalah".
 
 Tautan dihitung otomatis:
 
@@ -102,6 +102,44 @@ Keempat kontrol tidak mendapat chip *palsu* dan ditemukan di kitab hadits kita d
 **Lafaz mirip (`mirip` di `hadits_populer.json`).** Bila lafaz yang beredar tidak dibahas, tetapi ulama membahas lafaz yang mirip, entri itu bisa ditautkan **secara manual** dengan catatan. Isinya: daftar entri katalog dan riwayat yang disebut dalam kutipan itu. Halaman `/populer/<id>` menampilkannya di bagian "Lafaz mirip yang dibahas ulama", dengan keterangan bahwa kata kunci penilaiannya berlaku untuk lafaz mirip itu, bukan lafaz yang beredar. Bagian "Pembahasan ulama" untuk lafaz aslinya tetap menyatakan tidak ditemukan. Baru dipakai untuk "kebersihan sebagian dari iman": Maqashid 302, Kasyf 922, Asrar 127 (بني الدين على النظافة; al-'Iraqi: لم أجده; النظافة تدعو إلى الإيمان: sanadnya sangat lemah) dan Tirmidzi 2799 (إن الله ... نظيف يحب النظافة, yang disebut as-Suyuthi sebagai yang lebih dekat; at-Tirmidzi: gharib). Setiap id diperiksa ada saat `katalog_palsu.py` dijalankan.
 
 "Tidak ditemukan di 11 kitab hadits kami" **tidak** sama dengan "palsu". Situs mengatakannya secara eksplisit.
+
+## Tambahan 22 ucapan (21 Nov 2026)
+
+Daftar kini 42 ucapan. Lafaz Arab tiap ucapan dicocokkan dengan bentuk yang dibahas di kitab katalog. Tiga lafaz dibetulkan setelah teks katalog dicari: «الصمت حكمة» (bukan «حكم»), «إذا تزوج فقد استكمل نصف الدين», dan untuk "hari ini sama dengan kemarin" lafaz yang dibahas ulama «من استوى يوماه فهو مغبون». Sembilan di antaranya kontrol yang memang ada di kitab hadits kita (malu sebagian dari iman, menyerupai suatu kaum, urusan bukan pada ahlinya, tangan di atas, lahir di atas fitrah, nikah sunnahku, orang kuat menahan marah, mendiamkan lebih dari tiga hari, dunia penjara orang mukmin).
+
+| Ucapan | Lafaz | Entri katalog | Kata kunci palsu | Di kitab hadits kita | Disebut di |
+|---|---|---|---|---|---|
+| Menikah itu menyempurnakan separuh agama | إذا تزوج فقد استكمل نصف الدين | Kasyf 214 | — | — | — |
+| Musuh terbesarmu adalah nafsumu sendiri | أعدى عدوك نفسك التي بين جنبيك | — | — | — | Kasyf 382 |
+| Islam itu tinggi dan tidak ada yang mengungguli ketinggiannya | الإسلام يعلو ولا يعلى | Maqashid 109, Kasyf 362 | — | — | — |
+| Wanita adalah tiang negara | المرأة عماد البلاد | — | — | — | — |
+| Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia | خير الناس أنفعهم للناس | — | — | — | Kasyf 1254 |
+| Cinta dunia adalah pangkal segala kesalahan | حب الدنيا رأس كل خطيئة | Maqashid 384, Kasyf 1099, Asrar 163 | maudhu' (palsu) | — | — |
+| Rajab bulan Allah, Sya'ban bulanku, dan Ramadhan bulan umatku | رجب شهر الله وشعبان شهري ورمضان شهر أمتي | Maqashid 510, Kasyf 1358 | — | — | Maudhu'at 239, Maudhu'at 295 |
+| Sabar itu separuh dari iman | الصبر نصف الإيمان | — | — | — | — |
+| Manfaatkan lima perkara sebelum datang lima perkara | اغتنم خمسا قبل خمس | Kasyf 436 | — | — | Kasyf 203 |
+| Ilmu tanpa amal bagaikan pohon tanpa buah | العلم بلا عمل كالشجر بلا ثمر | — | — | — | — |
+| Barangsiapa hari ini sama dengan kemarin, ia merugi; bila lebih buruk, ia celaka | من استوى يوماه فهو مغبون | Maqashid 1080, Kasyf 2406, Asrar 457 | — | — | — |
+| Diam itu hikmah, tetapi sedikit yang melakukannya | الصمت حكمة وقليل فاعله | Kasyf 1623 | — | — | — |
+| Pemuda hari ini adalah pemimpin hari esok | شبان اليوم رجال الغد | — | — | — | — |
+| Dunia adalah penjara bagi orang mukmin dan surga bagi orang kafir | الدنيا سجن المؤمن وجنة الكافر | Maqashid 495, Kasyf 1318 | — | tirmidzi:2324, muslim:7417, ibnumajah:4113 … | Asrar 547 |
+| Malu adalah sebagian dari iman | الحياء من الإيمان | Maqashid 423, Kasyf 1183 | — | tirmidzi:2615, tirmidzi:2009, nasai:5033 … | — |
+| Barangsiapa menyerupai suatu kaum, ia termasuk golongan mereka | من تشبه بقوم فهو منهم | Maqashid 1101, Kasyf 2436 | — | abudawud:4031 | Maqashid 1170, Kasyf 2588 |
+| Jika suatu urusan diserahkan kepada yang bukan ahlinya, tunggulah kehancurannya | إذا وسد الأمر إلى غير أهله فانتظر الساعة | — | — | bukhari:59 | — |
+| Tangan di atas lebih baik daripada tangan di bawah | اليد العليا خير من اليد السفلى | Kasyf 466, Kasyf 3199 | — | tirmidzi:2463, tirmidzi:2343, nasai:2603 … | Maqashid 978, Kasyf 2241 |
+| Setiap anak dilahirkan dalam keadaan fitrah | كل مولود يولد على الفطرة | Kasyf 1990 | — | tirmidzi:2138, malik:572, bukhari:1385 … | — |
+| Menikah adalah sunnahku, siapa yang tidak mengamalkan sunnahku bukan golonganku | النكاح من سنتي فمن لم يعمل بسنتي فليس مني | Kasyf 2833 | — | ibnumajah:1846 | — |
+| Orang kuat bukanlah yang menang bergulat, tetapi yang mampu menahan diri ketika marah | ليس الشديد بالصرعة | Kasyf 2140 | — | muslim:6644, muslim:6643, malik:1644 … | — |
+| Tidak halal seorang muslim mendiamkan saudaranya lebih dari tiga hari | لا يحل لمسلم أن يهجر أخاه فوق ثلاث | Kasyf 3110 | — | tirmidzi:1932, muslim:6532, bukhari:6237 … | Maqashid 1356 |
+
+Empat ucapan tidak ditemukan sama sekali di keempat kitab: wanita tiang negara, sabar separuh iman, ilmu tanpa amal, dan pemuda pemimpin hari esok. Dua lagi hanya *disebut* di pembahasan entri lain: "musuh terbesarmu adalah nafsumu" (Kasyf 382) dan "sebaik-baik manusia yang paling bermanfaat" (Kasyf 1254; al-'Ajluni: belum pernah melihat yang menyebutnya hadits, maknanya benar, dan al-Qudha'i meriwayatkan «خير الناس أنفعهم للناس»). Untuk keenam ucapan ini situs menulis "tidak ditemukan sebagai judul entri", tanpa penilaian.
+
+**Dua perbaikan yang ditemukan saat meninjau:**
+
+- **Penilaian yang dikutip lalu dibantah tidak lagi dihitung.** Kasyf 1318 (hadits Muslim «الدنيا سجن المؤمن») memuat «وأما ما في الموضوعات للصغاني من أنه موضوع فلا يعول عليه». Al-'Ajluni justru menolak klaim maudhu' itu, tetapi kata "maudhu'" ikut menjadi label merah. Kini dua pola bantahan yang jelas diabaikan: «من أنه [penilaian] … فلا يعول عليه» dan «قول فلان [penilaian] … مردود». Dicoba dulu penanda yang lebih luas (لا يعول عليه, غلط, تعقب, …): 11 kata kunci hilang, 6 di antaranya justru penilaian yang dikuatkan («فضعيف جدا فلا يعول عليه», «هذا حديث موضوع ورشدين لا يعول عليه»), jadi dipersempit. Kini hanya Kasyf 1318 dan Kasyf 925 yang berubah. Diuji di `test_katalog.py`.
+- **Tautan manual yang ditolak (`bukan`).** Aturan "lafaz ada persis di teks + judul ≥ 50%" (untuk judul parafrase *al-Maudhu'at* dan judul yang salah ketik, mis. Maqashid 495 «وجته») menautkan «من تشبه بقوم فهو منهم» ke entri ucapan lain «من كثر سواد قوم فهو منهم» (Maqashid 1170, Kasyf 2588). Field `bukan` di `hadits_populer.json` menolak tautan judul itu. Karena lafaznya ada di teks entri tersebut, entri itu tetap tampil sebagai "disebut", tanpa kata kunci. Juga dipakai untuk Kasyf 3276 (versi panjang «يا أبا ذر إن الدنيا سجن المؤمن والقبر أمنه…»).
+
+Data ini diterapkan ke D1 lokal memakai impor bertahap (`pipeline/impor_cicil.py`): 1 cicilan, ±277 tulisan (impor penuh ±564 ribu). Hasilnya identik dengan data baru.
 
 ## Di situs
 
