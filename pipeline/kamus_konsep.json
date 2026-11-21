@@ -496,6 +496,12 @@
       "thaun",
       "taun",
       "thoun"
+    ],
+    [
+      "taubat",
+      "taubah",
+      "tobat",
+      "tobah"
     ]
   ],
   "_catatan_varian": "Kata pertama = bentuk baku untuk tampilan. Saat mencari, SEMUA varian dicari bersamaan (terjemahan Lidwa memakai ejaan campuran: sedekah 821, shadaqah 248, shodaqoh 16).",
@@ -3050,6 +3056,132 @@
       "bab": [],
       "catatan": "Dalam hadits, membersihkan gigi disebut bersiwak (سواك).",
       "bukti": "terjemah 'sikat gigi' = 0; 'bersiwak' = 157, 'siwak' = 96; arab_akar:سواك = 166 (build 2026-11-07)"
+    },
+    {
+      "id": "adopsi",
+      "label": "Anak angkat (adopsi)",
+      "pemicu": [
+        "adopsi",
+        "mengadopsi"
+      ],
+      "arab": [
+        "ادعوهم لآبائهم"
+      ],
+      "terjemah": [
+        "anak angkat"
+      ],
+      "bab": [],
+      "catatan": "Hadits-hadits tentang anak angkat berkaitan dengan ayat ادعوهم لآبائهم (panggillah mereka dengan nama bapak mereka), mis. kisah Zaid bin Haritsah. Kata Arab تبنى tidak dipakai karena tulisannya sama dengan تُبنى (dibangun).",
+      "bukti": "terjemah 'adopsi' = 0; 'anak angkat' = 12; arab_akar:\"ادعوهم لآبائهم\" = 17 (build 2026-11-21)"
+    },
+    {
+      "id": "kdrt",
+      "label": "Memukul istri (KDRT)",
+      "pemicu": [
+        "kdrt"
+      ],
+      "arab": [
+        "لا تضربوا إماء الله"
+      ],
+      "terjemah": [
+        "memukul isteri",
+        "memukul istri"
+      ],
+      "bab": [],
+      "catatan": "Istilah KDRT tidak ada di hadits. Hadits terkait: لا تضربوا إماء الله (janganlah kalian memukul hamba-hamba perempuan Allah). Cari juga \"suami memukul istri\".",
+      "bukti": "terjemah 'kdrt' = 0; 'memukul isteri' = 3; arab_akar:\"لا تضربوا إماء الله\" = 4 (build 2026-11-21)"
+    },
+    {
+      "id": "karyawan",
+      "label": "Karyawan / pekerja upahan (ajir)",
+      "pemicu": [
+        "karyawan"
+      ],
+      "arab": [
+        "الأجير"
+      ],
+      "terjemah": [
+        "pekerja",
+        "buruh",
+        "orang upahan",
+        "pegawai"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya memakai أجير (orang yang diupah), mis. أعطوا الأجير أجره قبل أن يجف عرقه.",
+      "bukti": "terjemah 'karyawan' = 1; 'pekerja' = 59, 'pegawai' = 26, 'buruh' = 13, 'orang upahan' = 7; arab_akar:الأجير = 26 (build 2026-11-21)"
+    },
+    {
+      "id": "begal",
+      "label": "Begal / perampok",
+      "pemicu": [
+        "begal",
+        "membegal"
+      ],
+      "arab": [
+        "المحاربين"
+      ],
+      "terjemah": [
+        "perampok",
+        "merampok"
+      ],
+      "bab": [],
+      "catatan": "Terjemah Lidwa memakai \"perampok\"/\"merampok\". Hukum perampok di jalan dibahas di bab المحاربين (orang-orang yang memerangi), mis. Sunan an-Nasa'i.",
+      "bukti": "terjemah 'begal' = 0; 'merampok' = 22, 'perampok' = 14; arab_akar:المحاربين = 4 (build 2026-11-21)"
+    },
+    {
+      "id": "rentenir",
+      "label": "Rentenir (pemakan riba)",
+      "pemicu": [
+        "rentenir",
+        "lintah"
+      ],
+      "arab": [
+        "آكل الربا"
+      ],
+      "terjemah": [
+        "pemakan riba"
+      ],
+      "bab": [],
+      "catatan": "Istilah rentenir/lintah darat tidak ada di hadits. Yang dibahas adalah آكل الربا (pemakan riba), mis. hadits laknat bagi pemakan riba, pemberinya, penulisnya, dan saksinya.",
+      "bukti": "terjemah 'rentenir' = 0, 'lintah' = 0; 'pemakan riba' = 32; arab_akar:\"آكل الربا\" = 49 (build 2026-11-21)"
+    },
+    {
+      "id": "ayyamul_bidh",
+      "label": "Puasa Ayyamul Bidh (13, 14, 15)",
+      "pemicu": [
+        "bidh",
+        "bidl",
+        "biidh",
+        "bid"
+      ],
+      "arab": [
+        "أيام البيض"
+      ],
+      "terjemah": [
+        "tiga belas, empat belas"
+      ],
+      "bab": [],
+      "catatan": "Ayyamul bidh (أيام البيض) = tanggal 13, 14, dan 15 bulan Hijriyah. Banyak riwayat menyebut tanggalnya langsung: ثلاث عشرة وأربع عشرة وخمس عشرة.",
+      "bukti": "terjemah 'tiga belas, empat belas' = 23; arab_akar:\"أيام البيض\" = 8 (build 2026-11-21)"
+    },
+    {
+      "id": "curang",
+      "label": "Curang / menipu (ghisy)",
+      "pemicu": [
+        "curang",
+        "mencurangi"
+      ],
+      "arab": [
+        "من غشنا",
+        "من غش"
+      ],
+      "terjemah": [
+        "curang",
+        "menipu"
+      ],
+      "bab": [],
+      "catatan": "Teks Arabnya: من غشنا فليس منا (siapa yang menipu kami bukan golongan kami), termasuk kisah tumpukan makanan yang basah di bagian bawah.",
+      "bukti": "terjemah 'curang' = 34, 'menipu' = 77; arab_akar:\"من غشنا\" = 4; \"من غش\" = 7 (build 2026-11-21)"
     }
   ]
 }
